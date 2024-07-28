@@ -1,0 +1,47 @@
+{
+	"name": "mediathekcommunity",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "vite preview",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
+		"lint": "prettier --check . && eslint .",
+		"format": "prettier --write ."
+	},
+	"devDependencies": {
+		"@flydotio/dockerfile": "^0.5.8",
+		"@skeletonlabs/skeleton": "3.0.0-next.2",
+		"@skeletonlabs/skeleton-svelte": "1.0.0-next.4",
+		"@sveltejs/adapter-auto": "^3.2.2",
+		"@sveltejs/adapter-node": "^5.2.0",
+		"@sveltejs/kit": "^2.5.18",
+		"@sveltejs/vite-plugin-svelte": "^3.1.1",
+		"@types/eslint": "^9.6.0",
+		"@types/node": "^22.0.0",
+		"autoprefixer": "^10.4.19",
+		"embla-carousel-svelte": "^8.1.7",
+		"eslint": "^9.8.0",
+		"eslint-config-prettier": "^9.1.0",
+		"eslint-plugin-svelte": "^2.43.0",
+		"globals": "^15.8.0",
+		"postcss": "^8.4.40",
+		"prettier": "^3.3.3",
+		"prettier-plugin-svelte": "^3.2.6",
+		"prettier-plugin-tailwindcss": "^0.6.5",
+		"svelte": "5.0.0-next.200",
+		"svelte-check": "^3.8.4",
+		"svelte-flag-icons": "^1.0.3",
+		"tailwindcss": "^3.4.7",
+		"typescript": "^5.5.4",
+		"video.js": "^8.16.1",
+		"vite": "^5.3.5"
+	},
+	"type": "module",
+	"dependencies": {
+		"@directus/sdk": "^16.1.1",
+		"lucide-svelte": "^0.417.0"
+	}
+}
