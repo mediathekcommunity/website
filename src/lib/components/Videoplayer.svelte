@@ -53,6 +53,7 @@
 				break;
 		}
 	}
+	//console.log($modalvideo)
 	$: changeVideo($modalvideo, $seriestype);
 
 	onMount(() => {

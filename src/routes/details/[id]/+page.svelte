@@ -49,7 +49,7 @@
 		showvideo = true;
 		modalvideo.set({
 			src: data1.streamlink,
-			type: data1.streamformat,
+			type: data1.format,
 			poster: poster1,
 			title: data1.title
 		});
@@ -109,13 +109,6 @@
 
 {#if data1}
 	<div>
-		<aside class="alert variant-ghost-error">
-			<div class="alert-message">
-				<h3 class="h3">WIP</h3>
-				<p>I'm rebuilding this site with Directus as backend - Currently using: Directus</p>
-			</div>
-		</aside>
-		<!-- 
 		{#if channelinfo.info}
 			<aside class="alert variant-ghost-error">
 				<div class="alert-message">
@@ -124,8 +117,6 @@
 				</div>
 			</aside>
 		{/if}
-        -->
-		{showvideo}
 		{#if !showvideo}
 			{#if data1.backdrop != 'backdrop' && data1.backdrop}
 				<img
@@ -346,13 +337,5 @@
 		</svelte:fragment>
 	</TabGroup>
     -->
-{:else}
-	<h1 class="h1">
-		<span
-			class="bg-gradient-to-br from-pink-100 to-red-900 box-decoration-clone bg-clip-text text-transparent"
-			>No Item(s) found for :</span
-		>
-		{data.param}
-	</h1>
 {/if}
 <!---->
