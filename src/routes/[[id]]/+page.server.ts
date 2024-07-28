@@ -22,7 +22,7 @@ export async function load({ fetch, params, request }) {
 						limit: 5
 					},
 					episodelist: {
-						limit: 5
+						limit: 99
 					}
 				}
 			})
@@ -39,7 +39,7 @@ export async function load({ fetch, params, request }) {
 						limit: 5
 					},
 					episodelist: {
-						limit: 5
+						limit: 99
 					}
 				}
 			})
