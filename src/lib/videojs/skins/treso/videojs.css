@@ -2346,7 +2346,6 @@ body.vjs-full-window {
 	transform: rotate(0);
 	-webkit-transition: transform .3s;
 	transition: transform .3s;
-	display:inline-block;
 }
 .vjs-cog-button .vjs-svg-icon {
 	display:flex;

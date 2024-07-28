@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for mediathekcommunity-withered-field-4823 on 2024-07-28T18:18:52+02:00
+# fly.toml app configuration file generated for mediathekcommunity on 2024-07-28T21:22:28+02:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'mediathekcommunity-withered-field-4823'
+app = 'mediathekcommunity'
 primary_region = 'fra'
 
 [build]

@@ -1827,7 +1827,6 @@ vjs-live:not(.vjs-liveui) .vjs-rewind-control, .vjs-live:not(.vjs-liveui) .vjs-f
 	transform: rotate(0);
 	-webkit-transition: transform .3s;
 	transition: transform .3s;
-	display:block;
 }
 .vjs-cog-active .vjs-icon-placeholder {
 	-webkit-transform: rotate(45deg);

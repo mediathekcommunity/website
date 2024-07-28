@@ -2064,7 +2064,6 @@ body.vjs-full-window {
 	transform-origin: center center;
 	-webkit-transition: transform .3s;
 	transition: transform .3s;
-	display:block;
 	line-height:1;
 }
 .vjs-cog-active .vjs-icon-placeholder {
