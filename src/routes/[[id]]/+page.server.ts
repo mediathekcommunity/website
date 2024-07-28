@@ -12,12 +12,12 @@ export async function load({ fetch, params, request }) {
 	h1 = request.headers.get('Cdn-RequestCountryCode') ? capitalizeFirstLetter(request.headers.get('Cdn-RequestCountryCode')) : 'De';
 	h1 = capitalizeFirstLetter(h1);
 	const directus = getDirectusInstance(fetch);
+	//console.log(params)
 	if (!params.id) {
 		x = await directus.request(
 			readItems('mediathek', {
 				fields: ['*.*'],
-				limit: 4,
-				deep: {
+ 				deep: {
 					channel: {
 						limit: 5
 					},
@@ -34,8 +34,7 @@ export async function load({ fetch, params, request }) {
 					mediatype: params.id
 				},
 				fields: ['*.*'],
-				limit: 4,
-				deep: {
+ 				deep: {
 					channel: {
 						limit: 5
 					},

@@ -2,7 +2,7 @@
 	// @ts-nocheck
 	let { data } = $props();
 	let data1 = $state();
-	let channelinfo = {};
+	let channelinfo = $state();
 	let omu = {};
 	let noomu = {};
 	//import { TabGroup, Tab, Accordion, AccordionItem } from '@skeletonlabs/skeleton';
