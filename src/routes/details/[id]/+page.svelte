@@ -99,8 +99,8 @@
 				});
 			}
 		});
-		console.log(myPlaylist);
-		console.log(omulist);
+		//console.log(myPlaylist);
+		//console.log(omulist);
 		noomulist.set(myPlaylist);
 		omulist.set(myPlaylistomu);
 		showvideo = true;

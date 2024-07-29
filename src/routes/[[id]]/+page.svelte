@@ -12,10 +12,10 @@
 	// Component props
 	/* @type { import('./$houdini').PageData } */
 	let { data } = $props();
-	console.log(data);
+	//console.log(data);
 	//data.page.channel = data.page.channel[0];
 	// console.log(data);
- 
+
 	let langdata = $state({});
 	let langlist = $state([]);
 
@@ -31,7 +31,7 @@
 		}, {});
 	};
 	$effect(() => {
-		console.log(visible);
+		//console.log(visible);
 	});
 	$effect(() => {
 		langdata = groupByChannelCountry(data);
@@ -39,6 +39,7 @@
 	$effect(() => {
 		langlist = Object.keys(langdata);
 	});
+	let options = { align: 'start', slidestoscroll: '2', loop: 'true' };
 
 	//console.log(langdata);
 	//console.log(Object.keys(langdata));
@@ -66,7 +67,7 @@
 				Zuletzt hinzugefügt.
 			</span>
 		</h1>
-		<div class="embla" use:emblaCarouselSvelte>
+		<div class="embla" use:emblaCarouselSvelte={{ options }}>
 			<div class="embla__container flex">
 				{#each data.page as name, index}
 					<div class="embla__slide"><Card carddata={name} geo={data.geo} /></div>
@@ -98,7 +99,7 @@
 		{/each}
 		-->
 		{#key visible}
-			<Slider1 {langlist} {visible} {langdata}  geo={data.geo} />
+			<Slider1 {langlist} {visible} {langdata} geo={data.geo} />
 		{/key}
 	</div>
 {/if}
