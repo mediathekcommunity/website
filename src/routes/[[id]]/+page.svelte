@@ -38,6 +38,7 @@
 	});
 	$effect(() => {
 		langlist = Object.keys(langdata);
+		langlist.sort()
 	});
 	let options = { align: 'start', slidestoscroll: '2', loop: 'true' };
 
