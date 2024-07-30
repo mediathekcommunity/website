@@ -33,7 +33,7 @@ RUN pnpm install --frozen-lockfile --prod=false
 COPY --link . .
 
 # Build application
-RUN DIRECTUS_APIURL=DIRECTUS_APIURL pnpm run build
+RUN pnpm run build
 
 # Remove development dependencies
 RUN pnpm prune --prod
