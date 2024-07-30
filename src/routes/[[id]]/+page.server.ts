@@ -9,15 +9,16 @@ function capitalizeFirstLetter(string) {
 
 export async function load({ fetch, params, request }) {
 	let h1;
-	h1 = request.headers.get('Cdn-RequestCountryCode') ? capitalizeFirstLetter(request.headers.get('Cdn-RequestCountryCode')) : 'De';
+	h1 = request.headers.get('Cdn-RequestCountryCode')
+		? capitalizeFirstLetter(request.headers.get('Cdn-RequestCountryCode'))
+		: 'De';
 	h1 = capitalizeFirstLetter(h1);
 	const directus = getDirectusInstance(fetch);
-	//console.log(params)
-	if (!params.id) {
+ 	if (!params.id) {
 		x = await directus.request(
 			readItems('videos ', {
 				fields: ['*.*'],
- 				deep: {
+				deep: {
 					channel: {
 						limit: 5
 					},
@@ -34,7 +35,7 @@ export async function load({ fetch, params, request }) {
 					mediatype: params.id
 				},
 				fields: ['*.*'],
- 				deep: {
+				deep: {
 					channel: {
 						limit: 5
 					},

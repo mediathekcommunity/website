@@ -1,6 +1,5 @@
 <script>
 	// @ts-nocheck
-	// Modals Utils
 	import { visible } from '$lib/store.js';
 	import { onDestroy } from 'svelte';
 	import * as Flag from 'svelte-flag-icons';
@@ -12,9 +11,6 @@
 	// Component props
 	/* @type { import('./$houdini').PageData } */
 	let { data } = $props();
-	//console.log(data);
-	//data.page.channel = data.page.channel[0];
-	// console.log(data);
 
 	let langdata = $state({});
 	let langlist = $state([]);
@@ -31,21 +27,13 @@
 		}, {});
 	};
 	$effect(() => {
-		//console.log(visible);
-	});
-	$effect(() => {
 		langdata = groupByChannelCountry(data);
 	});
 	$effect(() => {
 		langlist = Object.keys(langdata);
-		langlist.sort()
+		langlist.sort();
 	});
 	let options = { align: 'start', slidestoscroll: '2', loop: 'true' };
-
-	//console.log(langdata);
-	//console.log(Object.keys(langdata));
-
-	/*var geo1 = capitalizeFirstLetter(data.geo);*/
 </script>
 
 {#if data && data.count > 0}
