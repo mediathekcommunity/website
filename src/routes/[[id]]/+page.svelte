@@ -30,8 +30,7 @@
 		langdata = groupByChannelCountry(data);
 	});
 	$effect(() => {
-		langlist = Object.keys(langdata);
-		langlist.sort();
+		langlist = Object.keys(langdata).sort();
 	});
 	let options = { align: 'start', slidestoscroll: '2', loop: 'true' };
 </script>
