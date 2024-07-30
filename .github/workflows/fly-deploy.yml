@@ -9,6 +9,8 @@ jobs:
   deploy:
     name: Deploy app
     runs-on: ubuntu-latest
+    env:
+      DIRECTUS_APIURL: ${{ secrets.DIRECTUS_APIURL }}
     concurrency: deploy-group    # optional: ensure only one action runs at a time
     steps:
       - uses: actions/checkout@v4
