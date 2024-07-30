@@ -36,7 +36,7 @@
 		"svelte-flag-icons": "^1.0.3",
 		"tailwindcss": "^3.4.7",
 		"typescript": "^5.5.4",
-		"video.js": "^8.16.1",
+		"video.js": "^8.17.1",
 		"vite": "^5.3.5"
 	},
 	"type": "module",

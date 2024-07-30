@@ -6,7 +6,7 @@ import { readItem } from '@directus/sdk';
 export async function load({ fetch, params }) {
 	const directus = getDirectusInstance(fetch);
 	var x = await directus.request(
-		readItem('mediathek', params.id, {
+		readItem('videos', params.id, {
 			fields: ['*.*'],
 			limit: 4,
 			deep: {

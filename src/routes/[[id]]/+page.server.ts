@@ -15,7 +15,7 @@ export async function load({ fetch, params, request }) {
 	//console.log(params)
 	if (!params.id) {
 		x = await directus.request(
-			readItems('mediathek', {
+			readItems('videos ', {
 				fields: ['*.*'],
  				deep: {
 					channel: {
@@ -29,7 +29,7 @@ export async function load({ fetch, params, request }) {
 		);
 	} else {
 		x = await directus.request(
-			readItems('mediathek', {
+			readItems('videos', {
 				filter: {
 					mediatype: params.id
 				},
