@@ -11,7 +11,7 @@
 
 <!-- Component -->
 <div class="sticky bottom-0 z-50 block w-screen border-surface-900/80 sm:hidden">
-	<Nav.Bar bind:value onchange={console.log}>
+	<Nav.Bar>
 		<Nav.Tile id="0" labelExpanded="Browse Files" href="/">
 			<IconHouse />
 		</Nav.Tile>

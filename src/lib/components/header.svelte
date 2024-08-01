@@ -11,6 +11,6 @@
 	<span>Mediathek Community</span>
 	{#snippet trail()}Debug: disable Countryfilter &nbsp; 
 
-		<Switch id="example" name="example" bind:checked={$visible} onchange={console.log}></Switch>
+		<Switch id="example" name="example" bind:checked={$visible}></Switch>
 	{/snippet}
 </AppBar>
