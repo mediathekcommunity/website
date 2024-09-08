@@ -1,3 +1,4 @@
+// @ts-nocheck
 import youtubedl from 'youtube-dl-exec';
 import { page } from '$app/stores';
 
@@ -10,7 +11,8 @@ async function downloadVideo(event) {
 			noCheckCertificates: true,
 			noWarnings: true,
 			preferFreeFormats: true,
-			addHeader: ['referer:zdf.de', 'user-agent:googlebot']
+            geoBypass:true,
+            proxy: "socks5://138.201.21.227:47400"          
 		}
 	);
 	return JSON.stringify(t);
