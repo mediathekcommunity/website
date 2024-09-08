@@ -90,15 +90,14 @@
 			<Slider1 {langlist} {visible} {langdata} geo={data.geo} />
 		{/key}
 	</div>
-{/if}
-{#if !data}
+ {:else}
 	<h1 class="h1">
 		<span
 			class="bg-gradient-radial from-tertiary-500 to-primary-500 box-decoration-clone bg-clip-text text-transparent"
 		>
-			No Item(s) found
+			No Item(s) found  for type:
 		</span>
-		{data.param || '*'}
+		{data.filter || '*'}
 	</h1>
 {/if}
 

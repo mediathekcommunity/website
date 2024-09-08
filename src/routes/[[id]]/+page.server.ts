@@ -3,7 +3,7 @@ import { error } from '@sveltejs/kit';
 import getDirectusInstance from '$lib/directus';
 import { readItems } from '@directus/sdk';
 var x;
-function capitalizeFirstLetter(string) {
+function capitalizeFirstLetter(string: any) {
 	return string[0].toUpperCase() + string.slice(1).toLowerCase();
 }
 
@@ -14,7 +14,7 @@ export async function load({ fetch, params, request }) {
 		: 'De';
 	h1 = capitalizeFirstLetter(h1);
 	const directus = getDirectusInstance(fetch);
- 	if (!params.id) {
+	if (!params.id) {
 		x = await directus.request(
 			readItems('videos ', {
 				fields: ['*.*'],
@@ -51,7 +51,8 @@ export async function load({ fetch, params, request }) {
 		return {
 			page: x,
 			count: x.length,
-			geo: h1
+			geo: h1,
+			filter: params.id
 		};
 	} catch (err) {
 		throw error(404, 'Page not founds');

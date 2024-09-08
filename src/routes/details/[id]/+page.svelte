@@ -108,7 +108,7 @@
 </script>
 
 {#if data1}
-	<div>
+	<div class="pb-4">
 		{#if channelinfo.info}
 			<aside class="alert variant-ghost-error">
 				<div class="alert-message">
@@ -138,26 +138,26 @@
 		{/if}
 	</div>
 
-	<Tabs listJustify="justify-center">
+	<Tabs bind:value={group} listJustify="justify-center">
 		{#snippet list()}
-			<Tabs.Control bind:group name="details" title="Details">
+			<Tabs.Control value="details" title="Details">
 				<LibraryBig size={20} />
 				Details
 			</Tabs.Control>
 			{#if data1.mediatype == 'movie'}
-				<Tabs.Control bind:group name="links" title="Links">
+				<Tabs.Control value="links" title="Links">
 					<Film size={20} />
 					Links
 				</Tabs.Control>
 			{:else}
-				<Tabs.Control bind:group name="episodes" title="Episoden">
+				<Tabs.Control value="episodes" title="Episoden">
 					<Tv size={20} />
 					Episoden
 				</Tabs.Control>
 			{/if}
 		{/snippet}
-		{#snippet panels()}
-			<Tabs.Panel bind:group value="details">
+		{#snippet content()}
+			<Tabs.Panel value="details">
 				<div class="shadow-md sm:rounded-lg">
 					<table class="w-full table-auto text-left text-sm text-gray-500 dark:text-gray-400">
 						<tbody>
@@ -238,7 +238,7 @@
 				</div>
 			</Tabs.Panel>
 
-			<Tabs.Panel bind:group value="links">
+			<Tabs.Panel value="links">
 				<div class="flex justify-center">
 					<button type="button" class="btn preset-filled-primary-500" onclick={playvideo}
 						>play</button
@@ -246,7 +246,7 @@
 				</div>
 			</Tabs.Panel>
 
-			<Tabs.Panel bind:group value="episodes">
+			<Tabs.Panel value="episodes">
 				<Accordion {value}>
 					{#each data1.episodelist as episode, index (episode.id)}
 						<Accordion.Item id={index.toString()}>
