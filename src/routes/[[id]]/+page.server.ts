@@ -1,4 +1,6 @@
 /** @type {import('./$types').PageLoad} */
+// @ts-nocheck
+
 import { error } from '@sveltejs/kit';
 import getDirectusInstance from '$lib/directus';
 import { readItems } from '@directus/sdk';

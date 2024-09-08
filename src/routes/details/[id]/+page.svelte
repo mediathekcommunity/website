@@ -141,17 +141,14 @@
 	<Tabs bind:value={group} listJustify="justify-center">
 		{#snippet list()}
 			<Tabs.Control value="details" title="Details">
-				<LibraryBig size={20} />
 				Details
 			</Tabs.Control>
 			{#if data1.mediatype == 'movie'}
 				<Tabs.Control value="links" title="Links">
-					<Film size={20} />
 					Links
 				</Tabs.Control>
 			{:else}
 				<Tabs.Control value="episodes" title="Episoden">
-					<Tv size={20} />
 					Episoden
 				</Tabs.Control>
 			{/if}
