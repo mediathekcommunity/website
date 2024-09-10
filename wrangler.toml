@@ -8,7 +8,7 @@ compatibility_flags = [ "brotli_content_encoding,nodejs_compat_v2" ]
 mode = "smart"
 
 [vars]
-NODE_VERSION = "20.9.0"
+NODE_VERSION = "22.8.0"
 
 [env.production.vars]
-NODE_VERSION = "20.9.0"
+NODE_VERSION = "22.8.0"
