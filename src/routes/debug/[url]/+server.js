@@ -10,9 +10,7 @@ async function downloadVideo(event) {
 			dumpSingleJson: true,
 			noCheckCertificates: true,
 			noWarnings: true,
-			preferFreeFormats: true,
-            geoBypass:true,
-            proxy: "socks5://138.201.21.227:47400"          
+			preferFreeFormats: true
 		}
 	);
 	return JSON.stringify(t);

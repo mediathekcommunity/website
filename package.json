@@ -15,6 +15,7 @@
 		"@flydotio/dockerfile": "^0.5.8",
 		"@skeletonlabs/skeleton": "3.0.0-next.4",
 		"@skeletonlabs/skeleton-svelte": "1.0.0-next.7",
+		"@sveltejs/adapter-cloudflare": "^4.7.2",
 		"@sveltejs/adapter-node": "^5.2.2",
 		"@sveltejs/kit": "^2.5.26",
 		"@sveltejs/vite-plugin-svelte": "^3.1.2",
