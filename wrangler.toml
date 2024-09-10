@@ -2,7 +2,7 @@
 name = "mediathekcommunity"
 pages_build_output_dir = ".svelte-kit/cloudflare"
 compatibility_date = "2024-09-02"
-compatibility_flags = [ "brotli_content_encoding,nodejs_compat_v2" ]
+compatibility_flags = [ "brotli_content_encoding","nodejs_compat_v2" ]
 
 [placement]
 mode = "smart"
