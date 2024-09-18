@@ -11,7 +11,7 @@
 	// Component props
 	/* @type { import('./$houdini').PageData } */
 	let { data } = $props();
-
+	//console.log(data);
 	let langdata = $state({});
 	let langlist = $state([]);
 
@@ -44,7 +44,7 @@
 				class="bg-gradient-radial from-tertiary-100 to-red-500 box-decoration-clone bg-clip-text text-transparent"
 			>
 				<h3 class="h3">WIP</h3>
-				<p>I'm rebuilding this site with Directus as backend - Currently using: Directus</p>
+				<p>I'm rebuilding this site with PayloadCMS as backend - Currently using: PayloadCMS</p>
 			</div>
 		</aside>
 

@@ -2,6 +2,7 @@
 	// @ts-nocheck
 
 	export let langlist, visible, langdata, geo;
+	console.log(langlist,geo);
 	// console.log($visible);
 	import * as Flag from 'svelte-flag-icons';
 	import Card from '$lib/components/Card.svelte';

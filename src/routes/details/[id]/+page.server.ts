@@ -1,25 +1,43 @@
 // @ts-nocheck
 /** @type {import('./$types').PageLoad} */
 import { error } from '@sveltejs/kit';
-import getDirectusInstance from '$lib/directus';
-import { readItem } from '@directus/sdk';
-export async function load({ fetch, params }) {
-	const directus = getDirectusInstance(fetch);
-	var x = await directus.request(
-		readItem('videos', params.id, {
-			fields: ['*.*'],
-			limit: 4,
-			deep: {
-				channel: {
-					limit: 5
-				},
-				episodelist: {
-					limit: 5
-				}
+import client from '$lib/directus.js';
+function capitalizeFirstLetter(string: any) {
+	return string[0].toUpperCase() + string.slice(1).toLowerCase();
+}
+var query1 = `query 
+	HeroNameAndFriends($id: String!) {
+		Mediathek(id: $id){
+ 			title
+			id
+			tmdbid
+			metascore
+			type
+			episodes {
+				title
 			}
-		})
-	);
-	try {
+			orgtitle
+			onlineuntil
+			poster
+			backdrop
+			streamformat
+			streamlink
+			channel {
+				country
+				name
+				info
+			}
+		}
+  }
+		`;
+async function query(id1) {
+	const result = await client.query(query1, { id: id1 });
+	//console.log(result.data.Mediathek);
+	return result.data.Mediathek;
+}
+export async function load({ fetch, params }) {
+ 	var  x = await query(params.id);
+ 	try {
 		return {
 			page: x
 		};

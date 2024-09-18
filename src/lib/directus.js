@@ -1,12 +1,9 @@
-// @ts-nocheck
-import { createDirectus, rest } from '@directus/sdk';
-import { readItems, readItem } from '@directus/sdk';
+import { Client, cacheExchange, fetchExchange } from '@urql/core';
 import { DIRECTUS_APIURL } from '$env/static/private';
 
-function getDirectusInstance(fetch) {
-	const options = fetch ? { globals: { fetch } } : {};
-	const directus = createDirectus(DIRECTUS_APIURL, options).with(rest());
-	return directus;
-}
-
-export default getDirectusInstance;
+const client = new Client({
+	url: DIRECTUS_APIURL,
+	exchanges: [cacheExchange, fetchExchange],
+	requestPolicy: 'cache-and-network'
+});
+export default client;

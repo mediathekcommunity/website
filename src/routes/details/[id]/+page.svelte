@@ -22,7 +22,7 @@
 	let value = $state('0');
 
 	function sortepisodes(data2) {
-		if (data2.episodelist.length > 0) {
+		if (data2.episodes.length > 0) {
 			//console.log(data2.episodelist);
 		}
 	}
@@ -60,7 +60,7 @@
 		myPlaylistomu = [];
 		seriestype.set(type);
 
-		data1.episodelist.forEach((episode) => {
+		data1.episodes.forEach((episode) => {
 			let sources = [];
 			if (episode.streamlink) {
 				sources.push({
@@ -143,7 +143,7 @@
 			<Tabs.Control value="details" title="Details">
 				Details
 			</Tabs.Control>
-			{#if data1.mediatype == 'movie'}
+			{#if data1.type == 'movie'}
 				<Tabs.Control value="links" title="Links">
 					Links
 				</Tabs.Control>
@@ -195,7 +195,7 @@
 									{data1.quality}
 								</td>
 							</tr>
-							{#if data1.episodelist.length > 0}
+							{#if data1.episodes.length > 0}
 								<tr class="border-b dark:border-gray-700">
 									<th
 										scope="row"
@@ -204,7 +204,7 @@
 										Staffeln
 									</th>
 									<td class="px-6 py-4">
-										{data1.episodelist.length || 1}
+										{data1.episodes.length || 1}
 									</td>
 								</tr>
 								<tr class="border-b dark:border-gray-700">
@@ -215,7 +215,7 @@
 										Folgen
 									</th>
 									<td class="px-6 py-4">
-										{data1.episodelist.length}
+										{data1.episodes.length}
 									</td>
 								</tr>
 							{/if}
@@ -245,7 +245,7 @@
 
 			<Tabs.Panel value="episodes">
 				<Accordion {value}>
-					{#each data1.episodelist as episode, index (episode.id)}
+					{#each data1.episodes as episode, index (episode.id)}
 						<Accordion.Item id={index.toString()}>
 							{#snippet controlLead()}
 								E: {episode.episode} - {episode.title}
@@ -284,7 +284,7 @@
  
 			{:else if tabSet === 2}
 				<Accordion>
-					{#each data1.episodelist as episode, index (episode.id)}
+					{#each data1.episodes as episode, index (episode.id)}
 						{#if !episode.omu}
 							<AccordionItem>
 								<svelte:fragment slot="summary"
