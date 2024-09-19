@@ -9,6 +9,16 @@
 	import Tv from 'lucide-svelte/icons/tv';
 	import Videoplayer from '$lib/components/Videoplayer.svelte';
 	import { modalvideo, omulist, noomulist, seriestype } from '$lib/store.js';
+	function getformat(id) {
+		switch (id) {
+            case "mpd":
+                return 'application/dash+xml';
+            case "m3u8":
+                return 'application/x-mpegURL';
+            default:
+			return 'application/dash+xml';
+        }
+    }
 	let myPlaylist = [];
 	let myPlaylistomu = [];
 	let group = $state('details');
@@ -19,6 +29,8 @@
 	let omu = {};
 	let noomu = {};
 	let showvideo = $state(false);
+	//console.log(data);
+
 	$effect(() => {
 		data1 = data.page;
 		channelinfo = data.page.channel;
@@ -35,7 +47,7 @@
 		showvideo = true;
 		modalvideo.set({
 			src: data1.streamlink,
-			type: data1.format,
+			type: getformat(data1.streamformat),
 			poster: poster1,
 			title: data1.title
 		});
@@ -51,7 +63,7 @@
 			if (episode.streamlink) {
 				sources.push({
 					src: episode.streamlink,
-					type: episode.format,
+					type: getformat(data1.streamformat),
 					default: true
 				});
 			}
@@ -72,7 +84,7 @@
 				if (episode.directlinklq) {
 					sources.push({
 						src: episode.directlinklq,
-						type: episode.format,
+						type: getformat(episode.streamformat),
 						res: '360',
 						label: '360p'
 					});

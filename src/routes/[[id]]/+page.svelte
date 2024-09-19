@@ -15,6 +15,7 @@
 	// Function to group media items by channel country
 	const groupByChannelCountry = (items) => {
 		return items.reduce((acc, item) => {
+			//console.log(item);
 			const country = item.channel.country;
 			acc[country] = acc[country] || []; // Create array for country if it doesn't exist
 			acc[country].push(item);
@@ -53,15 +54,15 @@
 			<div class="embla__container flex">
 				{#each data.page as item}
 					<div class="embla__slide">
-						<Card carddata={item} geo={data.geo} />
+						<Card carddata={item} geo={data.geo} {visible}/>
 					</div>
 				{/each}
 			</div>
 		</div>
 
-		{#key visible}
+		 
 			<Slider1 {langlist} {visible} {langdata} geo={data.geo} />
-		{/key}
+	 
 	</div>
 {:else}
 	<h1 class="h1">

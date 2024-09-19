@@ -2,7 +2,7 @@
 	// @ts-nocheck
 	import * as Flag from 'svelte-flag-icons';
 
-	export let carddata, geo;
+	export let carddata, geo, visible;
 	let currentVariant = 'bg-initial';
 
 	const isFuture = (date) => new Date(date) > new Date();
@@ -11,9 +11,9 @@
 		? `https://img.mediathek.rocks/t/p/original${carddata.poster}`
 		: `https://img2.mediathek.rocks/assets/${carddata.coverimage}`;
 
-	$: showGeoAlert = !isFuture(carddata.publishdate) && carddata.channel.country !== geo;
+	$: showGeoAlert = !isFuture(carddata.publishdate) && carddata.channel.country !== geo && !$visible;
 	$: showComingSoon = isFuture(carddata.publishdate);
-
+	//console.log($visible)
 	const flag = Flag[carddata.channel.country];
 </script>
 

@@ -9,7 +9,7 @@
 	import '../videojs/plugins/es/videojs.hotkeys';
 
 	import { modalProps, modalvideo, omulist, noomulist, seriestype } from '$lib/store.js';
-
+	//console.log($modalProps, $modalvideo, omulist, noomulist, seriestype);
 	let player: videojs.Player | null = null;
 	const videojsOptions = {
 		controls: true,
@@ -65,6 +65,7 @@
 					title: $modalvideo.title
 				};
 				player.poster(video.poster);
+				//console.log('changeVideo', videoSource);
 				player.changeSource(videoSource);
 				break;
 		}
