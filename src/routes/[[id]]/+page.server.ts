@@ -37,6 +37,7 @@ const QUERY = `
 `;
 async function query() {
 	const result = await client.query(QUERY);
+	console.log(result);
 	return result.data.Mediatheks.docs;
 }
 export async function load({ fetch, params, request }) {

@@ -43,8 +43,8 @@
 	function playvideo() {
 		seriestype.set('');
 		let poster1 = data1.backdrop
-			? `https://img.mediathek.community/t/p/original/${data1.backdrop}`
-			: `https://img2.mediathek.community/assets/${data1.heroimage}`;
+			? `https://img.mediathek.rocks/t/p/original/${data1.backdrop}`
+			: `https://img2.mediathek.rocks/assets/${data1.heroimage}`;
 
 		showvideo = true;
 		modalvideo.set({
@@ -71,8 +71,8 @@
 			}
 
 			let poster12 = data1.backdrop
-				? `https://img.mediathek.community/t/p/original/${data1.backdrop}`
-				: `https://img2.mediathek.community/assets/${data1.heroimage}`;
+				? `https://img.mediathek.rocks/t/p/original/${data1.backdrop}`
+				: `https://img2.mediathek.rocks/assets/${data1.heroimage}`;
 
 			if (!episode.omu) {
 				myPlaylist.push({
@@ -94,7 +94,7 @@
 				myPlaylistomu.push({
 					title: `omu${episode.title}`,
 					infoTitle: episode.title,
-					poster: `https://img.mediathek.community/t/p/original/${data1.backdrop}`,
+					poster: `https://img.mediathek.corocksmunity/t/p/original/${data1.backdrop}`,
 					sources: sources
 				});
 			}
@@ -121,13 +121,13 @@
 			{#if data1.backdrop != 'backdrop' && data1.backdrop}
 				<img
 					class="relative mx-auto aspect-video max-h-[624px] rounded-lg"
-					src="https://img.mediathek.community/t/p/original{data1.backdrop}"
+					src="https://img.mediathek.rocks/t/p/original{data1.backdrop}"
 					alt="description"
 				/>
 			{:else}
 				<img
 					class="relative mx-auto aspect-video max-h-[624px] rounded-lg"
-					src="https://api.mediathek.community/assets/{data1.heroimage}.jpg"
+					src="https://api.mediathek.rocks/assets/{data1.heroimage}.jpg"
 					alt="description"
 				/>
 			{/if}

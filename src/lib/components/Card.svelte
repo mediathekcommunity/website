@@ -29,13 +29,13 @@
 					{#if carddata.poster}
 						<img
 							class="h-64 rounded-lg"
-							src="https://img.mediathek.community/t/p/original{carddata.poster}"
+							src="https://img.mediathek.rocks/t/p/original{carddata.poster}"
 							alt="description"
 						/>
 					{:else}
 						<img
 							class="image-full mx-auto h-64 rounded-lg"
-							src="https://img2.mediathek.community/assets/{carddata.coverimage}"
+							src="https://img2.mediathek.rocks/assets/{carddata.coverimage}"
 							alt="description"
 						/>
 					{/if}
@@ -58,13 +58,13 @@
 				{#if carddata.poster}
 					<img
 						class="image-full mx-auto h-64 rounded-lg"
-						src="https://img.mediathek.community/t/p/original{carddata.poster}"
+						src="https://img.mediathek.rocks/t/p/original{carddata.poster}"
 						alt="description"
 					/>
 				{:else}
 					<img
 						class="image-full mx-auto h-64 rounded-lg"
-						src="https://img2.mediathek.community/assets/{carddata.coverimage}"
+						src="https://img2.mediathek.rocks/assets/{carddata.coverimage}"
 						alt="description"
 					/>
 				{/if}
