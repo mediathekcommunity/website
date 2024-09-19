@@ -144,6 +144,7 @@
 									Land
 								</th>
 								<td class="px-6 py-4">
+									<!-- svelte-ignore svelte_component_deprecated -->
 									<svelte:component
 										this={Flag[data1.channel.country]}
 										class="mr-1 inline-flex place-self-center"

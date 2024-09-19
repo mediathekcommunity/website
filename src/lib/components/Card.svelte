@@ -4,7 +4,6 @@
 
 	export let carddata, geo;
 	let currentVariant = 'bg-initial';
-	//console.log(carddata,geo);
 	function inFuture(date) {
 		var now = new Date();
 		var then = new Date(date);
