@@ -6,12 +6,12 @@
 
 	// You may optionally bind a selected state value
 	// Pass the ID item you wish to be selected by default.
-	let value = $state('0');
+	let value = '0'; 
 </script>
 
 <!-- Component -->
 <div class="sticky bottom-0 z-50 block w-screen border-surface-900/80 sm:hidden">
-	<Nav.Bar>
+	<Nav.Bar value={value}> 
 		<Nav.Tile id="0" labelExpanded="Browse Files" href="/">
 			<IconHouse />
 		</Nav.Tile>

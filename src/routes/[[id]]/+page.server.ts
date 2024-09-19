@@ -1,12 +1,6 @@
 /** @type {import('./$types').PageLoad} */
-// @ts-nocheck
-
 import { error } from '@sveltejs/kit';
 import client from '$lib/directus.js';
-
-function capitalizeFirstLetter(string: any) {
-	return string[0].toUpperCase() + string.slice(1).toLowerCase();
-}
 
 const QUERY = `
 {
@@ -34,6 +28,7 @@ const QUERY = `
     }
 }
 `;
+
 const QUERY2 = `
 query Mediathekfilter($type: Mediathek_type_Input) {
 	Mediatheks(where: { type: { equals: $type } }) {
@@ -62,29 +57,27 @@ query Mediathekfilter($type: Mediathek_type_Input) {
 }
 
 `;
+
 async function query(id1) {
-	const result = id1 ? await client.query(QUERY2, { type: id1 }) :await client.query(QUERY) ;
+	const result = id1 ? await client.query(QUERY2, { type: id1 }) : await client.query(QUERY);
 	return result.data.Mediatheks.docs;
 }
 
 export async function load({ fetch, params, request }) {
-	let h1;
-	let data1;
+	const h1 = capitalizeFirstLetter(request.headers.get('Cdn-RequestCountryCode') || 'De');
+	const data1 = await query(params.id);
 
-	h1 = request.headers.get('Cdn-RequestCountryCode')
-		? capitalizeFirstLetter(request.headers.get('Cdn-RequestCountryCode'))
-		: 'De';
-	h1 = capitalizeFirstLetter(h1);
-	data1 = await query(params.id);
-
-	try {
-		return {
+	if (!data1) {
+		throw error(404, 'Page not found');
+	}
+	return {
 			page: data1,
 			count: data1.length,
 			geo: h1,
 			filter: params.id
 		};
-	} catch (err) {
-		throw error(404, 'Page not founds');
 	}
+
+function capitalizeFirstLetter(string: string): string {
+	return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }

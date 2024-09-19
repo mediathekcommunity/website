@@ -11,13 +11,13 @@
 <div class="sticky hidden h-[calc(100vh-1rem)] w-full border-[1px] border-surface-900/80 sm:block">
 	<Nav.Rail  value="nothing" background="bg-surface-900/80">
 		{#snippet tiles()}
-			<Nav.Tile id="0" labelExpanded="Browse Files" href="/">
+			<Nav.Tile id="0" label="Home" href="/">
 				<IconHouse />
 			</Nav.Tile>
-			<Nav.Tile id="1" labelExpanded="Browse Images" href="/movie">
+			<Nav.Tile id="1" label="Movies" href="/movie">
 				<IconClapperboard />
 			</Nav.Tile>
-			<Nav.Tile id="2" labelExpanded="Browse Music" href="/series">
+			<Nav.Tile id="2" label="Series" href="/series">
 				<IconTv />
 			</Nav.Tile>
 		{/snippet}

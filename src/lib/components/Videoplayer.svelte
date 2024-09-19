@@ -10,9 +10,7 @@
 
 	import { modalProps, modalvideo, omulist, noomulist, seriestype } from '$lib/store.js';
 
-	let videoPlayer;
-	let player;
-
+	let player: videojs.Player | null = null;
 	const videojsOptions = {
 		controls: true,
 		preload: 'auto',
@@ -30,11 +28,29 @@
 		}
 	};
 
-	function changeVideo(video, type) {
+	const nuevoOptions = {
+				video_id: $modalvideo.id,
+				playlistUI: true,
+				playlistShow: true,
+				playlistNavigation: true,
+				qualityMenu: true,
+				shareMenu: false,
+				pipButton: false,
+				buttonForward: true,
+				androidLock: true,
+				zoomMenu: false,
+				theaterButton: false,
+				rateMenu: false,
+				settingsButton: true,
+				resume: true
+	};
+
+	function changeVideo(video: any, type: string) {
 		if (!player) return;
 
 		player.pause();
 		player.currentTime(0);
+
 		switch (type) {
 			case 'noomu':
 				player.playlist.update($noomulist);
@@ -53,31 +69,14 @@
 				break;
 		}
 	}
-	//console.log($modalvideo)
+
 	$: changeVideo($modalvideo, $seriestype);
 
 	onMount(() => {
-		let videoElement = document.getElementById('my-video');
+		const videoElement = document.getElementById('my-video');
 		if (videoElement) {
 			player = videojs(videoElement, videojsOptions);
-
-			player.nuevo({
-				video_id: $modalvideo.id,
-				playlistUI: true,
-				playlistShow: true,
-				playlistNavigation: true,
-				qualityMenu: true,
-				shareMenu: false,
-				pipButton: false,
-				buttonForward: true,
-				androidLock: true,
-				zoomMenu: false,
-				theaterButton: false,
-				rateMenu: false,
-				settingsButton: true,
-				resume: true
-			});
-
+			player.nuevo(nuevoOptions);
 			player.hotkeys({ seekStep: 10 });
 
 			if ($seriestype === 'noomu') {
@@ -89,10 +88,10 @@
 			}
 
 			player.on('mode', (event, mode) => {
-				document.querySelector('#left_column').style.width = mode === 'large' ? '100%' : '70%';
+				document.querySelector('#left_column')!.style.width = mode === 'large' ? '100%' : '70%';
 			});
 
-			player.on('fullscreenchange', (evt, mode) => {
+			player.on('fullscreenchange', () => {
 				// fullscreen change logic goes here if needed
 			});
 		}
@@ -111,9 +110,8 @@
 		id="my-video"
 		playsinline
 		webkit-playsinline
-		bind:this={videoPlayer}
 		class="video-js vjs-16-9 overflow-hidden"
-	 ></video> 
+	 ></video>
 </div>
 
 <style>

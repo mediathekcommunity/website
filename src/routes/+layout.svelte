@@ -1,35 +1,26 @@
 <script>
 	import '../app.css';
-	import '../app.css';
 	import Header from '$lib/components/header.svelte';
 	import Sidebar from '$lib/components/sidebar.svelte';
 	import Footer1 from '$lib/components/footer1.svelte';
 </script>
 
 <div class="grid grid-rows-[auto_1fr_auto]">
-	<!-- Header -->
 	<header class="sticky top-0 z-50">
 		<Header />
 	</header>
-	<!-- Grid Column -->
 	<div class="grid grid-cols-[auto_1fr]">
-		<!-- Sidebar (Left) -->
 		<aside class="sticky top-[56px] h-[calc(100dvh-56px)]"><Sidebar /></aside>
-		<!-- Main -->
 		<main class="min-h-screen overflow-hidden">
-			<slot></slot>
+			<slot />
 		</main>
-
-		<!-- Sidebar (Right) -->
 	</div>
-	<footer
-		class="sticky bottom-[48px] z-50 block preset-filled-surface-100-900 sm:bottom-0 sm:text-center"
-	>
+	<footer class="sticky bottom-[48px] z-50 block preset-filled-surface-100-900 sm:bottom-0 sm:text-center">
 		<ul>
 			<li>
 				<span class="flex-auto">
-					This project uses the TMDB API but is not endorsed or certified by TMDB.<br />Data &
-					Images provided by
+					This project uses the TMDB API but is not endorsed or certified by TMDB.<br />
+					Data & Images provided by
 					<a
 						target="_blank"
 						href="https://www.themoviedb.org/"
