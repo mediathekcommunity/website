@@ -64,7 +64,7 @@ async function query(id1) {
 }
 
 export async function load({ fetch, params, request }) {
-	const h1 = capitalizeFirstLetter(request.headers.get('Cdn-RequestCountryCode') || 'De');
+	const h1 = capitalizeFirstLetter(request.headers.get('cf-ipcountry') || 'De');
 	const data1 = await query(params.id);
 
 	if (!data1) {
