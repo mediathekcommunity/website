@@ -4,7 +4,8 @@
 	export let langlist, visible, langdata, geo;
 	console.log(langlist,geo);
 	// console.log($visible);
-	import * as Flag from 'svelte-flag-icons';
+	import * as Flag from 'svelte-flags';
+	//import { De,Sw } from 'svelte-flags';
 	import Card from '$lib/components/Card.svelte';
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
 	let options = { align: 'start', slidestoscroll: '2', loop: 'true' };
@@ -61,7 +62,7 @@
 			</span>
 		</h1>
 	{/if}
-{/key}
+{/key} 
 
 <style scoped>
 	.embla__slide {

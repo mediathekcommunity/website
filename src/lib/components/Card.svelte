@@ -1,6 +1,6 @@
 <script>
 	// @ts-nocheck
-	import * as Flag from 'svelte-flag-icons';
+	import * as Flag from 'svelte-flags';
 
 	export let carddata, geo;
 	let currentVariant = 'bg-initial';

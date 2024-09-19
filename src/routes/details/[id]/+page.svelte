@@ -2,7 +2,7 @@
 	// @ts-nocheck
 	import { Tabs } from '@skeletonlabs/skeleton-svelte';
 	import { Accordion } from '@skeletonlabs/skeleton-svelte';
-	import * as Flag from 'svelte-flag-icons';
+	import * as Flag from 'svelte-flags';
 
 	import LibraryBig from 'lucide-svelte/icons/library-big';
 	import Film from 'lucide-svelte/icons/film';
