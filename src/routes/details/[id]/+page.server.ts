@@ -20,6 +20,7 @@ var query1 = `query
 			onlineuntil
 			poster
 			backdrop
+			quality
 			streamformat
 			streamlink
 			channel {
@@ -29,10 +30,9 @@ var query1 = `query
 			}
 		}
   }
-		`;
+`;
 async function query(id1) {
 	const result = await client.query(query1, { id: id1 });
-	//console.log(result.data.Mediathek);
 	return result.data.Mediathek;
 }
 export async function load({ fetch, params }) {

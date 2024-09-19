@@ -1,12 +1,5 @@
 <script>
 	// @ts-nocheck
-	let { data } = $props();
-	let data1 = $state();
-	let channelinfo = $state();
-	let omu = {};
-	let noomu = {};
-	//import { TabGroup, Tab, Accordion, AccordionItem } from '@skeletonlabs/skeleton';
-	//import { TabGroup, Tab, Accordion, AccordionItem } from '@skeletonlabs/skeleton';
 	import { Tabs } from '@skeletonlabs/skeleton-svelte';
 	import { Accordion } from '@skeletonlabs/skeleton-svelte';
 	import * as Flag from 'svelte-flag-icons';
@@ -20,22 +13,15 @@
 	let myPlaylistomu = [];
 	let group = $state('details');
 	let value = $state('0');
-
-	function sortepisodes(data2) {
-		if (data2.episodes.length > 0) {
-			//console.log(data2.episodelist);
-		}
-	}
-
+	let { data } = $props();
+	let data1 = $state();
+	let channelinfo = $state();
+	let omu = {};
+	let noomu = {};
 	let showvideo = $state(false);
 	$effect(() => {
 		data1 = data.page;
-	});
-	$effect(() => {
 		channelinfo = data.page.channel;
-	});
-	$effect(() => {
-		sortepisodes(data1);
 	});
 
 	let tabSet = 0;
@@ -99,8 +85,6 @@
 				});
 			}
 		});
-		//console.log(myPlaylist);
-		//console.log(omulist);
 		noomulist.set(myPlaylist);
 		omulist.set(myPlaylistomu);
 		showvideo = true;
@@ -133,24 +117,18 @@
 			{/if}
 		{:else}
 			<div class="relative mx-auto aspect-video max-h-[624px] rounded-lg">
-				<svelte:component this={Videoplayer} />
+				<Videoplayer/>
 			</div>
 		{/if}
 	</div>
 
 	<Tabs bind:value={group} listJustify="justify-center">
 		{#snippet list()}
-			<Tabs.Control value="details" title="Details">
-				Details
-			</Tabs.Control>
+			<Tabs.Control value="details" title="Details">Details</Tabs.Control>
 			{#if data1.type == 'movie'}
-				<Tabs.Control value="links" title="Links">
-					Links
-				</Tabs.Control>
+				<Tabs.Control value="links" title="Links">Links</Tabs.Control>
 			{:else}
-				<Tabs.Control value="episodes" title="Episoden">
-					Episoden
-				</Tabs.Control>
+				<Tabs.Control value="episodes" title="Episoden">Episoden</Tabs.Control>
 			{/if}
 		{/snippet}
 		{#snippet content()}
@@ -167,7 +145,7 @@
 								</th>
 								<td class="px-6 py-4">
 									<svelte:component
-										this={Flag[data1.country]}
+										this={Flag[data1.channel.country]}
 										class="mr-1 inline-flex place-self-center"
 										size="25"
 									/>
@@ -267,72 +245,4 @@
 			</Tabs.Panel>
 		{/snippet}
 	</Tabs>
-	<!-- 
-	<TabGroup justify="justify-center">
-		<Tab bind:group={tabSet} name="tab1" value={0}>
-			<span>Details</span>
-		</Tab>
-		{#if data1.mediatype == 'movie'}
-			<Tab bind:group={tabSet} name="tab2" value={1}>Links</Tab>
-		{:else}
-			<Tab bind:group={tabSet} name="tab3" value={2}>Episoden</Tab>
-		{/if}
-		<svelte:fragment slot="panel">
-			{#if tabSet === 0}
-	 
-			{:else if tabSet === 1}
- 
-			{:else if tabSet === 2}
-				<Accordion>
-					{#each data1.episodes as episode, index (episode.id)}
-						{#if !episode.omu}
-							<AccordionItem>
-								<svelte:fragment slot="summary"
-									>E: {episode.episode} - {episode.title}</svelte:fragment
-								>
-								<svelte:fragment slot="content">
-									<div class="grid grid-cols-4 grid-rows-1 gap-0">
-										<div class="col-span-3">{episode.overview}</div>
-										<div class="col-span-1 flex items-center justify-center">
-											<button
-												type="button"
-												class="variant-filled btn"
-												on:click={() => playepisode(episode, 'noomu')}>Play</button
-											>
-										</div>
-									</div>
-								</svelte:fragment>
-							</AccordionItem>
-						{/if}
-					{/each}
-				</Accordion>
-			{:else if tabSet === 3}
-				<Accordion>
-					{#each data1.episodes as episode, index}
-						{#if episode.omu}
-							<AccordionItem>
-								<svelte:fragment slot="summary"
-									>E: {episode.episode} - {episode.title}</svelte:fragment
-								>
-								<svelte:fragment slot="content">
-									<div class="grid grid-cols-4 grid-rows-1 gap-0">
-										<div class="col-span-3">{episode.overview}</div>
-										<div class="col-span-1 flex items-center justify-center">
-											<button
-												type="button"
-												class="variant-filled btn"
-												on:click={() => playepisode(episode, 'omu')}>Play</button
-											>
-										</div>
-									</div>
-								</svelte:fragment>
-							</AccordionItem>
-						{/if}
-					{/each}
-				</Accordion>
-			{/if}
-		</svelte:fragment>
-	</TabGroup>
-    -->
 {/if}
-<!---->
