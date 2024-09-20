@@ -3,13 +3,12 @@
 	import { onDestroy, onMount } from 'svelte';
 	import '../videojs/skins/treso/videojs.min.css';
 	import videojs from 'video.js';
-	import '../videojs/plugins/es/nuevo';
-	// import '../videojs/plugins/es/hlsjs.js';
+	import '../videojs/plugins/es/nuevo.js';
 	import '../videojs/plugins/es/playlist.js';
 	import '../videojs/plugins/es/videojs.hotkeys';
 
 	import { modalProps, modalvideo, omulist, noomulist, seriestype } from '$lib/store.js';
-	//console.log($modalProps, $modalvideo, omulist, noomulist, seriestype);
+	//console.log($modalProps, $modalvideo, $omulist, $noomulist, $seriestype);
 	let player: videojs.Player | null = null;
 	const videojsOptions = {
 		controls: true,
@@ -29,20 +28,20 @@
 	};
 
 	const nuevoOptions = {
-				video_id: $modalvideo.id,
-				playlistUI: true,
-				playlistShow: true,
-				playlistNavigation: true,
-				qualityMenu: true,
-				shareMenu: false,
-				pipButton: false,
-				buttonForward: true,
-				androidLock: true,
-				zoomMenu: false,
-				theaterButton: false,
-				rateMenu: false,
-				settingsButton: true,
-				resume: true
+		video_id: $modalvideo.id,
+		playlistUI: true,
+		playlistShow: true,
+		playlistNavigation: true,
+		qualityMenu: true,
+		shareMenu: false,
+		pipButton: false,
+		buttonForward: true,
+		androidLock: true,
+		zoomMenu: false,
+		theaterButton: false,
+		rateMenu: false,
+		settingsButton: true,
+		resume: true
 	};
 
 	function changeVideo(video: any, type: string) {
@@ -79,21 +78,18 @@
 			player = videojs(videoElement, videojsOptions);
 			player.nuevo(nuevoOptions);
 			player.hotkeys({ seekStep: 10 });
-
-			if ($seriestype === 'noomu') {
-				player.playlist($noomulist);
-			} else if ($seriestype === 'omu') {
-				player.playlist($omulist);
-			} else {
-				player.src([{ src: $modalvideo.src, type: $modalvideo.type }]);
+			switch ($seriestype) {
+				case 'noomu':
+					player.playlist($noomulist);
+				case 'omu':
+					player.playlist($omulist);
+				default:
+					player.src([{ src: $modalvideo.src, type: $modalvideo.type }]);
 			}
+			//console.log(player.src);
 
 			player.on('mode', (event, mode) => {
 				document.querySelector('#left_column')!.style.width = mode === 'large' ? '100%' : '70%';
-			});
-
-			player.on('fullscreenchange', () => {
-				// fullscreen change logic goes here if needed
 			});
 		}
 	});
@@ -107,12 +103,8 @@
 
 <div id="left_column" class="left-column">
 	<!-- svelte-ignore a11y-media-has-caption -->
-	<video
-		id="my-video"
-		playsinline
-		webkit-playsinline
-		class="video-js vjs-16-9 overflow-hidden"
-	 ></video>
+	<video id="my-video" playsinline webkit-playsinline class="video-js vjs-16-9 overflow-hidden"
+	></video>
 </div>
 
 <style>
