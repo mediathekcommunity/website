@@ -1,4 +1,4 @@
-import adapter from '@sveltejs/adapter-cloudflare';
+import adapter from 'svelte-adapter-deno';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
