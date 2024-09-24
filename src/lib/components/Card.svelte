@@ -36,7 +36,7 @@
 		</div>
 	{:else if !showComingSoon}
 		<!-- svelte-ignore a11y_consider_explicit_label -->
-		<a href={`details/${carddata.id}`}>
+		<a href={`/details/${carddata.id}`}>
 			<img class="image-full mx-auto h-64 rounded-lg" src={imageUrl} alt="description" />
 		</a>
 	{:else}

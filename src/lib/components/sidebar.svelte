@@ -20,6 +20,9 @@
 			<Nav.Tile id="2" label="Series" href="/series">
 				<IconTv />
 			</Nav.Tile>
+			<Nav.Tile id="2" label="Channels" href="/channels">
+				<IconTv />
+			</Nav.Tile>
 		{/snippet}
 	</Nav.Rail>
 </div>
