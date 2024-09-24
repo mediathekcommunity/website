@@ -32,6 +32,8 @@ jobs:
 
       - name: Build
         run: pnpm run build
+        env:
+         DIRECTUS_APIURL: ${{ secrets.DIRECTUS_APIURL }}
 
       - name: Deploy Script to Bunny Edge Scripting
         uses: BunnyWay/actions/deploy-script@main
