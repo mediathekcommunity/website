@@ -1,9 +1,6 @@
 name: Deploy when pushing on main
 
-on: 
-  push:
-    branches:
-      - 'main-deno'
+on: workflow_dispatch
 
 
 jobs:
