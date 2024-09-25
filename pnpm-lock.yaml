@@ -43,8 +43,8 @@ importers:
         specifier: 3.0.0-next.4
         version: 3.0.0-next.4(postcss@8.4.47)(tailwindcss@3.4.13)
       '@skeletonlabs/skeleton-svelte':
-        specifier: 1.0.0-next.8
-        version: 1.0.0-next.8(svelte@5.0.0-next.259)
+        specifier: 1.0.0-next.9
+        version: 1.0.0-next.9(svelte@5.0.0-next.259)
       '@sveltejs/adapter-node':
         specifier: ^5.2.4
         version: 5.2.4(@sveltejs/kit@2.5.28(@sveltejs/vite-plugin-svelte@4.0.0-next.7(svelte@5.0.0-next.259)(vite@5.4.8(@types/node@22.7.1)))(svelte@5.0.0-next.259)(vite@5.4.8(@types/node@22.7.1)))
@@ -686,8 +686,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@skeletonlabs/skeleton-svelte@1.0.0-next.8':
-    resolution: {integrity: sha512-1O20g0YtseOPw1n/X//6Ky5hmQVpSH7A7M4GjuZYUCeIQKIdodele6vMOjpZrQAz4JWKEE9ODpxEfEKMl6xi5g==}
+  '@skeletonlabs/skeleton-svelte@1.0.0-next.9':
+    resolution: {integrity: sha512-3COKulTlTH+9BdVl4MfFFoNjjpMCgKfe71oslhg14vmFRXRI6yphKOt7jbeubixkl7ptttY0erFsBOonKxiI4g==}
     peerDependencies:
       svelte: ^5.0.0-next.193
 
@@ -2686,7 +2686,7 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.22.4':
     optional: true
 
-  '@skeletonlabs/skeleton-svelte@1.0.0-next.8(svelte@5.0.0-next.259)':
+  '@skeletonlabs/skeleton-svelte@1.0.0-next.9(svelte@5.0.0-next.259)':
     dependencies:
       '@zag-js/accordion': 0.65.1
       '@zag-js/avatar': 0.65.1
