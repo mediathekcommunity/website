@@ -5,6 +5,7 @@
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
 	import Card from '$lib/components/Card.svelte';
 	import Slider1 from '$lib/components/Slider1.svelte';
+	import ErrorSection from '$lib/components/ErrorSection.svelte';
 
 	let { data } = $props();
 
@@ -24,32 +25,26 @@
 	};
 	var data1 = $state({});
 	// Update grouped data and country list when data prop changes
- 
-	 	console.log(data.data1)
+
+	//console.log(data.data1)
 	// Carousel options
 	let options = { align: 'start', slidestoscroll: '2', loop: 'true' };
 </script>
+
 {#if data}
-		<div class="embla" use:emblaCarouselSvelte>
-			<div class="embla__container">
-				{#each data.page as item, index}
-					<div class="embla__slide">
-						<Card carddata={item} geo={data.geo} {visible}/>
-					 
- 					</div>
-				{/each}
-			</div>
+	<div class="embla" use:emblaCarouselSvelte>
+		<div class="embla__container">
+			{#each data.page as item, index}
+				<div class="embla__slide">
+					<Card carddata={item} geo={data.geo} {visible} />
+				</div>
+			{/each}
 		</div>
- {:else}
-	<h1 class="h1">
-		<span
-			class="bg-gradient-radial from-tertiary-500 to-primary-500 box-decoration-clone bg-clip-text text-transparent"
-		>
-			No Item(s) found for type:
-		</span>
-		{data.filter || '*'}
-	</h1>
+	</div>
+{:else}
+	<ErrorSection filter={data?.filter} />
 {/if}
+
 <!--
 
 {#if data && data.count > 0}

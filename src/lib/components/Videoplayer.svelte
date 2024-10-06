@@ -1,5 +1,4 @@
 <script lang="ts">
-	// @ts-nocheck
 	import { onDestroy, onMount } from 'svelte';
 	import '../videojs/skins/treso/videojs.min.css';
 	import videojs from 'video.js';
@@ -8,8 +7,9 @@
 	import '../videojs/plugins/es/videojs.hotkeys';
 
 	import { modalProps, modalvideo, omulist, noomulist, seriestype } from '$lib/store.js';
-	//console.log($modalProps, $modalvideo, $omulist, $noomulist, $seriestype);
+
 	let player: videojs.Player | null = null;
+
 	const videojsOptions = {
 		controls: true,
 		preload: 'auto',
@@ -44,7 +44,21 @@
 		resume: true
 	};
 
-	function changeVideo(video: any, type: string) {
+	function initializePlayer(videoElement: HTMLVideoElement) {
+		player = videojs(videoElement, videojsOptions);
+		player.nuevo(nuevoOptions);
+		player.hotkeys({ seekStep: 10 });
+		updatePlayerSource($seriestype);
+
+		player.on('mode', (event, mode) => {
+			const leftColumn = document.querySelector('#left_column');
+			if (leftColumn) {
+				leftColumn.style.width = mode === 'large' ? '100%' : '70%';
+			}
+		});
+	}
+
+	function updatePlayerSource(type: string) {
 		if (!player) return;
 
 		player.pause();
@@ -52,10 +66,10 @@
 
 		switch (type) {
 			case 'noomu':
-				player.playlist.update($noomulist);
+				player.playlist($noomulist);
 				break;
 			case 'omu':
-				player.playlist.update($omulist);
+				player.playlist($omulist);
 				break;
 			default:
 				const videoSource = {
@@ -63,34 +77,20 @@
 					poster: $modalvideo.poster,
 					title: $modalvideo.title
 				};
-				player.poster(video.poster);
-				//console.log('changeVideo', videoSource);
-				player.changeSource(videoSource);
+				player.poster($modalvideo.poster);
+				player.src(videoSource.sources);
 				break;
 		}
 	}
 
-	$: changeVideo($modalvideo, $seriestype);
+	$: if (player && ($modalvideo || $seriestype)) {
+		updatePlayerSource($seriestype);
+	}
 
 	onMount(() => {
-		const videoElement = document.getElementById('my-video');
+		const videoElement = document.getElementById('my-video') as HTMLVideoElement;
 		if (videoElement) {
-			player = videojs(videoElement, videojsOptions);
-			player.nuevo(nuevoOptions);
-			player.hotkeys({ seekStep: 10 });
-			switch ($seriestype) {
-				case 'noomu':
-					player.playlist($noomulist);
-				case 'omu':
-					player.playlist($omulist);
-				default:
-					player.src([{ src: $modalvideo.src, type: $modalvideo.type }]);
-			}
-			//console.log(player.src);
-
-			player.on('mode', (event, mode) => {
-				document.querySelector('#left_column')!.style.width = mode === 'large' ? '100%' : '70%';
-			});
+			initializePlayer(videoElement);
 		}
 	});
 
@@ -102,8 +102,11 @@
 </script>
 
 <div id="left_column" class="left-column">
-	<!-- svelte-ignore a11y-media-has-caption -->
-	<video id="my-video" playsinline webkit-playsinline class="video-js vjs-16-9 overflow-hidden"
+	<video 
+		id="my-video" 
+		playsinline 
+		webkit-playsinline 
+		class="video-js vjs-16-9 overflow-hidden"
 	></video>
 </div>
 

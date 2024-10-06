@@ -31,21 +31,21 @@ const query = `
 
 // Helper function to capitalize the first letter of a string
 function capitalizeFirstLetter(string: string): string {
-  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+	return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
 
 // Function to fetch data from the GraphQL API
 async function fetchMediathek(id: string) {
-  const result = await client.query(query, { id });
-  return result.data.Mediathek;
+	const result = await client.query(query, { id });
+	return result.data.Mediathek;
 }
 export async function load({ params }) {
- 	try {
-    const mediathek = await fetchMediathek(params.id);
+	try {
+		const mediathek = await fetchMediathek(params.id);
 		return {
-      page: mediathek,
+			page: mediathek
 		};
 	} catch (err) {
-    throw error(404, 'Page not found');
+		throw error(404, 'Page not found');
 	}
 }

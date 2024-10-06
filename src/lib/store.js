@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
-export const nav1 =  writable('0');
- 
+export const nav1 = writable('0');
+
 export const alllang = writable(false);
 export const visible = writable(false);
 export const modalProps = writable({});

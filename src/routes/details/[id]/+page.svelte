@@ -1,24 +1,24 @@
 <script>
 	// @ts-nocheck
-	import { Tabs } from '@skeletonlabs/skeleton-svelte';
-	import { Accordion } from '@skeletonlabs/skeleton-svelte';
+	import { Tabs, Accordion } from '@skeletonlabs/skeleton-svelte';
 	import * as Flag from 'svelte-flags';
-
 	import LibraryBig from 'lucide-svelte/icons/library-big';
 	import Film from 'lucide-svelte/icons/film';
 	import Tv from 'lucide-svelte/icons/tv';
 	import Videoplayer from '$lib/components/Videoplayer.svelte';
 	import { modalvideo, omulist, noomulist, seriestype } from '$lib/store.js';
+
 	function getformat(id) {
 		switch (id) {
-            case "mpd":
-                return 'application/dash+xml';
-            case "m3u8":
-                return 'application/x-mpegURL';
-            default:
-			return 'application/dash+xml';
-        }
-    }
+			case 'mpd':
+				return 'application/dash+xml';
+			case 'm3u8':
+				return 'application/x-mpegURL';
+			default:
+				return 'application/dash+xml';
+		}
+	}
+
 	let myPlaylist = [];
 	let myPlaylistomu = [];
 	let group = $state('details');
@@ -26,10 +26,11 @@
 	let { data } = $props();
 	let data1 = $state();
 	let channelinfo = $state();
+	let backgroundImage = $state('');
+
 	let omu = {};
 	let noomu = {};
 	let showvideo = $state(false);
-	//console.log(data);
 
 	$effect(() => {
 		data1 = data.page;
@@ -39,72 +40,88 @@
 	let tabSet = 0;
 
 	function playvideo() {
-		seriestype.set('');
-		let poster1 = data1.backdrop
-			? `https://img.mediathek.rocks/t/p/original/${data1.backdrop}`
-			: `https://img2.mediathek.rocks/assets/${data1.heroimage}`;
+		showvideo = !showvideo; // Toggle the showvideo state
+		if (showvideo) {
+			seriestype.set('');
+			let poster1 = data1.backdrop
+				? `https://img.mediathek.rocks/t/p/original/${data1.backdrop}`
+				: `https://img2.mediathek.rocks/assets/${data1.heroimage}`;
 
-		showvideo = true;
-		modalvideo.set({
-			src: data1.streamlink,
-			type: getformat(data1.streamformat),
-			poster: poster1,
-			title: data1.title
-		});
+			modalvideo.set({
+				src: data1.streamlink,
+				type: getformat(data1.streamformat),
+				poster: poster1,
+				title: data1.title
+			});
+		} else {
+			// Optional: Reset the video player when hiding it
+			modalvideo.set({
+				src: '',
+				type: '',
+				poster: '',
+				title: ''
+			});
+		}
 	}
 
-	function playepisode(alldata, type) {
+	function playepisode(episode, type) {
+		showvideo = true; // Always show video for episodes
 		myPlaylist = [];
 		myPlaylistomu = [];
 		seriestype.set(type);
 
-		data1.episodes.forEach((episode) => {
-			let sources = [];
-			if (episode.streamlink) {
+		let sources = [];
+		if (episode.streamlink) {
+			sources.push({
+				src: episode.streamlink,
+				type: getformat(data1.streamformat),
+				default: true
+			});
+		}
+
+		let poster12 = data1.backdrop
+			? `https://img.mediathek.rocks/t/p/original/${data1.backdrop}`
+			: `https://img2.mediathek.rocks/assets/${data1.heroimage}`;
+
+		if (!episode.omu) {
+			myPlaylist.push({
+				title: episode.title,
+				infoTitle: episode.title,
+				poster: poster12,
+				thumb: poster12,
+				sources: sources
+			});
+		} else {
+			if (episode.directlinklq) {
 				sources.push({
-					src: episode.streamlink,
-					type: getformat(data1.streamformat),
-					default: true
+					src: episode.directlinklq,
+					type: getformat(episode.streamformat),
+					res: '360',
+					label: '360p'
 				});
 			}
+			myPlaylistomu.push({
+				title: `omu${episode.title}`,
+				infoTitle: episode.title,
+				poster: `https://img.mediathek.corocksmunity/t/p/original/${data1.backdrop}`,
+				sources: sources
+			});
+		}
 
-			let poster12 = data1.backdrop
-				? `https://img.mediathek.rocks/t/p/original/${data1.backdrop}`
-				: `https://img2.mediathek.rocks/assets/${data1.heroimage}`;
-
-			if (!episode.omu) {
-				myPlaylist.push({
-					title: episode.title,
-					infoTitle: episode.title,
-					poster: poster12,
-					thumb: poster12,
-					sources: sources
-				});
-			} else {
-				if (episode.directlinklq) {
-					sources.push({
-						src: episode.directlinklq,
-						type: getformat(episode.streamformat),
-						res: '360',
-						label: '360p'
-					});
-				}
-				myPlaylistomu.push({
-					title: `omu${episode.title}`,
-					infoTitle: episode.title,
-					poster: `https://img.mediathek.corocksmunity/t/p/original/${data1.backdrop}`,
-					sources: sources
-				});
-			}
-		});
 		noomulist.set(myPlaylist);
 		omulist.set(myPlaylistomu);
-		showvideo = true;
+
+		modalvideo.set({
+			src: episode.streamlink,
+			type: getformat(data1.streamformat),
+			poster: poster12,
+			title: episode.title
+		});
 	}
 </script>
 
 {#if data1}
-	<div class="pb-4">
+	<div class="details-container">
 		{#if channelinfo.info}
 			<aside class="alert variant-ghost-error">
 				<div class="alert-message">
@@ -113,149 +130,359 @@
 				</div>
 			</aside>
 		{/if}
-		{#if !showvideo}
-			{#if data1.backdrop != 'backdrop' && data1.backdrop}
-				<img
-					class="relative mx-auto aspect-video max-h-[624px] rounded-lg"
-					src="https://img.mediathek.rocks/t/p/original{data1.backdrop}"
-					alt="description"
-				/>
-			{:else}
-				<img
-					class="relative mx-auto aspect-video max-h-[624px] rounded-lg"
-					src="https://api.mediathek.rocks/assets/{data1.heroimage}.jpg"
-					alt="description"
-				/>
-			{/if}
+
+		{#if showvideo}
+			<div class="video-player-container">
+				<Videoplayer />
+				<button class="close-video-btn" on:click={playvideo}>Close Video</button>
+			</div>
 		{:else}
-			<div class="relative mx-auto aspect-video max-h-[624px] rounded-lg">
-				<Videoplayer/>
+			<div
+				class="hero-container"
+				style="background-image: url({data1.backdrop
+					? `https://img.mediathek.rocks/t/p/original${data1.backdrop}`
+					: `https://api.mediathek.rocks/assets/${data1.heroimage}.jpg`})"
+			>
+				<div class="hero-overlay"></div>
+				<div class="hero-content">
+					<h1 class="title">{data1.title}</h1>
+					{#if data1.orgtitle && data1.orgtitle !== data1.title}
+						<h2 class="subtitle">{data1.orgtitle}</h2>
+					{/if}
+					<div class="meta-info">
+						<span class="quality-badge">{data1.quality}</span>
+						{#if data1.channel && data1.channel.country && Flag[data1.channel.country]}
+							<div class="channel-info">
+								<svelte:component this={Flag[data1.channel.country]} size="20" />
+								<span>{data1.channel.name}</span>
+							</div>
+						{/if}
+					</div>
+				</div>
 			</div>
 		{/if}
-	</div>
 
-	<Tabs bind:value={group} listJustify="justify-center">
-		{#snippet list()}
-			<Tabs.Control value="details" title="Details">Details</Tabs.Control>
-			{#if data1.type == 'movie'}
-				<Tabs.Control value="links" title="Links">Links</Tabs.Control>
-			{:else}
-				<Tabs.Control value="episodes" title="Episoden">Episoden</Tabs.Control>
-			{/if}
-		{/snippet}
-		{#snippet content()}
-			<Tabs.Panel value="details">
-				<div class="shadow-md sm:rounded-lg">
-					<table class="w-full table-auto text-left text-sm text-gray-500 dark:text-gray-400">
-						<tbody>
-							<tr class="w-full border-b dark:border-gray-700">
-								<th
-									scope="row"
-									class="w-full whitespace-nowrap px-6 py-4 font-medium text-gray-900 lg:w-1/4 dark:text-white"
+		<div class="content-wrapper">
+			<Tabs bind:value={group} listJustify="justify-center" class="details-tabs">
+				{#snippet list()}
+					<Tabs.Control value="details" title="Details">Details</Tabs.Control>
+					{#if data1.type == 'movie'}
+						<Tabs.Control value="links" title="Links">Links</Tabs.Control>
+					{:else}
+						<Tabs.Control value="episodes" title="Episodes">Episodes</Tabs.Control>
+					{/if}
+				{/snippet}
+				{#snippet content()}
+					<Tabs.Panel value="details">
+						<div class="details-grid">
+							<div class="info-section">
+								<h3 class="section-title">Information</h3>
+								<table class="info-table">
+									<tbody>
+										<tr>
+											<th>Country</th>
+											<td>
+												<svelte:component
+													this={Flag[data1.channel.country]}
+													class="flag-icon"
+													size="25"
+												/>
+												{data1.channel.country}
+											</td>
+										</tr>
+										<tr>
+											<th>Channel</th>
+											<td>{data1.channel.name}</td>
+										</tr>
+										<tr>
+											<th>Quality</th>
+											<td>{data1.quality}</td>
+										</tr>
+										{#if data1.episodes.length > 0}
+											<tr>
+												<th>Seasons</th>
+												<td>{data1.episodes.length || 1}</td>
+											</tr>
+											<tr>
+												<th>Episodes</th>
+												<td>{data1.episodes.length}</td>
+											</tr>
+										{/if}
+									</tbody>
+								</table>
+							</div>
+							<div class="description-section">
+								<h3 class="section-title">Description</h3>
+								<p>{data1.overview}</p>
+							</div>
+						</div>
+					</Tabs.Panel>
+
+					<Tabs.Panel value="links">
+						<div class="play-button-container">
+							{#if !showvideo}
+								<button
+									type="button"
+									class="play-button btn preset-filled-primary-500"
+									on:click={playvideo}
 								>
-									Land
-								</th>
-								<td class="px-6 py-4">
-									<!-- svelte-ignore svelte_component_deprecated -->
-									<svelte:component
-										this={Flag[data1.channel.country]}
-										class="mr-1 inline-flex place-self-center"
-										size="25"
-									/>
-								</td>
-							</tr>
-							<tr class="border-b dark:border-gray-700">
-								<th
-									scope="row"
-									class="w-full whitespace-nowrap px-6 py-4 font-medium text-gray-900 lg:w-1/4 dark:text-white"
-								>
-									Sender
-								</th>
-								<td class="px-6 py-4">
-									{data1.channel.name}
-								</td>
-							</tr>
-							<tr class="border-b dark:border-gray-700">
-								<th
-									scope="row"
-									class="w-full whitespace-nowrap px-6 py-4 font-medium text-gray-900 lg:w-1/4 dark:text-white"
-								>
-									Qualität
-								</th>
-								<td class="px-6 py-4">
-									{data1.quality}
-								</td>
-							</tr>
-							{#if data1.episodes.length > 0}
-								<tr class="border-b dark:border-gray-700">
-									<th
-										scope="row"
-										class="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white"
-									>
-										Staffeln
-									</th>
-									<td class="px-6 py-4">
-										{data1.episodes.length || 1}
-									</td>
-								</tr>
-								<tr class="border-b dark:border-gray-700">
-									<th
-										scope="row"
-										class="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white"
-									>
-										Folgen
-									</th>
-									<td class="px-6 py-4">
-										{data1.episodes.length}
-									</td>
-								</tr>
+									Play Now
+								</button>
 							{/if}
-							<tr class="border-b dark:border-gray-700">
-								<th
-									scope="row"
-									class="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white"
-								>
-									Description
-								</th>
-								<td class="px-6 py-4">
-									{data1.overview}
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</Tabs.Panel>
+						</div>
+					</Tabs.Panel>
 
-			<Tabs.Panel value="links">
-				<div class="flex justify-center">
-					<button type="button" class="btn preset-filled-primary-500" onclick={playvideo}
-						>play</button
-					>
-				</div>
-			</Tabs.Panel>
-
-			<Tabs.Panel value="episodes">
-				<Accordion {value}>
-					{#each data1.episodes as episode, index (episode.id)}
-						<Accordion.Item id={index.toString()}>
-							{#snippet controlLead()}
-								E: {episode.episode} - {episode.title}
-							{/snippet}
-							{#snippet panel()}
-								<div class="grid grid-cols-4 grid-rows-1 gap-0">
-									<div class="col-span-3">{episode.overview}</div>
-									<div class="col-span-1 flex items-center justify-center">
-										<button
-											type="button"
-											class="btn preset-filled-primary-500"
-											onclick={() => playepisode(episode, 'noomu')}>Play</button
-										>
-									</div>
-								</div>{/snippet}
-						</Accordion.Item>
-					{/each}
-				</Accordion>
-			</Tabs.Panel>
-		{/snippet}
-	</Tabs>
+					<Tabs.Panel value="episodes">
+						<Accordion {value} class="episodes-accordion">
+							{#each data1.episodes as episode, index (episode.id)}
+								<Accordion.Item id={index.toString()}>
+									{#snippet controlLead()}
+										<div class="episode-title">
+											<span class="episode-number">E{episode.episode}:</span>
+											<span>{episode.title}</span>
+										</div>
+									{/snippet}
+									{#snippet panel()}
+										<div class="episode-content">
+											<p class="episode-overview">{episode.overview}</p>
+											<button
+												type="button"
+												class="play-episode-button btn preset-filled-primary-500"
+												on:click={() => playepisode(episode, 'noomu')}
+											>
+												Play Episode
+											</button>
+										</div>
+									{/snippet}
+								</Accordion.Item>
+							{/each}
+						</Accordion>
+					</Tabs.Panel>
+				{/snippet}
+			</Tabs>
+		</div>
+	</div>
 {/if}
+
+<style>
+	.video-player-container {
+		position: relative;
+		width: 100%;
+		max-width: 1200px;
+		margin: 0 auto 2rem;
+		aspect-ratio: 16 / 9;
+		background-color: black;
+		border-radius: 8px;
+		overflow: hidden;
+	}
+
+	.close-video-btn {
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		background-color: rgba(0, 0, 0, 0.5);
+		color: white;
+		border: none;
+		border-radius: 4px;
+		padding: 5px 10px;
+		cursor: pointer;
+		z-index: 10;
+	}
+
+	.close-video-btn:hover {
+		background-color: rgba(0, 0, 0, 0.7);
+	}
+
+	.details-container {
+		width: 100%;
+		max-width: 100%;
+		margin: 0;
+		padding: 0;
+	}
+
+	.alert {
+		margin-bottom: 1rem;
+		border-left: 4px solid var(--color-error-500);
+	}
+
+	.hero-container {
+		position: relative;
+		width: 100%;
+		height: 50vh;
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+		overflow: hidden;
+	}
+
+	.hero-overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.2) 100%);
+	}
+
+	.hero-content {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		padding: 2rem;
+		color: white;
+		z-index: 1;
+	}
+
+	.title {
+		font-size: 2rem;
+		font-weight: bold;
+		margin-bottom: 0.5rem;
+		text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+	}
+
+	.subtitle {
+		font-size: 1.25rem;
+		margin-bottom: 0.5rem;
+		text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+	}
+
+	.meta-info {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.quality-badge {
+		background-color: rgba(255, 255, 255, 0.2);
+		padding: 0.2rem 0.5rem;
+		border-radius: 4px;
+		font-size: 0.9rem;
+	}
+
+	.channel-info {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.content-wrapper {
+		width: 100%;
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 2rem;
+	}
+
+	.details-tabs {
+		margin-bottom: 1rem;
+	}
+
+	.details-grid {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 1rem;
+	}
+
+	.section-title {
+		font-size: 1.5rem;
+		font-weight: semibold;
+		margin-bottom: 0.5rem;
+	}
+
+	.info-table {
+		width: 100%;
+	}
+
+	.info-table th {
+		text-align: left;
+		padding: 0.5rem 0;
+		font-weight: 600;
+		color: var(--color-primary-500);
+	}
+
+	.info-table td {
+		padding: 0.5rem 0;
+	}
+
+	.flag-icon {
+		vertical-align: middle;
+		margin-right: 0.5rem;
+	}
+
+	.play-button {
+		margin-top: 1rem;
+	}
+
+	.play-button-container {
+		display: flex;
+		justify-content: center;
+		margin-top: 1rem;
+	}
+
+	.episodes-accordion {
+		width: 100%;
+	}
+
+	.episode-title {
+		display: flex;
+		align-items: center;
+	}
+
+	.episode-number {
+		font-weight: bold;
+		margin-right: 0.5rem;
+	}
+
+	.episode-content {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.episode-overview {
+		margin-bottom: 0.5rem;
+	}
+
+	@media (min-width: 768px) {
+		.hero-container {
+			height: 60vh;
+		}
+
+		.title {
+			font-size: 2.5rem;
+		}
+
+		.subtitle {
+			font-size: 1.5rem;
+		}
+
+		.details-grid {
+			grid-template-columns: 1fr 1fr;
+		}
+
+		.episode-content {
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.episode-overview {
+			flex: 1;
+			margin-bottom: 0;
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.hero-container {
+			height: 70vh;
+		}
+
+		.title {
+			font-size: 3rem;
+		}
+
+		.subtitle {
+			font-size: 1.75rem;
+		}
+	}
+</style>

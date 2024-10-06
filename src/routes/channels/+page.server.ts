@@ -17,13 +17,12 @@ const QUERY = `
 
 async function query() {
 	const result = await client.query(QUERY);
- 	return result.data.Channels.docs;
+	return result.data.Channels.docs;
 }
 
 export async function load({ fetch, params, request }) {
 	const h1 = capitalizeFirstLetter(request.headers.get('cf-ipcountry') || 'De');
 	const data1 = await query();
-
 	if (!data1) {
 		throw error(404, 'Page not found');
 	}

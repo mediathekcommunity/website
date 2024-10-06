@@ -1,77 +1,79 @@
 <script>
-	// @ts-nocheck
-
-	export let langlist, visible, langdata, geo;
-	//console.log(langlist,geo);
-	// console.log($visible);
-	import * as Flag from 'svelte-flag-icons';
-	
-	import Card from '$lib/components/Card.svelte';
+	import { visible } from '$lib/store.js';
+	import * as Flag from 'svelte-flags';
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
-	let options = { align: 'start', slidestoscroll: '2', loop: 'true' };
-	//console.log(langlist);
+	import Card from './Card.svelte';
+
+	export let langlist = [];
+	export let langdata = {};
+	export let geo = 'Unknown';
+
+	let options = {
+		align: 'start',
+		slidesToScroll: 2,
+		loop: true,
+		dragFree: true,
+		containScroll: 'trimSnaps'
+	};
+
+	// Function to sort countries, putting the user's geo country first
+	function sortCountries(countries, userGeo) {
+		return [...countries].sort((a, b) => {
+			if (a === userGeo) return -1;
+			if (b === userGeo) return 1;
+			return a.localeCompare(b);
+		});
+	}
+
+	$: sortedLanglist = sortCountries(langlist, geo);
 </script>
 
-{#key $visible}
-	{#if $visible}
-		{#each langlist as lang, index}
-			<div class="box">
-				<h1 class="h1 pb-3">
-					<div
-						class="flex items-center place-self-center bg-gradient-to-br from-blue-500 to-cyan-300 box-decoration-clone bg-clip-text text-transparent"
-					>
-						<svelte:component
-							this={Flag[lang]}
-							class="mr-1 inline-flex place-self-center"
-							size="50"
-						/> Mediatheken
-					</div>
-				</h1>
-				<div class="embla" use:emblaCarouselSvelte={{ options }}>
-					<div class="embla__container flex">
-						{#each langdata[lang] as name, index}
-							<div class="embla__slide"><Card carddata={name} {geo} {visible} /></div>
-						{/each}
-					</div>
-				</div>
-			</div>
-		{/each}
-	{:else if langdata[geo]}
-		<h1 class="h1 pb-3">
-			<div
-				class="flex items-center place-self-center bg-gradient-to-br from-blue-500 to-cyan-300 box-decoration-clone bg-clip-text text-transparent"
-			>
-				<svelte:component this={Flag[geo]} class="mr-1 inline-flex place-self-center" size="50" />
-				Mediatheken
-			</div>
-		</h1>
-		<div class="embla" use:emblaCarouselSvelte>
+{#each sortedLanglist as lang}
+	<div class="lang-section">
+		<h2 class="lang-header">
+			{#if lang !== 'Unknown'}
+				<svelte:component this={Flag[lang]} class="mr-2 inline-flex place-self-center" size="30" />
+			{/if}
+			{lang}
+			{lang === geo ? '(Your Location)' : ''}
+		</h2>
+		<div class="embla" use:emblaCarouselSvelte={options}>
 			<div class="embla__container">
-				{#each langdata[geo] as name, index}
-					<div class="embla__slide"><Card carddata={name} {geo} /></div>
+				{#each langdata[lang] || [] as item}
+					<div class="embla__slide">
+						<Card carddata={item} {visible} {geo} />
+					</div>
 				{/each}
 			</div>
 		</div>
-	{:else}
-		<!-- No items found section -->
-		<h1 class="h1">
-			<span
-				class="bg-gradient-to-br from-pink-100 to-red-900 box-decoration-clone bg-clip-text text-transparent"
-			>
-				No Item(s) found for Country:
-				<svelte:component this={Flag[geo]} class="mr-1 inline-flex place-self-center" size="50" />
-			</span>
-		</h1>
-	{/if}
-{/key}
+	</div>
+{/each}
 
-<style scoped>
-	.embla__slide {
-		flex: 0 0 200px !important;
-		min-width: 0;
+<style>
+	.lang-section {
+		margin-bottom: 2rem;
 	}
+
+	.lang-header {
+		display: flex;
+		align-items: center;
+		font-size: 1.5rem;
+		font-weight: bold;
+		margin-bottom: 1rem;
+	}
+
+	.embla {
+		overflow: hidden;
+	}
+
 	.embla__container {
 		display: flex;
-		flex-direction: row;
+	}
+
+	.embla__slide {
+		flex: 0 0 auto;
+		min-width: 0;
+		padding-left: 10px;
+		padding-right: 10px;
 	}
 </style>

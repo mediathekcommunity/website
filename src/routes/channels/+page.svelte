@@ -1,56 +1,39 @@
 <script>
-	// @ts-nocheck
 	import { visible } from '$lib/store.js';
 	import * as Flag from 'svelte-flags';
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
 	import Card from '$lib/components/Card.svelte';
-	import Slider1 from '$lib/components/Slider1.svelte';
 
 	let { data } = $props();
+	console.log('Received data:', data);
 
-	// State variables for grouped data and country list
-	let langdata = $state({});
-	let langlist = $state([]);
+	let options = { align: 'start', slidesToScroll: 2, loop: true };
 
 	// Function to group media items by channel country
 	const groupByChannelCountry = (items) => {
 		return items.reduce((acc, item) => {
-			//console.log(item);
-			const country = item.country;
-			acc[country] = acc[country] || []; // Create array for country if it doesn't exist
+			const country = item?.country || 'Unknown';
+			acc[country] = acc[country] || [];
 			acc[country].push(item);
 			return acc;
 		}, {});
 	};
 
-	// Update grouped data and country list when data prop changes
-	$effect(() => {
-		langdata = groupByChannelCountry(data.page);
-	});
-	$effect(() => {
-		langlist = Object.keys(langdata).sort();
-	});
-
-	// Carousel options
-	let options = { align: 'start', slidestoscroll: '2', loop: 'true' };
+	let groupedData = $derived(data?.page ? groupByChannelCountry(data.page) : {});
+	let countries = $derived(Object.keys(groupedData).sort());
 </script>
 
-{#if langdata}
-	{#each langlist as lang, index}
-		<h1 class="h1 pb-3">
-			<div
-				class="flex items-center place-self-center bg-gradient-to-br from-blue-500 to-cyan-300 box-decoration-clone bg-clip-text text-transparent"
-			>
-				<svelte:component this={Flag[lang]} class="mr-1 inline-flex place-self-center" size="50" /> Sender
-			</div>
-		</h1>
-		<div class="embla" use:emblaCarouselSvelte>
+{#if data && data.page && data.page.length > 0}
+	{#each countries as country}
+		<h2 class="country-header">
+			<svelte:component this={Flag[country]} class="mr-1 inline-flex place-self-center" size="30" />
+			{country}
+		</h2>
+		<div class="embla" use:emblaCarouselSvelte={options}>
 			<div class="embla__container">
-				{#each langdata[lang] as item, index}
+				{#each groupedData[country] as item}
 					<div class="embla__slide">
-						<button class="btn preset-filled-primary-500" href={`/${item.id}`}>
-							<a href={`/channels/${item.id}`}> {item['name']}<br /></a>
-						</button>
+						<Card carddata={item} geo={data.geo} {visible} />
 					</div>
 				{/each}
 			</div>
@@ -63,11 +46,11 @@
 		>
 			No Item(s) found for type:
 		</span>
-		{data.filter || '*'}
+		{data?.filter || '*'}
 	</h1>
 {/if}
- 
-<style scoped>
+
+<style>
 	.embla__slide {
 		flex: 0 0 200px !important;
 		min-width: 0;
@@ -75,5 +58,13 @@
 	.embla__container {
 		display: flex;
 		flex-direction: row;
+	}
+	.country-header {
+		display: flex;
+		align-items: center;
+		margin-top: 20px;
+		margin-bottom: 10px;
+		font-size: 1.5em;
+		font-weight: bold;
 	}
 </style>
