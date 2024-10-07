@@ -78,7 +78,7 @@ export async function load({ fetch, params, request }) {
 	return {
 		page: data1,
 		count: data1.length,
-		geo: h1,
+		geo: capitalizeFirstLetter(h1),
 		filter: params.id
 	};
 }
