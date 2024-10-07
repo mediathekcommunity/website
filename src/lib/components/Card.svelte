@@ -5,8 +5,6 @@
 	import Icon from '@iconify/svelte';
 
 	export let carddata;
-	export let visible;
-	export let geo;
 
 	$: title = carddata?.title || 'Unknown Title';
 	$: country = carddata?.channel?.country || 'Unknown';
