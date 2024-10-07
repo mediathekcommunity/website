@@ -34,7 +34,6 @@
 			{#if lang !== 'Unknown'}
 				<svelte:component this={Flag[lang]} class="mr-2 inline-flex place-self-center" size="30" />
 			{/if}
-			{lang}
 			{lang === geo ? '(Your Location)' : ''}
 		</h2>
 		<div class="embla" use:emblaCarouselSvelte={options}>

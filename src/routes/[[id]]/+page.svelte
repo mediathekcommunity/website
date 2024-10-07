@@ -1,4 +1,6 @@
 <script>
+// @ts-nocheck
+
 	import { visible } from '$lib/store.js';
 	import * as Flag from 'svelte-flags';
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
@@ -62,7 +64,11 @@
 							</p>
 						{/if}
 						<div class="hero-buttons">
-							<button class="btn-more-info">ⓘ More Info</button>
+							<button
+								class="btn-more-info"
+								onclick={() => (window.location.href = `/details/${heroItem.id}`)}
+								>ⓘ More Info</button
+							>
 						</div>
 					</div>
 				</div>
@@ -88,7 +94,7 @@
 						</div>
 					</div>
 				</div>
-				<Slider1 langlist={countries} {visible} langdata={groupedData} geo={data.geo} />
+				<Slider1 langlist={countries} langdata={groupedData} geo={data.geo} />
 			</div>
 		</div>
 	{:else}
