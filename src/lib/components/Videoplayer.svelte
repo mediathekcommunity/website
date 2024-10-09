@@ -59,8 +59,8 @@
 
 <video
 	id="my-video"
-	class="video-js vjs-default-skin vjs-big-play-centered"
-	controls
-	preload="auto"
+	playsinline 
+	webkit-playsinline 
+	class="video-js vjs-16-9 overflow-hidden"
 	bind:this={videoElement}
 ></video>
