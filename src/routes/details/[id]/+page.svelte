@@ -134,7 +134,7 @@
 		{#if showvideo}
 			<div class="video-player-container">
 				<Videoplayer />
-				<button class="close-video-btn" on:click={playvideo}>Close Video</button>
+				<button class="close-video-btn" onclick={playvideo}>Close Video</button>
 			</div>
 		{:else}
 			<div
@@ -153,8 +153,10 @@
 						<span class="quality-badge">{data1.quality}</span>
 						{#if data1.channel && data1.channel.country && Flag[data1.channel.country]}
 							<div class="channel-info">
-								<svelte:component this={Flag[data1.channel.country]} size="20" />
+																				<!-- svelte-ignore svelte_component_deprecated -->
+ 								<svelte:component this={Flag[data1.channel.country]} size="20" />
 								<span>{data1.channel.name}</span>
+								
 							</div>
 						{/if}
 					</div>
@@ -182,6 +184,7 @@
 										<tr>
 											<th>Country</th>
 											<td>
+												<!-- svelte-ignore svelte_component_deprecated -->
 												<svelte:component
 													this={Flag[data1.channel.country]}
 													class="flag-icon"
@@ -217,20 +220,39 @@
 							</div>
 						</div>
 					</Tabs.Panel>
-
 					<Tabs.Panel value="links">
-						<div class="play-button-container">
-							{#if !showvideo}
-								<button
-									type="button"
-									class="play-button btn preset-filled-primary-500"
-									on:click={playvideo}
-								>
-									Play Now
-								</button>
+						<table style="table-layout: fixed; width: 100%;">
+						  <thead>
+							<tr>
+							  <th style="width: 33.33%; text-align: center;">Channel</th>
+							  <th style="width: 33.33%; text-align: center;">Online until</th>
+							  <th style="width: 33.33%; text-align: center;">Links</th>
+							</tr>
+						  </thead>
+						  <tbody>
+							{#if data1.links && (data1.links.length > 1)}
+							  {#each data1.links as link}
+								<tr>
+								  <td style="text-align: center;">{link.channel}</td>
+								  <td style="text-align: center;">{link.onlineUntil}</td>
+								  <td style="text-align: center;">
+									<button onclick={() => playvideo(link.url)}>Play</button>
+								  </td>
+								</tr>
+							  {/each}
+							{:else if data1 && data1.channel && data1.channel.name}
+							  <tr>
+								<td style="text-align: center;">{data1.channel.name}</td>
+								<td style="text-align: center;">{data1.onlineUntil}</td>
+								<td style="text-align: center;">
+								  <button onclick={() => playvideo(data1.url)}>Play</button>
+								</td>
+							  </tr>
 							{/if}
-						</div>
+						  </tbody>
+						</table>
 					</Tabs.Panel>
+
 
 					<Tabs.Panel value="episodes">
 						<Accordion {value} class="episodes-accordion">
@@ -248,7 +270,7 @@
 											<button
 												type="button"
 												class="play-episode-button btn preset-filled-primary-500"
-												on:click={() => playepisode(episode, 'noomu')}
+												onclick={() => playepisode(episode, 'noomu')}
 											>
 												Play Episode
 											</button>
@@ -372,11 +394,11 @@
 		margin: 0 auto;
 		padding: 2rem;
 	}
-
+/*
 	.details-tabs {
 		margin-bottom: 1rem;
 	}
-
+*/
 	.details-grid {
 		display: grid;
 		grid-template-columns: 1fr;
@@ -403,7 +425,7 @@
 	.info-table td {
 		padding: 0.5rem 0;
 	}
-
+/*
 	.flag-icon {
 		vertical-align: middle;
 		margin-right: 0.5rem;
@@ -422,7 +444,7 @@
 	.episodes-accordion {
 		width: 100%;
 	}
-
+*/
 	.episode-title {
 		display: flex;
 		align-items: center;

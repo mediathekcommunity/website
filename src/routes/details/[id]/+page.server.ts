@@ -29,11 +29,6 @@ const query = `
   }
 `;
 
-// Helper function to capitalize the first letter of a string
-function capitalizeFirstLetter(string: string): string {
-	return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-}
-
 // Function to fetch data from the GraphQL API
 async function fetchMediathek(id: string) {
 	const result = await client.query(query, { id });
