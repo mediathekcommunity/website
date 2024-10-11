@@ -50,6 +50,13 @@
 			{:else}
 				<div class="card-poster-placeholder">{title[0]}</div>
 			{/if}
+			<div class="quality-icon">
+				{#if carddata.type === 'movie'}
+					<Icon icon="mdi:movie" />
+				{:else}
+					<Icon icon="mdi:tv" />
+				{/if}
+  			</div>
 			{#if isHovered}
 				<div class="card-overlay" transition:slide={{ duration: 300, delay: 50, easing: quintOut }}>
 					<h3 class="card-title">{title}</h3>
@@ -111,6 +118,20 @@
 		padding: 10px;
 		max-height: 70%;
 		overflow-y: auto;
+	}
+	.quality-icon {
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		z-index: 2;
+		color: white;
+		background-color: rgba(0, 0, 0, 0.7);
+		border-radius: 4px;
+		padding: 2px;
+		font-size: 24px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 	.card-title {
 		margin: 0 0 5px 0;

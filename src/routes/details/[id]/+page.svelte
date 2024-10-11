@@ -186,10 +186,12 @@
 								<h3 class="section-title">Information</h3>
 								<table class="info-table">
 									<tbody>
-										<tr>
-											<th>Duration</th>
-											<td>{data1.duration}m</td>
-										</tr>
+										{#if data1.type == 'movie'}
+											<tr>
+												<th>Duration</th>
+												<td>{data1.duration}m</td>
+											</tr>
+										{/if}
 										<!--  
 											<th>Country</th>
 											<td>
