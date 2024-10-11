@@ -42,8 +42,7 @@ function capitalizeFirstLetter(string: string): string {
 }
 async function query(id1) {
 	const result = id1 ? await client.query(QUERY2, { type: id1 }) : await client.query(QUERY);
-	console.log(result);
-
+	// console.log(result);
 	return result.data.Mediatheks.docs;
 }
 

@@ -20,7 +20,7 @@ query Mediathek($id: String!){
 // Function to fetch data from the GraphQL API
 async function fetchMediathek(id: string) {
 	const result = await client.query(query, { id });
-	console.log(result);
+	// console.log(result);
 	return result.data.Mediathek;
 }
 export async function load({ params }) {
