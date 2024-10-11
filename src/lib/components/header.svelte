@@ -30,7 +30,7 @@
 				<li><a href="/">Home</a></li>
 				<li><a href="/movie">Movies</a></li>
 				<li><a href="/series">TV Shows</a></li>
-				<li><a href="/channels">Channels</a></li>
+				<!-- <li><a href="/channels">Channels</a></li>-->
 			</ul>
 		</nav>
 		<button class="mobile-menu-button" on:click={toggleMobileMenu}> ☰ </button>
@@ -44,7 +44,7 @@
 				<li><a href="/" on:click={toggleMobileMenu}>Home</a></li>
 				<li><a href="/movie" on:click={toggleMobileMenu}>Movies</a></li>
 				<li><a href="/series" on:click={toggleMobileMenu}>TV Shows</a></li>
-				<li><a href="/channels" on:click={toggleMobileMenu}>Channels</a></li>
+				<!--<li><a href="/channels" on:click={toggleMobileMenu}>Channels</a></li>-->
 			</ul>
 		</nav>
 	</div>
