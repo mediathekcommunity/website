@@ -3,6 +3,7 @@
 	import * as Flag from 'svelte-flags';
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
 	import ChannelCard from '$lib/components/ChannelCard.svelte';
+	import ErrorSection from '$lib/components/ErrorSection.svelte';
 
 	let { data } = $props();
 	console.log('Received data:', data);

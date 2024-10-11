@@ -10,6 +10,8 @@ query Mediathek($id: String!){
 	   tmdbid
 	   poster
 	   backdrop
+	   description
+	   duration 
 	}
 }
 

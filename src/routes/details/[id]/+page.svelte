@@ -7,7 +7,7 @@
 	import Tv from 'lucide-svelte/icons/tv';
 	import Videoplayer from '$lib/components/Videoplayer.svelte';
 	import { modalvideo, omulist, noomulist, seriestype } from '$lib/store.js';
- 
+
 	function getformat(id) {
 		switch (id) {
 			case 'mpd':
@@ -120,6 +120,7 @@
 		});
 	}
 </script>
+
 {#if data1}
 	<div class="details-container">
 		<!--
@@ -151,9 +152,8 @@
 						<h2 class="subtitle">{data1.orgtitle}</h2>
 					{/if}
 					<div class="meta-info">
-						<span class="quality-badge">{data1.quality}</span>
-						<!-- 
-					 
+					<!--	<span class="quality-badge">{data1.quality}</span>
+ 					 
 						{#if data1.channel && data1.channel.country && Flag[data1.channel.country]}
 							<div class="channel-info">
   								<svelte:component this={Flag[data1.channel.country]} size="20" />
@@ -171,10 +171,13 @@
 			<Tabs bind:value={group} listJustify="justify-center" class="details-tabs">
 				{#snippet list()}
 					<Tabs.Control value="details" title="Details">Details</Tabs.Control>
+					{#if data1.links}
+
 					{#if data1.type == 'movie'}
 						<Tabs.Control value="links" title="Links">Links</Tabs.Control>
 					{:else}
 						<Tabs.Control value="episodes" title="Episodes">Episodes</Tabs.Control>
+					{/if}
 					{/if}
 				{/snippet}
 				{#snippet content()}
@@ -185,7 +188,10 @@
 								<table class="info-table">
 									<tbody>
 										<tr>
-											<!--  
+											<th>Duration</th>
+											<td>{data1.duration}m</td>
+										</tr>
+										<!--  
 											<th>Country</th>
 											<td>
  												<svelte:component
@@ -221,21 +227,21 @@
 							</div>
 							<div class="description-section">
 								<h3 class="section-title">Description</h3>
-								<p>{data1.overview}</p>
+								<p>{data1.description}</p>
 							</div>
 						</div>
 					</Tabs.Panel>
-					<Tabs.Panel value="links">
-						<table style="table-layout: fixed; width: 100%;">
-						  <thead>
-							<tr>
-							  <th style="width: 33.33%; text-align: center;">Channel</th>
-							  <th style="width: 33.33%; text-align: center;">Online until</th>
-							  <th style="width: 33.33%; text-align: center;">Links</th>
-							</tr>
-						  </thead>
-						  <tbody>
-							<!-- 
+						<Tabs.Panel value="links">
+							<table style="table-layout: fixed; width: 100%;">
+								<thead>
+									<tr>
+										<th style="width: 33.33%; text-align: center;">Channel</th>
+										<th style="width: 33.33%; text-align: center;">Online until</th>
+										<th style="width: 33.33%; text-align: center;">Links</th>
+									</tr>
+								</thead>
+								<tbody>
+									<!-- 
 							{#if data1.links && (data1.links.length > 1)}
 							  {#each data1.links as link}
 								<tr>
@@ -256,10 +262,10 @@
 							  </tr>
 							{/if}
 							-->
-						  </tbody>
-						</table>
-					</Tabs.Panel>
-
+								</tbody>
+							</table>
+						</Tabs.Panel>
+			 
 
 					<Tabs.Panel value="episodes">
 						<Accordion {value} class="episodes-accordion">
@@ -287,7 +293,7 @@
 							{/each}
 						</Accordion>
 					</Tabs.Panel>
-				{/snippet}
+ 				{/snippet}
 			</Tabs>
 		</div>
 	</div>
@@ -401,7 +407,7 @@
 		margin: 0 auto;
 		padding: 2rem;
 	}
-/*
+	/*
 	.details-tabs {
 		margin-bottom: 1rem;
 	}
@@ -432,7 +438,7 @@
 	.info-table td {
 		padding: 0.5rem 0;
 	}
-/*
+	/*
 	.flag-icon {
 		vertical-align: middle;
 		margin-right: 0.5rem;
