@@ -61,10 +61,9 @@
 					<h3 class="card-title">{title}</h3>
 					<div class="country-channel-info">
 						<h3 class="card-title">O: {orgtitle}</h3>
-
 					</div>
-					<p> Metascore: {metascore}</p>
- 				</div>
+					<p>Metascore: {metascore}</p>
+				</div>
 			{/if}
 		</div>
 	</div>
@@ -108,20 +107,6 @@
 		font-size: 48px;
 		font-weight: bold;
 	}
-	.quality-icon {
-		position: absolute;
-		top: 10px;
-		right: 10px;
-		z-index: 2;
-		color: white;
-		background-color: rgba(0, 0, 0, 0.7);
-		border-radius: 4px;
-		padding: 2px;
-		font-size: 24px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
 	.card-overlay {
 		position: absolute;
 		bottom: 0;
@@ -152,23 +137,5 @@
 	}
 	.country-channel-info > * {
 		margin-right: 5px;
-	}
-	.country-name {
-		font-weight: bold;
-	}
-	.channel-name {
-		margin-left: auto;
-		font-style: italic;
-		max-width: 50%;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-	.card-info {
-		margin: 3px 0;
-		font-size: 0.7rem;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
 	}
 </style>
