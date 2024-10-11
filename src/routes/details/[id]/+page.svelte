@@ -333,11 +333,6 @@
 		padding: 0;
 	}
 
-	.alert {
-		margin-bottom: 1rem;
-		border-left: 4px solid var(--color-error-500);
-	}
-
 	.hero-container {
 		position: relative;
 		width: 100%;
@@ -384,19 +379,6 @@
 		display: flex;
 		align-items: center;
 		gap: 1rem;
-	}
-
-	.quality-badge {
-		background-color: rgba(255, 255, 255, 0.2);
-		padding: 0.2rem 0.5rem;
-		border-radius: 4px;
-		font-size: 0.9rem;
-	}
-
-	.channel-info {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
 	}
 
 	.content-wrapper {
