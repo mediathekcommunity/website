@@ -13,7 +13,8 @@
 		? new Date(carddata.onlineuntil).toLocaleDateString()
 		: 'Unknown';
 	$: quality = carddata?.quality || 'Unknown';
-
+	$: orgtitle = carddata?.orgtitle || 'Unknown';
+	$: metascore = carddata?.metascore || 'Unknown';
 	function getQualityIcon(quality) {
 		switch (quality?.toLowerCase()) {
 			case 'sd':
@@ -32,7 +33,7 @@
 	}
 	function handleClick(event) {
 		event.preventDefault();
-		goto(`/details/${carddata.id}`);
+		//goto(`/details/${carddata.id}`);
 	}
 	let isHovered = false;
 </script>
@@ -40,6 +41,8 @@
 <a href={`/details/${carddata.id}`} class="card">
 	<div
 		class="card"
+		role="button"
+		tabindex="0"
 		on:mouseenter={() => (isHovered = true)}
 		on:mouseleave={() => (isHovered = false)}
 	>
@@ -53,21 +56,15 @@
 			{:else}
 				<div class="card-poster-placeholder">{title[0]}</div>
 			{/if}
-			<div class="quality-icon">
-				<Icon icon={getQualityIcon(quality)} />
-			</div>
 			{#if isHovered}
 				<div class="card-overlay" transition:slide={{ duration: 300, delay: 50, easing: quintOut }}>
 					<h3 class="card-title">{title}</h3>
 					<div class="country-channel-info">
-						{#if country !== 'Unknown' && Flag[country]}
-							<svelte:component this={Flag[country]} size="20" />
-						{/if}
-						<span class="country-name">{country}</span>
-						<span class="channel-name">{channelName}</span>
+						<h3 class="card-title">O: {orgtitle}</h3>
+
 					</div>
-					<p class="card-info">Available until: {onlineUntil}</p>
-				</div>
+					<p> Metascore: {metascore}</p>
+ 				</div>
 			{/if}
 		</div>
 	</div>

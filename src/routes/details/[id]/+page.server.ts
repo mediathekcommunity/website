@@ -3,35 +3,22 @@ import client from '$lib/directus.js';
 
 // GraphQL query string
 const query = `
-  query HeroNameAndFriends($id: String!) {
+query Mediathek($id: String!){
     Mediathek(id: $id) {
       title
-      id
-      tmdbid
-			metascore
-			type
-			episodes {
-				title
-			}
-			orgtitle
-			onlineuntil
-			poster
-			backdrop
-			quality
-			streamformat
-			streamlink
-			channel {
-				country
-				name
-				info
-			}
-		}
-  }
+       orgtitle
+	   tmdbid
+	   poster
+	   backdrop
+	}
+}
+
 `;
 
 // Function to fetch data from the GraphQL API
 async function fetchMediathek(id: string) {
 	const result = await client.query(query, { id });
+	console.log(result);
 	return result.data.Mediathek;
 }
 export async function load({ params }) {

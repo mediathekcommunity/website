@@ -7,7 +7,7 @@
 	import Tv from 'lucide-svelte/icons/tv';
 	import Videoplayer from '$lib/components/Videoplayer.svelte';
 	import { modalvideo, omulist, noomulist, seriestype } from '$lib/store.js';
-
+ 
 	function getformat(id) {
 		switch (id) {
 			case 'mpd':
@@ -34,7 +34,8 @@
 
 	$effect(() => {
 		data1 = data.page;
-		channelinfo = data.page.channel;
+		console.log(data);
+		//channelinfo = data.page.channel;
 	});
 
 	let tabSet = 0;
@@ -119,9 +120,9 @@
 		});
 	}
 </script>
-
 {#if data1}
 	<div class="details-container">
+		<!--
 		{#if channelinfo.info}
 			<aside class="alert variant-ghost-error">
 				<div class="alert-message">
@@ -130,7 +131,7 @@
 				</div>
 			</aside>
 		{/if}
-
+ -->
 		{#if showvideo}
 			<div class="video-player-container">
 				<Videoplayer />
@@ -151,14 +152,16 @@
 					{/if}
 					<div class="meta-info">
 						<span class="quality-badge">{data1.quality}</span>
+						<!-- 
+					 
 						{#if data1.channel && data1.channel.country && Flag[data1.channel.country]}
 							<div class="channel-info">
-																				<!-- svelte-ignore svelte_component_deprecated -->
- 								<svelte:component this={Flag[data1.channel.country]} size="20" />
+  								<svelte:component this={Flag[data1.channel.country]} size="20" />
 								<span>{data1.channel.name}</span>
 								
 							</div>
 						{/if}
+					-->
 					</div>
 				</div>
 			</div>
@@ -182,10 +185,10 @@
 								<table class="info-table">
 									<tbody>
 										<tr>
+											<!--  
 											<th>Country</th>
 											<td>
-												<!-- svelte-ignore svelte_component_deprecated -->
-												<svelte:component
+ 												<svelte:component
 													this={Flag[data1.channel.country]}
 													class="flag-icon"
 													size="25"
@@ -201,6 +204,7 @@
 											<th>Quality</th>
 											<td>{data1.quality}</td>
 										</tr>
+								
 										{#if data1.episodes.length > 0}
 											<tr>
 												<th>Seasons</th>
@@ -211,6 +215,7 @@
 												<td>{data1.episodes.length}</td>
 											</tr>
 										{/if}
+											-->
 									</tbody>
 								</table>
 							</div>
@@ -230,10 +235,11 @@
 							</tr>
 						  </thead>
 						  <tbody>
+							<!-- 
 							{#if data1.links && (data1.links.length > 1)}
 							  {#each data1.links as link}
 								<tr>
-								  <td style="text-align: center;">{link.channel}</td>
+								  <td style="text-align: center;"> link.channel </td>
 								  <td style="text-align: center;">{link.onlineUntil}</td>
 								  <td style="text-align: center;">
 									<button onclick={() => playvideo(link.url)}>Play</button>
@@ -249,6 +255,7 @@
 								</td>
 							  </tr>
 							{/if}
+							-->
 						  </tbody>
 						</table>
 					</Tabs.Panel>

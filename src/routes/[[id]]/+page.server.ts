@@ -10,21 +10,10 @@ const QUERY = `
 			id
 			tmdbid
 			metascore
-			episodes {
-				title
-			}
 			orgtitle
-			onlineuntil
-			poster
-			quality
-			backdrop
-			streamformat
-			streamlink
-			channel {
-				country
-				name
-				info
-			}
+ 			poster
+ 			backdrop
+			type
 		}
 	}
 }
@@ -38,21 +27,10 @@ query Mediathekfilter($type: Mediathek_type_Input) {
 			id
 			tmdbid
 			metascore
-			episodes {
-				title
-			}
 			orgtitle
-			onlineuntil
-			poster
-			quality
+ 			poster
 			backdrop
-			streamformat
-			streamlink
-			channel {
-				country
-				name
-				info
-			}
+			type
 		}
 	}
 }
@@ -64,13 +42,15 @@ function capitalizeFirstLetter(string: string): string {
 }
 async function query(id1) {
 	const result = id1 ? await client.query(QUERY2, { type: id1 }) : await client.query(QUERY);
+	 console.log(result);
+
 	return result.data.Mediatheks.docs;
 }
 
 export async function load({ fetch, params, request }) {
 	const h1 = request.headers.get('Cdn-Requestcountrycode') || 'Se';
 	const data1 = await query(params.id);
-	console.log(h1);
+	// console.log(data1);
 
 	if (!data1) {
 		throw error(404, 'Page not found');
