@@ -152,7 +152,7 @@
 						<h2 class="subtitle">{data1.orgtitle}</h2>
 					{/if}
 					<div class="meta-info">
-					<!--	<span class="quality-badge">{data1.quality}</span>
+						<!--	<span class="quality-badge">{data1.quality}</span>
  					 
 						{#if data1.channel && data1.channel.country && Flag[data1.channel.country]}
 							<div class="channel-info">
@@ -172,12 +172,11 @@
 				{#snippet list()}
 					<Tabs.Control value="details" title="Details">Details</Tabs.Control>
 					{#if data1.links}
-
-					{#if data1.type == 'movie'}
-						<Tabs.Control value="links" title="Links">Links</Tabs.Control>
-					{:else}
-						<Tabs.Control value="episodes" title="Episodes">Episodes</Tabs.Control>
-					{/if}
+						{#if data1.type == 'movie'}
+							<Tabs.Control value="links" title="Links">Links</Tabs.Control>
+						{:else}
+							<Tabs.Control value="episodes" title="Episodes">Episodes</Tabs.Control>
+						{/if}
 					{/if}
 				{/snippet}
 				{#snippet content()}
@@ -231,17 +230,17 @@
 							</div>
 						</div>
 					</Tabs.Panel>
-						<Tabs.Panel value="links">
-							<table style="table-layout: fixed; width: 100%;">
-								<thead>
-									<tr>
-										<th style="width: 33.33%; text-align: center;">Channel</th>
-										<th style="width: 33.33%; text-align: center;">Online until</th>
-										<th style="width: 33.33%; text-align: center;">Links</th>
-									</tr>
-								</thead>
-								<tbody>
-									<!-- 
+					<Tabs.Panel value="links">
+						<table style="table-layout: fixed; width: 100%;">
+							<thead>
+								<tr>
+									<th style="width: 33.33%; text-align: center;">Channel</th>
+									<th style="width: 33.33%; text-align: center;">Online until</th>
+									<th style="width: 33.33%; text-align: center;">Links</th>
+								</tr>
+							</thead>
+							<tbody>
+								<!-- 
 							{#if data1.links && (data1.links.length > 1)}
 							  {#each data1.links as link}
 								<tr>
@@ -262,10 +261,9 @@
 							  </tr>
 							{/if}
 							-->
-								</tbody>
-							</table>
-						</Tabs.Panel>
-			 
+							</tbody>
+						</table>
+					</Tabs.Panel>
 
 					<Tabs.Panel value="episodes">
 						<Accordion {value} class="episodes-accordion">
@@ -293,7 +291,7 @@
 							{/each}
 						</Accordion>
 					</Tabs.Panel>
- 				{/snippet}
+				{/snippet}
 			</Tabs>
 		</div>
 	</div>

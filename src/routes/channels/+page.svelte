@@ -46,7 +46,7 @@
 			</div>
 		{/each}
 	{:else}
-	<ErrorSection filter={data?.filter} />
+		<ErrorSection filter={data?.filter} />
 	{/if}
 </div>
 

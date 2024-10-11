@@ -1,5 +1,5 @@
 <script>
-// @ts-nocheck
+	// @ts-nocheck
 
 	import { visible } from '$lib/store.js';
 	import * as Flag from 'svelte-flags';
