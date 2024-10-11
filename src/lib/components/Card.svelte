@@ -6,13 +6,7 @@
 
 	export let carddata;
 
-	$: title = carddata?.title || 'Unknown Title';
-	$: country = carddata?.channel?.country || 'Unknown';
-	$: channelName = carddata?.channel?.name || 'Unknown Channel';
-	$: onlineUntil = carddata?.onlineuntil
-		? new Date(carddata.onlineuntil).toLocaleDateString()
-		: 'Unknown';
-	$: quality = carddata?.quality || 'Unknown';
+	$: title = carddata?.title || 'Unknown Title'; 
 	$: orgtitle = carddata?.orgtitle || 'Unknown';
 	$: metascore = carddata?.metascore || 'Unknown';
 	function getQualityIcon(quality) {
