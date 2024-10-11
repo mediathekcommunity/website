@@ -45,14 +45,7 @@
 			</div>
 		{/each}
 	{:else}
-		<h1 class="h1">
-			<span
-				class="bg-gradient-radial from-tertiary-500 to-primary-500 box-decoration-clone bg-clip-text text-transparent"
-			>
-				No Item(s) found for type:
-			</span>
-			{data?.filter || '*'}
-		</h1>
+	<ErrorSection filter={data?.filter} />
 	{/if}
 </div>
 
