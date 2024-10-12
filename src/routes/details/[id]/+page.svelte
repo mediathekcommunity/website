@@ -21,7 +21,7 @@
 
 	let myPlaylist = [];
 	let myPlaylistomu = [];
-	let group = $state('details');
+	let group = $state('episodes');
 	let value = $state('0');
 	let { data } = $props();
 	let data1 = $state();
@@ -34,7 +34,6 @@
 
 	$effect(() => {
 		data1 = data.page;
-		console.log(data);
 		//channelinfo = data.page.channel;
 	});
 
@@ -123,16 +122,6 @@
 
 {#if data1}
 	<div class="details-container">
-		<!--
-		{#if channelinfo.info}
-			<aside class="alert variant-ghost-error">
-				<div class="alert-message">
-					<h3 class="h3">{channelinfo.name}</h3>
-					<p>{channelinfo.info}</p>
-				</div>
-			</aside>
-		{/if}
- -->
 		{#if showvideo}
 			<div class="video-player-container">
 				<Videoplayer />
@@ -151,18 +140,7 @@
 					{#if data1.orgtitle && data1.orgtitle !== data1.title}
 						<h2 class="subtitle">{data1.orgtitle}</h2>
 					{/if}
-					<div class="meta-info">
-						<!--	<span class="quality-badge">{data1.quality}</span>
- 					 
-						{#if data1.channel && data1.channel.country && Flag[data1.channel.country]}
-							<div class="channel-info">
-  								<svelte:component this={Flag[data1.channel.country]} size="20" />
-								<span>{data1.channel.name}</span>
-								
-							</div>
-						{/if}
-					-->
-					</div>
+					<div class="meta-info"></div>
 				</div>
 			</div>
 		{/if}
@@ -172,7 +150,7 @@
 				{#snippet list()}
 					<Tabs.Control value="details" title="Details">Details</Tabs.Control>
 					{#if data1.links}
-						{#if data1.type == 'movie'}
+						{#if data1.type === 'movie'}
 							<Tabs.Control value="links" title="Links">Links</Tabs.Control>
 						{:else}
 							<Tabs.Control value="episodes" title="Episodes">Episodes</Tabs.Control>
@@ -242,55 +220,43 @@
 								</tr>
 							</thead>
 							<tbody>
-								<!-- 
-							{#if data1.links && (data1.links.length > 1)}
-							  {#each data1.links as link}
-								<tr>
-								  <td style="text-align: center;"> link.channel </td>
-								  <td style="text-align: center;">{link.onlineUntil}</td>
-								  <td style="text-align: center;">
-									<button onclick={() => playvideo(link.url)}>Play</button>
-								  </td>
-								</tr>
-							  {/each}
-							{:else if data1 && data1.channel && data1.channel.name}
-							  <tr>
-								<td style="text-align: center;">{data1.channel.name}</td>
-								<td style="text-align: center;">{data1.onlineUntil}</td>
-								<td style="text-align: center;">
-								  <button onclick={() => playvideo(data1.url)}>Play</button>
-								</td>
-							  </tr>
-							{/if}
-							-->
+								{#if data1.type == 'movie'}
+									<tr>
+										<td style="text-align: center;"> link.channel </td>
+										<td style="text-align: center;">{link.onlineUntil}</td>
+										<td style="text-align: center;"> </td>
+									</tr>
+								{/if}
 							</tbody>
 						</table>
 					</Tabs.Panel>
-
 					<Tabs.Panel value="episodes">
-						<Accordion {value} class="episodes-accordion">
-							{#each data1.episodes as episode, index (episode.id)}
-								<Accordion.Item id={index.toString()}>
-									{#snippet controlLead()}
-										<div class="episode-title">
-											<span class="episode-number">E{episode.episode}:</span>
-											<span>{episode.title}</span>
-										</div>
-									{/snippet}
-									{#snippet panel()}
-										<div class="episode-content">
-											<p class="episode-overview">{episode.overview}</p>
-											<button
-												type="button"
-												class="play-episode-button btn preset-filled-primary-500"
-												onclick={() => playepisode(episode, 'noomu')}
-											>
-												Play Episode
-											</button>
-										</div>
-									{/snippet}
-								</Accordion.Item>
-							{/each}
+						<Accordion {value} collapsible>
+							{#if data1.links}
+								{#each data1.links as link,index}
+									<Accordion.Item value={index.toString()}>
+										{#snippet lead()}
+											<div class="episode-title">
+												<span class="episode-number">S{link.season}-E{link.episode}:</span>
+												<span>{link.title}</span>
+											</div>
+										{/snippet}
+										{#snippet control()}<div class="flex justify-center"> {link.channel.name}</div>{/snippet}
+										{#snippet panel()}
+											<div class="episode-content">
+												<p class="episode-overview">{link.description}</p>
+												<button
+													type="button"
+													class="play-episode-button btn preset-filled-primary-500"
+													onclick={() => playepisode(episode, 'noomu')}
+												>
+													Play Episode
+												</button>
+											</div>
+										{/snippet}
+									</Accordion.Item>
+								{/each}
+							{/if}
 						</Accordion>
 					</Tabs.Panel>
 				{/snippet}

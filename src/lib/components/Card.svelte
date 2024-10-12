@@ -6,7 +6,7 @@
 
 	export let carddata;
 
-	$: title = carddata?.title || 'Unknown Title'; 
+	$: title = carddata?.title || 'Unknown Title';
 	$: orgtitle = carddata?.orgtitle || 'Unknown';
 	$: metascore = carddata?.metascore || 'Unknown';
 	function getQualityIcon(quality) {
@@ -56,7 +56,7 @@
 				{:else}
 					<Icon icon="mdi:tv" />
 				{/if}
-  			</div>
+			</div>
 			{#if isHovered}
 				<div class="card-overlay" transition:slide={{ duration: 300, delay: 50, easing: quintOut }}>
 					<h3 class="card-title">{title}</h3>

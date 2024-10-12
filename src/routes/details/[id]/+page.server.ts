@@ -12,6 +12,16 @@ query Mediathek($id: String!){
 	   backdrop
 	   description
 	   duration 
+	   links {
+			id
+			episode
+			title
+			description
+			season
+			channel {
+			name
+			}
+	   }
 	}
 }
 
