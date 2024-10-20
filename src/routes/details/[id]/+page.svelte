@@ -20,7 +20,7 @@
 	}
 	let myPlaylist = [];
 	let myPlaylistomu = [];
-	let group = $state('links');
+	let group = $state('details');
 	let value = $state('0');
 	let { data } = $props();
 	let data1 = $state();
@@ -184,6 +184,7 @@
 						</div>
 					</Tabs.Panel>
 					<Tabs.Panel value="links">
+					{#if data1.type == 'movie'}			
 						<table style="table-layout: fixed; width: 100%;">
 							<thead>
 								<tr>
@@ -206,6 +207,7 @@
 								</tr>
 							</tbody>
 						</table>
+						{/if}
 					</Tabs.Panel>
 					<Tabs.Panel value="episodes">
 						<Accordion {value} collapsible>
@@ -218,7 +220,7 @@
 												<span>{link.title}</span>
 											</div>
 										{/snippet}
-										{#snippet control()}<div class="flex justify-center">sssss</div>{/snippet}
+										{#snippet control()}<div class="flex justify-center"></div>{/snippet}
 										{#snippet panel()}
 											<div class="episode-content">
 												<p class="episode-overview">{link.description}</p>

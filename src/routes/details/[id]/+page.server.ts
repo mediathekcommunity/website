@@ -105,7 +105,7 @@ function generatePlaylist(slinks: any) {
 }
 function videosrc(links: any,backdrop: string) {
 	let src1 = {};
-	if (links) {
+	if (links.length > 0) {
 		src1.src = links[0].streamlink;
 		src1.type = getformat(links[0].streamformat);
 		src1.tracks = getsubformat(links[0].subtitles);
