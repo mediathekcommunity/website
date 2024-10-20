@@ -95,8 +95,8 @@
 				<div class="hero-overlay"></div>
 				<div class="hero-content">
 					<h1 class="title">{data1.title}</h1>
-					{#if data1.orgtitle && data1.orgtitle !== data1.title}
-						<h2 class="subtitle">{data1.orgtitle}</h2>
+					{#if data1.orgtitle}
+						<h2 class="subtitle">Original Title: {data1.orgtitle}</h2>
 					{/if}
 					<div class="meta-info"></div>
 				</div>

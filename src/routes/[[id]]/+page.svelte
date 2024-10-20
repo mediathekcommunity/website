@@ -7,57 +7,79 @@
 	import Card from '$lib/components/Card.svelte';
 	import Slider1 from '$lib/components/Slider1.svelte';
 	import ErrorSection from '$lib/components/ErrorSection.svelte';
-
+	import Autoplay from 'embla-carousel-autoplay';
+	import Fade from 'embla-carousel-fade';
 	let { data } = $props();
+ 
 	//console.log('Received data:', data);
 	// Function to group media items by channel country
 	// Get the first item from the data.page array as the hero item
-	let heroItem = $derived(data?.page && data.page.length > 0 ? data.page[0] : null);
+	let heroItems = $derived(data?.page && data.page.length > 0 ? data.page.slice(-5) : []);
 
 	// Carousel options
-	let options = { align: 'start', slidesToScroll: 2, loop: true };
+	let options = { align: 'start', slidesToScroll: 1, loop: true };
+	let plugins = [Autoplay({ delay: 8000, stopOnMouseEnter: false, stopOnFocusIn: false }), Fade()];
+
+	let options2 = { align: 'start', slidesToScroll: 2, loop: true };
+	let emblaApi;
+
+ 
+
+	function onInit(event) {
+		emblaApi = event.detail;
+	}
 </script>
 
 <div class="page-container">
 	{#if data && data.page && data.page.length > 0}
 		<div class="content">
 			<!-- Hero Section -->
-			{#if heroItem}
+			{#if heroItems}
 				<div class="hero-section">
-					<div class="hero-image-container">
-						{#if heroItem.backdrop}
-							<img
-								src="https://img.mediathek.rocks/t/p/original{heroItem.backdrop}"
-								alt="{heroItem.title} backdrop"
-								class="hero-image"
-							/>
-						{/if}
-						<div class="hero-overlay"></div>
-					</div>
-					<div class="hero-content">
-						<h1 class="hero-title">{heroItem.title || 'Latest Addition'}</h1>
-						<p class="hero-description">{heroItem.orgtitle || 'Original Title Not Available'}</p>
-						<div class="hero-details">
-							{#if heroItem.channel?.country && Flag[heroItem.channel.country]}
-								<!-- svelte-ignore svelte_component_deprecated -->
-								<svelte:component this={Flag[heroItem.channel.country]} size="20" />
-							{/if}
-							<span>{heroItem.channel?.name || 'Channel Name Not Available'}</span>
-							{#if heroItem.quality}
-								<span class="hero-quality">{heroItem.quality}</span>
-							{/if}
-						</div>
-						{#if heroItem.onlineuntil}
-							<p class="hero-availability">
-								Available until: {new Date(heroItem.onlineuntil).toLocaleDateString()}
-							</p>
-						{/if}
-						<div class="hero-buttons">
-							<button
-								class="btn-more-info"
-								onclick={() => (window.location.href = `/details/${heroItem.id}`)}
-								>ⓘ More Info</button
-							>
+					<div class="embla2" use:emblaCarouselSvelte={{ options, plugins }} onemblaInit={onInit}>
+						<div class="embla__container2">
+							{#each heroItems as heroItem}
+								<div class="embla__slide2">
+									<div class="hero-image-container">
+										{#if heroItem.backdrop}
+											<img
+												src="https://img.mediathek.rocks/t/p/original{heroItem.backdrop}"
+												alt="{heroItem.title} backdrop"
+												class="hero-image"
+											/>
+										{/if}
+										<div class="hero-overlay"></div>
+									</div>
+									<div class="hero-content">
+										<h1 class="hero-title">{heroItem.title || 'Latest Addition'}</h1>
+										<p class="hero-description">
+											{'Original Title: ' + heroItem.orgtitle || 'Original Title Not Available'}
+										</p>
+										<div class="hero-details">
+											{#if heroItem.channel?.country && Flag[heroItem.channel.country]}
+												<!-- svelte-ignore svelte_component_deprecated -->
+												<svelte:component this={Flag[heroItem.channel.country]} size="20" />
+											{/if}
+											<span>{heroItem.channel?.name || 'Channel Name Not Available'}</span>
+											{#if heroItem.quality}
+												<span class="hero-quality">{heroItem.quality}</span>
+											{/if}
+										</div>
+										{#if heroItem.onlineuntil}
+											<p class="hero-availability">
+												Available until: {new Date(heroItem.onlineuntil).toLocaleDateString()}
+											</p>
+										{/if}
+										<div class="hero-buttons">
+											<button
+												class="btn-more-info"
+												onclick={() => (window.location.href = `/details/${heroItem.id}`)}
+												>ⓘ More Info</button
+											>
+										</div>
+									</div>
+								</div>
+							{/each}
 						</div>
 					</div>
 				</div>
@@ -73,7 +95,7 @@
 						</span>
 					</h1>
 
-					<div class="embla" use:emblaCarouselSvelte={options}>
+					<div class="embla" use:emblaCarouselSvelte={options2}>
 						<div class="embla__container flex">
 							{#each data.page as item}
 								<div class="embla__slide">
@@ -144,8 +166,8 @@
 	}
 
 	.hero-content {
-		position: absolute;
-		bottom: 10%;
+		position: relative;
+		bottom: 58%;
 		left: 4%;
 		max-width: 50%;
 		z-index: 2;
@@ -233,7 +255,7 @@
 	.embla__slide {
 		flex: 0 0 auto;
 		min-width: 0;
-		padding-right: 20px; /* This adds space between slides */
+		padding-right: 0; /* This adds space between slides */
 	}
 
 	/* Media queries for responsiveness */
@@ -276,5 +298,16 @@
 			padding: 6px 12px;
 			font-size: 0.9rem;
 		}
+	}
+
+	.embla2 {
+		overflow: hidden;
+	}
+	.embla__container2 {
+		display: flex;
+	}
+	.embla__slide2 {
+		flex: 0 0 100%;
+		min-width: 0;
 	}
 </style>

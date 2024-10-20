@@ -5,7 +5,7 @@
 	import Icon from '@iconify/svelte';
 
 	export let carddata;
-
+	//console.log('Card data:', carddata);
 	$: title = carddata?.title || 'Unknown Title';
 	$: orgtitle = carddata?.orgtitle || 'Unknown';
 	$: metascore = carddata?.metascore || 'Unknown';
