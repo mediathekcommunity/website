@@ -1,6 +1,6 @@
 <script>
 	// @ts-nocheck
-	import { visible } from '$lib/store.js';
+	import { visible } from '$lib/store';
 	import * as Flag from 'svelte-flags';
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
 	import Card from '$lib/components/Card.svelte';
