@@ -24,7 +24,7 @@
 			return a.localeCompare(b);
 		});
 	}
-
+//$: console.log('langlist:', langlist);
 	$: sortedLanglist = sortCountries(langlist, geo);
 </script>
 

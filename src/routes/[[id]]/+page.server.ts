@@ -36,12 +36,22 @@ query Mediathekfilter($type: Mediathek_type_Input) {
  			poster
 			backdrop
 			type
+			channel {
+				id
+				name
+				country
+			}
 		}
 	}
-}
-
-`;
-
+}`;
+const groupByChannelCountry = (items) => {
+	return items.reduce((acc, item) => {
+		const country = item.channel?.country || 'Unknown';
+		acc[country] = acc[country] || [];
+		acc[country].push(item);
+		return acc;
+	}, {});
+};
 function capitalizeFirstLetter(string: string): string {
 	return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
@@ -63,6 +73,8 @@ export async function load({ fetch, params, request }) {
 		page: data1,
 		count: data1.length,
 		geo: capitalizeFirstLetter(h1),
-		filter: params.id
+		filter: params.id,
+		groupbycountry: groupByChannelCountry(data1),
+		countries: Object.keys(groupByChannelCountry(data1))
 	};
 }

@@ -9,20 +9,8 @@
 	import ErrorSection from '$lib/components/ErrorSection.svelte';
 
 	let { data } = $props();
-	console.log('Received data:', data);
+	//console.log('Received data:', data);
 	// Function to group media items by channel country
-	const groupByChannelCountry = (items) => {
-		return items.reduce((acc, item) => {	
-			const country = item.channel?.country || 'Unknown';
-			acc[country] = acc[country] || [];
-			acc[country].push(item);
-			return acc;
-		}, {});
-	};
-
-	let groupedData = $derived(data?.page ? groupByChannelCountry(data.page) : {});
-	let countries = $derived(Object.keys(groupedData).sort());
-
 	// Get the first item from the data.page array as the hero item
 	let heroItem = $derived(data?.page && data.page.length > 0 ? data.page[0] : null);
 
@@ -95,7 +83,7 @@
 						</div>
 					</div>
 				</div>
-				<Slider1 langlist={countries} langdata={groupedData} geo={data.geo} />
+				<Slider1 langlist={data.countries} langdata={data.groupbycountry} geo={data.geo} />
 			</div>
 		</div>
 	{:else}
