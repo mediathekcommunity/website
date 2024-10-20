@@ -134,6 +134,7 @@
 	});
 </script>
 
+<!-- svelte-ignore a11y_media_has_caption -->
 <video id="my-video" playsinline webkit-playsinline class="video-js vjs-16-9 overflow-hidden"
 ></video>
 
