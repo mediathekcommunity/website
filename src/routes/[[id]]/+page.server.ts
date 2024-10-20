@@ -55,6 +55,13 @@ const groupByChannelCountry = (items) => {
 function capitalizeFirstLetter(string: string): string {
 	return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
+function checkparamsok(params) {
+	if (params && (params == 'movie' || params == 'series'|| params == 'debug')) {
+ 		return true;
+	} else {
+		return false;
+	}
+}
 async function query(id1) {
 	const result = id1 ? await client.query(QUERY2, { type: id1 }) : await client.query(QUERY);
 	// console.log(result);
@@ -62,19 +69,26 @@ async function query(id1) {
 }
 
 export async function load({ fetch, params, request }) {
-	const h1 = request.headers.get('Cdn-Requestcountrycode') || 'Se';
-	const data1 = await query(params.id);
-	// console.log(data1);
+ 
+	if (!checkparamsok(params.id)) {
+ 		throw error(403, 'forbidden params');
+	} else {
+		const h1 = request.headers.get('Cdn-Requestcountrycode') || 'Se';
+		const data1 = await query(params.id);
+		// console.log(data1);
 
-	if (!data1) {
-		throw error(404, 'Page not found');
+		if (!data1) {
+			throw error(404, 'Page not found');
+		}
+
+		return {
+			page: data1,
+			error: false,
+			count: data1.length,
+			geo: capitalizeFirstLetter(h1),
+			filter: params.id,
+			groupbycountry: groupByChannelCountry(data1),
+			countries: Object.keys(groupByChannelCountry(data1))
+		};
 	}
-	return {
-		page: data1,
-		count: data1.length,
-		geo: capitalizeFirstLetter(h1),
-		filter: params.id,
-		groupbycountry: groupByChannelCountry(data1),
-		countries: Object.keys(groupByChannelCountry(data1))
-	};
 }

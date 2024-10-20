@@ -31,7 +31,7 @@
 </script>
 
 <div class="page-container">
-	{#if data && data.page && data.page.length > 0}
+	{#if data && data.page && data.page.length > 0 && data.error === false}
 		<div class="content">
 			<!-- Hero Section -->
 			{#if heroItems}
