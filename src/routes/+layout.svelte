@@ -15,8 +15,7 @@
 			>
 				<h3>WIP</h3>
 				<p>
-					I'm rebuilding data structure in the backend to support multiple channel public broadcast
-					mediatheks per entry
+					I'm still rebuilding the site & backend. Please be patient. Thanks!
 				</p>
 			</div>
 		</aside>

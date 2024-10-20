@@ -24,7 +24,7 @@
 	let countries = $derived(Object.keys(groupedData).sort());
 
 	// Get the first item from the data.page array as the hero item
-	let heroItem = $derived(data?.page && data.page.length > 0 ? data.page[2] : null);
+	let heroItem = $derived(data?.page && data.page.length > 0 ? data.page[0] : null);
 
 	// Carousel options
 	let options = { align: 'start', slidesToScroll: 2, loop: true };
@@ -51,6 +51,7 @@
 						<p class="hero-description">{heroItem.orgtitle || 'Original Title Not Available'}</p>
 						<div class="hero-details">
 							{#if heroItem.channel?.country && Flag[heroItem.channel.country]}
+								<!-- svelte-ignore svelte_component_deprecated -->
 								<svelte:component this={Flag[heroItem.channel.country]} size="20" />
 							{/if}
 							<span>{heroItem.channel?.name || 'Channel Name Not Available'}</span>

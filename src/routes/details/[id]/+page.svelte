@@ -233,7 +233,7 @@
 					<Tabs.Panel value="episodes">
 						<Accordion {value} collapsible>
 							{#if data1.links}
-								{#each data1.links as link,index}
+								{#each data1.links as link, index}
 									<Accordion.Item value={index.toString()}>
 										{#snippet lead()}
 											<div class="episode-title">
@@ -241,7 +241,9 @@
 												<span>{link.title}</span>
 											</div>
 										{/snippet}
-										{#snippet control()}<div class="flex justify-center"> {link.channel.name}</div>{/snippet}
+										{#snippet control()}<div class="flex justify-center">
+												{link.channel.name}
+											</div>{/snippet}
 										{#snippet panel()}
 											<div class="episode-content">
 												<p class="episode-overview">{link.description}</p>
