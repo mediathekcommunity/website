@@ -6,13 +6,16 @@
 	import '../videojs/plugins/es/playlist.js';
 	import '../videojs/plugins/es/videojs.hotkeys';
 
-	import { modalProps, modalvideo, omulist, noomulist, seriestype } from '$lib/store.js';
+	import { modalvideo, playlist, seriestype, playlistindex } from '$lib/store.js';
 
-	let player: videojs.Player | null = null;
-
+	let player: any = null;
+	let videoSource: {
+		sources: { src: string; type: string }[];
+		poster: string;
+		title: string;
+	} | null = null;
 	const videojsOptions = {
 		controls: true,
-		preload: 'auto',
 		playsinline: true,
 		fill: true,
 		hotkeys: true,
@@ -28,9 +31,11 @@
 	};
 
 	const nuevoOptions = {
-		video_id: $modalvideo.id,
+		videoInfo: true,
 		playlistUI: true,
+		ccButton: true,
 		playlistShow: true,
+		playlistAutoHide: false,
 		playlistNavigation: true,
 		qualityMenu: true,
 		shareMenu: false,
@@ -48,31 +53,46 @@
 		player = videojs(videoElement, videojsOptions);
 		player.nuevo(nuevoOptions);
 		player.hotkeys({ seekStep: 10 });
-		updatePlayerSource($seriestype);
-
-		player.on('mode', (event, mode) => {
-			const leftColumn = document.querySelector('#left_column');
-			if (leftColumn) {
-				leftColumn.style.width = mode === 'large' ? '100%' : '70%';
-			}
-		});
+		console.log('initializePlayer');
+		/*
+		console.log($modalvideo);
+		console.log($playlist);
+		console.log($seriestype);
+		console.log($playlistindex);
+		*/
+		//updatePlayerSource($seriestype);
+		if ($seriestype === 'playlist') {
+			player.playlist.currentItem($playlistindex);
+		}
+		player.pause();
 	}
 
 	function updatePlayerSource(type: string) {
 		if (!player) return;
-
-		player.pause();
 		player.currentTime(0);
-
 		switch (type) {
-			case 'noomu':
-				player.playlist($noomulist);
+			case 'playlist':
+				player.playlist($playlist);
+				var index = $playlistindex;
+				if ($playlist[index].tracks) {
+					//console.log('subs', $playlist[index].tracks);
+					player.loadTracks($playlist[index].tracks);
+				}
+				player.poster($playlist[index].poster);
 				break;
-			case 'omu':
-				player.playlist($omulist);
+			case 'single':
+				//console.log($modalvideo);
+				videoSource = {
+					sources: [{ src: $modalvideo.src, type: $modalvideo.type }],
+					poster: $modalvideo.poster,
+					title: $modalvideo.title
+				};
+
+				player.poster($modalvideo.poster);
+				player.src(videoSource.sources);
 				break;
 			default:
-				const videoSource = {
+				videoSource = {
 					sources: [{ src: $modalvideo.src, type: $modalvideo.type }],
 					poster: $modalvideo.poster,
 					title: $modalvideo.title
@@ -81,12 +101,27 @@
 				player.src(videoSource.sources);
 				break;
 		}
-	}
+		player.on('loadeddata', function () {
+			console.log('loadeddata');
+			var index = $playlistindex;
 
-	$: if (player && ($modalvideo || $seriestype)) {
+			if ($modalvideo.tracks) {
+				//console.log('subssingle', $modalvideo.tracks);
+				player.loadTracks($modalvideo.tracks);
+			} else if ($playlist && $playlist[index].tracks) {
+				//console.log('subsplaylist', $playlist[index].tracks);
+				player.loadTracks($playlist[index].tracks);
+			}
+			player.pause();
+		});
+	}
+	$: if (player && ($modalvideo || $seriestype || $playlistindex)) {
+		console.log('updatePlayerSource');
 		updatePlayerSource($seriestype);
+		if ($seriestype === 'playlist') {
+			player.playlist.currentItem($playlistindex);
+		}
 	}
-
 	onMount(() => {
 		const videoElement = document.getElementById('my-video') as HTMLVideoElement;
 		if (videoElement) {
@@ -101,25 +136,11 @@
 	});
 </script>
 
-<div id="left_column" class="left-column">
-	<video 
-		id="my-video" 
-		playsinline 
-		webkit-playsinline 
-		class="video-js vjs-16-9 overflow-hidden"
-	></video>
-</div>
+<video id="my-video" playsinline webkit-playsinline class="video-js vjs-16-9 overflow-hidden"
+></video>
 
 <style>
 	.overflow-hidden {
 		overflow: hidden !important;
-	}
-	.left-column {
-		width: 100%;
-		display: flex;
-		height: fit-content;
-		max-height: fit-content;
-		align-items: center;
-		overflow: hidden;
 	}
 </style>

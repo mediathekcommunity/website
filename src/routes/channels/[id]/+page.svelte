@@ -12,7 +12,7 @@
 	// State variables for grouped data and country list
 	let langdata = $state({});
 	let langlist = $state([]);
-
+	console.log(process.env);
 	// Function to group media items by channel country
 	const groupByChannelCountry = (items) => {
 		return items.reduce((acc, item) => {

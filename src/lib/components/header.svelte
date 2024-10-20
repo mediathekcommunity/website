@@ -3,6 +3,7 @@
 
 	let isScrolled = false;
 	let isMobileMenuOpen = false;
+	let mode = import.meta.env.MODE;
 
 	function handleScroll() {
 		isScrolled = window.scrollY > 50;
@@ -30,7 +31,9 @@
 				<li><a href="/">Home</a></li>
 				<li><a href="/movie">Movies</a></li>
 				<li><a href="/series">TV Shows</a></li>
-				<!-- <li><a href="/channels">Channels</a></li>-->
+				{#if (mode = 'development')}
+				<li><a href="/debug">Debug</a></li>
+				{/if}
 			</ul>
 		</nav>
 		<button class="mobile-menu-button" on:click={toggleMobileMenu}> ☰ </button>

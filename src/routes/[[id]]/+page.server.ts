@@ -14,6 +14,11 @@ const QUERY = `
  			poster
  			backdrop
 			type
+			channel {
+				id
+				name
+				country
+			}
 		}
 	}
 }

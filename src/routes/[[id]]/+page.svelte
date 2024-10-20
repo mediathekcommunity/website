@@ -9,10 +9,10 @@
 	import ErrorSection from '$lib/components/ErrorSection.svelte';
 
 	let { data } = $props();
-
+	console.log('Received data:', data);
 	// Function to group media items by channel country
 	const groupByChannelCountry = (items) => {
-		return items.reduce((acc, item) => {
+		return items.reduce((acc, item) => {	
 			const country = item.channel?.country || 'Unknown';
 			acc[country] = acc[country] || [];
 			acc[country].push(item);

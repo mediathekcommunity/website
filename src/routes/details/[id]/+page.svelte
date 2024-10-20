@@ -6,7 +6,7 @@
 	import Film from 'lucide-svelte/icons/film';
 	import Tv from 'lucide-svelte/icons/tv';
 	import Videoplayer from '$lib/components/Videoplayer.svelte';
-	import { modalvideo, omulist, noomulist, seriestype } from '$lib/store.js';
+	import { modalvideo, playlist, seriestype, playlistindex } from '$lib/store.js';
 
 	function getformat(id) {
 		switch (id) {
@@ -18,43 +18,41 @@
 				return 'application/dash+xml';
 		}
 	}
-
 	let myPlaylist = [];
 	let myPlaylistomu = [];
-	let group = $state('episodes');
+	let group = $state('links');
 	let value = $state('0');
 	let { data } = $props();
 	let data1 = $state();
 	let channelinfo = $state();
 	let backgroundImage = $state('');
-
-	let omu = {};
-	let noomu = {};
 	let showvideo = $state(false);
+	//console.log('Details page:', data);
 
 	$effect(() => {
 		data1 = data.page;
 		//channelinfo = data.page.channel;
 	});
-
+	//console.log('Received data:', data);
 	let tabSet = 0;
-
+	function stopvideo() {
+		showvideo = false;
+		modalvideo.set({
+			src: '',
+			type: '',
+			poster: '',
+			title: ''
+		});
+	}
 	function playvideo() {
-		showvideo = !showvideo; // Toggle the showvideo state
-		if (showvideo) {
-			seriestype.set('');
-			let poster1 = data1.backdrop
-				? `https://img.mediathek.rocks/t/p/original/${data1.backdrop}`
-				: `https://img2.mediathek.rocks/assets/${data1.heroimage}`;
-
-			modalvideo.set({
-				src: data1.streamlink,
-				type: getformat(data1.streamformat),
-				poster: poster1,
-				title: data1.title
-			});
+		if (!showvideo) {
+			var d = data.videosource;
+			//console.log(d);
+			showvideo = true; // Always show video for episodes
+			modalvideo.set(d);
+			seriestype.set('single');
 		} else {
-			// Optional: Reset the video player when hiding it
+			showvideo = false;
 			modalvideo.set({
 				src: '',
 				type: '',
@@ -64,59 +62,19 @@
 		}
 	}
 
-	function playepisode(episode, type) {
-		showvideo = true; // Always show video for episodes
-		myPlaylist = [];
-		myPlaylistomu = [];
-		seriestype.set(type);
+	function playepisode(episode, index) {
+		if (!showvideo) {
+			//console.log(episode + '-' + index);
+			showvideo = true; // Always show video for episodes
+			myPlaylist = [];
+			seriestype.set('playlist');
+			playlistindex.set(index);
 
-		let sources = [];
-		if (episode.streamlink) {
-			sources.push({
-				src: episode.streamlink,
-				type: getformat(data1.streamformat),
-				default: true
-			});
-		}
-
-		let poster12 = data1.backdrop
-			? `https://img.mediathek.rocks/t/p/original/${data1.backdrop}`
-			: `https://img2.mediathek.rocks/assets/${data1.heroimage}`;
-
-		if (!episode.omu) {
-			myPlaylist.push({
-				title: episode.title,
-				infoTitle: episode.title,
-				poster: poster12,
-				thumb: poster12,
-				sources: sources
-			});
+			playlist.set(data.playlist);
 		} else {
-			if (episode.directlinklq) {
-				sources.push({
-					src: episode.directlinklq,
-					type: getformat(episode.streamformat),
-					res: '360',
-					label: '360p'
-				});
-			}
-			myPlaylistomu.push({
-				title: `omu${episode.title}`,
-				infoTitle: episode.title,
-				poster: `https://img.mediathek.corocksmunity/t/p/original/${data1.backdrop}`,
-				sources: sources
-			});
+			//console.log(episode + '-' + index);
+			playlistindex.set(index);
 		}
-
-		noomulist.set(myPlaylist);
-		omulist.set(myPlaylistomu);
-
-		modalvideo.set({
-			src: episode.streamlink,
-			type: getformat(data1.streamformat),
-			poster: poster12,
-			title: episode.title
-		});
 	}
 </script>
 
@@ -125,7 +83,7 @@
 		{#if showvideo}
 			<div class="video-player-container">
 				<Videoplayer />
-				<button class="close-video-btn" onclick={playvideo}>Close Video</button>
+				<button class="close-video-btn" onclick={stopvideo}>Close Video</button>
 			</div>
 		{:else}
 			<div
@@ -170,15 +128,25 @@
 												<td>{data1.duration}m</td>
 											</tr>
 										{/if}
-										<!--  
+										{#if data1.type == 'series'}
+											<tr>
+												<th>Seasons</th>
+												<td>{data1.season}</td>
+											</tr>
+											<tr>
+												<th>Episodes</th>
+												<td>{data1.episode}</td>
+											</tr>
+										{/if}
+										<tr>
 											<th>Country</th>
 											<td>
- 												<svelte:component
+												<!-- svelte-ignore svelte_component_deprecated -->
+												<svelte:component
 													this={Flag[data1.channel.country]}
 													class="flag-icon"
 													size="25"
 												/>
-												{data1.channel.country}
 											</td>
 										</tr>
 										<tr>
@@ -189,11 +157,16 @@
 											<th>Quality</th>
 											<td>{data1.quality}</td>
 										</tr>
+										<!--   
+										<tr>
+											<th>Quality</th>
+											<td>{data1.quality}</td>
+										</tr>
 								
-										{#if data1.episodes.length > 0}
+										{#if data1.type == 'series'}
 											<tr>
 												<th>Seasons</th>
-												<td>{data1.episodes.length || 1}</td>
+												<td>{data1.slinks.length || 1}</td>
 											</tr>
 											<tr>
 												<th>Episodes</th>
@@ -214,26 +187,30 @@
 						<table style="table-layout: fixed; width: 100%;">
 							<thead>
 								<tr>
-									<th style="width: 33.33%; text-align: center;">Channel</th>
-									<th style="width: 33.33%; text-align: center;">Online until</th>
-									<th style="width: 33.33%; text-align: center;">Links</th>
+									<th style="width: 33.33%; text-align: center;">Format</th>
+									<th style="width: 33.33%; text-align: center;">Link</th>
 								</tr>
 							</thead>
 							<tbody>
-								{#if data1.type == 'movie'}
-									<tr>
-										<td style="text-align: center;"> link.channel </td>
-										<td style="text-align: center;">{link.onlineUntil}</td>
-										<td style="text-align: center;"> </td>
-									</tr>
-								{/if}
+								<tr>
+									<td style="text-align: center;"> {data1.links[0].streamformat} </td>
+									<td style="text-align: center;"
+										><button
+											type="button"
+											class="play-episode-button btn preset-filled-primary-500"
+											onclick={() => playvideo(data1.links)}
+										>
+											Play Link
+										</button>
+									</td>
+								</tr>
 							</tbody>
 						</table>
 					</Tabs.Panel>
 					<Tabs.Panel value="episodes">
 						<Accordion {value} collapsible>
-							{#if data1.links}
-								{#each data1.links as link, index}
+							{#if data1.slinks}
+								{#each data1.slinks as link, index}
 									<Accordion.Item value={index.toString()}>
 										{#snippet lead()}
 											<div class="episode-title">
@@ -241,16 +218,14 @@
 												<span>{link.title}</span>
 											</div>
 										{/snippet}
-										{#snippet control()}<div class="flex justify-center">
-												{link.channel.name}
-											</div>{/snippet}
+										{#snippet control()}<div class="flex justify-center">sssss</div>{/snippet}
 										{#snippet panel()}
 											<div class="episode-content">
 												<p class="episode-overview">{link.description}</p>
 												<button
 													type="button"
 													class="play-episode-button btn preset-filled-primary-500"
-													onclick={() => playepisode(episode, 'noomu')}
+													onclick={() => playepisode(link, index)}
 												>
 													Play Episode
 												</button>
@@ -282,7 +257,7 @@
 	.close-video-btn {
 		position: absolute;
 		top: 10px;
-		right: 10px;
+		left: 10px;
 		background-color: rgba(0, 0, 0, 0.5);
 		color: white;
 		border: none;
@@ -290,12 +265,19 @@
 		padding: 5px 10px;
 		cursor: pointer;
 		z-index: 10;
+		display: none; /* Initially hidden */
 	}
 
 	.close-video-btn:hover {
 		background-color: rgba(0, 0, 0, 0.7);
 	}
+	.video-player-container:hover .close-video-btn {
+		display: block; /* Show on hover */
+	}
 
+	.close-video-btn:hover {
+		background-color: rgba(0, 0, 0, 0.7);
+	}
 	.details-container {
 		width: 100%;
 		max-width: 100%;
