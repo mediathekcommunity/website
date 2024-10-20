@@ -1,2 +1,2 @@
 [phases.setup]
-nixPkgs = ['...', 'python']
+aptPkgs  = ['...', 'python3','python']
