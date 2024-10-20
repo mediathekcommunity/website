@@ -6,7 +6,7 @@
 	import Film from 'lucide-svelte/icons/film';
 	import Tv from 'lucide-svelte/icons/tv';
 	import Videoplayer from '$lib/components/Videoplayer.svelte';
-	import { modalvideo, playlist, seriestype, playlistindex } from '$lib/store.js';
+	import { modalvideo, playlist, seriestype, playlistindex } from '$lib/store';
 
 	function getformat(id) {
 		switch (id) {
@@ -31,10 +31,12 @@
 
 	$effect(() => {
 		data1 = data.page;
-		//channelinfo = data.page.channel;
+ 		//channelinfo = data.page.channel;
 	});
+ 
 	//console.log('Received data:', data);
 	let tabSet = 0;
+
 	function stopvideo() {
 		showvideo = false;
 		modalvideo.set({
@@ -47,10 +49,11 @@
 	function playvideo() {
 		if (!showvideo) {
 			var d = data.videosource;
-			//console.log(d);
+			//console.log(data);
 			showvideo = true; // Always show video for episodes
 			modalvideo.set(d);
 			seriestype.set('single');
+ 
 		} else {
 			showvideo = false;
 			modalvideo.set({
@@ -64,7 +67,7 @@
 
 	function playepisode(episode, index) {
 		if (!showvideo) {
-			//console.log(episode + '-' + index);
+			//console.log(JSON.stringify(episode) + '-' + index);
 			showvideo = true; // Always show video for episodes
 			myPlaylist = [];
 			seriestype.set('playlist');

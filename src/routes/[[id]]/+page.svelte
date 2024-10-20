@@ -1,7 +1,7 @@
 <script>
 	// @ts-nocheck
 
-	import { visible } from '$lib/store.js';
+	import { visible } from '$lib/store';
 	import * as Flag from 'svelte-flags';
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
 	import Card from '$lib/components/Card.svelte';
@@ -18,7 +18,7 @@
 
 	// Carousel options
 	let options = { align: 'start', slidesToScroll: 1, loop: true };
-	let plugins = [Autoplay({ delay: 8000, stopOnMouseEnter: false, stopOnFocusIn: false }), Fade()];
+	let plugins = [Autoplay({ delay: 8000, stopOnMouseEnter: false, stopOnFocusIn: false,stopOnInteraction:false }), Fade()];
 
 	let options2 = { align: 'start', slidesToScroll: 2, loop: true };
 	let emblaApi;

@@ -6,7 +6,7 @@
 	import '../videojs/plugins/es/playlist.js';
 	import '../videojs/plugins/es/videojs.hotkeys';
 
-	import { modalvideo, playlist, seriestype, playlistindex } from '$lib/store.js';
+	import { modalvideo, playlist, subs, seriestype, playlistindex } from '$lib/store';
 
 	let player: any = null;
 	let videoSource: {
@@ -73,22 +73,20 @@
 		switch (type) {
 			case 'playlist':
 				player.playlist($playlist);
+				//console.log('playlist', $playlistindex);
 				var index = $playlistindex;
-				if ($playlist[index].tracks) {
-					//console.log('subs', $playlist[index].tracks);
-					player.loadTracks($playlist[index].tracks);
-				}
-				player.poster($playlist[index].poster);
+
+				player.poster($playlist[index].thumb);
 				break;
 			case 'single':
 				//console.log($modalvideo);
 				videoSource = {
 					sources: [{ src: $modalvideo.src, type: $modalvideo.type }],
-					poster: $modalvideo.poster,
+					poster: $modalvideo.thumb,
 					title: $modalvideo.title
 				};
 
-				player.poster($modalvideo.poster);
+				player.poster($modalvideo.thumb);
 				player.src(videoSource.sources);
 				break;
 			default:

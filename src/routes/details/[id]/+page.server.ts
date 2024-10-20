@@ -103,7 +103,7 @@ function generatePlaylist(slinks: any) {
 	}
 	return playlist;
 }
-function videosrc(links: any,backdrop: string) {
+function videosrc(links: any, backdrop: string) {
 	let src1 = {};
 	if (links.length > 0) {
 		src1.src = links[0].streamlink;
@@ -118,7 +118,7 @@ export async function load({ params }) {
 	try {
 		const mediathek = await fetchMediathek(params.id);
 		const slinks = generatePlaylist(mediathek.slinks);
-		const videosrc1 = videosrc(mediathek.links,mediathek.backdrop);
+		const videosrc1 = videosrc(mediathek.links, mediathek.backdrop);
 		return {
 			page: mediathek,
 			playlist: slinks || [],
