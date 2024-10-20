@@ -56,8 +56,9 @@ function capitalizeFirstLetter(string: string): string {
 	return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
 function checkparamsok(params) {
-	if (params && (params == 'movie' || params == 'series'|| params == 'debug')) {
- 		return true;
+	//console.log(params);
+	if (!params || params == 'movie' || params == 'series' || params == 'debug') {
+		return true;
 	} else {
 		return false;
 	}
@@ -69,9 +70,8 @@ async function query(id1) {
 }
 
 export async function load({ fetch, params, request }) {
- 
 	if (!checkparamsok(params.id)) {
- 		throw error(403, 'forbidden params');
+		throw error(403, 'forbidden params');
 	} else {
 		const h1 = request.headers.get('Cdn-Requestcountrycode') || 'Se';
 		const data1 = await query(params.id);
