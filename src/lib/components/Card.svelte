@@ -63,7 +63,9 @@
 					<div class="country-channel-info">
 						<h3 class="card-title">O: {orgtitle}</h3>
 					</div>
-					<p>Metascore: {metascore}</p>
+					{#if metascore !== 'Unknown'}
+						<p>Metascore: {metascore}</p>
+					{/if}
 				</div>
 			{/if}
 		</div>
