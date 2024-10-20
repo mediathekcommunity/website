@@ -1,6 +1,5 @@
 <script>
-	import { visible } from '$lib/store.js';
-	import * as Flag from 'svelte-flags';
+ 	import * as Flag from 'svelte-flags';
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
 	import ChannelCard from '$lib/components/ChannelCard.svelte';
 	import ErrorSection from '$lib/components/ErrorSection.svelte';
@@ -28,6 +27,7 @@
 	{#if data && data.page && data.page.length > 0}
 		{#each countries as country}
 			<div class="country-header">
+				<!-- svelte-ignore svelte_component_deprecated -->
 				<svelte:component this={Flag[country]} size="30" />
 			</div>
 			<div class="embla" use:emblaCarouselSvelte={options}>
