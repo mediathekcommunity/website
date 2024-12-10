@@ -44,7 +44,7 @@
 	"type": "module",
 	"dependencies": {
 		"@eslint/js": "^9.13.0",
-		"@urql/core": "^5.0.7",
+		"@urql/core": "^5.1.0",
 		"@urql/svelte": "^4.2.1",
 		"embla-carousel-autoplay": "^8.3.0",
 		"embla-carousel-fade": "^8.3.0",
