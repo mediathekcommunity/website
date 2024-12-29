@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
-	import '../videojs/skins/treso/videojs.min.css';
+	import '../videojs/skins/gold1/videojs.min.css';
 	import videojs from 'video.js';
 	import '../videojs/plugins/es/nuevo.js';
 	import '../videojs/plugins/es/playlist.js';
 	import '../videojs/plugins/es/videojs.hotkeys';
 	import '../videojs/plugins/es/videojs.skipintro';
- 
+
 	import { modalvideo, playlist, subs, seriestype, playlistindex } from '$lib/store';
 
 	let player: any = null;
@@ -32,11 +32,13 @@
 	};
 
 	const nuevoOptions = {
-		qualityMenu: true,
 		pipButton: false,
 		shareMenu: false,
 		rateMenu: false,
-		contextMenu: false,
+		zoomMenu: false,
+		qualityMenu: false,
+		settingsButton: false,
+		contextMenu: true,
 		rewindforward: 30
 	};
 
@@ -61,7 +63,6 @@
 		});
 		player.nuevo(nuevoOptions);
 		player.skipintro({ skipStart: 1, skipDuration: 10, skipTarget: 30 });
- 
 		player.hotkeys({ seekStep: 10 });
 		console.log('initializePlayer');
 		console.log(player);
@@ -152,5 +153,35 @@
 <style>
 	.overflow-hidden {
 		overflow: hidden !important;
+	}
+	:root {
+		--controlbar-bg-color: transparent;
+		--big-play-bg-color: #708090;
+		--big-play-color: #ffffff;
+		--button-icon-bg-color: #708090;
+		--button-icon-hover-bg-color: #c6c6c6;
+		--button-icon-color: #ffffff;
+		--button-icon-hover-color: #222222;
+		--menu-bg-color: #f0f8ff;
+		--menu-hover-bg-color: #d4d9de;
+		--menu-color: #222222;
+		--menu-active-color: #22222;
+		--menu-active-bg-color: #b0c4de;
+		--menu-secondary-color: #222222;
+		--menu-title-bg-color: #708090;
+		--menu-title-color: #fff;
+		--menu-zoom-level-color: #708090;
+		--menu-zoom-slider-color: #cccccc;
+		--menu-zoom-thumb-color: #708090;
+		--tooltip-bg-color: #ffffff;
+		--tooltip-color: #222222;
+		--progress-play-color: #c6c6c6;
+		--progress-load-color: #999999;
+		--progress-ad-color: #cc0000;
+		--chapter-marker-color: #ffffff;
+		--volume-bg-color: rgba(0, 0, 0, 0.5);
+		--volume-slider-color: #666666;
+		--volume-level-color: #ffffff;
+		--volume-thumb-color: #708090;
 	}
 </style>
