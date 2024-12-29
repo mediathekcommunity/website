@@ -1,5 +1,6 @@
 import { error } from '@sveltejs/kit';
 import client from '$lib/directus.js';
+export const ssr = false;
 
 // GraphQL query string
 const query = `

@@ -5,7 +5,8 @@
 	import '../videojs/plugins/es/nuevo.js';
 	import '../videojs/plugins/es/playlist.js';
 	import '../videojs/plugins/es/videojs.hotkeys';
-
+	import '../videojs/plugins/es/videojs.skipintro';
+ 
 	import { modalvideo, playlist, subs, seriestype, playlistindex } from '$lib/store';
 
 	let player: any = null;
@@ -31,18 +32,39 @@
 	};
 
 	const nuevoOptions = {
-		
 		qualityMenu: true,
 		pipButton: false,
 		shareMenu: false,
 		rateMenu: false,
+		contextMenu: false,
+		rewindforward: 30
 	};
 
 	function initializePlayer(videoElement: HTMLVideoElement) {
-		player = videojs(videoElement, { license:"08085252080f5e4010" });
+		player = videojs(videoElement, {
+			license: '',
+			controls: true,
+			playsinline: true,
+			buttonForward: true,
+			fill: true,
+			hotkeys: true,
+			overlay: true,
+			resume: true,
+			html5: {
+				hlsjsConfig: {
+					debug: false,
+					enableWorker: true,
+					lowLatencyMode: false,
+					backBufferLength: 90
+				}
+			}
+		});
 		player.nuevo(nuevoOptions);
+		player.skipintro({ skipStart: 1, skipDuration: 10, skipTarget: 30 });
+ 
 		player.hotkeys({ seekStep: 10 });
 		console.log('initializePlayer');
+		console.log(player);
 		/*
 		console.log($modalvideo);
 		console.log($playlist);
