@@ -1,7 +1,7 @@
-import youtubedl from 'youtube-dl-exec';
+//import youtubedl from 'youtube-dl-exec';
 import { page } from '$app/stores';
 
-async function downloadVideo(event) {
+async function downloadVideo(event) {/*
 	var t;
 	t = await youtubedl(
 		event,
@@ -13,8 +13,8 @@ async function downloadVideo(event) {
             cookies: '.\\cookies.txt',
 			addHeader: ['referer:zdf.de', 'user-agent:googlebot']
 		}
-	);
-	return JSON.stringify(t);
+	);*/
+	return "JSON.stringify(t)";
 }
 export async function GET({ url }) {
 	var x = url.searchParams.get('url1');
