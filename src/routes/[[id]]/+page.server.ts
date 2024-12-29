@@ -45,10 +45,10 @@ query Mediathekfilter($type: Mediathek_type_Input) {
  			poster
 			heroimage
 			heroimageup {
-				url
+				filename
 			}
 			backdropup  {
-				url
+				filename
 			}
 			backdrop
 			type
