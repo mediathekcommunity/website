@@ -32,6 +32,7 @@
 				<li><a href="/">Home</a></li>
 				<li><a href="/movie">Movies</a></li>
 				<li><a href="/series">TV Shows</a></li>
+                <li><a href="/music">Music</a></li>
 				{#if mode === 'development'}
 					<li><a href="/debug">Debug</a></li>
 				{/if}
@@ -48,6 +49,8 @@
 				<li><a href="/" on:click={toggleMobileMenu}>Home</a></li>
 				<li><a href="/movie" on:click={toggleMobileMenu}>Movies</a></li>
 				<li><a href="/series" on:click={toggleMobileMenu}>TV Shows</a></li>
+                <li><a href="/music" on:click={toggleMobileMenu}>Music</a></li>
+
 			</ul>
 		</nav>
 	</div>
