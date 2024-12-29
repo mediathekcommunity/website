@@ -48,7 +48,7 @@
 					class="card-poster"
 				/>
 			{:else if carddata.backdropup}
-				<img src={carddata.backdropup.url} alt="{title} backdrop" class="card-poster" />
+				<img src="https://cdn1.mediathek.community/{carddata.backdropup.filename}" alt="{title} backdrop" class="card-poster" />
 			{:else}
 				<div class="card-poster-placeholder">{title[0]}</div>
 			{/if}

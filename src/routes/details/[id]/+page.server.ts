@@ -13,10 +13,10 @@ query Mediathek($id: String!){
 	  description
 	  season
 	  heroimageup {
-	  	url
+	  	filename
 	  }
 	  backdropup  {
-	  	url
+	  	filename
 	  }
 	  episode
       type

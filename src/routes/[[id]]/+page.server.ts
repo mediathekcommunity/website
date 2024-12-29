@@ -16,10 +16,10 @@ const QUERY = `
  			backdrop
 			heroimage
 			heroimageup {
-				url
+				filename
 			}
 			backdropup  {
-				url
+				filename
 			}
 			type
 			channel {

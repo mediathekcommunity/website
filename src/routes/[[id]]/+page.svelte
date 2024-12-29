@@ -55,7 +55,7 @@
 										{/if}
 										{#if heroItem.backdropup}
 											<img
-												src={heroItem.backdropup.url}
+												src="https://cdn1.mediathek.community/{heroItem.backdropup.filename}"
 												alt="{heroItem.title} backdrop"
 												class="hero-image"
 											/>

@@ -104,7 +104,7 @@
 				</div>
 			</div>
 		{:else}
-			<div class="hero-container" style="background-image: url({data1.backdropup.url})">
+			<div class="hero-container" style="background-image: url(https://cdn1.mediathek.community/{data1.backdropup.filename})">
 				<div class="hero-overlay"></div>
 				<div class="hero-content">
 					<h1 class="title">{data1.title}</h1>
