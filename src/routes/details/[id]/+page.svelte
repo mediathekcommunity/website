@@ -120,12 +120,10 @@
 			<Tabs bind:value={group} listJustify="justify-center" class="details-tabs">
 				{#snippet list()}
 					<Tabs.Control value="details" title="Details">Details</Tabs.Control>
-					{#if data1.links}
-						{#if data1.type === 'movie'}
-							<Tabs.Control value="links" title="Links">Links</Tabs.Control>
-						{:else}
-							<Tabs.Control value="episodes" title="Episodes">Episodes</Tabs.Control>
-						{/if}
+					{#if data1.links.length > 0}
+						<Tabs.Control value="links" title="Links">Links</Tabs.Control>
+					{:else}
+						<Tabs.Control value="episodes" title="Episodes">Episodes</Tabs.Control>
 					{/if}
 				{/snippet}
 				{#snippet content()}
@@ -197,7 +195,7 @@
 						</div>
 					</Tabs.Panel>
 					<Tabs.Panel value="links">
-						{#if data1.type == 'movie'}
+						{#if data1.links.length > 0}
 							<table style="table-layout: fixed; width: 100%;">
 								<thead>
 									<tr>

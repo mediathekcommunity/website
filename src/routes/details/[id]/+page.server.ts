@@ -128,6 +128,7 @@ export async function load({ params }) {
 		const videosrc1 = videosrc(mediathek.links, mediathek.backdrop);
 		return {
 			page: mediathek,
+			episodes: mediathek.episode,
 			playlist: slinks || [],
 			videosource: videosrc1 || {}
 		};

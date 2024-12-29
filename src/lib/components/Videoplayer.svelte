@@ -31,26 +31,15 @@
 	};
 
 	const nuevoOptions = {
-		videoInfo: true,
-		playlistUI: true,
-		ccButton: true,
-		playlistShow: true,
-		playlistAutoHide: false,
-		playlistNavigation: true,
+		
 		qualityMenu: true,
-		shareMenu: false,
 		pipButton: false,
-		buttonForward: true,
-		androidLock: true,
-		zoomMenu: false,
-		theaterButton: false,
+		shareMenu: false,
 		rateMenu: false,
-		settingsButton: true,
-		resume: true
 	};
 
 	function initializePlayer(videoElement: HTMLVideoElement) {
-		player = videojs(videoElement, videojsOptions);
+		player = videojs(videoElement, { license:"08085252080f5e4010" });
 		player.nuevo(nuevoOptions);
 		player.hotkeys({ seekStep: 10 });
 		console.log('initializePlayer');
