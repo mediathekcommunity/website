@@ -20,6 +20,7 @@ query Mediathek($id: String!){
 	  }
 	  episode
       type
+	  duration
 	  quality
       slinks {
  	    title
@@ -48,6 +49,7 @@ query Mediathek($id: String!){
 		channel {
 			name
 			country
+			info
 		}
       orgtitle
       onlineuntil

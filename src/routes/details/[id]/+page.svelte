@@ -7,7 +7,11 @@
 	import Tv from 'lucide-svelte/icons/tv';
 	import Videoplayer from '$lib/components/Videoplayer.svelte';
 	import { modalvideo, playlist, seriestype, playlistindex } from '$lib/store';
-
+	function toHoursAndMinutes(totalMinutes) {
+		const hours = Math.floor(totalMinutes / 60);
+		const minutes = totalMinutes % 60;
+		return `${hours}h${minutes > 0 ? ` ${minutes}m` : ''}`;
+	}
 	function getformat(id) {
 		switch (id) {
 			case 'mpd':
@@ -82,6 +86,16 @@
 
 {#if data1}
 	<div class="details-container">
+		{#if data1.channel.info}
+		<aside class="gradient-text">
+			<div class="gradient-text-light b21">
+				<h3>INFO</h3>
+				<p>
+					{data1.channel.info}
+				</p>
+			</div>
+		</aside>
+		{/if}
 		{#if showvideo}
 			<div class="video-player-container">
 				<Videoplayer />
@@ -104,7 +118,10 @@
 				</div>
 			</div>
 		{:else}
-			<div class="hero-container" style="background-image: url(https://cdn1.mediathek.community/{data1.backdropup.filename})">
+			<div
+				class="hero-container"
+				style="background-image: url(https://cdn1.mediathek.community/{data1.backdropup.filename})"
+			>
 				<div class="hero-overlay"></div>
 				<div class="hero-content">
 					<h1 class="title">{data1.title}</h1>
@@ -133,10 +150,10 @@
 								<h3 class="section-title">Information</h3>
 								<table class="info-table">
 									<tbody>
-										{#if data1.type == 'movie'}
+										{#if data1.duration}
 											<tr>
 												<th>Duration</th>
-												<td>{data1.duration}m</td>
+												<td>{toHoursAndMinutes(data1.duration)}</td>
 											</tr>
 										{/if}
 										{#if data1.type == 'series'}
@@ -256,6 +273,20 @@
 {/if}
 
 <style>
+		.gradient-text {
+		background: radial-gradient(circle, var(--tertiary-500), var(--primary-500));
+		background-clip: text;
+		/*color: transparent;*/
+	}
+
+	.gradient-text-light {
+		background: radial-gradient(circle, var(--tertiary-100), red);
+		background-clip: text;
+		/*color: transparent;*/
+	}
+	.b21 {
+		padding: 1% 4% 0 4%;
+	}
 	.video-player-container {
 		position: relative;
 		width: 100%;
