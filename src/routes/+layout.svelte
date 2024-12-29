@@ -50,13 +50,13 @@
 	.gradient-text {
 		background: radial-gradient(circle, var(--tertiary-500), var(--primary-500));
 		background-clip: text;
-		//color: transparent;
+		/*color: transparent;*/
 	}
 
 	.gradient-text-light {
 		background: radial-gradient(circle, var(--tertiary-100), red);
 		background-clip: text;
-		//color: transparent;
+		/*color: transparent;*/
 	}
 
 	@media (max-width: 768px) {

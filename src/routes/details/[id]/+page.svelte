@@ -31,9 +31,9 @@
 
 	$effect(() => {
 		data1 = data.page;
- 		//channelinfo = data.page.channel;
+		//channelinfo = data.page.channel;
 	});
- 
+
 	//console.log('Received data:', data);
 	let tabSet = 0;
 
@@ -53,7 +53,6 @@
 			showvideo = true; // Always show video for episodes
 			modalvideo.set(d);
 			seriestype.set('single');
- 
 		} else {
 			showvideo = false;
 			modalvideo.set({
@@ -88,13 +87,24 @@
 				<Videoplayer />
 				<button class="close-video-btn" onclick={stopvideo}>Close Video</button>
 			</div>
-		{:else}
+		{:else if data1.backdrop}
 			<div
 				class="hero-container"
 				style="background-image: url({data1.backdrop
 					? `https://img.mediathek.rocks/t/p/original${data1.backdrop}`
 					: `https://api.mediathek.rocks/assets/${data1.heroimage}.jpg`})"
 			>
+				<div class="hero-overlay"></div>
+				<div class="hero-content">
+					<h1 class="title">{data1.title}</h1>
+					{#if data1.orgtitle}
+						<h2 class="subtitle">Original Title: {data1.orgtitle}</h2>
+					{/if}
+					<div class="meta-info"></div>
+				</div>
+			</div>
+		{:else}
+			<div class="hero-container" style="background-image: url({data1.backdropup.url})">
 				<div class="hero-overlay"></div>
 				<div class="hero-content">
 					<h1 class="title">{data1.title}</h1>
@@ -187,29 +197,29 @@
 						</div>
 					</Tabs.Panel>
 					<Tabs.Panel value="links">
-					{#if data1.type == 'movie'}			
-						<table style="table-layout: fixed; width: 100%;">
-							<thead>
-								<tr>
-									<th style="width: 33.33%; text-align: center;">Format</th>
-									<th style="width: 33.33%; text-align: center;">Link</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td style="text-align: center;"> {data1.links[0].streamformat} </td>
-									<td style="text-align: center;"
-										><button
-											type="button"
-											class="play-episode-button btn preset-filled-primary-500"
-											onclick={() => playvideo(data1.links)}
-										>
-											Play Link
-										</button>
-									</td>
-								</tr>
-							</tbody>
-						</table>
+						{#if data1.type == 'movie'}
+							<table style="table-layout: fixed; width: 100%;">
+								<thead>
+									<tr>
+										<th style="width: 33.33%; text-align: center;">Format</th>
+										<th style="width: 33.33%; text-align: center;">Link</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td style="text-align: center;"> {data1.links[0].streamformat} </td>
+										<td style="text-align: center;"
+											><button
+												type="button"
+												class="play-episode-button btn preset-filled-primary-500"
+												onclick={() => playvideo(data1.links)}
+											>
+												Play Link
+											</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
 						{/if}
 					</Tabs.Panel>
 					<Tabs.Panel value="episodes">

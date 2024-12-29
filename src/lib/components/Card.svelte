@@ -47,6 +47,8 @@
 					alt="{title} poster"
 					class="card-poster"
 				/>
+			{:else if carddata.backdropup}
+				<img src={carddata.backdropup.url} alt="{title} backdrop" class="card-poster" />
 			{:else}
 				<div class="card-poster-placeholder">{title[0]}</div>
 			{/if}
@@ -58,9 +60,9 @@
 				{/if}
 			</div>
 			{#if countryflag}
-			<div class="country-icon">
-				<svelte:component this={Flag[carddata.channel.country]} size="25" />
-			</div>
+				<div class="country-icon">
+					<svelte:component this={Flag[carddata.channel.country]} size="25" />
+				</div>
 			{/if}
 			{#if isHovered}
 				<div class="card-overlay" transition:slide={{ duration: 300, delay: 50, easing: quintOut }}>

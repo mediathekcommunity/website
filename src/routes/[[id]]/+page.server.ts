@@ -6,6 +6,7 @@ const QUERY = `
 {
 	Mediatheks {
 		docs {
+			createdAt
 			title
 			id
 			tmdbid
@@ -13,6 +14,13 @@ const QUERY = `
 			orgtitle
  			poster
  			backdrop
+			heroimage
+			heroimageup {
+				url
+			}
+			backdropup  {
+				url
+			}
 			type
 			channel {
 				id
@@ -28,12 +36,20 @@ const QUERY2 = `
 query Mediathekfilter($type: Mediathek_type_Input) {
 	Mediatheks(where: { type: { equals: $type } }) {
 		docs {
+			createdAt
 			title
 			id
 			tmdbid
 			metascore
 			orgtitle
  			poster
+			heroimage
+			heroimageup {
+				url
+			}
+			backdropup  {
+				url
+			}
 			backdrop
 			type
 			channel {
@@ -41,11 +57,13 @@ query Mediathekfilter($type: Mediathek_type_Input) {
 				name
 				country
 			}
+
 		}
 	}
 }`;
 const groupByChannelCountry = (items) => {
 	return items.reduce((acc, item) => {
+		//console.log(item);
 		const country = item.channel?.country || 'Unknown';
 		acc[country] = acc[country] || [];
 		acc[country].push(item);
@@ -57,7 +75,13 @@ function capitalizeFirstLetter(string: string): string {
 }
 function checkparamsok(params) {
 	//console.log(params);
-	if (!params || params == 'movie' || params == 'series' || params == 'debug') {
+	if (
+		!params ||
+		params == 'movie' ||
+		params == 'series' ||
+		params == 'debug' ||
+		params == 'music'
+	) {
 		return true;
 	} else {
 		return false;
@@ -65,8 +89,11 @@ function checkparamsok(params) {
 }
 async function query(id1) {
 	const result = id1 ? await client.query(QUERY2, { type: id1 }) : await client.query(QUERY);
-	// console.log(result);
-	return result.data.Mediatheks.docs;
+	//console.log(result);
+	var data = result.data.Mediatheks.docs;
+	data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+	return data;
 }
 
 export async function load({ fetch, params, request }) {
@@ -75,7 +102,7 @@ export async function load({ fetch, params, request }) {
 	} else {
 		const h1 = request.headers.get('Cdn-Requestcountrycode') || 'De';
 		const data1 = await query(params.id);
-		// console.log(data1);
+		console.log(data1);
 
 		if (!data1) {
 			throw error(404, 'Page not found');

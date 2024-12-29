@@ -11,8 +11,15 @@ query Mediathek($id: String!){
       metascore
 	  description
 	  season
+	  heroimageup {
+	  	url
+	  }
+	  backdropup  {
+	  	url
+	  }
 	  episode
       type
+	  quality
       slinks {
  	    title
 		backdrop

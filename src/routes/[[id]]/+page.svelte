@@ -10,19 +10,25 @@
 	import Autoplay from 'embla-carousel-autoplay';
 	import Fade from 'embla-carousel-fade';
 	let { data } = $props();
-
+	console.log(data.page);
 	// Function to group media items by channel country
 	// Get the first item from the data.page array as the hero item
-	let heroItems = $derived(data?.page && data.page.length > 0 ? data.page.slice(-5) : []);
-
+	let heroItems = $derived(data?.page && data.page.length > 0 ? data.page.slice(0, 5) : []);
+	console.log(heroItems);
 	// Carousel options
 	let options = { align: 'start', slidesToScroll: 1, loop: true };
-	let plugins = [Autoplay({ delay: 8000, stopOnMouseEnter: false, stopOnFocusIn: false,stopOnInteraction:false }), Fade()];
+	let plugins = [
+		Autoplay({
+			delay: 8000,
+			stopOnMouseEnter: false,
+			stopOnFocusIn: false,
+			stopOnInteraction: false
+		}),
+		Fade()
+	];
 
 	let options2 = { align: 'start', slidesToScroll: 2, loop: true };
 	let emblaApi;
-
- 
 
 	function onInit(event) {
 		emblaApi = event.detail;
@@ -43,6 +49,13 @@
 										{#if heroItem.backdrop}
 											<img
 												src="https://img.mediathek.rocks/t/p/original{heroItem.backdrop}"
+												alt="{heroItem.title} backdrop"
+												class="hero-image"
+											/>
+										{/if}
+										{#if heroItem.backdropup}
+											<img
+												src={heroItem.backdropup.url}
 												alt="{heroItem.title} backdrop"
 												class="hero-image"
 											/>
