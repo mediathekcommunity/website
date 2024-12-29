@@ -1,18 +1,14 @@
 <script>
 	import Header from '$lib/components/header.svelte';
-	import Footer1 from '$lib/components/footer1.svelte';
+	import Footer from '$lib/components/footer.svelte';  // Renamed Footer1 to Footer
 	import '../app.css';
 </script>
 
 <div class="app">
 	<Header />
 	<main>
-		<aside
-			class="bg-gradient-radial from-tertiary-500 to-primary-500 box-decoration-clone bg-clip-text text-transparent"
-		>
-			<div
-				class="bg-gradient-radial from-tertiary-100 to-red-500 box-decoration-clone bg-clip-text text-transparent"
-			>
+		<aside class="gradient-text">
+			<div class="gradient-text-light b21">
 				<h3>WIP</h3>
 				<p>
 					I'm still rebuilding the site & backend. Please be patient. Thanks!
@@ -21,7 +17,7 @@
 		</aside>
 		<slot />
 	</main>
-	<Footer1 />
+	<Footer />
 </div>
 
 <style>
@@ -39,7 +35,9 @@
 		flex-direction: column;
 		min-height: 100vh;
 	}
-
+	.b21 {
+		padding: 0 4% 0 4%;
+	}
 	main {
 		flex: 1;
 		width: 100%;
@@ -47,6 +45,18 @@
 		margin: 0 auto;
 		padding: 0;
 		box-sizing: border-box;
+	}
+
+	.gradient-text {
+		background: radial-gradient(circle, var(--tertiary-500), var(--primary-500));
+		background-clip: text;
+		//color: transparent;
+	}
+
+	.gradient-text-light {
+		background: radial-gradient(circle, var(--tertiary-100), red);
+		background-clip: text;
+		//color: transparent;
 	}
 
 	@media (max-width: 768px) {

@@ -10,8 +10,7 @@
 	import Autoplay from 'embla-carousel-autoplay';
 	import Fade from 'embla-carousel-fade';
 	let { data } = $props();
- 
-	//console.log('Received data:', data);
+
 	// Function to group media items by channel country
 	// Get the first item from the data.page array as the hero item
 	let heroItems = $derived(data?.page && data.page.length > 0 ? data.page.slice(-5) : []);
@@ -99,7 +98,7 @@
 						<div class="embla__container flex">
 							{#each data.page as item}
 								<div class="embla__slide">
-									<Card carddata={item} {visible} geo={data.geo} />
+									<Card carddata={item} countryflag geo={data.geo} />
 								</div>
 							{/each}
 						</div>
