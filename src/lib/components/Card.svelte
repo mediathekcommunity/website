@@ -4,7 +4,7 @@
 	import { quintOut } from 'svelte/easing';
 	import Icon from '@iconify/svelte';
 
-	export let carddata;
+	export let carddata, countryflag;
 	//console.log('Card data:', carddata);
 	$: title = carddata?.title || 'Unknown Title';
 	$: orgtitle = carddata?.orgtitle || 'Unknown';
@@ -57,6 +57,11 @@
 					<Icon icon="mdi:tv" />
 				{/if}
 			</div>
+			{#if countryflag}
+			<div class="country-icon">
+				<svelte:component this={Flag[carddata.channel.country]} size="25" />
+			</div>
+			{/if}
 			{#if isHovered}
 				<div class="card-overlay" transition:slide={{ duration: 300, delay: 50, easing: quintOut }}>
 					<h3 class="card-title">{title}</h3>
@@ -125,6 +130,20 @@
 		position: absolute;
 		top: 10px;
 		right: 10px;
+		z-index: 2;
+		color: white;
+		background-color: rgba(0, 0, 0, 0.7);
+		border-radius: 4px;
+		padding: 2px;
+		font-size: 24px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.country-icon {
+		position: absolute;
+		top: 10px;
+		left: 10px;
 		z-index: 2;
 		color: white;
 		background-color: rgba(0, 0, 0, 0.7);
