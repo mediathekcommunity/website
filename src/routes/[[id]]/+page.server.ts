@@ -100,7 +100,7 @@ export async function load({ fetch, params, request }) {
 	if (!checkparamsok(params.id)) {
 		throw error(403, 'forbidden params');
 	} else {
-		const h1 = request.headers.get('Cdn-Requestcountrycode') || 'De';
+		const h1 = request.headers.get('cf-ipcountry') || 'De';
 		const data1 = await query(params.id);
 		console.log(data1);
 
