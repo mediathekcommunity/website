@@ -9,24 +9,6 @@
 	$: title = carddata?.title || 'Unknown Title';
 	$: orgtitle = carddata?.orgtitle || 'Unknown';
 	$: metascore = carddata?.metascore || 'Unknown';
-	function getQualityIcon(quality) {
-		switch (quality?.toLowerCase()) {
-			case 'sd':
-				return 'mdi:video-sd';
-			case 'hd':
-				return 'material-symbols:hd-outline';
-			case 'fhd':
-				return 'material-symbols:full-hd-outline';
-			case '4k':
-				return 'mdi:video-8k-box';
-			default:
-				return 'mdi:video';
-		}
-	}
-	function handleClick(event) {
-		event.preventDefault();
-		//goto(`/details/${carddata.id}`);
-	}
 	let isHovered = false;
 </script>
 
