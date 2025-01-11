@@ -55,6 +55,7 @@
 			var d = data.videosource;
 			//console.log(data);
 			showvideo = true; // Always show video for episodes
+			//d.skip= 30
 			modalvideo.set(d);
 			seriestype.set('single');
 		} else {
@@ -212,7 +213,7 @@
 						</div>
 					</Tabs.Panel>
 					<Tabs.Panel value="links">
-						{#if data1.links.length > 0}
+						{#if data1.links.length > 0 && data1.channel.name != "YLE"}
 							<table style="table-layout: fixed; width: 100%;">
 								<thead>
 									<tr>
@@ -235,6 +236,15 @@
 									</tr>
 								</tbody>
 							</table>
+						{:else}
+							<p> Visit YLE  Page to watch the show:  </p>
+							{JSON.stringify(data1.links)}
+							<button
+												type="button"
+												class="play-episode-button btn preset-filled-primary-500"
+												>
+
+							<a href={data1.links.videosource} target="_blank"> YLE </a>							</button>
 						{/if}
 					</Tabs.Panel>
 					<Tabs.Panel value="episodes">
