@@ -50,7 +50,7 @@
 		"graffle": "latest",
 		"graphql": "^16.10.0",
 		"ky": "^1.7.4",
-		"lucide-svelte": "^0.453.0",
+		"lucide-svelte": "^0.471.0",
 		"media-chrome": "^4.3.0",
 		"svelte-flag-icons": "^2.0.1"
 	},

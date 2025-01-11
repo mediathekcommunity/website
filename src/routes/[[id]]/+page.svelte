@@ -140,7 +140,7 @@
 
 	.hero-section {
 		position: relative;
-		max-height: 50vh;
+		max-height: 50vh;	
 		margin-bottom: 2rem;
 		width: 100%;
 		z-index: 1;

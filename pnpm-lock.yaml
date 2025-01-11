@@ -33,8 +33,8 @@ importers:
         specifier: ^1.7.4
         version: 1.7.4
       lucide-svelte:
-        specifier: ^0.453.0
-        version: 0.453.0(svelte@5.17.3)
+        specifier: ^0.471.0
+        version: 0.471.0(svelte@5.17.3)
       media-chrome:
         specifier: ^4.3.0
         version: 4.3.0
@@ -1548,8 +1548,8 @@ packages:
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
 
-  lucide-svelte@0.453.0:
-    resolution: {integrity: sha512-K+eE2ZeE00ThIEbAmZB3Hq0sVS+1ZLj+7nqtJvN0Xrh/KZnfnEChG+do80sctqXQEE+iG1dA2T+5fVcJS1awfA==}
+  lucide-svelte@0.471.0:
+    resolution: {integrity: sha512-z+C6G2K089iDGbl8HzTdD5G6i5BvuaBxdIPQDa650Kb8TXBJRODa7YfmaIHy78+Y+YaB75N0lzUIQEclzflJrQ==}
     peerDependencies:
       svelte: ^3 || ^4 || ^5.0.0-next.42
 
@@ -3709,7 +3709,7 @@ snapshots:
 
   lru-cache@10.4.3: {}
 
-  lucide-svelte@0.453.0(svelte@5.17.3):
+  lucide-svelte@0.471.0(svelte@5.17.3):
     dependencies:
       svelte: 5.17.3
 
