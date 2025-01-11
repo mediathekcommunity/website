@@ -49,8 +49,8 @@ importers:
         specifier: 3.0.0-next.10
         version: 3.0.0-next.10(postcss@8.4.49)(tailwindcss@3.4.17)
       '@skeletonlabs/skeleton-svelte':
-        specifier: 1.0.0-next.16
-        version: 1.0.0-next.16(svelte@5.17.3)
+        specifier: 1.0.0-next.17
+        version: 1.0.0-next.17(svelte@5.17.3)
       '@sveltejs/adapter-cloudflare':
         specifier: ^5.0.0
         version: 5.0.0(@sveltejs/kit@2.15.2(@sveltejs/vite-plugin-svelte@5.0.0-next.0(svelte@5.17.3)(vite@6.0.7(@types/node@22.10.5)(jiti@1.21.7)(yaml@2.7.0)))(svelte@5.17.3)(vite@6.0.7(@types/node@22.10.5)(jiti@1.21.7)(yaml@2.7.0)))(wrangler@3.99.0(@cloudflare/workers-types@4.20250109.0))
@@ -747,8 +747,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@skeletonlabs/skeleton-svelte@1.0.0-next.16':
-    resolution: {integrity: sha512-hYHsayn1yLdOLJbapEQR/AmO/0w014QRPrYaJwL8mjk0Ar0++QBs2Wlnf/r9aqSzOM6Nqe8HvVLsYKMmsf3ChA==}
+  '@skeletonlabs/skeleton-svelte@1.0.0-next.17':
+    resolution: {integrity: sha512-BgBEZB7Ud+KjlAXnj8/ROiVR/wHZQFvXFfkn20yDcZFAHhS6nTRjPHc3+PlRoYJ1+Ft76wsIWLB7LIaqkHqO0w==}
     peerDependencies:
       svelte: ^5.0.0
 
@@ -2716,7 +2716,7 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.30.1':
     optional: true
 
-  '@skeletonlabs/skeleton-svelte@1.0.0-next.16(svelte@5.17.3)':
+  '@skeletonlabs/skeleton-svelte@1.0.0-next.17(svelte@5.17.3)':
     dependencies:
       '@zag-js/accordion': 0.78.3
       '@zag-js/avatar': 0.78.3
