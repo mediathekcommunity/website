@@ -62,10 +62,12 @@
 			}
 		});
 		player.nuevo(nuevoOptions);
-		player.skipintro({ skipStart: 1, skipDuration: 10, skipTarget: 30 });
 		player.hotkeys({ seekStep: 10 });
 		console.log('initializePlayer');
 		console.log(player);
+		if ($modalvideo.skip) {
+			player.skipintro({ skipStart: 1, skipDuration: $modalvideo.skip, skipTarget: 30 });
+		} 
 		/*
 		console.log($modalvideo);
 		console.log($playlist);
