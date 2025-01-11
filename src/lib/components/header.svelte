@@ -15,7 +15,9 @@
 	};
 </script>
 <svelte:head>
-<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b7e2f3218ca7460b8cf5684db6e8cb25"}'></script><!-- End Cloudflare Web Analytics -->
+<!-- Cloudflare Web Analytics -->
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b7e2f3218ca7460b8cf5684db6e8cb25"}'></script>
+<!-- End Cloudflare Web Analytics -->
 </svelte:head>
 <svelte:window on:scroll={handleScroll} />
 
