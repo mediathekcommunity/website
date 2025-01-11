@@ -17,8 +17,6 @@
 				return 'material-symbols:hd-outline';
 			case 'fhd':
 				return 'material-symbols:full-hd-outline';
-			case 'full hd':
-				return 'mdi:video-4k-box';
 			case '4k':
 				return 'mdi:video-8k-box';
 			default:
