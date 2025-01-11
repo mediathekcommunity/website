@@ -3,7 +3,11 @@
     import Footer from '$lib/components/footer.svelte';
     import '../app.css';
 </script>
-
+<svelte:head>
+<!-- Cloudflare Web Analytics -->
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{JSON.stringify({"token": "b7e2f3218ca7460b8cf5684db6e8cb25"})}'></script>
+<!-- End Cloudflare Web Analytics -->
+</svelte:head>
 <div class="app">
     <Header />
     <main>
