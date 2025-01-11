@@ -39,8 +39,8 @@ importers:
         specifier: ^4.3.0
         version: 4.3.0
       svelte-flag-icons:
-        specifier: ^1.0.3
-        version: 1.0.3(svelte@5.17.3)
+        specifier: ^2.0.1
+        version: 2.0.1(svelte@5.17.3)
     devDependencies:
       '@iconify/svelte':
         specifier: ^4.2.0
@@ -2048,10 +2048,11 @@ packages:
       svelte:
         optional: true
 
-  svelte-flag-icons@1.0.3:
-    resolution: {integrity: sha512-oPXJwQ+36nsI25k/J0zpG8YPyb9juJVKTW1dz9q1GgklzpYAry2c7TGOiSokZ428VIFYMIWsGLg42zYpBu4/zw==}
+  svelte-flag-icons@2.0.1:
+    resolution: {integrity: sha512-IgnAVZ72qM/2D59I+AJkbs6Bre5LgUaxShrSsCFHeDubSAxwmDQO8ImGIAxy6lYapQdHn2gU9gte01KTWktgvg==}
+    engines: {node: '>=18.0.0', npm: '>=7.0.0'}
     peerDependencies:
-      svelte: ^3.54.0 || ^4.0.0 || ^5.0.0
+      svelte: ^5.0.0
 
   svelte-flags@2.0.1:
     resolution: {integrity: sha512-wxFDMBALryXgupOqjDWpzFHxAQbnGjXp4LL7oDzcZdZQDF2buMnsYxLOdf8Md+WHU+ZJtqR7l2vnkVj6a6Gvcg==}
@@ -4139,7 +4140,7 @@ snapshots:
     optionalDependencies:
       svelte: 5.17.3
 
-  svelte-flag-icons@1.0.3(svelte@5.17.3):
+  svelte-flag-icons@2.0.1(svelte@5.17.3):
     dependencies:
       svelte: 5.17.3
 
