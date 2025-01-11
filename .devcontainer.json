@@ -1,5 +1,0 @@
-{"image":"mcr.microsoft.com/devcontainers/javascript-node",
-"forwardPorts": [
-    5173
-  ]
-}
