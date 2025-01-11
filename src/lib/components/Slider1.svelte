@@ -4,6 +4,7 @@
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
 	import Card from './Card.svelte';
 
+	// @ts-ignore
 	export let langlist = [];
 	export let langdata = {};
 	export let geo = 'Unknown';

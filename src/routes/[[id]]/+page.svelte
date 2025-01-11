@@ -200,7 +200,7 @@
 
 	.maincontent {
 		margin-bottom: 2rem;
-		margin-top: 1rem; /* Add this line */
+		margin-top: 1rem;
 	}
 	.hero-details {
 		display: flex;
@@ -244,9 +244,9 @@
 
 	.content-wrapper {
 		position: relative;
-		z-index: 2; /* Change this line */
+		z-index: 2;
 		padding: 0 4%;
-		margin-top: 1rem; /* Add this line */
+		margin-top: 1rem;
 	}
 
 	.section-title {
