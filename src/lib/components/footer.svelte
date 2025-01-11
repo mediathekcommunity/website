@@ -4,7 +4,7 @@
 <footer class="footer">
 	<div class="footer-content">
 		<p class="tmdb-credit">
-			This product uses the TMDB API but is not endorsed or certified by TMDB.
+			This site uses the TMDB API but is not endorsed or certified by TMDB.
 		</p>
 		<div class="tmdb-logo">
 			<svg

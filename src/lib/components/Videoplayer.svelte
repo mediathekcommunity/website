@@ -74,7 +74,6 @@
 		console.log($seriestype);
 		console.log($playlistindex);
 		*/
-		//updatePlayerSource($seriestype);
 		if ($seriestype === 'playlist') {
 			player.playlist.currentItem($playlistindex);
 		}
