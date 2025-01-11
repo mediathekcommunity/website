@@ -7,14 +7,6 @@
 <div class="app">
 	<Header />
 	<main>
-		<aside class="gradient-text">
-			<div class="gradient-text-light b21">
-				<h3>WIP</h3>
-				<p>
-					I'm still rebuilding the site & backend. Please be patient. Thanks!
-				</p>
-			</div>
-		</aside>
 		<slot />
 	</main>
 	<Footer />

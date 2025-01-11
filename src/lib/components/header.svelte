@@ -24,6 +24,7 @@
 				<h1 class="site-title">
 					<span class="mediathek">Mediathek</span>
 					<span class="community">Community</span>
+					<span class="badge preset-tonal-primary">v0.1</span>
 				</h1>
 			</a>
 		</div>
@@ -33,9 +34,6 @@
 				<li><a href="/movie">Movies</a></li>
 				<li><a href="/series">TV Shows</a></li>
 				<li><a href="/music">Music</a></li>
-				{#if mode === 'development'}
-					<li><a href="/debug">Debug</a></li>
-				{/if}
 			</ul>
 		</nav>
 		<button class="mobile-menu-button" on:click={toggleMobileMenu}> ☰</button>
