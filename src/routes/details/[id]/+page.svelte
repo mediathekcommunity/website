@@ -106,8 +106,8 @@
 			<div
 				class="hero-container"
 				style="background-image: url({data1.backdrop
-					? `https://img.mediathek.rocks/t/p/original${data1.backdrop}`
-					: `https://api.mediathek.rocks/assets/${data1.heroimage}.jpg`})"
+					? `https://img.mediathek.community/t/p/original${data1.backdrop}`
+					: `https://api.mediathek.community/assets/${data1.heroimage}.jpg`})"
 			>
 				<div class="hero-overlay"></div>
 				<div class="hero-content">
