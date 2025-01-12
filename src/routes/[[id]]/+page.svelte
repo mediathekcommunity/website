@@ -48,7 +48,7 @@
 									<div class="hero-image-container">
 										{#if heroItem.backdrop}
 											<img
-												src="https://img.mediathek.rocks/t/p/original{heroItem.backdrop}"
+												src="https://img.mediathek.community/t/p/original{heroItem.backdrop}"
 												alt="{heroItem.title} backdrop"
 												class="hero-image"
 											/>
