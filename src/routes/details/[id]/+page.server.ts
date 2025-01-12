@@ -60,7 +60,7 @@ function generatePlaylist(slinks: any) {
 			playlist.push({
 				title: link.title,
 				src: link.streamlink,
-				thumb: 'https://img.mediathek.rocks/t/p/original/' + link.backdrop,
+				thumb: 'https://img.mediathek.community/t/p/original/' + link.backdrop,
 				type: getformat(link.streamformat),
 				description: link.description,
 				infoTitle: link.title,
@@ -77,7 +77,7 @@ function videosrc(links: any, backdrop: string) {
 		src1.src = links[0].streamlink;
 		src1.type = getformat(links[0].streamformat);
 		src1.tracks = getsubformat(links[0].subtitles);
-		src1.poster = 'https://img.mediathek.rocks/t/p/original' + backdrop;
+		src1.poster = 'https://img.mediathek.community/t/p/original' + backdrop;
 	}
 	return src1;
 }
