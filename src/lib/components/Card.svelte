@@ -23,7 +23,7 @@
 		<div class="card-image">
 			{#if carddata.poster}
 				<img
-					src="https://img.mediathek.rocks/t/p/w300{carddata.poster}"
+					src="https://img.mediathek.community/t/p/w300{carddata.poster}"
 					alt="{title} poster"
 					class="card-poster"
 				/>
