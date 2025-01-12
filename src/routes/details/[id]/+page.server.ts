@@ -1,65 +1,8 @@
 import { error } from '@sveltejs/kit';
-import client from '$lib/directus.js';
 export const ssr = false;
-
+import getDirectusInstance from '$lib/directus';
+import { readItem } from '@directus/sdk';
 // GraphQL query string
-const query = `
-query Mediathek($id: String!){
-    Mediathek(id: $id) {
-      id
-      title
-      tmdbid
-      metascore
-	  description
-	  season
-	  heroimageup {
-	  	filename
-	  }
-	  backdropup  {
-	  	filename
-	  }
-	  episode
-      type
-	  duration
-	  quality
-      slinks {
- 	    title
-		backdrop
-		description
-		duration
-		season
-		episode
-		streamlink
-		streamformat
-		subtitles {
-	  			language
-				url
-				label
-			}
-      }
-		links {
-		streamlink
-		streamformat
-		subtitles {
-	  			language
-				url
-				label
-			}
-      }
-		channel {
-			name
-			country
-			info
-		}
-      orgtitle
-      onlineuntil
-      poster
-      backdrop
-
-	}
-}
-
-`;
 function getformat(id) {
 	switch (id) {
 		case 'mpd':
@@ -91,9 +34,24 @@ function getsubformat(id) {
 }
 // Function to fetch data from the GraphQL API
 async function fetchMediathek(id: string) {
-	const result = await client.query(query, { id });
+	const directus = getDirectusInstance(fetch);
+	var result = await directus.request(
+		readItem('mediathek', id, {
+			fields: ['*.*'],
+			limit: 4,
+			deep: {
+				channel: {
+					limit: 5
+				},
+				episodelist: {
+					limit: 5
+				}
+			}
+		})
+	);
+	//const result = await client.query(query, { id });
 	//console.log(result);
-	return result.data.Mediathek;
+	return result;
 }
 function generatePlaylist(slinks: any) {
 	let playlist: any[] = [];
@@ -125,7 +83,6 @@ function videosrc(links: any, backdrop: string) {
 }
 
 export async function load({ params }) {
-	try {
 		const mediathek = await fetchMediathek(params.id);
 		const slinks = generatePlaylist(mediathek.slinks);
 		const videosrc1 = videosrc(mediathek.links, mediathek.backdrop);
@@ -135,7 +92,4 @@ export async function load({ params }) {
 			playlist: slinks || [],
 			videosource: videosrc1 || {}
 		};
-	} catch (err) {
-		throw error(404, 'Page not found');
-	}
 }

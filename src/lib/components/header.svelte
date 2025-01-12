@@ -24,7 +24,7 @@
 				<h1 class="site-title">
 					<span class="mediathek">Mediathek</span>
 					<span class="community">Community</span>
-					<span class="badge preset-tonal-primary">v0.1</span>
+					<span class="badge preset-tonal-primary">v0.1.1</span>
 				</h1>
 			</a>
 		</div>
