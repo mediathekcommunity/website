@@ -1,66 +1,10 @@
 /** @type {import('./$types').PageLoad} */
 import { error } from '@sveltejs/kit';
-import client from '$lib/directus.js';
+import getDirectusInstance from '$lib/directus';
+import { readItems } from '@directus/sdk';
+const directus = getDirectusInstance(fetch);
+var x;
 
-const QUERY = `
-{
-	Mediatheks {
-		docs {
-			createdAt
-			title
-			id
-			tmdbid
-			metascore
-			orgtitle
- 			poster
- 			backdrop
-			heroimage
-			heroimageup {
-				filename
-			}
-			backdropup  {
-				filename
-			}
-			type
-			channel {
-				id
-				name
-				country
-			}
-		}
-	}
-}
-`;
-
-const QUERY2 = `
-query Mediathekfilter($type: Mediathek_type_Input) {
-	Mediatheks(where: { type: { equals: $type } }) {
-		docs {
-			createdAt
-			title
-			id
-			tmdbid
-			metascore
-			orgtitle
- 			poster
-			heroimage
-			heroimageup {
-				filename
-			}
-			backdropup  {
-				filename
-			}
-			backdrop
-			type
-			channel {
-				id
-				name
-				country
-			}
-
-		}
-	}
-}`;
 const groupByChannelCountry = (items) => {
 	return items.reduce((acc, item) => {
 		//console.log(item);
@@ -88,11 +32,41 @@ function checkparamsok(params) {
 	}
 }
 async function query(id1) {
-	const result = id1 ? await client.query(QUERY2, { type: id1 }) : await client.query(QUERY);
-	//console.log(result);
-	var data = result.data.Mediatheks.docs;
-	data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
+	if (!id1) {
+		// console.log('no id');
+		x = await directus.request(
+			readItems('mediathek ', {
+				fields: ['*.*'],
+				deep: {
+					channel: {
+						limit: 5
+					},
+					country : {
+						limit: 5
+					},
+				}
+			})
+		);
+	} else {
+		x = await directus.request(
+			readItems('mediathek', {
+				filter: {
+					type: id1
+				},
+				fields: ['*.*'],
+				deep: {
+					channel: {
+						limit: 5
+					},
+					country: {
+						limit: 99
+					}
+				}
+			})
+		);
+	}
+ 	var data = x;
+	data.sort((a, b) => new Date(b.date_created) - new Date(a.date_created));
 	return data;
 }
 
@@ -100,6 +74,7 @@ export async function load({ fetch, params, request }) {
 	if (!checkparamsok(params.id)) {
 		throw error(403, 'forbidden params');
 	} else {
+		// console.log(params.id);
 		const h1 = request.headers.get('cf-ipcountry') || 'De';
 		const data1 = await query(params.id);
 		console.log(data1);
@@ -107,7 +82,7 @@ export async function load({ fetch, params, request }) {
 		if (!data1) {
 			throw error(404, 'Page not found');
 		}
-
+		// console.log(data1);
 		return {
 			page: data1,
 			error: false,

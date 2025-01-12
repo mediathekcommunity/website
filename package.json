@@ -40,6 +40,7 @@
 	},
 	"packageManager": "pnpm@10.0.0",
 	"dependencies": {
+		"@directus/sdk": "^18.0.3",
 		"@urql/core": "^5.1.0",
 		"@urql/svelte": "^4.2.2",
 		"embla-carousel-autoplay": "^8.5.2",

@@ -10,7 +10,7 @@
 	import Autoplay from 'embla-carousel-autoplay';
 	import Fade from 'embla-carousel-fade';
 	let { data } = $props();
-	// console.log(data.page);
+	//console.log(data);
 	// Function to group media items by channel country
 	// Get the first item from the data.page array as the hero item
 	let heroItems = $derived(data?.page && data.page.length > 0 ? data.page.slice(0, 5) : []);
