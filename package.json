@@ -28,10 +28,10 @@
 		"eslint-plugin-svelte": "^2.46.1",
 		"globals": "^15.14.0",
 		"prettier": "^3.4.2",
-		"prettier-plugin-svelte": "^3.3.2",
+		"prettier-plugin-svelte": "^3.3.3",
 		"prettier-plugin-tailwindcss": "^0.6.9",
-		"svelte": "^5.17.3",
-		"svelte-check": "^4.1.3",
+		"svelte": "^5.17.4",
+		"svelte-check": "^4.1.4",
 		"svelte-flags": "^1.0.3",
 		"tailwindcss": "^3.4.17",
 		"typescript": "^5.7.3",
@@ -46,5 +46,8 @@
 		"embla-carousel-autoplay": "^8.5.2",
 		"embla-carousel-fade": "^8.5.2",
 		"lucide-svelte": "^0.471.0"
+	},
+	"pnpm": {
+		"neverBuiltDependencies": []
 	}
 }
