@@ -179,7 +179,7 @@
 
 	.hero-content {
 		position: relative;
-		bottom: 58%;
+		bottom: 60%;
 		left: 4%;
 		max-width: 50%;
 		z-index: 2;
