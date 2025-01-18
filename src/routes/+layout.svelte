@@ -45,9 +45,12 @@
 
 	main {
 		flex: 1;
-		margin: 0 auto;
+		margin: 0;
 		padding: 0;
 		box-sizing: border-box;
+        width: 100%;
+        min-height: 100vh;
+                max-width: 100%;
 	}
 
 	@media (max-width: 768px) {

@@ -1,6 +1,6 @@
 <script>
 	// @ts-nocheck
-
+	import HeroSlider from '$lib/components/HeroSlider.svelte';
 	import { visible } from '$lib/store';
 	import * as Flag from 'svelte-flags';
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
@@ -26,78 +26,51 @@
 		}),
 		Fade()
 	];
-
+	let currentSlide = 0;
 	let options2 = { align: 'start', slidesToScroll: 2, loop: true };
 	let emblaApi;
-
+	function getimgurl(img) {
+		if (img.backdrop) {
+			return 'https://img.mediathek.community/t/p/original' + img.backdrop;
+		} else {
+			return 'https://cdn1.mediathek.community/' + img.backdropup.filename;
+		}
+	}
 	function onInit(event) {
 		emblaApi = event.detail;
 	}
 </script>
 
-<div class="page-container">
+<div>
 	{#if data && data.page && data.page.length > 0 && data.error === false}
-		<div class="content">
-			<!-- Hero Section -->
-			{#if heroItems}
-				<div class="hero-section">
-					<div class="embla2" use:emblaCarouselSvelte={{ options, plugins }} onemblaInit={onInit}>
-						<div class="embla__container2">
-							{#each heroItems as heroItem}
-								<div class="embla__slide2">
-									<div class="hero-image-container">
-										{#if heroItem.backdrop}
-											<img
-												src="https://img.mediathek.community/t/p/original{heroItem.backdrop}"
-												alt="{heroItem.title} backdrop"
-												class="hero-image"
-											/>
-										{/if}
-										{#if heroItem.backdropup}
-											<img
-												src="https://cdn1.mediathek.community/{heroItem.backdropup.filename}"
-												alt="{heroItem.title} backdrop"
-												class="hero-image"
-											/>
-										{/if}
-										<div class="hero-overlay"></div>
-									</div>
-									<div class="hero-content">
-										<h1 class="hero-title">{heroItem.title || 'Latest Addition'}</h1>
-										<p class="hero-description">
-											{'Original Title: ' + heroItem.orgtitle || 'Original Title Not Available'}
-										</p>
-										<div class="hero-details">
-											{#if heroItem.channel?.country && Flag[heroItem.channel.country]}
-												<!-- svelte-ignore svelte_component_deprecated -->
-												<svelte:component this={Flag[heroItem.channel.country]} size="20" />
-											{/if}
-											<span>{heroItem.channel?.name || 'Channel Name Not Available'}</span>
-											{#if heroItem.quality}
-												<span class="hero-quality">{heroItem.quality}</span>
-											{/if}
-										</div>
-										{#if heroItem.onlineuntil}
-											<p class="hero-availability">
-												Available until: {new Date(heroItem.onlineuntil).toLocaleDateString()}
-											</p>
-										{/if}
-										<div class="hero-buttons">
-											<button
-												class="btn-more-info"
-												onclick={() => (window.location.href = `/details/${heroItem.id}`)}
-												>ⓘ More Info</button
-											>
-										</div>
-									</div>
-								</div>
-							{/each}
-						</div>
+		<!-- Hero Section -->
+		{#if heroItems}
+			<HeroSlider {heroItems} {data} />
+		{/if}
+		<div class=" max-w-[2000px] px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
+			<div class="maincontent">
+				<h1 class="section-title">
+					<span
+						class="bg-gradient-to-br from-blue-500 to-cyan-300 box-decoration-clone bg-clip-text text-transparent"
+					>
+						Recently Added
+					</span>
+				</h1>
+
+				<div class="embla" use:emblaCarouselSvelte={options2}>
+					<div class="embla__container flex">
+						{#each data.page as item}
+							<div class="embla__slide">
+								<Card carddata={item} countryflag geo={data.geo} />
+							</div>
+						{/each}
 					</div>
 				</div>
-			{/if}
-
-			<div class="content-wrapper">
+			</div>
+			<Slider1 langlist={data.countries} langdata={data.groupbycountry} geo={data.geo} />
+		</div>
+		<!-- Main Content 
+			<div class="container mx-auto max-w-[2000px] px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
 				<div class="maincontent">
 					<h1 class="section-title">
 						<span
@@ -118,134 +91,23 @@
 					</div>
 				</div>
 				<Slider1 langlist={data.countries} langdata={data.groupbycountry} geo={data.geo} />
-			</div>
-		</div>
+			</div>-->
 	{:else}
 		<ErrorSection filter={data?.filter} />
 	{/if}
 </div>
 
 <style>
-	.page-container {
-		position: relative;
-		min-height: 100vh;
-		background-color: #141414;
-		color: white;
-	}
-
-	.content {
-		position: relative;
-		z-index: 1;
-	}
-
 	.hero-section {
 		position: relative;
-		max-height: 50vh;	
+		max-height: 50vh;
 		margin-bottom: 2rem;
 		width: 100%;
 		z-index: 1;
-	}
-
-	.hero-image-container {
-		position: relative;
-		width: 100%;
-		padding-top: 56.25%; /* 16:9 Aspect Ratio (9 / 16 = 0.5625) */
-		overflow: hidden;
-	}
-
-	.hero-image {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		object-position: center top;
-	}
-
-	.hero-overlay {
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background: linear-gradient(
-			to bottom,
-			rgba(20, 20, 20, 0) 0%,
-			rgba(20, 20, 20, 0.8) 60%,
-			rgba(20, 20, 20, 1) 100%
-		);
-	}
-
-	.hero-content {
-		position: relative;
-		bottom: 60%;
-		left: 4%;
-		max-width: 50%;
-		z-index: 2;
-	}
-
-	.hero-title {
-		font-size: 3rem;
-		font-weight: bold;
-		margin-bottom: 0.5rem;
-		text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-	}
-
-	.hero-description {
-		font-size: 1.2rem;
-		margin-bottom: 0.5rem;
-		text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 	}
 
 	.maincontent {
 		margin-bottom: 2rem;
-		margin-top: 1rem;
-	}
-	.hero-details {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		margin-bottom: 0.5rem;
-	}
-
-	.hero-quality {
-		background-color: rgba(255, 255, 255, 0.2);
-		padding: 2px 6px;
-		border-radius: 3px;
-		font-size: 0.8rem;
-	}
-
-	.hero-availability {
-		font-size: 0.9rem;
-		margin-bottom: 0.5rem;
-	}
-
-	.hero-buttons {
-		display: flex;
-		gap: 10px;
-	}
-
-	.btn-more-info {
-		padding: 8px 16px;
-		font-size: 1rem;
-		font-weight: bold;
-		border: none;
-		border-radius: 4px;
-		cursor: pointer;
-		transition: background-color 0.3s ease;
-		background-color: rgba(109, 109, 110, 0.7);
-		color: white;
-	}
-
-	.btn-more-info:hover {
-		background-color: rgba(109, 109, 110, 0.4);
-	}
-
-	.content-wrapper {
-		position: relative;
-		z-index: 2;
-		padding: 0 4%;
 		margin-top: 1rem;
 	}
 
@@ -268,48 +130,6 @@
 		flex: 0 0 auto;
 		min-width: 0;
 		padding-right: 0; /* This adds space between slides */
-	}
-
-	/* Media queries for responsiveness */
-	@media (max-width: 1024px) {
-		.hero-title {
-			font-size: 2rem;
-		}
-
-		.hero-description {
-			font-size: 1rem;
-		}
-	}
-
-	@media (max-width: 768px) {
-		.hero-content {
-			max-width: 80%;
-			bottom: 5%;
-		}
-	}
-
-	@media (max-width: 480px) {
-		.hero-content {
-			max-width: 90%;
-		}
-
-		.hero-title {
-			font-size: 1.5rem;
-		}
-
-		.hero-description {
-			font-size: 0.9rem;
-		}
-
-		.hero-details,
-		.hero-availability {
-			font-size: 0.8rem;
-		}
-
-		.btn-more-info {
-			padding: 6px 12px;
-			font-size: 0.9rem;
-		}
 	}
 
 	.embla2 {
