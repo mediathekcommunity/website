@@ -4,7 +4,6 @@
 	import '../app.css';
 	import { scrollY } from 'svelte/reactivity/window';
 	let isScrolled = $state(false);
-    e
 	const handleScroll = () => {
 		isScrolled = scrollY.current > 50;
 	};

@@ -59,7 +59,7 @@
 	}
 
 	header.scrolled {
-		backdrop-filter: blur(8px);
+		backdrop-filter: blur(10px);
 		-webkit-backdrop-filter: blur(8px);
 	}
 
