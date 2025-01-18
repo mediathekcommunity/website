@@ -1,21 +1,12 @@
 <script>
 	import { slide } from 'svelte/transition';
-
-	let isScrolled = false;
+	export let isScrolled;
 	let isMobileMenuOpen = false;
-
-	const mode = import.meta.env.MODE;
-
-	const handleScroll = () => {
-		isScrolled = window.scrollY > 50;
-	};
 
 	const toggleMobileMenu = () => {
 		isMobileMenuOpen = !isMobileMenuOpen;
 	};
 </script>
-
-<svelte:window on:scroll={handleScroll} />
 
 <header class:scrolled={isScrolled}>
 	<div class="header-content">
@@ -55,20 +46,21 @@
 
 <style>
 	header {
-		position: sticky;
+		position: fixed;
 		top: 0;
 		left: 0;
 		right: 0;
 		z-index: 1000;
-		transition: background-color 0.3s ease;
+		transition: all 0.3s ease;
 		padding: 1rem 4%;
-		background-color: rgba(20, 20, 20, 0.5);
-		backdrop-filter: blur(8px);
-		-webkit-backdrop-filter: blur(8px);
+		background-color: transparent;
+		-webkit-backdrop-filter: none;
+		backdrop-filter: none;
 	}
 
 	header.scrolled {
-		background-color: rgba(20, 20, 20, 0.9);
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
 	}
 
 	.header-content {

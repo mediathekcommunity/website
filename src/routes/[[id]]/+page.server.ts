@@ -77,7 +77,7 @@ export async function load({ fetch, params, request }) {
 		// console.log(params.id);
 		const h1 = request.headers.get('cf-ipcountry') || 'De';
 		const data1 = await query(params.id);
-		console.log(data1);
+		//console.log(data1);
 
 		if (!data1) {
 			throw error(404, 'Page not found');
