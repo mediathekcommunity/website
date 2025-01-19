@@ -2,7 +2,18 @@
 	// @ts-nocheck
 	import { visible } from '$lib/store';
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
+	import Autoplay from 'embla-carousel-autoplay';
+	import Fade from 'embla-carousel-fade';
 	let { data, heroItems } = $props();
+	let plugins = [
+		Autoplay({
+			delay: 5000,
+			stopOnMouseEnter: false,
+			stopOnFocusIn: false,
+			stopOnInteraction: false
+		}),
+		Fade()
+	];
 	let options = {
 		align: 'center',
 		slidesToScroll: 1,
@@ -16,10 +27,11 @@
 	function onInit(event) {
 		emblaApi = event.detail;
 	}
+	//console.log(heroItems);
 </script>
 
 <div class="hero-container relative w-full">
-	<div class="embla absolute inset-0" use:emblaCarouselSvelte={{ options }} onemblaInit={onInit}>
+	<div class="embla absolute inset-0" use:emblaCarouselSvelte={{ options,plugins }} onemblaInit={onInit}>
 		<div class="embla__container">
 			{#each heroItems as slide, i}
 				<div class="embla__slide">
@@ -76,7 +88,7 @@
 								{slide.title}
 							</h1>
 							<p class="mb-4 text-sm italic text-gray-300 sm:text-base">
-								Original Title: {slide.originalTitle}
+								Original Title: {slide.orgtitle}
 							</p>
 							<a href="/details/{slide.id}">
 								<button

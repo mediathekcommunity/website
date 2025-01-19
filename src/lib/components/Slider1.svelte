@@ -1,9 +1,16 @@
 <script>
+// @ts-nocheck
+
 	import { visible } from '$lib/store';
 	import * as Flag from 'svelte-flags';
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
 	import Card from './Card.svelte';
-
+	function getregionname(lang) {
+		const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
+		lang = lang.toUpperCase(); 
+		return regionNames.of(lang);
+	}
+	const regionNamesInEnglish = new Intl.DisplayNames(['en'], { type: 'language' });
 	// @ts-ignore
 	export let langlist = [];
 	export let langdata = {};
@@ -31,12 +38,17 @@
 
 {#each sortedLanglist as lang}
 	<div class="lang-section">
-		<h2 class="section-title">
+		<h1 class="section-title">
+			<span
+						class="bg-gradient-to-br from-blue-500 to-cyan-300 box-decoration-clone bg-clip-text text-transparent"
+					>
 			{#if lang !== 'Unknown'}
 				<svelte:component this={Flag[lang]} class="mr-2 inline-flex place-self-center" size="30" />
 			{/if}
+			{getregionname(lang)}
 			{lang === geo ? '(Your Location)' : ''}
-		</h2>
+			</span>
+		</h1>
 		<div class="embla" use:emblaCarouselSvelte={options}>
 			<div class="embla__container">
 				{#each langdata[lang] || [] as item}
@@ -57,12 +69,8 @@
 	.section-title {
 		font-size: clamp(1.25rem, 2vw, 1.5rem);
 		font-weight: bold;
-		color: rgb(229, 231, 235);
-		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-		padding: 0 1rem 0.5rem 1rem;
-		display: flex;
-		align-items: center;
-		gap: 1rem;
+		margin-bottom: 1.5rem;
+		text-align: center;
 	}
 
 	.embla {
