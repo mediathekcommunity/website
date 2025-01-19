@@ -1,15 +1,13 @@
-<script>
-	// You can add any necessary imports or script logic here
-</script>
+<footer class="footer sm:footer-horizontal footer-left bg-base-300 text-base-content bottom-0 p-4">
+	<div class="grid grid-flow-row gap-0">
+		<p>Copyright © {new Date().getFullYear()} - All right reserved</p>
 
-<footer class="footer">
-	<div class="footer-content">
 		<p class="tmdb-credit">This site uses the TMDB API but is not endorsed or certified by TMDB.</p>
 		<div class="tmdb-logo">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				viewBox="0 0 273.42 35.52"
-				height="15.52"
+				height="13.52"
 				class="display-inline"
 			>
 				<defs>
@@ -37,31 +35,17 @@
 			</svg>
 		</div>
 	</div>
+	<nav>
+		<span
+			>Built with <a target="_blank" href="https://kit.svelte.dev">Sveltekit</a> &
+			<a target="_blank" href="https://daisyui.com">DaisyUI v4-beta</a></span
+		>
+	</nav>
 </footer>
 
 <style>
-	:root {
-		--font-color-light: #999;
-	}
-
-	.footer {
-		background-color: rgba(20, 20, 20, 0.9);
-		color: #fff;
-		padding: 2rem 4%;
-		margin-top: 2rem;
-	}
-
-	.footer-content {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		flex-direction: column;
-		text-align: center;
-	}
-
 	.tmdb-credit {
 		font-size: 0.9rem;
-		margin-bottom: 1rem;
 		color: var(--font-color-light);
 	}
 
@@ -78,10 +62,6 @@
 	}
 
 	@media (max-width: 768px) {
-		.footer {
-			padding: 1.5rem 4%;
-		}
-
 		.tmdb-credit {
 			font-size: 0.8rem;
 		}

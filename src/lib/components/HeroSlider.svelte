@@ -19,20 +19,21 @@
 	};
 	function getbgcolor(bgcolor) {
 		if (bgcolor) {
-			var x="inline-flex items-center gap-1 px-2 py-1 text-xs text-white sm:text-sm" + bgcolor;
-			return bgcolor;
+			bgcolor = '  ' + bgcolor;
+			var x = 'inline-flex items-center gap-1 text-white sm:text-sm ' + bgcolor;
+			//console.log(x);
+			return x;
 		} else {
-			return 'bg-green-800';
+			return 'bg-lime-600';
 		}
 	}
 	let plugins = [
-		/*
 		Autoplay({
 			delay: 8000,
 			stopOnMouseEnter: false,
 			stopOnFocusIn: false,
 			stopOnInteraction: false
-		}),*/
+		}) /**/,
 		Fade()
 	];
 	let options = {
@@ -71,8 +72,8 @@
 							class="absolute bottom-4 left-4 max-w-[calc(100%-2rem)] text-white sm:bottom-8 sm:left-8 sm:max-w-[calc(100%-4rem)] md:bottom-12 md:left-16 md:max-w-2xl lg:bottom-16 lg:left-32 lg:max-w-3xl"
 						>
 							<div class="mb-2 flex flex-wrap items-center gap-2 sm:mb-4">
-								<span class={getbgcolor(slide.channel.bgcolor)}  >
-									<Icon icon={slide.channel.icon} height="28px" width="36px" class={slide.channel.bgcolor}/>
+								<span class={getbgcolor(slide.channel.bgcolor)}>
+									<Icon icon={slide.channel.icon} height="28px" width="36px" />
 								</span>
 								<span class="inline-flex gap-1 bg-gray-800 text-white sm:text-sm">
 									<Icon icon={getqualityicon(slide.quality)} height="28px" width="36px" />
@@ -88,32 +89,15 @@
 								</span>
 							</div>
 							<h1
-								class="mb-2 text-2xl font-bold leading-tight tracking-tight sm:text-3xl md:text-4xl lg:text-5xl"
+								class="mb-2 text-2xl leading-tight font-bold tracking-tight sm:text-3xl md:text-4xl lg:text-5xl"
 							>
 								{slide.title}
 							</h1>
-							<p class="mb-4 text-sm italic text-gray-300 sm:text-base">
+							<p class="mb-4 text-sm text-gray-300 italic sm:text-base">
 								Original Title: {slide.orgtitle}
 							</p>
 							<a href="/details/{slide.id}">
-								<button
-									class="inline-flex items-center gap-2 rounded-md bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-700"
-									href="/details/{slide.id}"
-								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										class="h-5 w-5"
-										viewBox="0 0 20 20"
-										fill="currentColor"
-									>
-										<path
-											fill-rule="evenodd"
-											d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
-											clip-rule="evenodd"
-										/>
-									</svg>
-									Details
-								</button></a
+								<button class="btn btn-primary" href="/details/{slide.id}"> Details </button></a
 							>
 						</div>
 					</div>

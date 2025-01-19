@@ -45,7 +45,7 @@
 			<div class="maincontent">
 				<h1 class="section-title">
 					<span
-						class="bg-gradient-to-br from-blue-500 to-cyan-300 box-decoration-clone bg-clip-text text-transparent"
+						class="bg-linear-to-br from-blue-500 to-cyan-300 box-decoration-clone bg-clip-text text-transparent"
 					>
 						Recently Added
 					</span>
@@ -83,7 +83,7 @@
 	.section-title {
 		font-size: clamp(1.25rem, 2vw, 1.5rem);
 		font-weight: bold;
-		margin-bottom: 0rem;
+		margin-bottom: 1rem;
 		text-align: center;
 	}
 
