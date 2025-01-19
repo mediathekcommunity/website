@@ -1,11 +1,10 @@
 <script>
 	// You can add any necessary imports or script logic here
 </script>
+
 <footer class="footer">
 	<div class="footer-content">
-		<p class="tmdb-credit">
-			This site uses the TMDB API but is not endorsed or certified by TMDB.
-		</p>
+		<p class="tmdb-credit">This site uses the TMDB API but is not endorsed or certified by TMDB.</p>
 		<div class="tmdb-logo">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
@@ -39,55 +38,56 @@
 		</div>
 	</div>
 </footer>
+
 <style>
-    :root {
-        --font-color-light: #999;
-    }
+	:root {
+		--font-color-light: #999;
+	}
 
-    .footer {
-        background-color: rgba(20, 20, 20, 0.9);
-        color: #fff;
-        padding: 2rem 4%;
-        margin-top: 2rem;
-    }
+	.footer {
+		background-color: rgba(20, 20, 20, 0.9);
+		color: #fff;
+		padding: 2rem 4%;
+		margin-top: 2rem;
+	}
 
-    .footer-content {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        text-align: center;
-    }
+	.footer-content {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+		text-align: center;
+	}
 
-    .tmdb-credit {
-        font-size: 0.9rem;
-        margin-bottom: 1rem;
-        color: var(--font-color-light);
-    }
+	.tmdb-credit {
+		font-size: 0.9rem;
+		margin-bottom: 1rem;
+		color: var(--font-color-light);
+	}
 
-    .tmdb-logo {
-        margin-top: 0.5rem;
-    }
+	.tmdb-logo {
+		margin-top: 0.5rem;
+	}
 
-    .display-inline {
-        display: inline;
-    }
+	.display-inline {
+		display: inline;
+	}
 
-    .logo-path {
-        fill: url(#tmdb-logo-gradient);
-    }
+	.logo-path {
+		fill: url(#tmdb-logo-gradient);
+	}
 
-    @media (max-width: 768px) {
-        .footer {
-            padding: 1.5rem 4%;
-        }
+	@media (max-width: 768px) {
+		.footer {
+			padding: 1.5rem 4%;
+		}
 
-        .tmdb-credit {
-            font-size: 0.8rem;
-        }
+		.tmdb-credit {
+			font-size: 0.8rem;
+		}
 
-        .tmdb-logo svg {
-            height: 12px;
-        }
-    }
+		.tmdb-logo svg {
+			height: 12px;
+		}
+	}
 </style>

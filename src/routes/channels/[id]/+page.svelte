@@ -42,6 +42,7 @@
 {:else}
 	<ErrorSection filter={data?.filter} />
 {/if}
+
 <style scoped>
 	.embla__slide {
 		flex: 0 0 200px !important;

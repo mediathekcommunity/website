@@ -41,9 +41,9 @@ async function query(id1) {
 					channel: {
 						limit: 5
 					},
-					country : {
+					country: {
 						limit: 5
-					},
+					}
 				}
 			})
 		);
@@ -65,7 +65,7 @@ async function query(id1) {
 			})
 		);
 	}
- 	var data = x;
+	var data = x;
 	data.sort((a, b) => new Date(b.date_created) - new Date(a.date_created));
 	return data;
 }
