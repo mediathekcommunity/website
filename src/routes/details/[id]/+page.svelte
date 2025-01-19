@@ -1,6 +1,5 @@
 <script>
 	// @ts-nocheck
-	import { Tabs, Accordion } from '@skeletonlabs/skeleton-svelte';
 	import * as Flag from 'svelte-flags';
 	import LibraryBig from 'lucide-svelte/icons/library-big';
 	import Film from 'lucide-svelte/icons/film';
@@ -88,7 +87,7 @@
 </script>
 
 {#if data1}
-	<div class="details-container">
+	<div>
 		{#if data1.channel.info}
 			<aside class="gradient-text">
 				<div class="gradient-text-light b21">
@@ -114,7 +113,7 @@
 					class="hero-image absolute inset-0 h-full w-full"
 				/>
 				<div class="gradient-overlay absolute inset-x-0" style="bottom: -1px"></div>
-				<div class="hero-content">
+				<div class="hero-content grid">
 					<h1 class="title">{data1.title}</h1>
 					{#if data1.orgtitle}
 						<h2 class="subtitle">Original Title: {data1.orgtitle}</h2>
@@ -139,176 +138,148 @@
 		{/if}
 
 		<div class="content-wrapper">
-			<Tabs bind:value={group} listJustify="justify-center" class="details-tabs">
-				{#snippet list()}
-					<Tabs.Control value="details" title="Details">Details</Tabs.Control>
-					{#if data1.links.length > 0}
-						<Tabs.Control value="links" title="Links">Links</Tabs.Control>
-					{:else if data1.season > 1}
-						<Tabs.Control value="episodes" title="Seasons">Seasons</Tabs.Control>
-					{:else}
-						<Tabs.Control value="episodes" title="Episodes">Episodes</Tabs.Control>
-					{/if}
-				{/snippet}
-				{#snippet content()}
-					<Tabs.Panel value="details">
-						<div class="details-grid">
-							<div class="">
-								<h3 class="section-title">Information</h3>
-								<table class="info-table">
-									<tbody>
-										{#if data1.duration}
-											<tr>
-												<th>Duration</th>
-												<td>{toHoursAndMinutes(data1.duration)}</td>
-											</tr>
-										{/if}
-										{#if data1.type == 'series'}
-											<tr>
-												<th>Seasons</th>
-												<td>{data1.season}</td>
-											</tr>
-											<tr>
-												<th>Episodes (total)</th>
-												<td>{data1.episode}</td>
-											</tr>
-										{/if}
-										<tr>
-											<th>Country</th>
-											<td>
-												<!-- svelte-ignore svelte_component_deprecated -->
-												<svelte:component
-													this={Flag[data1.channel.country]}
-													class="flag-icon"
-													size="25"
-												/>
-											</td>
-										</tr>
-										<tr>
-											<th>Channel</th>
-											<td>{data1.channel.name}</td>
-										</tr>
-										<tr>
-											<th>Quality</th>
-											<td>{data1.quality}</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-							<div class="description-section">
-								<h3 class="section-title">Description</h3>
-								<p>{data1.description}</p>
-							</div>
-						</div>
-					</Tabs.Panel>
-					<Tabs.Panel value="links">
-						{#if data1.links.length > 0 && data1.channel.name != 'YLE'}
-							<table style="table-layout: fixed; width: 100%;">
-								<thead>
-									<tr>
-										<th style="width: 33.33%; text-align: center;">Format</th>
-										<th style="width: 33.33%; text-align: center;">Link</th>
-									</tr>
-								</thead>
+			<div role="tablist" class="tabs tabs-lift">
+				<input
+					type="radio"
+					name="my_tabs_3"
+					role="tab"
+					class="tab"
+					aria-label="Details"
+					checked="checked"
+				/>
+				<div class="tab-content bg-base-100 border-base-300 p-6">
+					<div class="details-grid">
+						<div class="">
+							<h3 class="section-title">Information</h3>
+							<table class="info-table">
 								<tbody>
+									{#if data1.duration}
+										<tr>
+											<th>Duration</th>
+											<td>{toHoursAndMinutes(data1.duration)}</td>
+										</tr>
+									{/if}
+									{#if data1.type == 'series'}
+										<tr>
+											<th>Seasons</th>
+											<td>{data1.season}</td>
+										</tr>
+										<tr>
+											<th>Episodes (total)</th>
+											<td>{data1.episode}</td>
+										</tr>
+									{/if}
 									<tr>
-										<td style="text-align: center;"> {data1.links[0].streamformat} </td>
-										<td style="text-align: center;"
-											><button
-												type="button"
-												class="play-episode-button btn preset-filled-primary-500"
-												onclick={() => playvideo(data1.links)}
-											>
-												Play Link
-											</button>
+										<th>Country</th>
+										<td>
+											<!-- svelte-ignore svelte_component_deprecated -->
+											<svelte:component
+												this={Flag[data1.channel.country]}
+												class="flag-icon"
+												size="25"
+											/>
 										</td>
+									</tr>
+									<tr>
+										<th>Channel</th>
+										<td>{data1.channel.name}</td>
+									</tr>
+									<tr>
+										<th>Quality</th>
+										<td>{data1.quality}</td>
 									</tr>
 								</tbody>
 							</table>
-						{:else}
-							<p>Visit YLE Page to watch the show:</p>
-							{JSON.stringify(data1.links)}
-							<button type="button" class="play-episode-button btn preset-filled-primary-500">
-								<a href={data1.links.videosource} target="_blank"> YLE </a>
-							</button>
-						{/if}
-					</Tabs.Panel>
-					<Tabs.Panel value="episodes">
+						</div>
+						<div class="description-section">
+							<h3 class="section-title">Description</h3>
+							<p>{data1.description}</p>
+						</div>
+					</div>
+				</div>
+				{#if data1.links.length > 0}
+					<input type="radio" name="my_tabs_3" role="tab" class="tab" aria-label="Links" />
+					<div class="tab-content bg-base-100 border-base-300 p-6">Tab content 2</div>
+				{:else}
+					<input
+						type="radio"
+						name="my_tabs_3"
+						role="tab"
+						class="tab"
+						aria-label={data1.season > 1 ? 'Seasons' : 'Episodes'}
+					/>
+					<div class="tab-content bg-base-100 border-base-300 p-6">
 						{#if data1.season > 1}
-							<Tabs bind:value={group2}>
-								{#snippet list()}
-									<div
-										class="flex snap-x snap-mandatory scroll-px-2 gap-4 overflow-x-auto overflow-y-hidden scroll-smooth"
-									>
-										{#each { length: data1.season }, season}
-											<Tabs.Control value={season + 1}>Season {season + 1}</Tabs.Control>
-										{/each}
-									</div>
-								{/snippet}
-								{#snippet content()}
-									{#each { length: data1.season }, season1}
-										<Tabs.Panel value={season1 + 1}>
-											<Accordion {value2} collapsible>
-												{#each data.groupseasons[season1 + 1] as link, index1}
-													<Accordion.Item value={index1.toString()}>
-														{#snippet lead()}
-															<div class="episode-title">
-																<span class="episode-number">S{link.season}-E{link.episode}:</span>
-																<span>{link.title}</span>
-															</div>
-														{/snippet}
-														{#snippet control()}<div class="flex justify-center"></div>{/snippet}
-														{#snippet panel()}
-															<div class="episode-content">
-																<p class="episode-overview">{link.description}</p>
+							<div role="tablist" class="tabs tabs-lift">
+								{#each { length: data1.season }, season}
+									<input
+										type="radio"
+										name="seasons_tab"
+										role="tab"
+										class="tab"
+										aria-label="S{season + 1}"
+										checked={season == 0}
+									/>
+									<div class="tab-content bg-base-100 border-base-300 p-6">
+										<div class="join join-vertical bg-base-100">
+											<!-- begin episode for seasons -->
+											{#each data.groupseasons[season + 1] as link, index1}
+												<div class="collapse-arrow join-item border-base-300 collapse border">
+													<input type="radio" name="my-accordion-s{season}" checked={index1 == 0} />
+													<div class="collapse-title font-semibold">
+														<span class="episode-number">S{link.season}-E{link.episode}:</span>
+														<span>{link.title} {index1}</span>
+													</div>
+													<div class="collapse-content text-sm">
+														<div class="episode-content">
+															<p class="episode-overview">
+																{link.description ? link.description : 'no description'}
+															</p>
+															{#if link.src}
 																<button
 																	type="button"
-																	class="play-episode-button btn preset-filled-primary-500"
-																	onclick={() => playepisode(link, index)}
+																	class="btn btn-accent"
+																	onclick={() => playepisode(link, index1)}
 																>
 																	Play Episode
 																</button>
-															</div>
-														{/snippet}
-													</Accordion.Item>
-												{/each}
-											</Accordion>
-										</Tabs.Panel>
-									{/each}
-								{/snippet}
-							</Tabs>
+															{/if}
+														</div>
+													</div>
+												</div>
+											{/each}
+										</div>
+									</div>
+								{/each}
+							</div>
 						{:else}
-							<Accordion {value} collapsible>
-								{#if data1.slinks}
-									{#each data1.slinks as link, index}
-										<Accordion.Item value={index.toString()}>
-											{#snippet lead()}
-												<div class="episode-title">
-													<span class="episode-number">S{link.season}-E{link.episode}:</span>
-													<span>{link.title}</span>
-												</div>
-											{/snippet}
-											{#snippet control()}<div class="flex justify-center"></div>{/snippet}
-											{#snippet panel()}
-												<div class="episode-content">
-													<p class="episode-overview">{link.description}</p>
-													<button
-														type="button"
-														class="play-episode-button btn preset-filled-primary-500"
-														onclick={() => playepisode(link, index)}
-													>
-														Play Episode
-													</button>
-												</div>
-											{/snippet}
-										</Accordion.Item>
-									{/each}
-								{/if}
-							</Accordion>
+							<div class="join join-vertical bg-base-100">
+								{#each data.groupseasons[1] as link2, index3}
+									<div class="collapse-arrow join-item border-base-300 collapse border">
+										<input type="radio" name="my-accordion-episode" checked={index3 == 0} />
+										<div class="collapse-title font-semibold">
+											<span class="episode-number">S{link2.season}-E{link2.episode}:</span>
+											<span>{link2.title}</span>?
+										</div>
+										<div class="collapse-content text-sm">
+											<div class="episode-content">
+												<p class="episode-overview">{link2.description}</p>
+												<button
+													type="button"
+													class="btn btn-accent"
+													onclick={() => playepisode(link2, index3)}
+												>
+													Play Episode
+												</button>
+											</div>
+										</div>
+									</div>
+								{/each}
+							</div>
 						{/if}
-					</Tabs.Panel>
-				{/snippet}
-			</Tabs>
+					</div>
+				{/if}
+			</div>
 		</div>
 	</div>
 {/if}
@@ -507,15 +478,6 @@
 	.close-video-btn:hover {
 		background-color: rgba(0, 0, 0, 0.7);
 	}
-	.details-container {
-		position: relative;
-		width: 100%;
-		max-width: 100%;
-		margin: 0;
-		padding: 0;
-		top: 4rem;
-	}
-
 	.hero-container {
 		position: relative;
 		width: 100%;
@@ -566,7 +528,7 @@
 
 	.content-wrapper {
 		width: 100%;
-		max-width: 1200px;
+		max-width: 1800px;
 		margin: 0 auto;
 		padding: 2rem;
 	}
@@ -595,11 +557,6 @@
 
 	.info-table td {
 		padding: 0.5rem 0;
-	}
-
-	.episode-title {
-		display: flex;
-		align-items: center;
 	}
 
 	.episode-number {
