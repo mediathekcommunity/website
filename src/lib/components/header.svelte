@@ -8,7 +8,7 @@
 	}
 </script>
 
-<header class:scrolled={isScrolled}>
+<header class:scrolled={isScrolled} class:navopen={isMobileMenuOpen}>
 	<div class="header-content">
 		<div class="logo">
 			<a href="/">
@@ -62,7 +62,9 @@
 		backdrop-filter: blur(10px);
 		-webkit-backdrop-filter: blur(8px);
 	}
-
+	header.navopen {
+		background-color: rgba(20, 20, 20, 0.9);
+	}
 	.header-content {
 		display: flex;
 		justify-content: space-between;

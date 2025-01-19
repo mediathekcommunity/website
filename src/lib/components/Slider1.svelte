@@ -69,7 +69,7 @@
 	.section-title {
 		font-size: clamp(1.25rem, 2vw, 1.5rem);
 		font-weight: bold;
-		margin-bottom: 1.5rem;
+		margin-bottom: 0rem;
 		text-align: center;
 	}
 
@@ -88,7 +88,7 @@
 		flex: 0 0 auto;
 		min-width: 0;
 		padding: 0;
-		height: 350px; /* Base height to accommodate card height (330px) plus margin */
+		/*height: 350px;  Base height to accommodate card height (330px) plus margin */
 	}
 
 	@media (max-width: 640px) {
@@ -97,16 +97,13 @@
 		}
 
 		.section-title {
-			padding: 0 0.75rem 0.375rem 0.75rem;
+			padding: 0 0.75rem 0rem 0.75rem;
 		}
 
 		.embla__container {
 			padding: 0 0.5rem;
 		}
-
-		.embla__slide {
-			height: 252px; /* Matches card height (240px) plus margins for mobile */
-		}
+ 
 	}
 
 	@media (min-width: 641px) and (max-width: 1024px) {
@@ -122,10 +119,7 @@
 			padding: 0 0.75rem;
 			gap: 0.375rem;
 		}
-
-		.embla__slide {
-			height: 286px; /* Matches card height (270px) plus margins for tablets */
-		}
+ 
 	}
 
 	@media (min-width: 1025px) {
@@ -142,8 +136,6 @@
 			gap: 1rem;
 		}
 
-		.embla__slide {
-			height: 350px; /* Full height for desktop */
-		}
+ 
 	}
 </style>
