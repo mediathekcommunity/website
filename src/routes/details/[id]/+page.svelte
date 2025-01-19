@@ -393,6 +393,7 @@
 	}
 	.video-player-container {
 		position: relative;
+		top: 60px;
 		width: 100%;
 		max-width: 1200px;
 		margin: 0 auto 2rem;
