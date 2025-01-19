@@ -13,6 +13,16 @@ function getformat(id: string) {
 			return 'application/dash+xml';
 	}
 }
+const groupBySeason = (items) => {
+	return items.reduce((acc, item) => {
+		//console.log(item);
+		const season = item.season || 'Unknown';
+		acc[season] = acc[season] || [];
+		acc[season].push(item); /**/
+		return acc;
+	}, {});
+};
+
 function getsubformat(id: any[]) {
 	let x = 0;
 	let subs: { kind: string; src: string; srclang: string; label: string; default: boolean }[] = [];
@@ -83,13 +93,15 @@ function videosrc(links: any, backdrop: string) {
 }
 
 export async function load({ params }) {
-		const mediathek = await fetchMediathek(params.id);
-		const slinks = generatePlaylist(mediathek.slinks);
-		const videosrc1 = videosrc(mediathek.links, mediathek.backdrop);
-		return {
-			page: mediathek,
-			episodes: mediathek.episode,
-			playlist: slinks || [],
-			videosource: videosrc1 || {}
-		};
+	const mediathek = await fetchMediathek(params.id);
+	const slinks = generatePlaylist(mediathek.slinks);
+	const videosrc1 = videosrc(mediathek.links, mediathek.backdrop);
+	return {
+		page: mediathek,
+		groupseasons: groupBySeason(mediathek.slinks),
+		episodes: mediathek.episode,
+		seasons: mediathek.season,
+		playlist: slinks || [],
+		videosource: videosrc1 || {}
+	};
 }

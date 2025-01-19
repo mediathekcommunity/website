@@ -25,13 +25,15 @@
 	let myPlaylist = [];
 	let myPlaylistomu = [];
 	let group = $state('details');
+	let group2 = $state(1);
 	let value = $state('0');
+	let value2 = $state('0');
 	let { data } = $props();
 	let data1 = $state();
 	let channelinfo = $state();
 	let backgroundImage = $state('');
 	let showvideo = $state(false);
-	//console.log('Details page:', data);
+	console.log('Details page:', data);
 
 	$effect(() => {
 		data1 = data.page;
@@ -142,6 +144,8 @@
 					<Tabs.Control value="details" title="Details">Details</Tabs.Control>
 					{#if data1.links.length > 0}
 						<Tabs.Control value="links" title="Links">Links</Tabs.Control>
+					{:else if data1.season > 1}
+						<Tabs.Control value="episodes" title="Seasons">Seasons</Tabs.Control>
 					{:else}
 						<Tabs.Control value="episodes" title="Episodes">Episodes</Tabs.Control>
 					{/if}
@@ -165,7 +169,7 @@
 												<td>{data1.season}</td>
 											</tr>
 											<tr>
-												<th>Episodes</th>
+												<th>Episodes (total)</th>
 												<td>{data1.episode}</td>
 											</tr>
 										{/if}
@@ -230,33 +234,78 @@
 						{/if}
 					</Tabs.Panel>
 					<Tabs.Panel value="episodes">
-						<Accordion {value} collapsible>
-							{#if data1.slinks}
-								{#each data1.slinks as link, index}
-									<Accordion.Item value={index.toString()}>
-										{#snippet lead()}
-											<div class="episode-title">
-												<span class="episode-number">S{link.season}-E{link.episode}:</span>
-												<span>{link.title}</span>
-											</div>
-										{/snippet}
-										{#snippet control()}<div class="flex justify-center"></div>{/snippet}
-										{#snippet panel()}
-											<div class="episode-content">
-												<p class="episode-overview">{link.description}</p>
-												<button
-													type="button"
-													class="play-episode-button btn preset-filled-primary-500"
-													onclick={() => playepisode(link, index)}
-												>
-													Play Episode
-												</button>
-											</div>
-										{/snippet}
-									</Accordion.Item>
-								{/each}
-							{/if}
-						</Accordion>
+						{#if data1.season > 1}
+							<Tabs bind:value={group2}>
+								{#snippet list()}
+									<div
+										class="flex snap-x snap-mandatory scroll-px-2 gap-4 overflow-x-auto overflow-y-hidden scroll-smooth"
+									>
+										{#each { length: data1.season }, season}
+											<Tabs.Control value={season + 1}>Season {season + 1}</Tabs.Control>
+										{/each}
+									</div>
+								{/snippet}
+								{#snippet content()}
+									{#each { length: data1.season }, season1}
+										<Tabs.Panel value={season1 + 1}>
+											<Accordion {value2} collapsible>
+												{#each data.groupseasons[season1 + 1] as link, index1}
+													<Accordion.Item value={index1.toString()}>
+														{#snippet lead()}
+															<div class="episode-title">
+																<span class="episode-number">S{link.season}-E{link.episode}:</span>
+																<span>{link.title}</span>
+															</div>
+														{/snippet}
+														{#snippet control()}<div class="flex justify-center"></div>{/snippet}
+														{#snippet panel()}
+															<div class="episode-content">
+																<p class="episode-overview">{link.description}</p>
+																<button
+																	type="button"
+																	class="play-episode-button btn preset-filled-primary-500"
+																	onclick={() => playepisode(link, index)}
+																>
+																	Play Episode
+																</button>
+															</div>
+														{/snippet}
+													</Accordion.Item>
+												{/each}
+											</Accordion>
+										</Tabs.Panel>
+									{/each}
+								{/snippet}
+							</Tabs>
+						{:else}
+							<Accordion {value} collapsible>
+								{#if data1.slinks}
+									{#each data1.slinks as link, index}
+										<Accordion.Item value={index.toString()}>
+											{#snippet lead()}
+												<div class="episode-title">
+													<span class="episode-number">S{link.season}-E{link.episode}:</span>
+													<span>{link.title}</span>
+												</div>
+											{/snippet}
+											{#snippet control()}<div class="flex justify-center"></div>{/snippet}
+											{#snippet panel()}
+												<div class="episode-content">
+													<p class="episode-overview">{link.description}</p>
+													<button
+														type="button"
+														class="play-episode-button btn preset-filled-primary-500"
+														onclick={() => playepisode(link, index)}
+													>
+														Play Episode
+													</button>
+												</div>
+											{/snippet}
+										</Accordion.Item>
+									{/each}
+								{/if}
+							</Accordion>
+						{/if}
 					</Tabs.Panel>
 				{/snippet}
 			</Tabs>
@@ -396,7 +445,7 @@
 			height: 70vh;
 			max-height: 85vh;
 		}
-		.hero-container2{
+		.hero-container2 {
 			height: 70vh;
 			max-height: 85vh;
 		}

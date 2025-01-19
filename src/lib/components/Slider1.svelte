@@ -1,5 +1,5 @@
 <script>
-// @ts-nocheck
+	// @ts-nocheck
 
 	import { visible } from '$lib/store';
 	import * as Flag from 'svelte-flags';
@@ -7,7 +7,7 @@
 	import Card from './Card.svelte';
 	function getregionname(lang) {
 		const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
-		lang = lang.toUpperCase(); 
+		lang = lang.toUpperCase();
 		return regionNames.of(lang);
 	}
 	const regionNamesInEnglish = new Intl.DisplayNames(['en'], { type: 'language' });
@@ -40,13 +40,17 @@
 	<div class="lang-section">
 		<h1 class="section-title">
 			<span
-						class="bg-gradient-to-br from-blue-500 to-cyan-300 box-decoration-clone bg-clip-text text-transparent"
-					>
-			{#if lang !== 'Unknown'}
-				<svelte:component this={Flag[lang]} class="mr-2 inline-flex place-self-center" size="30" />
-			{/if}
-			{getregionname(lang)}
-			{lang === geo ? '(Your Location)' : ''}
+				class="bg-gradient-to-br from-blue-500 to-cyan-300 box-decoration-clone bg-clip-text text-transparent"
+			>
+				{#if lang !== 'Unknown'}
+					<svelte:component
+						this={Flag[lang]}
+						class="mr-2 inline-flex place-self-center"
+						size="30"
+					/>
+				{/if}
+				{getregionname(lang)}
+				{lang === geo ? '(Your Location)' : ''}
 			</span>
 		</h1>
 		<div class="embla" use:emblaCarouselSvelte={options}>
@@ -103,7 +107,6 @@
 		.embla__container {
 			padding: 0 0.5rem;
 		}
- 
 	}
 
 	@media (min-width: 641px) and (max-width: 1024px) {
@@ -119,7 +122,6 @@
 			padding: 0 0.75rem;
 			gap: 0.375rem;
 		}
- 
 	}
 
 	@media (min-width: 1025px) {
@@ -135,7 +137,5 @@
 			padding: 0rem;
 			gap: 1rem;
 		}
-
- 
 	}
 </style>
