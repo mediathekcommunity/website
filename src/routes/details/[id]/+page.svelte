@@ -98,9 +98,11 @@
 			</aside>
 		{/if}
 		{#if showvideo}
-			<div class="video-player-container">
-				<Videoplayer />
-				<button class="close-video-btn" onclick={stopvideo}>Close Video</button>
+			<div class="hero-container2 relative w-full">
+				<div class="video-player-container h-full">
+					<Videoplayer />
+					<button class="close-video-btn" onclick={stopvideo}>Close Video</button>
+				</div>
 			</div>
 		{:else if data1.backdrop}
 			<div class="hero-container relative w-full">
@@ -109,7 +111,7 @@
 					alt={data1.title}
 					class="hero-image absolute inset-0 h-full w-full"
 				/>
-				<div class="gradient-overlay absolute inset-x-0 bottom-0"></div>
+				<div class="gradient-overlay absolute inset-x-0" style="bottom: -1px"></div>
 				<div class="hero-content">
 					<h1 class="title">{data1.title}</h1>
 					{#if data1.orgtitle}
@@ -272,7 +274,16 @@
 		background-repeat: no-repeat;
 		overflow: hidden;
 	}
-
+	.hero-container2 {
+		position: relative;
+		width: 100%;
+		height: 52vh;
+		top: auto;
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+		overflow: hidden;
+	}
 	.hero-image {
 		width: 100%;
 		height: 100%;
@@ -324,6 +335,11 @@
 			min-height: 250px;
 			max-height: 50vh;
 		}
+		.hero-container2 {
+			height: 40vh;
+			min-height: 250px;
+			max-height: 50vh;
+		}
 
 		.hero-image {
 			object-fit: cover;
@@ -337,6 +353,11 @@
 
 	@media (min-width: 481px) and (max-width: 640px) {
 		.hero-container {
+			height: 50vh;
+			min-height: 300px;
+			max-height: 60vh;
+		}
+		.hero-container2 {
 			height: 50vh;
 			min-height: 300px;
 			max-height: 60vh;
@@ -357,7 +378,10 @@
 			height: 60vh;
 			max-height: 75vh;
 		}
-
+		.hero-container2 {
+			height: 60vh;
+			max-height: 75vh;
+		}
 		.hero-image {
 			object-fit: cover;
 		}
@@ -372,7 +396,10 @@
 			height: 70vh;
 			max-height: 85vh;
 		}
-
+		.hero-container2{
+			height: 70vh;
+			max-height: 85vh;
+		}
 		.gradient-overlay {
 			height: 75%;
 		}
@@ -380,6 +407,10 @@
 
 	@media (min-width: 1025px) {
 		.hero-container {
+			height: 85vh;
+			max-height: 95vh;
+		}
+		.hero-container2 {
 			height: 85vh;
 			max-height: 95vh;
 		}
@@ -428,10 +459,12 @@
 		background-color: rgba(0, 0, 0, 0.7);
 	}
 	.details-container {
+		position: relative;
 		width: 100%;
 		max-width: 100%;
 		margin: 0;
 		padding: 0;
+		top: 4rem;
 	}
 
 	.hero-container {
@@ -539,7 +572,9 @@
 		.hero-container {
 			height: 60vh;
 		}
-
+		.hero-container2 {
+			height: 60vh;
+		}
 		.title {
 			font-size: 2.5rem;
 		}
@@ -568,7 +603,9 @@
 		.hero-container {
 			height: 70vh;
 		}
-
+		.hero-container2 {
+			height: 70vh;
+		}
 		.title {
 			font-size: 3rem;
 		}

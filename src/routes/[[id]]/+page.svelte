@@ -77,13 +77,13 @@
 	}
 
 	.maincontent {
-		margin-bottom: 1.5rem;
+		margin-bottom: 0rem;
 	}
 
 	.section-title {
 		font-size: clamp(1.25rem, 2vw, 1.5rem);
 		font-weight: bold;
-		margin-bottom: 1.5rem;
+		margin-bottom: 0rem;
 		text-align: center;
 	}
 
