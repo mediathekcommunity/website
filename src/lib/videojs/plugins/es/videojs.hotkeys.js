@@ -3,4 +3,169 @@
  * Hotkeys plugin for video.js
  * Version 2.0.0
  */
-/* eslint-disable */import videojs from"video.js";const Plugin=videojs.getPlugin("plugin");class Hotkeys extends Plugin{constructor(e,t){super(e,t);const n=e.el(),r=document;var i={docKeys:!0,volumeStep:.1,seekStep:5,enableMute:!0,enableCC:!1,enableRate:!0,enableRewindFroward:!0,enableVolume:!0,enableFullscreen:!0,enableNumbers:!0,enableJogStyle:!1,alwaysCaptureHotkeys:!0,captureDocumentHotkeys:!1,documentHotkeysFocusElementFilter:function(){return!1},enableModifiersForNumbers:!0,enableInactiveFocus:!0,skipInitialFocus:!1,playPauseKey:P,muteKey:D,fullscreenKey:C,captionsKey:R,customKeys:{}};videojs.options.blockKeys=!1;var o=!1,l=1,s=6,u=7,a=8;try{t=videojs.obj.merge(i,t)}catch(e){t=videojs.mergeOptions(i,t)}e.on("dispose",function(){e.off("keyup",T);e.off("keydown",T);e.off("dblclick",q);for(var t=e.el_.querySelectorAll(".vjs-button"),n=0;n<t.length;n++)if(!0!==t[n].classList.contains("vjs-menu-button"))t[n].removeEventListener("click",K)});var c=t.volumeStep,f=t.seekStep,y=t.enableMute,v=t.enableFullscreen,b=t.enableNumbers,p=t.enableJogStyle,m=t.alwaysCaptureHotkeys,d=t.captureDocumentHotkeys,k=t.enableModifiersForNumbers,h=t.enableInactiveFocus,g=t.skipInitialFocus;if(!n.hasAttribute("tabIndex"))n.setAttribute("tabIndex","-1");n.style.outline="none";if(m||!e.autoplay())if(!g)e.one("play",function(){n.focus()});if(h)e.on("userinactive",function(){var t=function(){clearTimeout(i)},i=setTimeout(function(){e.off("useractive",t);var i=r.activeElement,o=n.querySelector(".vjs-control-bar");if(i&&i.parentElement===o)n.focus()},10);e.one("useractive",t)});for(var j=e.el_.querySelectorAll(".vjs-button"),w=0;w<j.length;w++)if(!0!==j[w].classList.contains("vjs-menu-button"))j[w].addEventListener("click",K,!1);function K(){n.focus()}e.on("play",function(){var e=n.querySelector(".iframeblocker");if(e&&""===e.style.display){e.style.display="block";e.style.bottom="39px"}});var S=0,F=null,T=function(i){if(!e.el_.querySelector(".vjs-lock-showing")){var h=[70,77,32,179,67],g=i.which||i.keyCode,j=[188,190,40,38,39,37,177,39,176];if(i.shiftKey)if(!j.includes(g))return;if(!i.ctrlKey)if(!i.altKey)if(e.controls()){if([32,179,77,70,67].includes(g)){var w=(i.target||i.srcElement).tagName;if("INPUT"===w||"TEXTAREA"===w||"SELECT"===w)return}var K=r.activeElement,T=!1;if(K===n||K===n.querySelector(".vjs-tech")||K===n.querySelector(".vjs-control-bar")||K===n.querySelector(".iframeblocker"))T=!0;if(T&&t.enableRewindFroward&&(37===g||177===g)){i.preventDefault();i.stopPropagation();if(videojs.options.blockKeys)return;e.currentTime(e.currentTime()-f)}if(T&&t.enableRewindFroward&&(39===g||176===g)){i.preventDefault();i.stopPropagation();if(videojs.options.blockKeys)return;e.currentTime(e.currentTime()+f)}if(T&&38===g&&t.enableVolume){i.preventDefault();i.stopPropagation();if(videojs.options.blockKeys)return;if(!p)e.volume(e.volume()+c);else e.currentTime(e.currentTime()+1);return}if(T&&40===g&&t.enableVolume){i.preventDefault();i.stopPropagation();if(videojs.options.blockKeys)return;if(!p)e.volume(e.volume()-c);else e.currentTime(e.currentTime()+1);return}if(m||T){if(h.includes(g)){i.preventDefault();if(m||d)if(i.stopPropagation)i.stopPropagation();else if(window.event)window.event.cancelBubble=!0}if(70===g||77===g||32===g||179===g)if(!1!==o)return;o=!0;var q=e.playbackRates();if(i.shiftKey&&188===g&&t.enableRate){q.sort(function(e,t){return t-e});for(var P=0;P<q.length;P++)if(q[P]<e.playbackRate()){e.setRate(q[P]);break}}if(i.shiftKey&&190===g&&t.enableRate){q.sort(function(e,t){return e-t});for(P=0;P<q.length;P++)if(q[P]>e.playbackRate()){e.setRate(q[P]);break}}switch(E(i,e)){case a:if(t.enableCC){var R=e.el_.querySelector(".vjs-subs-caps-button");if(R){var D=R.querySelectorAll("li");if(D.length>1)if(S>0){D[S].click();S=0;e.el_.focus();break}else{var C=R.querySelector(".vjs-selected");if(C.classList.contains("vjs-captions-menu-item"))F=C;if(null!==F){for(P=0;P<D.length;P++)if(D[P].classList.contains("vjs-selected"))S=P;F=null;D[1].click();e.el_.focus();break}}}}break;case l:if(e.paused())e.play();else e.pause();break;case s:if(y)e.muted(!e.muted());break;case u:if(v)if(e.isFullscreen())e.exitFullscreen();else e.requestFullscreen();break;default:if(g>47&&g<59||g>95&&g<106)if(k||!(i.metaKey||i.ctrlKey||i.altKey))if(b){var H=48;if(g>95)H=96;var x=g-H;i.preventDefault();e.currentTime(e.duration()*x*.1)}for(var A in t.customKeys){var I=t.customKeys[A];if(I&&I.key&&I.handler)if(I.key(i)){i.preventDefault();I.handler(e,t)}}}}}}},q=function(t){if(e.controls()){var i=t.relatedTarget||t.toElement||r.activeElement;if(i===n||i===n.querySelector(".vjs-tech")||i===n.querySelector(".iframeblocker"))if(v)if(e.isFullscreen())e.exitFullscreen();else e.requestFullscreen()}},E=function(e,n){if(t.playPauseKey(e,n))return l;if(t.muteKey(e,n))return s;if(t.captionsKey(e,n))return a;if(t.fullscreenKey(e,n))return u;else return};function P(e){return 32===e.which||179===e.which}function R(e){return 67===e.which}function D(e){return 77===e.which}function C(e){return 70===e.which}function H(){o=!1}document.onkeydown=T;document.onkeyup=H;e.on("keydown",T);e.on("keyup",H);e.on("dblclick",q)}}if("undefined"!=typeof window)videojs.registerPlugin("hotkeys",Hotkeys);export default Hotkeys;
+/* eslint-disable */
+import videojs from 'video.js';
+
+const Plugin = videojs.getPlugin('plugin');
+
+class Hotkeys extends Plugin {
+	constructor(e, t) {
+		super(e, t);
+
+		// Wait for player to be ready before initializing hotkeys
+		e.ready(() => {
+			this.initialize(e, t);
+		});
+	}
+
+	initialize(e, t) {
+		const n = e.el();
+		const r = document;
+
+		// Define key handler functions first
+		const playPauseKey = (e) => {
+			return e.which === 32 || e.which === 179; // Space or Media Play/Pause key
+		};
+
+		const muteKey = (e) => {
+			return e.which === 77; // M key
+		};
+
+		const fullscreenKey = (e) => {
+			return e.which === 70; // F key
+		};
+
+		const captionsKey = (e) => {
+			return e.which === 67; // C key
+		};
+
+		var i = {
+			docKeys: !0,
+			volumeStep: 0.1,
+			seekStep: 5,
+			enableMute: !0,
+			enableCC: !1,
+			enableRate: !0,
+			enableRewindFroward: !0,
+			enableVolume: !0,
+			enableFullscreen: !0,
+			enableNumbers: !0,
+			enableJogStyle: !1,
+			alwaysCaptureHotkeys: !0,
+			captureDocumentHotkeys: !1,
+			documentHotkeysFocusElementFilter: function () {
+				return !1;
+			},
+			enableModifiersForNumbers: !0,
+			enableInactiveFocus: !0,
+			skipInitialFocus: !1,
+			playPauseKey: playPauseKey,
+			muteKey: muteKey,
+			fullscreenKey: fullscreenKey,
+			captionsKey: captionsKey,
+			customKeys: {}
+		};
+
+		videojs.options.blockKeys = !1;
+
+		var o = !1,
+			l = 1,
+			s = 6,
+			u = 7,
+			a = 8;
+
+		try {
+			t = videojs.obj.merge(i, t);
+		} catch (e) {
+			t = videojs.mergeOptions(i, t);
+		}
+
+		if (!n.hasAttribute('tabIndex')) {
+			n.setAttribute('tabIndex', '-1');
+		}
+
+		n.style.outline = 'none';
+
+		if (t.alwaysCaptureHotkeys || !e.autoplay()) {
+			if (!t.skipInitialFocus) {
+				e.one('play', function () {
+					n.focus();
+				});
+			}
+		}
+
+		// Handle hotkey events
+		const handleHotkeys = (event) => {
+			// Only handle hotkeys if player has controls
+			if (!e.controls()) return;
+
+			const keyCode = event.which || event.keyCode;
+
+			// Prevent default for supported keys
+			if ([32, 37, 38, 39, 40, 70, 77].includes(keyCode)) {
+				event.preventDefault();
+			}
+
+			// Play/Pause
+			if (t.playPauseKey(event)) {
+				if (e.paused()) {
+					e.play();
+				} else {
+					e.pause();
+				}
+			}
+
+			// Mute
+			if (t.muteKey(event) && t.enableMute) {
+				e.muted(!e.muted());
+			}
+
+			// Fullscreen
+			if (t.fullscreenKey(event) && t.enableFullscreen) {
+				if (e.isFullscreen()) {
+					e.exitFullscreen();
+				} else {
+					e.requestFullscreen();
+				}
+			}
+
+			// Volume
+			if (t.enableVolume) {
+				if (keyCode === 38) {
+					// Up arrow
+					e.volume(Math.min(e.volume() + t.volumeStep, 1));
+				}
+				if (keyCode === 40) {
+					// Down arrow
+					e.volume(Math.max(e.volume() - t.volumeStep, 0));
+				}
+			}
+
+			// Seek
+			if (t.enableRewindFroward) {
+				if (keyCode === 37) {
+					// Left arrow
+					e.currentTime(Math.max(e.currentTime() - t.seekStep, 0));
+				}
+				if (keyCode === 39) {
+					// Right arrow
+					e.currentTime(Math.min(e.currentTime() + t.seekStep, e.duration()));
+				}
+			}
+		};
+
+		// Add event listeners
+		e.on('keydown', handleHotkeys);
+
+		// Cleanup on dispose
+		e.on('dispose', function () {
+			e.off('keydown', handleHotkeys);
+		});
+	}
+}
+
+if ('undefined' != typeof window) {
+	videojs.registerPlugin('hotkeys', Hotkeys);
+}
+
+export default Hotkeys;

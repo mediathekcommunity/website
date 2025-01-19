@@ -88,14 +88,14 @@
 {#if data1}
 	<div class="details-container">
 		{#if data1.channel.info}
-		<aside class="gradient-text">
-			<div class="gradient-text-light b21">
-				<h3>INFO</h3>
-				<p>
-					{data1.channel.info}
-				</p>
-			</div>
-		</aside>
+			<aside class="gradient-text">
+				<div class="gradient-text-light b21">
+					<h3>INFO</h3>
+					<p>
+						{data1.channel.info}
+					</p>
+				</div>
+			</aside>
 		{/if}
 		{#if showvideo}
 			<div class="video-player-container">
@@ -103,13 +103,13 @@
 				<button class="close-video-btn" onclick={stopvideo}>Close Video</button>
 			</div>
 		{:else if data1.backdrop}
-			<div
-				class="hero-container"
-				style="background-image: url({data1.backdrop
-					? `https://img.mediathek.community/t/p/original${data1.backdrop}`
-					: `https://api.mediathek.community/assets/${data1.heroimage}.jpg`})"
-			>
-				<div class="hero-overlay"></div>
+			<div class="hero-container relative w-full">
+				<img
+					src="https://img.mediathek.community/t/p/original{data1.backdrop}"
+					alt={data1.title}
+					class="hero-image absolute inset-0 h-full w-full"
+				/>
+				<div class="gradient-overlay absolute inset-x-0 bottom-0"></div>
 				<div class="hero-content">
 					<h1 class="title">{data1.title}</h1>
 					{#if data1.orgtitle}
@@ -147,7 +147,7 @@
 				{#snippet content()}
 					<Tabs.Panel value="details">
 						<div class="details-grid">
-							<div class="info-section">
+							<div class="">
 								<h3 class="section-title">Information</h3>
 								<table class="info-table">
 									<tbody>
@@ -186,23 +186,6 @@
 											<th>Quality</th>
 											<td>{data1.quality}</td>
 										</tr>
-										<!--   
-										<tr>
-											<th>Quality</th>
-											<td>{data1.quality}</td>
-										</tr>
-								
-										{#if data1.type == 'series'}
-											<tr>
-												<th>Seasons</th>
-												<td>{data1.slinks.length || 1}</td>
-											</tr>
-											<tr>
-												<th>Episodes</th>
-												<td>{data1.episodes.length}</td>
-											</tr>
-										{/if}
-											-->
 									</tbody>
 								</table>
 							</div>
@@ -213,7 +196,7 @@
 						</div>
 					</Tabs.Panel>
 					<Tabs.Panel value="links">
-						{#if data1.links.length > 0 && data1.channel.name != "YLE"}
+						{#if data1.links.length > 0 && data1.channel.name != 'YLE'}
 							<table style="table-layout: fixed; width: 100%;">
 								<thead>
 									<tr>
@@ -237,14 +220,11 @@
 								</tbody>
 							</table>
 						{:else}
-							<p> Visit YLE  Page to watch the show:  </p>
+							<p>Visit YLE Page to watch the show:</p>
 							{JSON.stringify(data1.links)}
-							<button
-												type="button"
-												class="play-episode-button btn preset-filled-primary-500"
-												>
-
-							<a href={data1.links.videosource} target="_blank"> YLE </a>							</button>
+							<button type="button" class="play-episode-button btn preset-filled-primary-500">
+								<a href={data1.links.videosource} target="_blank"> YLE </a>
+							</button>
 						{/if}
 					</Tabs.Panel>
 					<Tabs.Panel value="episodes">
@@ -283,7 +263,27 @@
 {/if}
 
 <style>
-		.gradient-text {
+	.hero-container {
+		position: relative;
+		width: 100%;
+		height: 50vh;
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+		overflow: hidden;
+	}
+
+	.hero-image {
+		width: 100%;
+		height: 100%;
+		object-position: top center;
+		transform: scale(1);
+		transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+		will-change: transform, object-fit;
+		object-fit: cover;
+	}
+
+	.gradient-text {
 		background: radial-gradient(circle, var(--tertiary-500), var(--primary-500));
 		background-clip: text;
 		/*color: transparent;*/
@@ -293,6 +293,100 @@
 		background: radial-gradient(circle, var(--tertiary-100), red);
 		background-clip: text;
 		/*color: transparent;*/
+	}
+
+	.gradient-overlay {
+		height: 75%;
+		background: linear-gradient(
+			to top,
+			rgb(17, 17, 17) 0%,
+			rgba(17, 17, 17, 0.987) 7.8%,
+			rgba(17, 17, 17, 0.951) 15.2%,
+			rgba(17, 17, 17, 0.896) 22.1%,
+			rgba(17, 17, 17, 0.825) 28.7%,
+			rgba(17, 17, 17, 0.741) 35.1%,
+			rgba(17, 17, 17, 0.648) 41.2%,
+			rgba(17, 17, 17, 0.55) 47.1%,
+			rgba(17, 17, 17, 0.45) 52.9%,
+			rgba(17, 17, 17, 0.352) 58.8%,
+			rgba(17, 17, 17, 0.259) 64.9%,
+			rgba(17, 17, 17, 0.175) 71.3%,
+			rgba(17, 17, 17, 0.104) 77.9%,
+			rgba(17, 17, 17, 0.049) 84.8%,
+			rgba(17, 17, 17, 0.013) 92.2%,
+			rgba(17, 17, 17, 0) 100%
+		);
+	}
+
+	@media (max-width: 480px) {
+		.hero-container {
+			height: 40vh;
+			min-height: 250px;
+			max-height: 50vh;
+		}
+
+		.hero-image {
+			object-fit: cover;
+			background-color: rgb(17, 17, 17);
+		}
+
+		.hero-overlay {
+			height: 85%;
+		}
+	}
+
+	@media (min-width: 481px) and (max-width: 640px) {
+		.hero-container {
+			height: 50vh;
+			min-height: 300px;
+			max-height: 60vh;
+		}
+
+		.hero-image {
+			object-fit: cover;
+			background-color: rgb(17, 17, 17);
+		}
+
+		.gradient-overlay {
+			height: 80%;
+		}
+	}
+
+	@media (min-width: 641px) and (max-width: 768px) {
+		.hero-container {
+			height: 60vh;
+			max-height: 75vh;
+		}
+
+		.hero-image {
+			object-fit: cover;
+		}
+
+		.gradient-overlay {
+			height: 75%;
+		}
+	}
+
+	@media (min-width: 769px) and (max-width: 1024px) {
+		.hero-container {
+			height: 70vh;
+			max-height: 85vh;
+		}
+
+		.gradient-overlay {
+			height: 75%;
+		}
+	}
+
+	@media (min-width: 1025px) {
+		.hero-container {
+			height: 85vh;
+			max-height: 95vh;
+		}
+
+		.gradient-overlay {
+			height: 75%;
+		}
 	}
 	.b21 {
 		padding: 1% 4% 0 4%;
@@ -393,11 +487,6 @@
 		margin: 0 auto;
 		padding: 2rem;
 	}
-	/*
-	.details-tabs {
-		margin-bottom: 1rem;
-	}
-*/
 	.details-grid {
 		display: grid;
 		grid-template-columns: 1fr;
@@ -424,26 +513,7 @@
 	.info-table td {
 		padding: 0.5rem 0;
 	}
-	/*
-	.flag-icon {
-		vertical-align: middle;
-		margin-right: 0.5rem;
-	}
 
-	.play-button {
-		margin-top: 1rem;
-	}
-
-	.play-button-container {
-		display: flex;
-		justify-content: center;
-		margin-top: 1rem;
-	}
-
-	.episodes-accordion {
-		width: 100%;
-	}
-*/
 	.episode-title {
 		display: flex;
 		align-items: center;

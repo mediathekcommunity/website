@@ -1,5 +1,5 @@
 <script>
- 	import * as Flag from 'svelte-flags';
+	import * as Flag from 'svelte-flags';
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
 	import ChannelCard from '$lib/components/ChannelCard.svelte';
 	import ErrorSection from '$lib/components/ErrorSection.svelte';

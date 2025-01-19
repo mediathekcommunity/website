@@ -72,7 +72,7 @@ function generatePlaylist(slinks: any) {
 	return playlist;
 }
 function videosrc(links: any, backdrop: string) {
-	let src1 = {};
+	let src1: { src?: string; type?: string; tracks?: any[]; poster?: string } = {};
 	if (links.length > 0) {
 		src1.src = links[0].streamlink;
 		src1.type = getformat(links[0].streamformat);
@@ -83,13 +83,13 @@ function videosrc(links: any, backdrop: string) {
 }
 
 export async function load({ params }) {
-		const mediathek = await fetchMediathek(params.id);
-		const slinks = generatePlaylist(mediathek.slinks);
-		const videosrc1 = videosrc(mediathek.links, mediathek.backdrop);
-		return {
-			page: mediathek,
-			episodes: mediathek.episode,
-			playlist: slinks || [],
-			videosource: videosrc1 || {}
-		};
+	const mediathek = await fetchMediathek(params.id);
+	const slinks = generatePlaylist(mediathek.slinks);
+	const videosrc1 = videosrc(mediathek.links, mediathek.backdrop);
+	return {
+		page: mediathek,
+		episodes: mediathek.episode,
+		playlist: slinks || [],
+		videosource: videosrc1 || {}
+	};
 }

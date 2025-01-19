@@ -10,12 +10,7 @@
 	import Autoplay from 'embla-carousel-autoplay';
 	import Fade from 'embla-carousel-fade';
 	let { data } = $props();
-	//console.log(data);
-	// Function to group media items by channel country
-	// Get the first item from the data.page array as the hero item
 	let heroItems = $derived(data?.page && data.page.length > 0 ? data.page.slice(0, 5) : []);
-	// console.log(heroItems);
-	// Carousel options
 	let options = { align: 'start', slidesToScroll: 1, loop: true };
 	let plugins = [
 		Autoplay({
@@ -43,11 +38,10 @@
 
 <div>
 	{#if data && data.page && data.page.length > 0 && data.error === false}
-		<!-- Hero Section -->
 		{#if heroItems}
 			<HeroSlider {heroItems} {data} />
 		{/if}
-		<div class=" max-w-[2000px] px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
+		<div class="content-section px-4 sm:px-6 lg:px-8">
 			<div class="maincontent">
 				<h1 class="section-title">
 					<span
@@ -56,7 +50,6 @@
 						Recently Added
 					</span>
 				</h1>
-
 				<div class="embla" use:emblaCarouselSvelte={options2}>
 					<div class="embla__container flex">
 						{#each data.page as item}
@@ -69,77 +62,69 @@
 			</div>
 			<Slider1 langlist={data.countries} langdata={data.groupbycountry} geo={data.geo} />
 		</div>
-		<!-- Main Content 
-			<div class="container mx-auto max-w-[2000px] px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
-				<div class="maincontent">
-					<h1 class="section-title">
-						<span
-							class="bg-gradient-to-br from-blue-500 to-cyan-300 box-decoration-clone bg-clip-text text-transparent"
-						>
-							Recently Added
-						</span>
-					</h1>
-
-					<div class="embla" use:emblaCarouselSvelte={options2}>
-						<div class="embla__container flex">
-							{#each data.page as item}
-								<div class="embla__slide">
-									<Card carddata={item} countryflag geo={data.geo} />
-								</div>
-							{/each}
-						</div>
-					</div>
-				</div>
-				<Slider1 langlist={data.countries} langdata={data.groupbycountry} geo={data.geo} />
-			</div>-->
 	{:else}
 		<ErrorSection filter={data?.filter} />
 	{/if}
 </div>
 
 <style>
-	.hero-section {
+	.content-section {
+		margin-top: -2rem;
 		position: relative;
-		max-height: 50vh;
-		margin-bottom: 2rem;
-		width: 100%;
-		z-index: 1;
+		z-index: 10;
+		background: linear-gradient(to bottom, transparent, rgb(17, 17, 17) 15%);
+		padding-top: 3rem;
 	}
 
 	.maincontent {
-		margin-bottom: 2rem;
-		margin-top: 1rem;
+		margin-bottom: 1.5rem;
 	}
 
 	.section-title {
-		font-size: 1.5rem;
+		font-size: clamp(1.25rem, 2vw, 1.5rem);
 		font-weight: bold;
-		margin-top: 2rem;
-		margin-bottom: 1rem;
+		margin-bottom: 1.5rem;
+		text-align: center;
 	}
 
 	.embla {
 		overflow: hidden;
+		margin: 0 -1rem;
 	}
 
 	.embla__container {
 		display: flex;
+		gap: 1rem;
+		padding: 0 1rem;
 	}
 
 	.embla__slide {
 		flex: 0 0 auto;
 		min-width: 0;
-		padding-right: 0; /* This adds space between slides */
+		padding: 0;
+	}
+	@media (max-width: 640px) {
+		.content-section {
+			margin-top: -1.5rem;
+			padding-top: 2rem;
+		}
+
+		.section-title {
+			margin-bottom: 1rem;
+		}
 	}
 
-	.embla2 {
-		overflow: hidden;
+	@media (min-width: 641px) and (max-width: 1024px) {
+		.content-section {
+			margin-top: -2rem;
+			padding-top: 2.5rem;
+		}
 	}
-	.embla__container2 {
-		display: flex;
-	}
-	.embla__slide2 {
-		flex: 0 0 100%;
-		min-width: 0;
+
+	@media (min-width: 1025px) {
+		.content-section {
+			margin-top: -2rem;
+			padding-top: 3rem;
+		}
 	}
 </style>

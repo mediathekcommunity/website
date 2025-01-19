@@ -5,7 +5,6 @@
 	import Icon from '@iconify/svelte';
 
 	export let carddata, countryflag;
-	//console.log('Card data:', carddata);
 	$: title = carddata?.title || 'Unknown Title';
 	$: orgtitle = carddata?.orgtitle || 'Unknown';
 	$: metascore = carddata?.metascore || 'Unknown';
@@ -28,7 +27,11 @@
 					class="card-poster"
 				/>
 			{:else if carddata.backdropup}
-				<img src="https://cdn1.mediathek.community/{carddata.backdropup.filename}" alt="{title} backdrop" class="card-poster" />
+				<img
+					src="https://cdn1.mediathek.community/{carddata.backdropup.filename}"
+					alt="{title} backdrop"
+					class="card-poster"
+				/>
 			{:else}
 				<div class="card-poster-placeholder">{title[0]}</div>
 			{/if}
@@ -61,53 +64,61 @@
 
 <style>
 	.card {
-		width: 200px;
-		height: 300px;
-		margin: 10px;
+		width: 220px;
+		height: 330px;
+		margin: 0px;
 		position: relative;
 		transition:
 			transform 0.3s ease,
 			box-shadow 0.3s ease;
 		cursor: pointer;
 		overflow: hidden;
-		border-radius: 4px;
+		border-radius: 8px;
+		background: rgb(17, 17, 17);
 	}
+
 	.card:hover {
 		transform: scale(1.05);
-		box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+		box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
 		z-index: 1;
 	}
+
 	.card-image {
 		width: 100%;
 		height: 100%;
 		position: relative;
 	}
+
 	.card-poster,
 	.card-poster-placeholder {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
+		background: rgb(23, 23, 23);
 	}
+
 	.card-poster-placeholder {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		background-color: #2f2f2f;
+		background-color: rgb(23, 23, 23);
 		color: white;
 		font-size: 48px;
 		font-weight: bold;
 	}
+
 	.card-overlay {
 		position: absolute;
 		bottom: 0;
 		left: 0;
 		right: 0;
-		background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.5) 100%);
+		background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.7) 100%);
 		color: white;
-		padding: 10px;
+		padding: 15px;
 		max-height: 70%;
 		overflow-y: auto;
 	}
+
 	.quality-icon {
 		position: absolute;
 		top: 10px;
@@ -115,13 +126,15 @@
 		z-index: 2;
 		color: white;
 		background-color: rgba(0, 0, 0, 0.7);
-		border-radius: 4px;
-		padding: 2px;
+		border-radius: 6px;
+		padding: 4px;
 		font-size: 24px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		backdrop-filter: blur(4px);
 	}
+
 	.country-icon {
 		position: absolute;
 		top: 10px;
@@ -129,31 +142,61 @@
 		z-index: 2;
 		color: white;
 		background-color: rgba(0, 0, 0, 0.7);
-		border-radius: 4px;
-		padding: 2px;
+		border-radius: 6px;
+		padding: 4px;
 		font-size: 24px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		backdrop-filter: blur(4px);
 	}
+
 	.card-title {
-		margin: 0 0 5px 0;
+		margin: 0 0 8px 0;
 		font-size: 1rem;
-		line-height: 1.2;
-		max-height: 3.6em; /* 3 lines of text */
+		line-height: 1.3;
+		max-height: 3.9em;
 		overflow: hidden;
 		display: -webkit-box;
 		-webkit-line-clamp: 3;
 		-webkit-box-orient: vertical;
 		word-wrap: break-word;
 	}
+
 	.country-channel-info {
 		display: flex;
 		align-items: center;
-		margin-bottom: 5px;
-		font-size: 0.8rem;
+		margin-bottom: 8px;
+		font-size: 0.9rem;
 	}
+
 	.country-channel-info > * {
-		margin-right: 5px;
+		margin-right: 8px;
+	}
+
+	@media (max-width: 640px) {
+		.card {
+			width: 160px;
+			height: 240px;
+			margin: 6px;
+		}
+
+		.card-title {
+			font-size: 0.9rem;
+		}
+
+		.quality-icon,
+		.country-icon {
+			padding: 3px;
+			font-size: 20px;
+		}
+	}
+
+	@media (min-width: 641px) and (max-width: 1024px) {
+		.card {
+			width: 180px;
+			height: 270px;
+			margin: 8px;
+		}
 	}
 </style>

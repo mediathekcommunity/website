@@ -12,7 +12,7 @@
 	}
 </script>
 
-<div 
+<div
 	class="channel-card"
 	on:click={handleClick}
 	on:keydown={(e) => e.key === 'Enter' && handleClick()}
@@ -39,13 +39,17 @@
 		border-radius: 8px;
 		overflow: hidden;
 		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-		transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+		transition:
+			transform 0.3s ease,
+			box-shadow 0.3s ease,
+			filter 0.3s ease;
 		cursor: pointer;
 		aspect-ratio: 16 / 9;
 		position: relative;
 	}
 
-	.channel-card:hover, .channel-card:focus {
+	.channel-card:hover,
+	.channel-card:focus {
 		transform: translateY(-5px);
 		box-shadow: 0 0 20px rgba(var(--color-primary-500-rgb), 0.5);
 		filter: brightness(1.1);
@@ -66,7 +70,8 @@
 		pointer-events: none;
 	}
 
-	.channel-card:hover::after, .channel-card:focus::after {
+	.channel-card:hover::after,
+	.channel-card:focus::after {
 		opacity: 1;
 	}
 
