@@ -5,13 +5,34 @@
 	import Autoplay from 'embla-carousel-autoplay';
 	import Fade from 'embla-carousel-fade';
 	let { data, heroItems } = $props();
+	import Icon from '@iconify/svelte';
+	let getqualityicon = (quality) => {
+		if (quality === '4K') {
+			return 'mdi:uhd';
+		} else if (quality === 'fhd') {
+			return 'material-symbols:full-hd';
+		} else if (quality === 'hd') {
+			return 'mdi:video';
+		} else {
+			return 'mdi:video-outline';
+		}
+	};
+	function getbgcolor(bgcolor) {
+		if (bgcolor) {
+			var x="inline-flex items-center gap-1 px-2 py-1 text-xs text-white sm:text-sm" + bgcolor;
+			return bgcolor;
+		} else {
+			return 'bg-green-800';
+		}
+	}
 	let plugins = [
+		/*
 		Autoplay({
-			delay: 5000,
+			delay: 8000,
 			stopOnMouseEnter: false,
 			stopOnFocusIn: false,
 			stopOnInteraction: false
-		}),
+		}),*/
 		Fade()
 	];
 	let options = {
@@ -31,7 +52,11 @@
 </script>
 
 <div class="hero-container relative w-full">
-	<div class="embla absolute inset-0" use:emblaCarouselSvelte={{ options,plugins }} onemblaInit={onInit}>
+	<div
+		class="embla absolute inset-0"
+		use:emblaCarouselSvelte={{ options, plugins }}
+		onemblaInit={onInit}
+	>
 		<div class="embla__container">
 			{#each heroItems as slide, i}
 				<div class="embla__slide">
@@ -46,40 +71,20 @@
 							class="absolute bottom-4 left-4 max-w-[calc(100%-2rem)] text-white sm:bottom-8 sm:left-8 sm:max-w-[calc(100%-4rem)] md:bottom-12 md:left-16 md:max-w-2xl lg:bottom-16 lg:left-32 lg:max-w-3xl"
 						>
 							<div class="mb-2 flex flex-wrap items-center gap-2 sm:mb-4">
-								<span class="inline-block bg-red-700 px-2 py-1 text-xs text-white sm:text-sm">
-									{slide.channel.name}
+								<span class={getbgcolor(slide.channel.bgcolor)}  >
+									<Icon icon={slide.channel.icon} height="28px" width="36px" class={slide.channel.bgcolor}/>
 								</span>
-								<span
-									class="inline-flex items-center gap-1 bg-gray-800 px-2 py-1 text-xs text-white sm:text-sm"
-								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										class="h-3 w-3"
-										viewBox="0 0 20 20"
-										fill="currentColor"
-									>
-										<path
-											d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-										/>
-									</svg>
-									{slide.quality}
+								<span class="inline-flex gap-1 bg-gray-800 text-white sm:text-sm">
+									<Icon icon={getqualityicon(slide.quality)} height="28px" width="36px" />
 								</span>
 								<span
 									class="inline-flex items-center gap-1 bg-blue-600 px-2 py-1 text-xs text-white sm:text-sm"
 								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										class="h-3 w-3"
-										viewBox="0 0 20 20"
-										fill="currentColor"
-									>
-										<path
-											fill-rule="evenodd"
-											d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm3 2h6v4H7V5zm8 8v2h-2v-2h2zm-3 0v2H8v-2h4zm-5 0v2H5v-2h2zm-3-3h2v2H4v-2zm3 0h4v2H7v-2zm5 0h2v2h-2v-2zm3-3h2v2h-2V7zm-3 0h2v2h-2V7zm-5 0h4v2H7V7zm-3 0h2v2H4V7z"
-											clip-rule="evenodd"
-										/>
-									</svg>
-									{slide.type}
+									{#if slide.type === 'movie'}
+										<Icon icon="mdi:movie" height="20px" />
+									{:else}
+										<Icon icon="mdi:tv" height="20px" />
+									{/if}
 								</span>
 							</div>
 							<h1
