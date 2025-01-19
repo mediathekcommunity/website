@@ -3,7 +3,7 @@ export const ssr = false;
 import getDirectusInstance from '$lib/directus';
 import { readItem } from '@directus/sdk';
 // GraphQL query string
-function getformat(id) {
+function getformat(id: string) {
 	switch (id) {
 		case 'mpd':
 			return 'application/dash+xml';
@@ -13,9 +13,9 @@ function getformat(id) {
 			return 'application/dash+xml';
 	}
 }
-function getsubformat(id) {
+function getsubformat(id: any[]) {
 	let x = 0;
-	let subs = [];
+	let subs: { kind: string; src: string; srclang: string; label: string; default: boolean }[] = [];
 	if (id) {
 		id.forEach((sub) => {
 			subs.push({
@@ -83,13 +83,13 @@ function videosrc(links: any, backdrop: string) {
 }
 
 export async function load({ params }) {
-	const mediathek = await fetchMediathek(params.id);
-	const slinks = generatePlaylist(mediathek.slinks);
-	const videosrc1 = videosrc(mediathek.links, mediathek.backdrop);
-	return {
-		page: mediathek,
-		episodes: mediathek.episode,
-		playlist: slinks || [],
-		videosource: videosrc1 || {}
-	};
+		const mediathek = await fetchMediathek(params.id);
+		const slinks = generatePlaylist(mediathek.slinks);
+		const videosrc1 = videosrc(mediathek.links, mediathek.backdrop);
+		return {
+			page: mediathek,
+			episodes: mediathek.episode,
+			playlist: slinks || [],
+			videosource: videosrc1 || {}
+		};
 }

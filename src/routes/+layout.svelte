@@ -7,6 +7,8 @@
 	const handleScroll = () => {
 		isScrolled = scrollY.current > 50;
 	};
+	let { children } = $props();
+
 </script>
 
 <svelte:window onscroll={handleScroll} />
@@ -23,7 +25,7 @@
 <div class="app">
 	<Header {isScrolled} />
 	<main>
-		<slot />
+		{@render children()}
 	</main>
 	<Footer />
 </div>
