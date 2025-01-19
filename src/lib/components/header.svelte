@@ -14,7 +14,7 @@
 			<a href="/">
 				<h1 class="site-title">
 					<span class="text-primary">Mediathek</span>
-					<span class="community">Community</span>
+					<span class="text-white">Community</span>
 					<span class="badge badge-primary text-white">v0.3</span>
 				</h1>
 			</a>
@@ -72,15 +72,7 @@
 		font-weight: bold;
 		margin: 0;
 	}
-
-	.mediathek {
-		color: #3498db;
-	}
-
-	.community {
-		color: #ffffff;
-	}
-
+ 
 	.desktop-nav ul {
 		display: flex;
 		list-style-type: none;
