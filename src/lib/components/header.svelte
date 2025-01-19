@@ -13,9 +13,9 @@
 		<div class="logo">
 			<a href="/">
 				<h1 class="site-title">
-					<span class="mediathek">Mediathek</span>
+					<span class="text-primary">Mediathek</span>
 					<span class="community">Community</span>
-					<span class="badge preset-tonal-primary">v0.2.1</span>
+					<span class="badge badge-primary text-white">v0.3</span>
 				</h1>
 			</a>
 		</div>

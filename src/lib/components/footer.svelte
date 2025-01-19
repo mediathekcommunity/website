@@ -38,7 +38,7 @@
 	<nav>
 		<span
 			>Built with <a target="_blank" href="https://kit.svelte.dev">Sveltekit</a> &
-			<a target="_blank" href="https://daisyui.com">DaisyUI v4-beta</a></span
+			<a target="_blank" href="https://daisyui.com">DaisyUI v5 beta</a></span
 		>
 	</nav>
 </footer>
