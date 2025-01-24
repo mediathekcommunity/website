@@ -17,7 +17,7 @@
 		"@eslint/js": "^9.18.0",
 		"@iconify/svelte": "^4.2.0",
 		"@sveltejs/adapter-cloudflare": "^5.0.1",
-		"@sveltejs/kit": "^2.16.0",
+		"@sveltejs/kit": "^2.16.1",
 		"@sveltejs/vite-plugin-svelte": "^5.0.3",
 		"@tailwindcss/postcss": "4.0.0-beta.9",
 		"daisyui": "5.0.0-beta.1",
@@ -28,22 +28,22 @@
 		"globals": "^15.14.0",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.3",
-		"prettier-plugin-tailwindcss": "^0.6.10",
-		"svelte": "^5.19.0",
+		"prettier-plugin-tailwindcss": "^0.6.11",
+		"svelte": "^5.19.2",
 		"svelte-check": "^4.1.4",
-		"svelte-flags": "^1.0.3",
+		"svelte-flags": "^2.0.1",
 		"tailwindcss": "4.0.0-beta.9",
 		"typescript": "^5.7.3",
-		"video.js": "^8.21.0",
-		"vite": "^6.0.7"
+		"video.js": "^8.21.1",
+		"vite": "^6.0.11"
 	},
 	"packageManager": "pnpm@10.0.0",
 	"dependencies": {
-		"@directus/sdk": "^18.0.3",
+		"@directus/sdk": "^19.0.0",
 		"@tailwindcss/vite": "4.0.0-beta.9",
 		"embla-carousel-autoplay": "^8.5.2",
 		"embla-carousel-fade": "^8.5.2",
-		"lucide-svelte": "^0.471.0"
+		"lucide-svelte": "^0.474.0"
 	},
 	"pnpm": {
 		"neverBuiltDependencies": []
