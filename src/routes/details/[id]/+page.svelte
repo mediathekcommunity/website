@@ -99,7 +99,7 @@
 			</aside>
 		{/if}
 		{#if showvideo}
-			<div class="hero-container2 relative w-full">
+			<div class="hero-container2 top60 relative w-full">
 				<div class="video-player-container h-full">
 					<Videoplayer />
 					<button class="close-video-btn" onclick={stopvideo}>Close Video</button>
@@ -137,7 +137,7 @@
 			</div>
 		{/if}
 
-		<div class="content-wrapper">
+		<div class="content-wrapper top602">
 			<div role="tablist" class="tabs tabs-lift">
 				<input
 					type="radio"
@@ -198,8 +198,36 @@
 					</div>
 				</div>
 				{#if data1.links.length > 0}
-					<input type="radio" name="my_tabs_3" role="tab" class="tab" aria-label="Links" />
-					<div class="tab-content bg-base-100 border-base-300 p-6">Tab content 2</div>
+				<input
+				type="radio"
+				name="my_tabs_3"
+				role="tab"
+				class="tab"
+				aria-label="Links"
+			/>
+			<div class="tab-content bg-base-100 border-base-300 p-6">
+
+					<div class="join join-vertical bg-base-100">
+							<div class="collapse-arrow join-item border-base-300 collapse border">
+								<input type="radio" name="my-accordion-episode" checked="true" />
+								<div class="collapse-title font-semibold">
+									<span>{data1.title}</span>?
+								</div>
+								<div class="collapse-content text-sm">
+									<div class="episode-content">
+										<p class="episode-overview">{data1.description}</p>
+										<button
+											type="button"
+											class="btn btn-accent"
+											onclick={() => playvideo(data1)}
+										>
+											Play Episode
+										</button>
+									</div>
+								</div>
+							</div>
+					</div>
+			</div>
 				{:else}
 					<input
 						type="radio"
@@ -267,7 +295,7 @@
 												<button
 													type="button"
 													class="btn btn-accent"
-													onclick={() => playepisode(link2, index3)}
+													onclick={() => playvideo()}
 												>
 													Play Episode
 												</button>
@@ -444,7 +472,7 @@
 	}
 	.video-player-container {
 		position: relative;
-		top: 60px;
+		top: 60px !important;
 		width: 100%;
 		max-width: 1200px;
 		margin: 0 auto 2rem;
@@ -619,5 +647,11 @@
 		.subtitle {
 			font-size: 1.75rem;
 		}
+	}
+	.top60 {
+		top: 60px;
+	}
+	.top602 {
+		margin-top: 60px;
 	}
 </style>

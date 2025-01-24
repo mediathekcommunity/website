@@ -82,12 +82,13 @@ function generatePlaylist(slinks: any) {
 	return playlist;
 }
 function videosrc(links: any, backdrop: string) {
-	let src1: { src?: string; type?: string; tracks?: any[]; poster?: string } = {};
+	let src1: { src?: string; type?: string; tracks?: any[]; poster?: string ; skip?: number} = {};
 	if (links.length > 0) {
 		src1.src = links[0].streamlink;
 		src1.type = getformat(links[0].streamformat);
 		src1.tracks = getsubformat(links[0].subtitles);
 		src1.poster = 'https://img.mediathek.community/t/p/original' + backdrop;
+		src1.skip= 0;
 	}
 	return src1;
 }

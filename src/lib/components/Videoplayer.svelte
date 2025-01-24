@@ -17,7 +17,7 @@
 	} | null = null;
 	const videojsOptions = {
 		controls: true,
-		playsinline: true,
+		playsinline: false,
 		fill: true,
 		hotkeys: true,
 		resume: true,
@@ -65,15 +65,15 @@
 		player.hotkeys({ seekStep: 10 });
 		console.log('initializePlayer');
 		console.log(player);
-		if ($modalvideo.skip) {
+		/*if ($modalvideo.skip) {
 			player.skipintro({ skipStart: 1, skipDuration: $modalvideo.skip, skipTarget: 30 });
 		}
-		/*
+		*/
 		console.log($modalvideo);
 		console.log($playlist);
 		console.log($seriestype);
 		console.log($playlistindex);
-		*/
+		
 		if ($seriestype === 'playlist') {
 			player.playlist.currentItem($playlistindex);
 		}
@@ -148,7 +148,7 @@
 </script>
 
 <!-- svelte-ignore a11y_media_has_caption -->
-<video id="my-video" playsinline webkit-playsinline class="video-js vjs-16-9 overflow-hidden"
+<video id="my-video" playsinline webkit-playsinline class="video-js  overflow-hidden"
 ></video>
 
 <style>
