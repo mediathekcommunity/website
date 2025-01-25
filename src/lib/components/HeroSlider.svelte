@@ -17,6 +17,20 @@
 			return 'mdi:video-outline';
 		}
 	};
+
+	// @ts-ignore
+	function getTypeIcon(type) {
+		switch (type) {
+			case 'movie':
+				return 'mdi:movie';
+			case 'series':
+				return 'mdi:tv';
+			case 'music':
+				return 'mdi:music';
+			default:
+				return 'mdi:movie';
+		}
+	}
 	function getbgcolor(bgcolor) {
 		if (bgcolor) {
 			bgcolor = '  ' + bgcolor;
@@ -81,11 +95,7 @@
 								<span
 									class="inline-flex items-center gap-1 bg-blue-600 px-2 py-1 text-xs text-white sm:text-sm"
 								>
-									{#if slide.type === 'movie'}
-										<Icon icon="mdi:movie" height="20px" />
-									{:else}
-										<Icon icon="mdi:tv" height="20px" />
-									{/if}
+									<Icon icon={getTypeIcon(slide.type)} height="20px" />
 								</span>
 							</div>
 							<h1
