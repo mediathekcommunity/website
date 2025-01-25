@@ -41,7 +41,7 @@
 	});
 
 	let tabSet = 0;
-	function sortseasons (a) {
+	function sortseasons(a) {
 		if (a.season < b.season) {
 			return -1;
 		}
@@ -98,7 +98,7 @@
 			playlist.set(data.playlist);
 		} else {
 			playlistindex.set(index);
-			showvideo = false
+			showvideo = false;
 		}
 	}
 </script>
@@ -186,26 +186,40 @@
 												{/each}
 											</td>
 										</tr>
-										<tr>
-											<th>Subtitle Language</th>
-											<td>
-												<!-- svelte-ignore svelte_component_deprecated -->
-												<div class="flex flex-row space-x-2">
-													{#each data.sublangs as lang, i}
-														<div class={lang.spokenlang ? 'tooltip' : ''} data-tip="Spoken lang">
-															<div class="badge badge-neutral">
-																<svelte:component this={Flag[lang.srclang]} size="25" />
-																{#if lang.spokenlang}
-																	<Icon icon="mdi:speakerphone" height="28px" width="36px" />
-																{/if}
+										{#if data.sublangs.length > 0}
+											<tr>
+												<th>Subtitle Language</th>
+												<td>
+													<!-- svelte-ignore svelte_component_deprecated -->
+													<div class="flex flex-row space-x-2">
+														{#each data.sublangs as lang, i}
+															<div class={lang.spokenlang ? 'tooltip' : ''} data-tip="Spoken lang">
+																<div class="badge badge-neutral">
+																	<svelte:component this={Flag[lang.srclang]} size="25" />
+																	{#if lang.spokenlang}
+																		<Icon icon="mdi:speakerphone" height="28px" width="36px" />
+																	{/if}
+																</div>
 															</div>
-														</div>
-													{/each}
-												</div>
-											</td>
-										</tr>
+														{/each}
+													</div>
+												</td>
+											</tr>
+										{/if}
+										{#if data1.links[0].fsubtitle}
+											<tr>
+												<th>Forced Subtitle language </th>
+												<td>
+													<!-- svelte-ignore svelte_component_deprecated -->
+													<div class="flex flex-row space-x-2">
+														{#each data1.links[0].fsubtitle_lang as lang, i}
+															<svelte:component this={Flag[lang]} size="25" />
+														{/each}
+													</div>
+												</td>
+											</tr>
+										{/if}
 									{/if}
-
 									{#if data1.type != 'movie'}
 										<tr>
 											<th>Seasons</th>
@@ -221,7 +235,8 @@
 										<td>
 											<div class="flex flex-row space-x-2">
 												<!-- svelte-ignore svelte_component_deprecated -->
-												{data1.channel.name} / <svelte:component
+												{data1.channel.name} / <!-- svelte-ignore svelte_component_deprecated -->
+												<svelte:component
 													this={Flag[data1.channel.country]}
 													class="flag-icon ml-3"
 													size="25"
