@@ -85,17 +85,21 @@
 						<div
 							class="absolute bottom-4 left-4 max-w-[calc(100%-2rem)] text-white sm:bottom-8 sm:left-8 sm:max-w-[calc(100%-4rem)] md:bottom-12 md:left-16 md:max-w-2xl lg:bottom-16 lg:left-32 lg:max-w-3xl"
 						>
-							<div class="mb-2 flex flex-wrap items-center gap-2 sm:mb-4">
-								<span class={getbgcolor(slide.channel.bgcolor)}>
+							<div class="mb-2 flex flex-wrap items-center gap-1 sm:mb-4">
+								<span
+									class="inline-flex items-center gap-1 badge-ghost px-1 py-1 text-white sm:text-sm"
+								>
 									<Icon icon={slide.channel.icon} height="28px" width="36px" />
 								</span>
-								<span class="inline-flex gap-1 bg-gray-800 text-white sm:text-sm">
+								<span
+									class="inline-flex items-center gap-1 badge-ghost px-1 py-1 text-white sm:text-sm"
+								>
 									<Icon icon={getqualityicon(slide.quality)} height="28px" width="36px" />
 								</span>
 								<span
-									class="inline-flex items-center gap-1 bg-blue-600 px-2 py-1 text-xs text-white sm:text-sm"
+									class="inline-flex items-center gap-1 badge-ghost px-1 py-1 text-white sm:text-sm"
 								>
-									<Icon icon={getTypeIcon(slide.type)} height="20px" />
+									<Icon icon={getTypeIcon(slide.type)} height="28px" />
 								</span>
 							</div>
 							<h1
