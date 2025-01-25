@@ -1,6 +1,7 @@
 <script>
 	// @ts-nocheck
 	import * as Flag from 'svelte-flags';
+	import Icon from '@iconify/svelte';
 	import LibraryBig from 'lucide-svelte/icons/library-big';
 	import Film from 'lucide-svelte/icons/film';
 	import Tv from 'lucide-svelte/icons/tv';
@@ -198,16 +199,9 @@
 					</div>
 				</div>
 				{#if data1.links.length > 0}
-				<input
-				type="radio"
-				name="my_tabs_3"
-				role="tab"
-				class="tab"
-				aria-label="Links"
-			/>
-			<div class="tab-content bg-base-100 border-base-300 p-6">
-
-					<div class="join join-vertical bg-base-100">
+					<input type="radio" name="my_tabs_3" role="tab" class="tab" aria-label="Links" />
+					<div class="tab-content bg-base-100 border-base-300 p-6">
+						<div class="join join-vertical bg-base-100">
 							<div class="collapse-arrow join-item border-base-300 collapse border">
 								<input type="radio" name="my-accordion-episode" checked="true" />
 								<div class="collapse-title font-semibold">
@@ -216,18 +210,16 @@
 								<div class="collapse-content text-sm">
 									<div class="episode-content">
 										<p class="episode-overview">{data1.description}</p>
-										<button
-											type="button"
-											class="btn btn-accent"
-											onclick={() => playvideo(data1)}
-										>
-											Play Episode
+
+										<button type="button" class="btn btn-accent" onclick={() => playvideo(data1)}>
+											<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
+											Play
 										</button>
 									</div>
 								</div>
 							</div>
+						</div>
 					</div>
-			</div>
 				{:else}
 					<input
 						type="radio"
@@ -292,11 +284,8 @@
 										<div class="collapse-content text-sm">
 											<div class="episode-content">
 												<p class="episode-overview">{link2.description}</p>
-												<button
-													type="button"
-													class="btn btn-accent"
-													onclick={() => playvideo()}
-												>
+												<button type="button" class="btn btn-accent" onclick={() => playvideo()}>
+													<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
 													Play Episode
 												</button>
 											</div>
