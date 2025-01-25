@@ -1,6 +1,7 @@
 <script>
 	// @ts-nocheck
 	import * as Flag from 'svelte-flags';
+	import Time from "svelte-time";
 	import Icon from '@iconify/svelte';
 	import LibraryBig from 'lucide-svelte/icons/library-big';
 	import Film from 'lucide-svelte/icons/film';
@@ -229,6 +230,12 @@
 										<td>
 											<Icon icon={getqualityicon(data1.quality)} height="28px" width="36px" />
 										</td>
+									</tr>
+									<tr>
+										<th>Online until</th>
+										<td>
+											<Time timestamp={data1.onlineuntil} format="DD.MM.YYYY"/>
+ 										</td>
 									</tr>
 								</tbody>
 							</table>
