@@ -15,7 +15,7 @@
 				<h1 class="site-title">
 					<span class="text-primary">Mediathek</span>
 					<span class="text-white">Community</span>
-					<span class="badge badge-primary text-white">v0.3</span>
+					<span class="badge badge-primary text-white">v0.4</span>
 				</h1>
 			</a>
 		</div>
