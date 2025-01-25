@@ -42,9 +42,6 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^5.0.3
         version: 5.0.3(svelte@5.19.3)(vite@6.0.11(jiti@2.4.2)(lightningcss@1.29.1))
-      '@tailwindcss/postcss':
-        specifier: 4.0.0-beta.9
-        version: 4.0.0-beta.9
       daisyui:
         specifier: 5.0.0-beta.1
         version: 5.0.0-beta.1
@@ -95,10 +92,6 @@ importers:
         version: 6.0.11(jiti@2.4.2)(lightningcss@1.29.1)
 
 packages:
-
-  '@alloc/quick-lru@5.2.0':
-    resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
-    engines: {node: '>=10'}
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -741,9 +734,6 @@ packages:
   '@tailwindcss/oxide@4.0.0-beta.9':
     resolution: {integrity: sha512-1bpui84CDnrjB6TI3AGR9jYUA28+VIfkrM4BH3+VXA9B80+cARtd3ON06ouA5/r/2xs4qe+T85Z1c0k5X6vLeA==}
     engines: {node: '>= 10'}
-
-  '@tailwindcss/postcss@4.0.0-beta.9':
-    resolution: {integrity: sha512-xXqMnXtg8K2FgrIlqSf3PPHgyAuSiGe7BJ6+6wma96s7VXArsN5UtTwDuksAedJtCymk1liTvLa2eRNrumlavA==}
 
   '@tailwindcss/vite@4.0.0-beta.9':
     resolution: {integrity: sha512-Hf28QkwSLM6bbOkcTQk1iEEOB37v+9vfqdpHUaLSluZpEGCVAFc0i+p2Gvp6MlK840tyixQu5L39VjL2lAZFFQ==}
@@ -1738,8 +1728,6 @@ packages:
 
 snapshots:
 
-  '@alloc/quick-lru@5.2.0': {}
-
   '@ampproject/remapping@2.3.0':
     dependencies:
       '@jridgewell/gen-mapping': 0.3.8
@@ -2175,15 +2163,6 @@ snapshots:
       '@tailwindcss/oxide-linux-x64-musl': 4.0.0-beta.9
       '@tailwindcss/oxide-win32-arm64-msvc': 4.0.0-beta.9
       '@tailwindcss/oxide-win32-x64-msvc': 4.0.0-beta.9
-
-  '@tailwindcss/postcss@4.0.0-beta.9':
-    dependencies:
-      '@alloc/quick-lru': 5.2.0
-      '@tailwindcss/node': 4.0.0-beta.9
-      '@tailwindcss/oxide': 4.0.0-beta.9
-      lightningcss: 1.29.1
-      postcss: 8.5.1
-      tailwindcss: 4.0.0-beta.9
 
   '@tailwindcss/vite@4.0.0-beta.9(vite@6.0.11(jiti@2.4.2)(lightningcss@1.29.1))':
     dependencies:
