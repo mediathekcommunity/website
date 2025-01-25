@@ -50,6 +50,29 @@ function getsubformat(id: any[]) {
 		return [];
 	}
 }
+
+function getsublangs(id: any[]) {
+	console.log(id);
+	let x = 0;
+	let subs: {
+		srclang: string;
+		label: string;
+		spokenlang: boolean;
+	}[] = [];
+	if (id) {
+		id.forEach((sub) => {
+			subs.push({
+				srclang: sub.sublang,
+				label: sub.sublang + ' ' + (sub.spokenlang ? '(Spoken)' : ''),
+				spokenlang: sub.spokenlang
+			});
+			x++;
+		});
+		return subs;
+	} else {
+		return [];
+	}
+}
 // Function to fetch data from the GraphQL API
 async function fetchMediathek(id: string) {
 	const directus = getDirectusInstance(fetch);
@@ -115,6 +138,7 @@ export async function load({ params }) {
 		page: mediathek,
 		groupseasons: groupBySeason(mediathek.slinks),
 		episodes: mediathek.episode,
+		sublangs: getsublangs(mediathek.links[0].subtitles) || [],
 		seasons: mediathek.season,
 		playlist: slinks || [],
 		videosource: videosrc1 || {}

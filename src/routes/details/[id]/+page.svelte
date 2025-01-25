@@ -70,7 +70,17 @@
 			});
 		}
 	}
-
+	let getqualityicon = (quality) => {
+		if (quality === '4K') {
+			return 'mdi:uhd';
+		} else if (quality === 'fhd') {
+			return 'material-symbols:full-hd';
+		} else if (quality === 'hd') {
+			return 'mdi:video';
+		} else {
+			return 'mdi:video-outline';
+		}
+	};
 	function playepisode(episode, index) {
 		if (!showvideo) {
 			//console.log(JSON.stringify(episode) + '-' + index);
@@ -160,6 +170,38 @@
 											<td>{toHoursAndMinutes(data1.duration)}</td>
 										</tr>
 									{/if}
+									{#if data1.type == 'movie'}
+										<tr>
+											<th>Audio Language</th>
+											<td>
+												{console.log(data1)}
+												<!-- svelte-ignore svelte_component_deprecated -->
+												{#each data1.links[0].audiolang as lang, i}
+													<svelte:component this={Flag[lang]} size="25" />
+												{/each}
+											</td>
+										</tr>
+										<tr>
+											<th>Subtitle Language</th>
+											<td>
+												{console.log(data)}
+												<!-- svelte-ignore svelte_component_deprecated -->
+												<div class="flex flex-row space-x-2">
+													{#each data.sublangs as lang, i}
+														<div class={lang.spokenlang ? 'tooltip' : ''} data-tip="Spoken lang">
+															<div class="badge badge-neutral">
+																<svelte:component this={Flag[lang.srclang]} size="25" />
+																{#if lang.spokenlang}
+																	<Icon icon="mdi:speakerphone" height="28px" width="36px" />
+																{/if}
+															</div>
+														</div>
+													{/each}
+												</div>
+											</td>
+										</tr>
+									{/if}
+
 									{#if data1.type == 'series'}
 										<tr>
 											<th>Seasons</th>
@@ -169,25 +211,24 @@
 											<th>Episodes (total)</th>
 											<td>{data1.episode}</td>
 										</tr>
-									{/if}
+									{/if} 
 									<tr>
-										<th>Country</th>
+										<th>Channel / Country</th>
 										<td>
-											<!-- svelte-ignore svelte_component_deprecated -->
-											<svelte:component
-												this={Flag[data1.channel.country]}
-												class="flag-icon"
-												size="25"
-											/>
-										</td>
-									</tr>
-									<tr>
-										<th>Channel</th>
-										<td>{data1.channel.name}</td>
+											<div class="flex flex-row space-x-2">
+												{data1.channel.name} / <svelte:component
+													this={Flag[data1.channel.country]}
+													class="flag-icon ml-3"
+													size="25"
+												/>
+											</div></td
+										>
 									</tr>
 									<tr>
 										<th>Quality</th>
-										<td>{data1.quality}</td>
+										<td>
+											<Icon icon={getqualityicon(data1.quality)} height="28px" width="36px" />
+										</td>
 									</tr>
 								</tbody>
 							</table>
