@@ -9,6 +9,19 @@
 	$: orgtitle = carddata?.orgtitle || 'Unknown';
 	$: metascore = carddata?.metascore || 'Unknown';
 	let isHovered = false;
+	// @ts-ignore
+	function getTypeIcon(type) {
+		switch (type) {
+			case 'movie':
+				return 'mdi:movie';
+			case 'series':
+				return 'mdi:tv';
+			case 'music':
+				return 'mdi:music';
+			default:
+				return 'mdi:movie';
+		}
+	}
 </script>
 
 <a href={`/details/${carddata.id}`} class="card">
@@ -36,11 +49,7 @@
 				<div class="card-poster-placeholder">{title[0]}</div>
 			{/if}
 			<div class="quality-icon">
-				{#if carddata.type === 'movie'}
-					<Icon icon="mdi:movie" />
-				{:else}
-					<Icon icon="mdi:tv" />
-				{/if}
+				<Icon icon="{getTypeIcon(carddata.type)}" />
 			</div>
 			{#if countryflag}
 				<div class="country-icon">
