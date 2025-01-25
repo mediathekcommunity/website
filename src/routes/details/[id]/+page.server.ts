@@ -25,15 +25,23 @@ const groupBySeason = (items) => {
 
 function getsubformat(id: any[]) {
 	let x = 0;
-	let subs: { kind: string; src: string; srclang: string; label: string; default: boolean }[] = [];
+	let subs: {
+		kind: string;
+		src: string;
+		srclang: string;
+		label: string;
+		default: boolean;
+		spokenlang: boolean;
+	}[] = [];
 	if (id) {
 		id.forEach((sub) => {
 			subs.push({
 				kind: 'captions',
-				src: sub.url,
-				srclang: sub.language,
-				label: sub.label,
-				default: x === 0 ? true : false
+				src: sub.sublink,
+				srclang: sub.sublang,
+				label: sub.sublang + ' ' + (sub.spokenlang ? '(Spoken)' : ''),
+				spokenlang: sub.spokenlang,
+				default: false
 			});
 			x++;
 		});
@@ -47,13 +55,19 @@ async function fetchMediathek(id: string) {
 	const directus = getDirectusInstance(fetch);
 	var result = await directus.request(
 		readItem('mediathek', id, {
-			fields: ['*.*'],
-			limit: 4,
+			fields: ['*.*.*'],
+			limit: 10,
 			deep: {
 				channel: {
 					limit: 5
 				},
 				episodelist: {
+					limit: 5,
+					subtitles: {
+						limit: 5
+					}
+				},
+				subtitles: {
 					limit: 5
 				}
 			}
@@ -82,13 +96,13 @@ function generatePlaylist(slinks: any) {
 	return playlist;
 }
 function videosrc(links: any, backdrop: string) {
-	let src1: { src?: string; type?: string; tracks?: any[]; poster?: string ; skip?: number} = {};
+	let src1: { src?: string; type?: string; tracks?: any[]; poster?: string; skip?: number } = {};
 	if (links.length > 0) {
 		src1.src = links[0].streamlink;
 		src1.type = getformat(links[0].streamformat);
 		src1.tracks = getsubformat(links[0].subtitles);
 		src1.poster = 'https://img.mediathek.community/t/p/original' + backdrop;
-		src1.skip= 0;
+		src1.skip = 0;
 	}
 	return src1;
 }
