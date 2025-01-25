@@ -3,6 +3,13 @@ export const ssr = false;
 import getDirectusInstance from '$lib/directus';
 import { readItem } from '@directus/sdk';
 // GraphQL query string
+function getimage(backdropup: any, backdrop: object) {
+	if (backdrop) {
+		return 'https://img.mediathek.community/t/p/original/' + backdrop;
+	} else {
+		return 'https://api.mediathek.community/assets/' + backdropup.filename_disk;
+	}
+}
 function getformat(id: string) {
 	switch (id) {
 		case 'mpd':
@@ -13,15 +20,24 @@ function getformat(id: string) {
 			return 'application/dash+xml';
 	}
 }
-const groupBySeason = (items) => {
-	return items.reduce((acc, item) => {
-		//console.log(item);
-		const season = item.season || 'Unknown';
-		acc[season] = acc[season] || [];
-		acc[season].push(item); /**/
-		return acc;
-	}, {});
-};
+function sortBySeasonAndEpisode(data) {
+	const sortedData = {};
+
+	data.slinks.forEach((item) => {
+		const season = item.season;
+		const episode = item.episode;
+
+		if (!sortedData[season]) {
+			sortedData[season] = [];
+		}
+
+		sortedData[season].push(item);
+	});
+	Object.keys(sortedData).forEach((season) => {
+		sortedData[season].sort((a, b) => parseFloat(a.episode) - parseFloat(b.episode));
+	});
+	return sortedData;
+}
 
 function getsubformat(id: any[]) {
 	let x = 0;
@@ -52,7 +68,6 @@ function getsubformat(id: any[]) {
 }
 
 function getsublangs(id: any[]) {
-	console.log(id);
 	let x = 0;
 	let subs: {
 		srclang: string;
@@ -107,24 +122,26 @@ function generatePlaylist(slinks: any) {
 			playlist.push({
 				title: link.title,
 				src: link.streamlink,
-				thumb: 'https://img.mediathek.community/t/p/original/' + link.backdrop,
+				thumb: getimage(link.backdropup, link.backdrop),
 				type: getformat(link.streamformat),
 				description: link.description,
 				infoTitle: link.title,
 				infoDescription: link.description,
-				tracks: getsubformat(link.subtitles)
+				tracks: getsubformat(link.subtitles),
+				episodes: link.episode,
+				season: link.season
 			});
 		});
 	}
 	return playlist;
 }
-function videosrc(links: any, backdrop: string) {
+function videosrc(links: any, backdrop: string, backdropup: string) {
 	let src1: { src?: string; type?: string; tracks?: any[]; poster?: string; skip?: number } = {};
 	if (links.length > 0) {
 		src1.src = links[0].streamlink;
 		src1.type = getformat(links[0].streamformat);
 		src1.tracks = getsubformat(links[0].subtitles);
-		src1.poster = 'https://img.mediathek.community/t/p/original' + backdrop;
+		src1.poster = getimage(backdrop, backdropup);
 		src1.skip = 0;
 	}
 	return src1;
@@ -133,12 +150,13 @@ function videosrc(links: any, backdrop: string) {
 export async function load({ params }) {
 	const mediathek = await fetchMediathek(params.id);
 	const slinks = generatePlaylist(mediathek.slinks);
-	const videosrc1 = videosrc(mediathek.links, mediathek.backdrop);
+	const videosrc1 = videosrc(mediathek.links, mediathek.backdrop, mediathek.backdropup);
+	const subl = mediathek.links.length > 0 ? getsublangs(mediathek.links[0].subtitles) : [];
 	return {
 		page: mediathek,
-		groupseasons: groupBySeason(mediathek.slinks),
+		groupseasons: sortBySeasonAndEpisode(mediathek),
 		episodes: mediathek.episode,
-		sublangs: getsublangs(mediathek.links[0].subtitles) || [],
+		sublangs: subl,
 		seasons: mediathek.season,
 		playlist: slinks || [],
 		videosource: videosrc1 || {}

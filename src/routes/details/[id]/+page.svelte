@@ -1,7 +1,7 @@
 <script>
 	// @ts-nocheck
 	import * as Flag from 'svelte-flags';
-	import Time from "svelte-time";
+	import Time from 'svelte-time';
 	import Icon from '@iconify/svelte';
 	import LibraryBig from 'lucide-svelte/icons/library-big';
 	import Film from 'lucide-svelte/icons/film';
@@ -38,12 +38,18 @@
 
 	$effect(() => {
 		data1 = data.page;
-		//channelinfo = data.page.channel;
 	});
 
-	//console.log('Received data:', data);
 	let tabSet = 0;
-
+	function sortseasons (a) {
+		if (a.season < b.season) {
+			return -1;
+		}
+		if (a.season > b.season) {
+			return 1;
+		}
+		return 0;
+	}
 	function stopvideo() {
 		showvideo = false;
 		modalvideo.set({
@@ -84,7 +90,6 @@
 	};
 	function playepisode(episode, index) {
 		if (!showvideo) {
-			//console.log(JSON.stringify(episode) + '-' + index);
 			showvideo = true; // Always show video for episodes
 			myPlaylist = [];
 			seriestype.set('playlist');
@@ -92,8 +97,8 @@
 
 			playlist.set(data.playlist);
 		} else {
-			//console.log(episode + '-' + index);
 			playlistindex.set(index);
+			showvideo = false
 		}
 	}
 </script>
@@ -175,7 +180,6 @@
 										<tr>
 											<th>Audio Language</th>
 											<td>
-												{console.log(data1)}
 												<!-- svelte-ignore svelte_component_deprecated -->
 												{#each data1.links[0].audiolang as lang, i}
 													<svelte:component this={Flag[lang]} size="25" />
@@ -185,7 +189,6 @@
 										<tr>
 											<th>Subtitle Language</th>
 											<td>
-												{console.log(data)}
 												<!-- svelte-ignore svelte_component_deprecated -->
 												<div class="flex flex-row space-x-2">
 													{#each data.sublangs as lang, i}
@@ -203,7 +206,7 @@
 										</tr>
 									{/if}
 
-									{#if data1.type == 'series'}
+									{#if data1.type != 'movie'}
 										<tr>
 											<th>Seasons</th>
 											<td>{data1.season}</td>
@@ -212,11 +215,12 @@
 											<th>Episodes (total)</th>
 											<td>{data1.episode}</td>
 										</tr>
-									{/if} 
+									{/if}
 									<tr>
 										<th>Channel / Country</th>
 										<td>
 											<div class="flex flex-row space-x-2">
+												<!-- svelte-ignore svelte_component_deprecated -->
 												{data1.channel.name} / <svelte:component
 													this={Flag[data1.channel.country]}
 													class="flag-icon ml-3"
@@ -234,8 +238,8 @@
 									<tr>
 										<th>Online until</th>
 										<td>
-											<Time timestamp={data1.onlineuntil} format="DD.MM.YYYY"/>
- 										</td>
+											<Time timestamp={data1.onlineuntil} format="DD.MM.YYYY" />
+										</td>
 									</tr>
 								</tbody>
 							</table>
@@ -332,7 +336,11 @@
 										<div class="collapse-content text-sm">
 											<div class="episode-content">
 												<p class="episode-overview">{link2.description}</p>
-												<button type="button" class="btn btn-accent" onclick={() => playvideo()}>
+												<button
+													type="button"
+													class="btn btn-accent"
+													onclick={() => playepisode(link2, index3)}
+												>
 													<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
 													Play Episode
 												</button>

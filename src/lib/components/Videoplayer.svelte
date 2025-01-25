@@ -86,7 +86,7 @@
 		switch (type) {
 			case 'playlist':
 				player.playlist($playlist);
-				//console.log('playlist', $playlistindex);
+				console.log('playlist', $playlist);
 				var index = $playlistindex;
 
 				player.poster($playlist[index].thumb);
