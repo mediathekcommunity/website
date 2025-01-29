@@ -28,8 +28,15 @@
 	left: 0;
 	z-index:97;
 	background:rgba(0,0,0,.33);
+	opacity:1;
+	pointer-events:auto;
+	display:block;
+	transition:top .5s ease, opacity .5s ease;
 }
-
+.video-js .vjs-more-hidden {
+	opacity:0;
+	pointer-events:none;
+}
 
 .video-js .vjs-more-header {
 	text-align:left;
