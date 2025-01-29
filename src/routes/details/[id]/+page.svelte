@@ -1,5 +1,6 @@
 <script>
 	// @ts-nocheck
+	import { mount, unmount } from 'svelte';
 	import * as Flag from 'svelte-flags';
 	import Time from 'svelte-time';
 	import Icon from '@iconify/svelte';
@@ -23,6 +24,8 @@
 				return 'application/dash+xml';
 		}
 	}
+	import videojs from 'video.js';
+
 	let myPlaylist = [];
 	let myPlaylistomu = [];
 	let group = $state('details');
@@ -58,6 +61,9 @@
 			poster: '',
 			title: ''
 		});
+		const player = videojs.getPlayers()['my-video'];
+		//console.log('player:', player);
+		player.dispose();
 	}
 	function playvideo() {
 		if (!showvideo) {
@@ -68,13 +74,7 @@
 			modalvideo.set(d);
 			seriestype.set('single');
 		} else {
-			showvideo = false;
-			modalvideo.set({
-				src: '',
-				type: '',
-				poster: '',
-				title: ''
-			});
+			stopvideo();
 		}
 	}
 	let getqualityicon = (quality) => {
@@ -89,16 +89,16 @@
 		}
 	};
 	function playepisode(episode, index) {
-		if (!showvideo) {
+		//console.log(showvideo);
+		if (showvideo == false) {
 			showvideo = true; // Always show video for episodes
 			myPlaylist = [];
 			seriestype.set('playlist');
 			playlistindex.set(index);
-
 			playlist.set(data.playlist);
+			//console.log('playlist:', compRef);
 		} else {
-			playlistindex.set(index);
-			showvideo = false;
+			stopvideo();
 		}
 	}
 </script>
@@ -116,9 +116,9 @@
 			</aside>
 		{/if}
 		{#if showvideo}
-			<div class="hero-container2 top60 relative w-full">
+			<div class="hero-container2 top60 relative w-full" bind:this={compRef}>
 				<div class="video-player-container h-full">
-					<Videoplayer />
+					<svelte:component this={Videoplayer} />
 					<button class="close-video-btn" onclick={stopvideo}>Close Video</button>
 				</div>
 			</div>
