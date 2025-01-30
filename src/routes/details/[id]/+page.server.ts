@@ -146,10 +146,13 @@ function videosrc(links: any, backdrop: string, backdropup: string) {
 	}
 	return src1;
 }
-
-export async function load({ params }) {
+function capitalizeFirstLetter(string: string): string {
+	return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+}
+export async function load({ params, request }) {
 	const mediathek = await fetchMediathek(params.id);
 	const slinks = generatePlaylist(mediathek.slinks);
+	const h1 = request.headers.get('cf-ipcountry') || 'De';
 	const videosrc1 = videosrc(mediathek.links, mediathek.backdrop, mediathek.backdropup);
 	const subl = mediathek.links.length > 0 ? getsublangs(mediathek.links[0].subtitles) : [];
 	return {
@@ -157,6 +160,7 @@ export async function load({ params }) {
 		groupseasons: sortBySeasonAndEpisode(mediathek),
 		episodes: mediathek.episode,
 		sublangs: subl,
+		geo: capitalizeFirstLetter(h1),
 		seasons: mediathek.season,
 		playlist: slinks || [],
 		videosource: videosrc1 || {}

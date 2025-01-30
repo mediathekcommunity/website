@@ -10,7 +10,7 @@
 	import Autoplay from 'embla-carousel-autoplay';
 	import Fade from 'embla-carousel-fade';
 	let { data } = $props();
-	let heroItems = $derived(data?.page && data.page.length > 0 ? data.page.slice(0, 5) : []);
+	let heroItems = $derived(data?.page && data.page.length > 0 ? data.page.slice(0, 10) : []);
 	let options = { align: 'start', slidesToScroll: 1, loop: true };
 	let plugins = [
 		Autoplay({
@@ -21,6 +21,7 @@
 		}),
 		Fade()
 	];
+	//console.log(data);
 	let currentSlide = 0;
 	let options2 = { align: 'start', slidesToScroll: 2, loop: true };
 	let emblaApi;

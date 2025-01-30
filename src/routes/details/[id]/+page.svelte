@@ -118,7 +118,7 @@
 		{#if showvideo}
 			<div class="hero-container2 top60 relative w-full" bind:this={compRef}>
 				<div class="video-player-container h-full">
-					<svelte:component this={Videoplayer} />
+					<Videoplayer />
 					<button class="close-video-btn" onclick={stopvideo}>Close Video</button>
 				</div>
 			</div>
@@ -322,7 +322,7 @@
 															<p class="episode-overview">
 																{link.description ? link.description : 'no description'}
 															</p>
-															{#if link.src}
+															{#if data.geo == data1.channel.geo}
 																<button
 																	type="button"
 																	class="btn btn-accent"
@@ -354,10 +354,20 @@
 												<button
 													type="button"
 													class="btn btn-accent"
-													onclick={() => playepisode(link2, index3)}
+													onclick={() =>
+														data.geo == data.page.channel.country ? playepisode(link2, index3) : ''}
 												>
-													<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
-													Play Episode
+													{#if data.geo == data.page.channel.country}
+														<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
+														<span>
+															Play Episode aaa {console.log(data.page.channel.country)}
+														</span>
+													{:else}
+														<span class="flex items-center gap-1">
+															<svelte:component this={Flag[data.page.channel.country]} size="25" /> IP
+															required
+														</span>
+													{/if}
 												</button>
 											</div>
 										</div>
@@ -654,7 +664,7 @@
 
 	.episode-content {
 		display: flex;
-		flex-direction: column;
+		flex-direction: row;
 		gap: 1rem;
 	}
 

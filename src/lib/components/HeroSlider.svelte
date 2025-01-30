@@ -1,10 +1,11 @@
 <script>
 	// @ts-nocheck
 	import { visible } from '$lib/store';
+	import * as Flag from 'svelte-flags';
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
 	import Autoplay from 'embla-carousel-autoplay';
 	import Fade from 'embla-carousel-fade';
-	let { data, heroItems } = $props();
+	let { data, heroItems,geo } = $props();
 	import Icon from '@iconify/svelte';
 	let getqualityicon = (quality) => {
 		if (quality === '4K') {
@@ -85,19 +86,19 @@
 						<div
 							class="absolute bottom-4 left-4 max-w-[calc(100%-2rem)] text-white sm:bottom-8 sm:left-8 sm:max-w-[calc(100%-4rem)] md:bottom-12 md:left-16 md:max-w-2xl lg:bottom-16 lg:left-32 lg:max-w-3xl"
 						>
-							<div class="mb-2 flex flex-wrap items-center gap-1 sm:mb-4">
-								<span
-									class="inline-flex items-center gap-1 badge-ghost px-1 py-1 text-white sm:text-sm"
-								>
+							<div class="mb-1 flex flex-wrap items-center gap-1 sm:mb-4">
+								<span class="badge-ghost inline-flex items-center px-1 py-1 text-white sm:text-sm">
+									<svelte:component this={Flag[slide.channel.country]} size="25" />
+
 									<Icon icon={slide.channel.icon} height="28px" width="36px" />
 								</span>
 								<span
-									class="inline-flex items-center gap-1 badge-ghost px-1 py-1 text-white sm:text-sm"
+									class="badge-ghost inline-flex items-center gap-1 px-1 py-1 text-white sm:text-sm"
 								>
 									<Icon icon={getqualityicon(slide.quality)} height="28px" width="36px" />
 								</span>
 								<span
-									class="inline-flex items-center gap-1 badge-ghost px-1 py-1 text-white sm:text-sm"
+									class="badge-ghost inline-flex items-center gap-1 px-1 py-1 text-white sm:text-sm"
 								>
 									<Icon icon={getTypeIcon(slide.type)} height="28px" />
 								</span>
@@ -111,7 +112,7 @@
 								Original Title: {slide.orgtitle}
 							</p>
 							<a href="/details/{slide.id}">
-								<button class="btn btn-primary" href="/details/{slide.id}"> Details </button></a
+								<button class="btn btn-primary" href="/details/{slide.id}"> Details</button></a
 							>
 						</div>
 					</div>

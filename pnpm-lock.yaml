@@ -46,8 +46,8 @@ importers:
         specifier: ^5.0.3
         version: 5.0.3(svelte@5.19.5)(vite@6.0.11(jiti@2.4.2)(lightningcss@1.29.1))
       daisyui:
-        specifier: 5.0.0-beta.3
-        version: 5.0.0-beta.3
+        specifier: 5.0.0-beta.5
+        version: 5.0.0-beta.5
       embla-carousel-svelte:
         specifier: ^8.5.2
         version: 8.5.2(svelte@5.19.5)
@@ -870,8 +870,8 @@ packages:
     engines: {node: '>=4'}
     hasBin: true
 
-  daisyui@5.0.0-beta.3:
-    resolution: {integrity: sha512-O05OpyuwrIz+jcxUh00vLtAeH0JIhc+cyez7J7aeZfUxcXAg1OqNt9vS13Bv4ICue1SrPhY/YISJI9YUNQOrqw==}
+  daisyui@5.0.0-beta.5:
+    resolution: {integrity: sha512-TTrOdPKf+ohXgPpOEvJ5f8iTWMwi5Fk/aMb66GxKZ1UUlujnVEOvQ4FTDQtoqp9pDGQ8jw0UwnUmmOTQ+kJynA==}
 
   data-uri-to-buffer@2.0.2:
     resolution: {integrity: sha512-ND9qDTLc6diwj+Xe5cdAgVTbLVdXbtxTJRXRhli8Mowuaan+0EJOtdqJ0QCHNSSPyoXGx9HX2/VMnKeC34AChA==}
@@ -2304,7 +2304,7 @@ snapshots:
 
   cssesc@3.0.0: {}
 
-  daisyui@5.0.0-beta.3: {}
+  daisyui@5.0.0-beta.5: {}
 
   data-uri-to-buffer@2.0.2: {}
 
