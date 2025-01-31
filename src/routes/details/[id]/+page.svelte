@@ -537,7 +537,6 @@
 
 	.content-wrapper {
 		width: 100%;
-		//max-width: 1800px;
 		margin: 0rem 1rem 1rem 0rem;
 		padding: 0rem 1rem 2rem 1rem;
 	}
