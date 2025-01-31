@@ -1,6 +1,8 @@
 <script>
 	// @ts-nocheck
 	import { mount, unmount } from 'svelte';
+	import { Image } from '@unpic/svelte';
+
 	import * as Flag from 'svelte-flags';
 	import Time from 'svelte-time';
 	import Icon from '@iconify/svelte';
@@ -124,18 +126,25 @@
 			</div>
 		{:else if data1.backdrop}
 			<div class="hero-container relative w-full">
-				<img
-					src="https://img.mediathek.community/t/p/original{data1.backdrop}"
+				<Image
+					src="https://mediathekc.b-cdn.net/t/p/original{data1.backdrop}"
 					alt={data1.title}
 					class="hero-image absolute inset-0 h-full w-full"
 				/>
 				<div class="gradient-overlay absolute inset-x-0" style="bottom: -1px"></div>
-				<div class="hero-content grid">
-					<h1 class="title">{data1.title}</h1>
+				<div
+					class="absolute bottom-4 left-4 max-w-[calc(100%-2rem)] text-white sm:bottom-8 sm:left-8 sm:max-w-[calc(100%-4rem)] md:bottom-12 md:left-16 md:max-w-2xl lg:bottom-16 lg:left-32 lg:max-w-3xl"
+				>
+					<h1
+						class="mb-2 text-2xl leading-tight font-bold tracking-tight sm:text-3xl md:text-4xl lg:text-5xl"
+					>
+						{data1.title}
+					</h1>
 					{#if data1.orgtitle}
-						<h2 class="subtitle">Original Title: {data1.orgtitle}</h2>
+						<p class="mb-4 text-sm text-gray-300 italic sm:text-base">
+							Original Title: {data1.orgtitle}
+						</p>
 					{/if}
-					<div class="meta-info"></div>
 				</div>
 			</div>
 		{:else}
@@ -386,7 +395,8 @@
 	.hero-container {
 		position: relative;
 		width: 100%;
-		height: 50vh;
+		height: 85vh;
+		max-height: 95vh;
 		background-size: cover;
 		background-position: center;
 		background-repeat: no-repeat;
@@ -401,15 +411,6 @@
 		background-position: center;
 		background-repeat: no-repeat;
 		overflow: hidden;
-	}
-	.hero-image {
-		width: 100%;
-		height: 100%;
-		object-position: top center;
-		transform: scale(1);
-		transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-		will-change: transform, object-fit;
-		object-fit: cover;
 	}
 
 	.gradient-text {
@@ -447,96 +448,6 @@
 		);
 	}
 
-	@media (max-width: 480px) {
-		.hero-container {
-			height: 40vh;
-			min-height: 250px;
-			max-height: 50vh;
-		}
-		.hero-container2 {
-			height: 40vh;
-			min-height: 250px;
-			max-height: 50vh;
-		}
-
-		.hero-image {
-			object-fit: cover;
-			background-color: rgb(17, 17, 17);
-		}
-
-		.hero-overlay {
-			height: 85%;
-		}
-	}
-
-	@media (min-width: 481px) and (max-width: 640px) {
-		.hero-container {
-			height: 50vh;
-			min-height: 300px;
-			max-height: 60vh;
-		}
-		.hero-container2 {
-			height: 50vh;
-			min-height: 300px;
-			max-height: 60vh;
-		}
-
-		.hero-image {
-			object-fit: cover;
-			background-color: rgb(17, 17, 17);
-		}
-
-		.gradient-overlay {
-			height: 80%;
-		}
-	}
-
-	@media (min-width: 641px) and (max-width: 768px) {
-		.hero-container {
-			height: 60vh;
-			max-height: 75vh;
-		}
-		.hero-container2 {
-			height: 60vh;
-			max-height: 75vh;
-		}
-		.hero-image {
-			object-fit: cover;
-		}
-
-		.gradient-overlay {
-			height: 75%;
-		}
-	}
-
-	@media (min-width: 769px) and (max-width: 1024px) {
-		.hero-container {
-			height: 70vh;
-			max-height: 85vh;
-		}
-		.hero-container2 {
-			height: 70vh;
-			max-height: 85vh;
-		}
-		.gradient-overlay {
-			height: 75%;
-		}
-	}
-
-	@media (min-width: 1025px) {
-		.hero-container {
-			height: 85vh;
-			max-height: 95vh;
-		}
-		.hero-container2 {
-			height: 85vh;
-			max-height: 95vh;
-		}
-
-		.gradient-overlay {
-			height: 75%;
-		}
-	}
 	.b21 {
 		padding: 1% 4% 0 4%;
 	}
@@ -628,7 +539,7 @@
 		width: 100%;
 		max-width: 1800px;
 		margin: 0 auto;
-		padding: 2rem;
+		padding: 0rem 1rem 2rem 1rem;
 	}
 	.details-grid {
 		display: grid;
@@ -672,56 +583,87 @@
 		margin-bottom: 0.5rem;
 	}
 
-	@media (min-width: 768px) {
-		.hero-container {
-			height: 60vh;
-		}
-		.hero-container2 {
-			height: 60vh;
-		}
-		.title {
-			font-size: 2.5rem;
-		}
-
-		.subtitle {
-			font-size: 1.5rem;
-		}
-
-		.details-grid {
-			grid-template-columns: 1fr 1fr;
-		}
-
-		.episode-content {
-			flex-direction: row;
-			justify-content: space-between;
-			align-items: center;
-		}
-
-		.episode-overview {
-			flex: 1;
-			margin-bottom: 0;
-		}
-	}
-
-	@media (min-width: 1024px) {
-		.hero-container {
-			height: 70vh;
-		}
-		.hero-container2 {
-			height: 70vh;
-		}
-		.title {
-			font-size: 3rem;
-		}
-
-		.subtitle {
-			font-size: 1.75rem;
-		}
-	}
 	.top60 {
-		top: 60px;
+		top: 320px;
 	}
 	.top602 {
-		margin-top: 60px;
+		margin-top: 30px;
+	}
+
+	@media (max-width: 480px) {
+		.hero-container {
+			height: 40vh;
+			min-height: 250px;
+			max-height: 50vh;
+		}
+		.hero-container2 {
+			height: 40vh;
+			min-height: 250px;
+			max-height: 50vh;
+		}
+
+		.hero-overlay {
+			height: 85%;
+		}
+	}
+
+	@media (min-width: 481px) and (max-width: 640px) {
+		.hero-container {
+			height: 50vh;
+			min-height: 300px;
+			max-height: 60vh;
+		}
+		.hero-container2 {
+			height: 50vh;
+			min-height: 300px;
+			max-height: 60vh;
+		}
+
+		.gradient-overlay {
+			height: 80%;
+		}
+	}
+
+	@media (min-width: 641px) and (max-width: 768px) {
+		.hero-container {
+			height: 60vh;
+			max-height: 75vh;
+		}
+		.hero-container2 {
+			height: 60vh;
+			max-height: 75vh;
+		}
+		.gradient-overlay {
+			height: 75%;
+		}
+	}
+
+	@media (min-width: 769px) and (max-width: 1024px) {
+		.hero-container {
+			height: 70vh;
+			max-height: 85vh;
+		}
+		.hero-container2 {
+			height: 70vh;
+			max-height: 85vh;
+		}
+		.gradient-overlay {
+			height: 75%;
+		}
+	}
+
+	@media (min-width: 1025px) {
+		.hero-container {
+			height: 85vh;
+			max-height: 95vh;
+		}
+		.hero-container2 {
+			height: 85vh;
+			max-height: 95vh;
+		}
+
+		.gradient-overlay {
+			height: 75%;
+		}
 	}
 </style>

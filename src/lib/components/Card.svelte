@@ -1,8 +1,11 @@
 <script>
+// @ts-nocheck
+
 	import * as Flag from 'svelte-flags';
 	import { slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 	import Icon from '@iconify/svelte';
+	import { Image } from '@unpic/svelte';
 
 	export let carddata, countryflag;
 	$: title = carddata?.title || 'Unknown Title';
@@ -34,8 +37,8 @@
 	>
 		<div class="card-image">
 			{#if carddata.poster}
-				<img
-					src="https://img.mediathek.community/t/p/w300{carddata.poster}"
+				<Image
+					src="https://mediathekc.b-cdn.net/t/p/original{carddata.poster}"
 					alt="{title} poster"
 					class="card-poster"
 				/>
@@ -49,7 +52,7 @@
 				<div class="card-poster-placeholder">{title[0]}</div>
 			{/if}
 			<div class="quality-icon">
-				<Icon icon="{getTypeIcon(carddata.type)}" />
+				<Icon icon={getTypeIcon(carddata.type)} />
 			</div>
 			{#if countryflag}
 				<div class="country-icon">

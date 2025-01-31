@@ -14,6 +14,9 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.0.1
         version: 4.0.1(vite@6.0.11(jiti@2.4.2)(lightningcss@1.29.1))
+      '@unpic/svelte':
+        specifier: https://pkg.pr.new/@unpic/svelte@748
+        version: https://pkg.pr.new/@unpic/svelte@748(svelte@5.19.5)
       embla-carousel-autoplay:
         specifier: ^8.5.2
         version: 8.5.2(embla-carousel@8.5.2)
@@ -751,6 +754,16 @@ packages:
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
+
+  '@unpic/core@https://pkg.pr.new/ascorbic/unpic-img/@unpic/core@13b27cda2cfac761ed635638ae6ca484045004f1':
+    resolution: {tarball: https://pkg.pr.new/ascorbic/unpic-img/@unpic/core@13b27cda2cfac761ed635638ae6ca484045004f1}
+    version: 0.1.0
+
+  '@unpic/svelte@https://pkg.pr.new/@unpic/svelte@748':
+    resolution: {tarball: https://pkg.pr.new/@unpic/svelte@748}
+    version: 0.0.58
+    peerDependencies:
+      svelte: ^5
 
   '@videojs/http-streaming@3.16.2':
     resolution: {integrity: sha512-fvt4ko7FknxiT9FnjyNQt6q2px+awrkM+Orv7IB/4gldvj94u4fowGfmNHynnvNTPgPkdxHklGmFLGfclYw8HA==}
@@ -1542,6 +1555,9 @@ packages:
     resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}
     engines: {node: '>=8'}
 
+  style-object-to-css-string@1.1.3:
+    resolution: {integrity: sha512-bISQoUsir/qGfo7vY8rw00ia9nnyE1jvYt3zZ2jhdkcXZ6dAEi74inMzQ6On57vFI+I4Fck6wOv5UI9BEwJDgw==}
+
   supports-color@7.2.0:
     resolution: {integrity: sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==}
     engines: {node: '>=8'}
@@ -1608,6 +1624,9 @@ packages:
 
   unenv@2.0.0-rc.0:
     resolution: {integrity: sha512-H0kl2w8jFL/FAk0xvjVing4bS3jd//mbg1QChDnn58l9Sc5RtduaKmLAL8n+eBw5jJo8ZjYV7CrEGage5LAOZQ==}
+
+  unpic@4.0.1:
+    resolution: {integrity: sha512-ek65O9ciDNKVUdLxNVfv7lF6NF6jYD4PoCPfEEwUVkZJXxIpfPlHpY1RKtDzN2FJ8crm7QLXoQqU/xAuCzfx6Q==}
 
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
@@ -2186,6 +2205,16 @@ snapshots:
   '@types/estree@1.0.6': {}
 
   '@types/json-schema@7.0.15': {}
+
+  '@unpic/core@https://pkg.pr.new/ascorbic/unpic-img/@unpic/core@13b27cda2cfac761ed635638ae6ca484045004f1':
+    dependencies:
+      unpic: 4.0.1
+
+  '@unpic/svelte@https://pkg.pr.new/@unpic/svelte@748(svelte@5.19.5)':
+    dependencies:
+      '@unpic/core': https://pkg.pr.new/ascorbic/unpic-img/@unpic/core@13b27cda2cfac761ed635638ae6ca484045004f1
+      style-object-to-css-string: 1.1.3
+      svelte: 5.19.5
 
   '@videojs/http-streaming@3.16.2(video.js@8.21.1)':
     dependencies:
@@ -2931,6 +2960,8 @@ snapshots:
 
   strip-json-comments@3.1.1: {}
 
+  style-object-to-css-string@1.1.3: {}
+
   supports-color@7.2.0:
     dependencies:
       has-flag: 4.0.0
@@ -3009,6 +3040,8 @@ snapshots:
       ohash: 1.1.4
       pathe: 1.1.2
       ufo: 1.5.4
+
+  unpic@4.0.1: {}
 
   uri-js@4.4.1:
     dependencies:

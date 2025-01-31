@@ -1,11 +1,13 @@
 <script>
 	// @ts-nocheck
 	import { visible } from '$lib/store';
+	import { Image } from '@unpic/svelte';
+
 	import * as Flag from 'svelte-flags';
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
 	import Autoplay from 'embla-carousel-autoplay';
 	import Fade from 'embla-carousel-fade';
-	let { data, heroItems,geo } = $props();
+	let { data, heroItems, geo } = $props();
 	import Icon from '@iconify/svelte';
 	let getqualityicon = (quality) => {
 		if (quality === '4K') {
@@ -77,9 +79,10 @@
 			{#each heroItems as slide, i}
 				<div class="embla__slide">
 					<div class="relative h-full w-full">
-						<img
-							src="https://img.mediathek.community/t/p/original{slide.backdrop}"
+						<Image
+							src="https://mediathekc.b-cdn.net/t/p/original{slide.backdrop}"
 							alt={slide.title}
+							layout="fixed"
 							class="hero-image absolute inset-0 h-full w-full"
 						/>
 						<div class="gradient-overlay absolute inset-x-0 bottom-0"></div>
@@ -154,16 +157,6 @@
 		overflow: hidden;
 	}
 
-	.hero-image {
-		width: 100%;
-		height: 100%;
-		object-position: top center;
-		transform: scale(1);
-		transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-		will-change: transform, object-fit;
-		object-fit: cover;
-	}
-
 	.gradient-overlay {
 		height: 75%;
 		background: linear-gradient(
@@ -193,12 +186,6 @@
 			min-height: 250px;
 			max-height: 50vh;
 		}
-
-		.hero-image {
-			object-fit: cover;
-			background-color: rgb(17, 17, 17);
-		}
-
 		.gradient-overlay {
 			height: 85%;
 		}
@@ -210,12 +197,6 @@
 			min-height: 300px;
 			max-height: 60vh;
 		}
-
-		.hero-image {
-			object-fit: cover;
-			background-color: rgb(17, 17, 17);
-		}
-
 		.gradient-overlay {
 			height: 80%;
 		}
@@ -225,10 +206,6 @@
 		.hero-container {
 			height: 60vh;
 			max-height: 75vh;
-		}
-
-		.hero-image {
-			object-fit: cover;
 		}
 
 		.gradient-overlay {

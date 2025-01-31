@@ -40,6 +40,7 @@
 	"dependencies": {
 		"@directus/sdk": "^19.0.0",
 		"@tailwindcss/vite": "^4.0.1",
+"@unpic/svelte": "https://pkg.pr.new/@unpic/svelte@748",
 		"embla-carousel-autoplay": "^8.5.2",
 		"embla-carousel-fade": "^8.5.2",
 		"lucide-svelte": "^0.474.0",
