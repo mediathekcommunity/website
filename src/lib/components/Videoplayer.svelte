@@ -6,7 +6,8 @@
 	import '../videojs/plugins/es/playlist.js';
 	import '../videojs/plugins/es/videojs.hotkeys';
 	import '../videojs/plugins/es/videojs.skipintro';
-
+import { env } from '$env/dynamic/public';
+const { VIDEO_LICENSE } = env;
 	import { modalvideo, playlist, subs, seriestype, playlistindex } from '$lib/store';
 
 	let player: any = null;
@@ -16,6 +17,7 @@
 		title: string;
 	} | null = null;
 	const videojsOptions = {
+license: "0902555a051359560f49525c090a445d0d1348",
 		controls: true,
 		playsinline: false,
 		fill: true,
@@ -43,24 +45,7 @@
 	};
 
 	function initializePlayer(videoElement: HTMLVideoElement) {
-		player = videojs(videoElement, {
-			license: '',
-			controls: true,
-			playsinline: true,
-			buttonForward: true,
-			fill: true,
-			hotkeys: true,
-			overlay: true,
-			resume: true,
-			html5: {
-				hlsjsConfig: {
-					debug: false,
-					enableWorker: true,
-					lowLatencyMode: false,
-					backBufferLength: 90
-				}
-			}
-		});
+		player = videojs(videoElement, videojsOptions);
 		player.nuevo(nuevoOptions);
 		player.hotkeys({ seekStep: 10 });
 		console.log('initializePlayer');
