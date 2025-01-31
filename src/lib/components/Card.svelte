@@ -190,8 +190,7 @@
 		.card {
 			width: 160px;
 			height: 240px;
-			margin: 6px;
-		}
+ 		}
 
 		.card-title {
 			font-size: 0.9rem;

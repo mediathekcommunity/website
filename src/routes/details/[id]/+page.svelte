@@ -539,12 +539,7 @@
 		width: 100%;
 		margin: 0rem 1rem 1rem 0rem;
 		padding: 0rem 1rem 2rem 1rem;
-	}
-	.details-grid {
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: 1rem;
-	}
+	} 
 
 	.section-title {
 		font-size: 1.5rem;

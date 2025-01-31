@@ -75,6 +75,8 @@
 		z-index: 10;
 		background: linear-gradient(to bottom, transparent, rgb(17, 17, 17) 15%);
 		padding-top: 3rem;
+		padding-left: 3rem;
+
 	}
 
 	.maincontent {
@@ -96,7 +98,6 @@
 	.embla__container {
 		display: flex;
 		gap: 1rem;
-		padding: 0 1rem;
 	}
 
 	.embla__slide {
@@ -119,6 +120,7 @@
 		.content-section {
 			margin-top: -2rem;
 			padding-top: 2.5rem;
+			padding-left: 0rem !important;
 		}
 	}
 
