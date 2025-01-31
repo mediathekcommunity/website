@@ -584,7 +584,7 @@
 	}
 
 	.top60 {
-		top: 320px;
+		top: 30px;
 	}
 	.top602 {
 		margin-top: 30px;
