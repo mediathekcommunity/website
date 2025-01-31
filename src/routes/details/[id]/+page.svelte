@@ -174,8 +174,8 @@
 					checked="checked"
 				/>
 				<div class="tab-content bg-base-100 border-base-300 p-6">
-					<div class="details-grid">
-						<div class="">
+					<div class="grid grid-cols-1 md:grid-cols-2">
+						<div>
 							<h3 class="section-title">Information</h3>
 							<table class="info-table">
 								<tbody>
@@ -537,8 +537,8 @@
 
 	.content-wrapper {
 		width: 100%;
-		max-width: 1800px;
-		margin: 0 auto;
+		//max-width: 1800px;
+		margin: 0rem 1rem 1rem 0rem;
 		padding: 0rem 1rem 2rem 1rem;
 	}
 	.details-grid {
