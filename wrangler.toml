@@ -23,4 +23,8 @@ mode = "smart"
 
 [env.production.vars]
 DIRECTUS_APIURL = "https://api.mediathek.community/"
+DIRECTUS_REST_BASE_URL = "https://api.mediathek.community/"
+NITRO_PRESET = "cloudflare_pages"
 NODE_VERSION = "22"
+NUXT_PUBLIC_DIRECTUS_URL = "https://api.mediathek.community/"
+PNPM_VERSION = "10.0.0"
