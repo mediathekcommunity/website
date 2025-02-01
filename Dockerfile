@@ -5,7 +5,6 @@ ARG NODE_VERSION=22.12.0
 FROM node:${NODE_VERSION}-slim AS base
 
 ARG DIRECTUS_APIURL
-ENV VITE_DIRECTUS_APIURL=$DIRECTUS_APIURL
 LABEL fly_launch_runtime="SvelteKit"
 
 # SvelteKit app lives here
@@ -33,7 +32,7 @@ RUN pnpm install --frozen-lockfile --prod=false
 
 # Copy application code
 COPY . .
-RUN  VITE_DIRECTUS_APIURL=$VITE_DIRECTUS_APIURL pnpm run build
+RUN DIRECTUS_APIURL=$DIRECTUS_APIURL pnpm run build
 # Remove development dependencies
 RUN pnpm prune --prod
 
