@@ -13,10 +13,7 @@ WORKDIR /app
 ENV NODE_ENV="production"
 
 # Install pnpm
-ARG PNPM_VERSION=10.0.0
-ARG DIRECTUS_APIURL
-ENV DIRECTUS_APIURL=${DIRECTUS_APIURL}
-
+ARG PNPM_VERSION=10.0.0 
 
 RUN npm install -g pnpm@$PNPM_VERSION
 
@@ -34,7 +31,9 @@ RUN pnpm install --frozen-lockfile --prod=false
 
 # Copy application code
 COPY . .
-RUN DIRECTUS_APIURL=${DIRECTUS_APIURL} pnpm run build
+RUN --mount=type=secret,id=DIRECTUS_APIURL \
+    DIRECTUS_APIURL="$(cat /run/secrets/DIRECTUS_APIURL)"
+RUN pnpm run build
 # Remove development dependencies
 RUN pnpm prune --prod
 
