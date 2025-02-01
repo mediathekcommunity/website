@@ -33,6 +33,7 @@ RUN pnpm install --frozen-lockfile --prod=false
 COPY . .
 RUN --mount=type=secret,id=DIRECTUS_APIURL \
     DIRECTUS_APIURL="$(cat /run/secrets/DIRECTUS_APIURL)" && \
+    cat /run/secrets/DIRECTUS_APIURL && \
     pnpm run build
 # Remove development dependencies
 RUN pnpm prune --prod
