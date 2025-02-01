@@ -5,7 +5,7 @@ import { readItem } from '@directus/sdk';
 // GraphQL query string
 function getimage(backdropup: any, backdrop: object) {
 	if (backdrop) {
-		return 'https://img.mediathek.community/t/p/original/' + backdrop;
+		return 'https://mediathekc.b-cdn.net/t/p/original/' + backdrop;
 	} else {
 		return 'https://api.mediathek.community/assets/' + backdropup.filename_disk;
 	}

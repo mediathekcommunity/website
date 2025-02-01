@@ -6,8 +6,7 @@
 	import '../videojs/plugins/es/playlist.js';
 	import '../videojs/plugins/es/videojs.hotkeys';
 	import '../videojs/plugins/es/videojs.skipintro';
-import { env } from '$env/dynamic/public';
-const { VIDEO_LICENSE } = env;
+	import { env } from '$env/dynamic/public';
 	import { modalvideo, playlist, subs, seriestype, playlistindex } from '$lib/store';
 
 	let player: any = null;
@@ -17,7 +16,7 @@ const { VIDEO_LICENSE } = env;
 		title: string;
 	} | null = null;
 	const videojsOptions = {
-license: "0902555a051359560f49525c090a445d0d1348",
+		license: '0902555a051359560f49525c090a445d0d1348',
 		controls: true,
 		playsinline: false,
 		fill: true,
@@ -58,7 +57,7 @@ license: "0902555a051359560f49525c090a445d0d1348",
 		console.log($playlist);
 		console.log($seriestype);
 		console.log($playlistindex);
-		
+
 		if ($seriestype === 'playlist') {
 			player.playlist.currentItem($playlistindex);
 		}
@@ -133,8 +132,7 @@ license: "0902555a051359560f49525c090a445d0d1348",
 </script>
 
 <!-- svelte-ignore a11y_media_has_caption -->
-<video id="my-video" playsinline webkit-playsinline class="video-js  overflow-hidden"
-></video>
+<video id="my-video" playsinline webkit-playsinline class="video-js overflow-hidden"></video>
 
 <style>
 	.overflow-hidden {
