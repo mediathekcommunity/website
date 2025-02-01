@@ -1,57 +1,57 @@
 /** @type {import('./$types').PageLoad} */
 import { error } from '@sveltejs/kit';
-import client from '$lib/directus.js';
+import getDirectusInstance from '$lib/directus';
+import { readItems, readItem } from '@directus/sdk';
 
-const QUERY = `
-query Mediatheks($channel: JSON) {
-	Mediatheks(where: {channel : {equals: $channel } })
-		{
-		docs {
-			title
-			id
-			tmdbid
-			metascore
-			episodes {
-				title
+async function query(id: number): Promise<any> {
+	const directus = getDirectusInstance(fetch);
+	var result = await directus.request(
+		readItems('mediathek', {
+			fields: ['*.*'],
+			filter: {
+				channel: {
+					id: {
+						_in: id
+					}
+				}
+			},
+			deep: {
+				channel: {
+					limit: 5
+				},
+				country: {
+					limit: 5
+				}
 			}
-			orgtitle
-			onlineuntil
-			poster
-			quality
-			backdrop
-			streamformat
-			streamlink
-			channel  {
-				id
-				country
-				name
-				info
-			}
-		}
-	}
-}
-
-`;
-
-async function query(id) {
-	id = {
-		channel: id
-	};
-	const result = await client.query(QUERY, id);
+		})
+	);
+	//const result = await client.query(query, { id });
 	console.log(result);
-	return result.data.Mediatheks.docs;
+	return result;
+}
+async function query2(id: number) {
+	const directus = getDirectusInstance(fetch);
+	var result = await directus.request(
+		readItem('channels', id, {
+			fields: ['*.*']
+		})
+	);
+	console.log(result);
+	return result;
 }
 
 export async function load({ fetch, params, request }) {
 	const h1 = capitalizeFirstLetter(request.headers.get('cf-ipcountry') || 'De');
-	const data1 = await query(params.id);
-
+	const data1 = await query(Number(params.id));
+	const data2 = await query2(Number(params.id));
 	if (!data1) {
 		throw error(404, 'Page not found');
 	}
 	return {
 		page: data1,
-		geo: h1
+		geo: h1,
+		id: params.id,
+		page2: data2
 	};
 }
 

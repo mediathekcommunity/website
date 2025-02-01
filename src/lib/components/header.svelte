@@ -25,6 +25,8 @@
 				<li><a href="/movie">Movies</a></li>
 				<li><a href="/series">TV Shows</a></li>
 				<li><a href="/music">Music</a></li>
+				<li><a href="/channels">Channels</a></li>
+
 			</ul>
 		</nav>
 		<button class="mobile-menu-button" onclick={toggleMobileMenu}>☰</button>

@@ -1,23 +1,18 @@
 /** @type {import('./$types').PageLoad} */
 import { error } from '@sveltejs/kit';
-import client from '$lib/directus.js';
 
-const QUERY = `
-{
-	Channels (sort: "country") {
-		docs {
-			info
-			name
-			country
-			id
-		}
-	}
-}
-`;
+import getDirectusInstance from '$lib/directus';
+import { readItems } from '@directus/sdk'; 
 
 async function query() {
-	const result = await client.query(QUERY);
-	return result.data.Channels.docs;
+	const directus = getDirectusInstance(fetch);
+	var result =await directus.request(
+		readItems('channels', { 
+			fields: ['*.*'], 
+		})
+	);
+	console.log(result)
+ 	return result;
 }
 
 export async function load({ fetch, params, request }) {

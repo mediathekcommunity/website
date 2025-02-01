@@ -38,6 +38,7 @@
 								title={item.title}
 								poster={item.poster}
 								channelName={item.name}
+								channelIcon={item.icon}
 							/>
 						</div>
 					{/each}
@@ -45,13 +46,13 @@
 			</div>
 		{/each}
 	{:else}
-		<ErrorSection filter={data?.filter} />
+		<ErrorSection filter={data.id} text1="Channel" />
 	{/if}
 </div>
 
 <style>
 	.channels-container {
-		padding: 0 1rem; /* Add horizontal padding */
+		padding: 4rem 1rem 1rem 3em; /* Add horizontal padding */
 	}
 
 	.embla__slide {

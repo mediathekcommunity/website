@@ -3,10 +3,10 @@
 	import { visible } from '$lib/store';
 	import { Image } from '@unpic/svelte';
 
- 	import emblaCarouselSvelte from 'embla-carousel-svelte';
+	import emblaCarouselSvelte from 'embla-carousel-svelte';
 	import Autoplay from 'embla-carousel-autoplay';
 	import Fade from 'embla-carousel-fade';
-	let { data, heroItems, geo } = $props();
+	let { data, heroItems, geo, showcountry } = $props();
 	import Icon from '@iconify/svelte';
 	let getqualityicon = (quality) => {
 		if (quality === '4K') {
@@ -90,7 +90,9 @@
 						>
 							<div class="mb-1 flex flex-wrap items-center gap-1 sm:mb-4">
 								<span class="badge-ghost inline-flex items-center px-1 py-1 text-white sm:text-sm">
+									{#if showcountry}
 									<span class="fi fi-{slide.channel.country.toLowerCase()} text-2xl"></span>
+									{/if}
 									<Icon icon={slide.channel.icon} height="28px" width="36px" />
 								</span>
 								<span

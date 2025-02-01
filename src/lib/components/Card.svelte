@@ -1,5 +1,5 @@
 <script>
-// @ts-nocheck
+	// @ts-nocheck
 
 	import { slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
@@ -56,7 +56,7 @@
 			{#if countryflag}
 				<div class="country-icon">
 					<span class="fi fi-{carddata.channel.country.toLowerCase()}"></span>
- 				</div>
+				</div>
 			{/if}
 			{#if isHovered}
 				<div class="card-overlay" transition:slide={{ duration: 300, delay: 50, easing: quintOut }}>
@@ -189,7 +189,7 @@
 		.card {
 			width: 160px;
 			height: 240px;
- 		}
+		}
 
 		.card-title {
 			font-size: 0.9rem;

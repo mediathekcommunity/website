@@ -1,14 +1,15 @@
 <!-- $lib/components/ChannelCard.svelte -->
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import Icon from '@iconify/svelte';
 
 	export let id: string;
 	export let title: string;
 	export let poster: string | null;
 	export let channelName: string | null;
-
+	export let channelIcon: string | "";
 	function handleClick() {
-		goto(`/details/${id}`);
+		goto(`/channels/${id}`);
 	}
 </script>
 
@@ -25,7 +26,7 @@
 	{:else}
 		<div class="no-image">
 			{#if channelName}
-				<span class="channel-name">{channelName}</span>
+				<Icon icon={channelIcon} height="68px" width="66px" />
 			{:else}
 				<span>No Image Available</span>
 			{/if}

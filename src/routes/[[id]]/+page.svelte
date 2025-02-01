@@ -9,6 +9,7 @@
 	import Autoplay from 'embla-carousel-autoplay';
 	import Fade from 'embla-carousel-fade';
 	let { data } = $props();
+	let showcountry = true
 	let heroItems = $derived(data?.page && data.page.length > 0 ? data.page.slice(0, 10) : []);
 	let options = { align: 'start', slidesToScroll: 1, loop: true };
 	let plugins = [
@@ -39,7 +40,7 @@
 <div>
 	{#if data && data.page && data.page.length > 0 && data.error === false}
 		{#if heroItems}
-			<HeroSlider {heroItems} {data} />
+			<HeroSlider {heroItems} {data} {showcountry} />
 		{/if}
 		<div class="content-section px-4 sm:px-6 lg:px-8">
 			<div class="maincontent">
