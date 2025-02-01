@@ -1,6 +1,6 @@
 import { createDirectus, rest } from '@directus/sdk';
-import { env } from '$env/dynamic/private';
- const { DIRECTUS_APIURL } = env;
+const DIRECTUS_APIURL = import.meta.env.VITE_DIRECTUS_APIURL
+ 
  function getDirectusInstance(fetch) {
 	const directus = createDirectus(DIRECTUS_APIURL).with(rest());
 	return directus;
