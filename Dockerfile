@@ -34,7 +34,8 @@ RUN pnpm install --frozen-lockfile --prod=false
 
 # Copy application code
 COPY . .
-RUN pnpm run build
+RUN --mount=type=secret,id=DIRECTUS_APIURL \
+    DIRECTUS_APIURL="$(cat /run/secrets/OBAN_KEY_FINGERPRINT)" pnpm run build
 
 # Remove development dependencies
 RUN pnpm prune --prod
