@@ -10,6 +10,7 @@ mode = "off"
 DIRECTUS_APIURL = "https://api.mediathek.community/"
 DIRECTUS_REST_BASE_URL = "https://api.mediathek.community/"
 NITRO_PRESET = "cloudflare_pages"
+NODE_VERSION = "22.12.0"
 SKIP_DEPENDENCY_INSTALL="1"
 
 [env.production]
@@ -24,3 +25,4 @@ DIRECTUS_APIURL = "https://api.mediathek.community/"
 DIRECTUS_REST_BASE_URL = "https://api.mediathek.community/"
 NITRO_PRESET = "cloudflare_pages"
 SKIP_DEPENDENCY_INSTALL="1"
+NODE_VERSION = "22.12.0"
