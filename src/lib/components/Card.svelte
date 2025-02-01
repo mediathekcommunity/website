@@ -1,7 +1,6 @@
 <script>
 // @ts-nocheck
 
-	import * as Flag from 'svelte-flags';
 	import { slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 	import Icon from '@iconify/svelte';
@@ -56,8 +55,8 @@
 			</div>
 			{#if countryflag}
 				<div class="country-icon">
-					<svelte:component this={Flag[carddata.channel.country]} size="25" />
-				</div>
+					<span class="fi fi-{carddata.channel.country.toLowerCase()}"></span>
+ 				</div>
 			{/if}
 			{#if isHovered}
 				<div class="card-overlay" transition:slide={{ duration: 300, delay: 50, easing: quintOut }}>

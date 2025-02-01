@@ -11,6 +11,9 @@ importers:
       '@directus/sdk':
         specifier: ^19.0.0
         version: 19.0.0
+      '@formkit/auto-animate':
+        specifier: ^0.8.2
+        version: 0.8.2
       '@tailwindcss/vite':
         specifier: ^4.0.3
         version: 4.0.3(vite@6.0.11(jiti@2.4.2)(lightningcss@1.29.1))
@@ -81,9 +84,6 @@ importers:
       svelte-check:
         specifier: ^4.1.4
         version: 4.1.4(svelte@5.19.6)(typescript@5.7.3)
-      svelte-flags:
-        specifier: ^2.0.1
-        version: 2.0.1(svelte@5.19.6)
       tailwindcss:
         specifier: ^4.0.3
         version: 4.0.3
@@ -490,6 +490,9 @@ packages:
   '@fastify/busboy@2.1.1':
     resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
     engines: {node: '>=14'}
+
+  '@formkit/auto-animate@0.8.2':
+    resolution: {integrity: sha512-SwPWfeRa5veb1hOIBMdzI+73te5puUBHmqqaF1Bu7FjvxlYSz/kJcZKSa9Cg60zL0uRNeJL2SbRxV6Jp6Q1nFQ==}
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -1579,12 +1582,6 @@ packages:
       svelte:
         optional: true
 
-  svelte-flags@2.0.1:
-    resolution: {integrity: sha512-wxFDMBALryXgupOqjDWpzFHxAQbnGjXp4LL7oDzcZdZQDF2buMnsYxLOdf8Md+WHU+ZJtqR7l2vnkVj6a6Gvcg==}
-    engines: {node: '>=18.0.0', npm: '>=7.0.0'}
-    peerDependencies:
-      svelte: ^5.0.0
-
   svelte-time@2.0.0:
     resolution: {integrity: sha512-sMPmIs2XifPXtBQ6CAObuthLcMOPuGJS8HYDkYLghcpkLZzMAKUC2Kf6uCFOnW9cGy6U47WcYhFnJQ0xYgjDIg==}
 
@@ -1990,6 +1987,8 @@ snapshots:
       levn: 0.4.1
 
   '@fastify/busboy@2.1.1': {}
+
+  '@formkit/auto-animate@0.8.2': {}
 
   '@humanfs/core@0.19.1': {}
 
@@ -2986,10 +2985,6 @@ snapshots:
       postcss: 8.5.1
       postcss-scss: 4.0.9(postcss@8.5.1)
     optionalDependencies:
-      svelte: 5.19.6
-
-  svelte-flags@2.0.1(svelte@5.19.6):
-    dependencies:
       svelte: 5.19.6
 
   svelte-time@2.0.0:

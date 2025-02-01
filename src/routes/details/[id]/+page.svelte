@@ -3,7 +3,6 @@
 	import { mount, unmount } from 'svelte';
 	import { Image } from '@unpic/svelte';
 
-	import * as Flag from 'svelte-flags';
 	import Time from 'svelte-time';
 	import Icon from '@iconify/svelte';
 	import LibraryBig from 'lucide-svelte/icons/library-big';
@@ -191,7 +190,7 @@
 											<td>
 												<!-- svelte-ignore svelte_component_deprecated -->
 												{#each data1.links[0].audiolang as lang, i}
-													<svelte:component this={Flag[lang]} size="25" />
+													<span class="fi fi-{lang.toLowerCase()}"></span>
 												{/each}
 											</td>
 										</tr>
@@ -204,7 +203,8 @@
 														{#each data.sublangs as lang, i}
 															<div class={lang.spokenlang ? 'tooltip' : ''} data-tip="Spoken lang">
 																<div class="badge badge-neutral">
-																	<svelte:component this={Flag[lang.srclang]} size="25" />
+																	<span class="fi fi-{lang.srclang.toLowerCase()}"></span>
+
 																	{#if lang.spokenlang}
 																		<Icon icon="mdi:speakerphone" height="28px" width="36px" />
 																	{/if}
@@ -222,7 +222,7 @@
 													<!-- svelte-ignore svelte_component_deprecated -->
 													<div class="flex flex-row space-x-2">
 														{#each data1.links[0].fsubtitle_lang as lang, i}
-															<svelte:component this={Flag[lang]} size="25" />
+															<span class="fi fi-{lang.toLowerCase()}"></span>
 														{/each}
 													</div>
 												</td>
@@ -245,11 +245,7 @@
 											<div class="flex flex-row space-x-2">
 												<!-- svelte-ignore svelte_component_deprecated -->
 												{data1.channel.name} / <!-- svelte-ignore svelte_component_deprecated -->
-												<svelte:component
-													this={Flag[data1.channel.country]}
-													class="flag-icon ml-3"
-													size="25"
-												/>
+												<span class="fi fi-{data1.channel.country.toLowerCase()}"></span>
 											</div></td
 										>
 									</tr>
@@ -373,8 +369,8 @@
 														</span>
 													{:else}
 														<span class="flex items-center gap-1">
-															<svelte:component this={Flag[data.page.channel.country]} size="25" /> IP
-															required
+															<span class="fi fi-{data1.channel.country.toLowerCase()}"></span>
+															IP required
 														</span>
 													{/if}
 												</button>
@@ -539,7 +535,7 @@
 		width: 100%;
 		margin: 0rem 1rem 1rem 0rem;
 		padding: 0rem 1rem 2rem 1rem;
-	} 
+	}
 
 	.section-title {
 		font-size: 1.5rem;

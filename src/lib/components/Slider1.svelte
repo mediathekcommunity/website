@@ -1,8 +1,7 @@
 <script>
 	// @ts-nocheck
 	import { visible } from '$lib/store';
-	import * as Flag from 'svelte-flags';
-	import emblaCarouselSvelte from 'embla-carousel-svelte';
+ 	import emblaCarouselSvelte from 'embla-carousel-svelte';
 	import Card from './Card.svelte';
 	function getregionname(lang) {
 		const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
@@ -34,7 +33,6 @@
 
 	$: sortedLanglist = sortCountries(langlist, geo);
 </script>
-
 {#each sortedLanglist as lang}
 	<div>
 		<h1 class="section-title">
@@ -42,11 +40,7 @@
 				class="bg-linear-to-br from-blue-500 to-cyan-300 box-decoration-clone bg-clip-text text-transparent"
 			>
 				{#if lang !== 'Unknown'}
-					<svelte:component
-						this={Flag[lang]}
-						class="mr-2 inline-flex place-self-center"
-						size="30"
-					/>
+				<span class="fi fi-{lang.toLowerCase()}"></span>
 				{/if}
 				{getregionname(lang)}
 				{lang === geo ? '(Your Location)' : ''}
@@ -65,10 +59,6 @@
 {/each}
 
 <style>
-	.lang-section {
-		padding-left:  -1;
-	}
-
 	.section-title {
 		font-size: clamp(1.25rem, 2vw, 1.5rem);
 		font-weight: bold;
@@ -83,7 +73,7 @@
 
 	.embla__container {
 		display: flex;
-		gap: 0.25rem;
+		gap: 1rem;
 	}
 
 	.embla__slide {
@@ -93,35 +83,20 @@
 	}
 
 	@media (max-width: 640px) {
-		.lang-section {
-			padding: 0.5rem 0;
-		}
-
 		.section-title {
-			padding: 0 0.75rem 0rem 0.75rem;
+			padding:1.25rem 1.25rem 0.625rem 1.25rem;
 		}
- 
 	}
 
 	@media (min-width: 641px) and (max-width: 1024px) {
-		.lang-section {
-			padding: 0.625rem 0;
-		}
-
 		.section-title {
 			padding: 0 1rem 0.5rem 1rem;
 		}
- 
 	}
 
 	@media (min-width: 1025px) {
-		.lang-section {
-			padding: 0.875rem 0;
-		}
-
 		.section-title {
-			padding: 0 1.25rem 0.625rem 1.25rem;
+			padding: 1.25rem 1.25rem 0.625rem 1.25rem;
 		}
- 
 	}
 </style>

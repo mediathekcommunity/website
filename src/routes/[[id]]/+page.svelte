@@ -2,7 +2,6 @@
 	// @ts-nocheck
 	import HeroSlider from '$lib/components/HeroSlider.svelte';
 	import { visible } from '$lib/store';
-	import * as Flag from 'svelte-flags';
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
 	import Card from '$lib/components/Card.svelte';
 	import Slider1 from '$lib/components/Slider1.svelte';
@@ -92,7 +91,7 @@
 
 	.embla {
 		overflow: hidden;
-		margin: 0 -1rem;
+		margin: 0;
 	}
 
 	.embla__container {
