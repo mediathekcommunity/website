@@ -13,7 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only
+      - run: echo "DIRECTUS_APIURL $DIRECTUS_APIURL"
+      - run: echo "DIRECTUS_APIURL2  env.DIRECTUS_APIURL"
+      - run: flyctl deploy --remote-only --build-secret DIRECTUS_APIURL=$DIRECTUS_APIURL
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
           DIRECTUS_APIURL: ${{ secrets.DIRECTUS_APIURL }}
