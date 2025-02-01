@@ -5,7 +5,7 @@ ARG NODE_VERSION=22.12.0
 FROM node:${NODE_VERSION}-slim AS base
 
 ARG DIRECTUS_APIURL
-
+ENV DIRECTUS_APIURL=$DIRECTUS_APIURL
 LABEL fly_launch_runtime="SvelteKit"
 
 # SvelteKit app lives here
