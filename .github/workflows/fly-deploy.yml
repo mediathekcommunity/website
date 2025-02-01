@@ -16,5 +16,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only --build-secret DIRECTUS_APIURL="${{ secrets.DIRECTUS_APIURL }}"
+      - run: "flyctl deploy --remote-only --build-secret DIRECTUS_APIURL=${{ secrets.DIRECTUS_APIURL }}"
 
