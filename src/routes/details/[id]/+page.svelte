@@ -282,10 +282,21 @@
 								<div class="collapse-content text-sm">
 									<div class="episode-content">
 										<p class="episode-overview">{data1.description}</p>
-
-										<button type="button" class="btn btn-accent" onclick={() => playvideo(data1)}>
-											<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
-											Play
+										<button
+											type="button"
+											class="btn btn-accent"
+											onclick={() =>
+												data.geo == data.page.channel.country ? playvideo(data1) : ''}
+										>
+											{#if data.geo == data.page.channel.country}
+												<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
+												<span> Play</span>
+											{:else}
+												<span class="flex items-center gap-1">
+													<span class="fi fi-{data1.channel.country.toLowerCase()}"></span>
+													IP required
+												</span>
+											{/if}
 										</button>
 									</div>
 								</div>
@@ -327,15 +338,23 @@
 															<p class="episode-overview">
 																{link.description ? link.description : 'no description'}
 															</p>
-															{#if data.geo == data1.channel.geo}
-																<button
-																	type="button"
-																	class="btn btn-accent"
-																	onclick={() => playepisode(link, index1)}
-																>
-																	Play Episode
-																</button>
-															{/if}
+															<button
+																type="button"
+																class="btn btn-accent"
+																onclick={() =>
+																	data.geo == data1.channel.geo ? playepisode(link, index1) : ''}
+															>
+																{#if data.geo == data1.channel.geo}
+																	<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
+																	<span> Play Episode</span>
+																{:else}
+																	<span class="flex items-center gap-1">
+																		<span class="fi fi-{data1.channel.country.toLowerCase()}"
+																		></span>
+																		IP required
+																	</span>
+																{/if}
+															</button>
 														</div>
 													</div>
 												</div>
@@ -364,9 +383,7 @@
 												>
 													{#if data.geo == data.page.channel.country}
 														<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
-														<span>
-															Play Episode aaa {console.log(data.page.channel.country)}
-														</span>
+														<span> Play Episode </span>
 													{:else}
 														<span class="flex items-center gap-1">
 															<span class="fi fi-{data1.channel.country.toLowerCase()}"></span>

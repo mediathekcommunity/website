@@ -152,8 +152,9 @@ function capitalizeFirstLetter(string: string): string {
 export async function load({ params, request }) {
 	const mediathek = await fetchMediathek(params.id);
 	const slinks = generatePlaylist(mediathek.slinks);
-	const h1 = request.headers.get('cf-ipcountry') || 'De';
-	const videosrc1 = videosrc(mediathek.links, mediathek.backdrop, mediathek.backdropup);
+	var h1 = request.headers.get('cf-ipcountry') || 'DK';
+	h1 = capitalizeFirstLetter(h1)
+ 	const videosrc1 = videosrc(mediathek.links, mediathek.backdrop, mediathek.backdropup);
 	const subl = mediathek.links.length > 0 ? getsublangs(mediathek.links[0].subtitles) : [];
 	return {
 		page: mediathek,
