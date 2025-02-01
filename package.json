@@ -6,7 +6,7 @@
 	"scripts": {
 		"dev": "vite dev",
 		"start": "node build",
-		"build": "npm install -g corepack && corepack install && pnpm i  && vite build",
+		"build": "npm install -g corepack && corepack install -g pnpm@10.1.0 && pnpm i  && vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
@@ -37,7 +37,7 @@
 		"video.js": "^8.21.1",
 		"vite": "^6.0.11"
 	},
-	"packageManager": "pnpm@10.1.0",
+	"packageManager": "pnpm@10.0.0",
 	"dependencies": {
 		"@directus/sdk": "^19.0.0",
 		"@formkit/auto-animate": "^0.8.2",
