@@ -5,6 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
+		"start": "node build",
 		"build": "vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
@@ -15,6 +16,7 @@
 	"devDependencies": {
 		"@eslint/compat": "^1.2.6",
 		"@eslint/js": "^9.19.0",
+		"@flydotio/dockerfile": "^0.7.4",
 		"@iconify/svelte": "^4.2.0",
 		"@sveltejs/adapter-cloudflare": "^5.0.1",
 		"@sveltejs/kit": "^2.16.1",
@@ -39,6 +41,7 @@
 	"dependencies": {
 		"@directus/sdk": "^19.0.0",
 		"@formkit/auto-animate": "^0.8.2",
+		"@sveltejs/adapter-node": "^5.2.12",
 		"@tailwindcss/vite": "^4.0.3",
 		"@unpic/svelte": "https://pkg.pr.new/@unpic/svelte@748",
 		"embla-carousel-autoplay": "^8.5.2",
