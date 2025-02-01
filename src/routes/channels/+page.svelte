@@ -1,5 +1,4 @@
 <script>
-	import * as Flag from 'svelte-flags';
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
 	import ChannelCard from '$lib/components/ChannelCard.svelte';
 	import ErrorSection from '$lib/components/ErrorSection.svelte';
@@ -28,7 +27,7 @@
 		{#each countries as country}
 			<div class="country-header">
 				<!-- svelte-ignore svelte_component_deprecated -->
-				<svelte:component this={Flag[country]} size="30" />
+				<span class="fi fi-{country.toLowerCase()}"></span>
 			</div>
 			<div class="embla" use:emblaCarouselSvelte={options}>
 				<div class="embla__container">
