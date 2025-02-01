@@ -7,7 +7,8 @@ app = 'mediathekcommunity'
 primary_region = 'fra'
 
 [build]
-
+  [build.args]
+    DIRECTUS_APIURL=""
 [http_service]
   internal_port = 3000
   force_https = true
