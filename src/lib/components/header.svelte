@@ -8,7 +8,7 @@
 	}
 </script>
 
-<header class:glass={isScrolled || isMobileMenuOpen}>
+<header class:glass2={isScrolled || isMobileMenuOpen}>
 	<div class="header-content">
 		<div class="logo">
 			<a href="/">
@@ -113,7 +113,9 @@
 		padding: 1rem;
 		z-index: 999;
 	}
-
+	.glass2 {
+		background-color: rgba(20, 20, 20, 0.9);
+	}
 	.mobile-menu nav ul {
 		list-style-type: none;
 		padding: 0;
