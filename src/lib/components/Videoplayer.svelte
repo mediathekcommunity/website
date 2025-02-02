@@ -37,6 +37,7 @@
 		shareMenu: false,
 		rateMenu: false,
 		zoomMenu: false,
+		buttonForward: true,
 		qualityMenu: false,
 		settingsButton: false,
 		contextMenu: true,

@@ -249,7 +249,7 @@ export async function load({ params, request }) {
 		seasons: mediaEntry?.season || [],
 		playlist,
 		videosource: videoSource || {},
-		dyna: true || false,
+		dyna: false || false,
 		pageMetaTags
 	};
 }
