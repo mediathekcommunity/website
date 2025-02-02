@@ -75,7 +75,7 @@
 		z-index: 10;
 		background: linear-gradient(to bottom, transparent, rgb(17, 17, 17) 15%);
 		padding-top: 3rem;
-		padding-left: 3rem;
+		// padding-left: 3rem;
 
 	}
 

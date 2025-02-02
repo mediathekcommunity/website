@@ -2,16 +2,24 @@
 	import Header from '$lib/components/header.svelte';
 	import Footer from '$lib/components/footer.svelte';
 	import '../app.css';
+	import { onMount } from 'svelte';
 	import { scrollY } from 'svelte/reactivity/window';
 	let isScrolled = $state(false);
-	const handleScroll = () => {
-		isScrolled = scrollY.current > 50;
-	};
-	let { children } = $props();
+    let { children } = $props();
+	
+	onMount(() => {
+		const handleScroll = () => {
+			isScrolled = scrollY?.current !== undefined && scrollY.current > 50;
+		};
 
+
+		window.addEventListener('scroll', handleScroll);
+
+		return () => {
+			window.removeEventListener('scroll', handleScroll);
+		};
+	});
 </script>
-
-<svelte:window onscroll={handleScroll} />
 
 <svelte:head>
 	<!-- Cloudflare Web Analytics -->
@@ -22,6 +30,7 @@
 	></script>
 	<!-- End Cloudflare Web Analytics -->
 </svelte:head>
+
 <div class="app">
 	<Header {isScrolled} />
 	<main>
@@ -43,15 +52,12 @@
 	.app {
 		display: flex;
 		flex-direction: column;
+		min-height: 100vh;
 	}
 
 	main {
 		flex: 1;
-		margin: 0;
-		padding: 0;
-		box-sizing: border-box;
 		width: 100%;
-		min-height: 100vh;
 		max-width: 100%;
 	}
 

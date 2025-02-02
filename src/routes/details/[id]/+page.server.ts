@@ -1,16 +1,18 @@
 import { error } from '@sveltejs/kit';
-export const ssr = false;
 import getDirectusInstance from '$lib/directus';
 import { readItem } from '@directus/sdk';
-// GraphQL query string
-function getimage(backdropup: any, backdrop: object) {
-	if (backdrop) {
-		return 'https://mediathekc.b-cdn.net/t/p/original/' + backdrop;
-	} else {
-		return 'https://api.mediathek.community/assets/' + backdropup.filename_disk;
-	}
+
+export const ssr = false;
+
+// Helper function to construct image URLs
+function getImageUrl(backdropup: any, backdrop: any): string {
+	return backdrop
+		? `https://mediathekc.b-cdn.net/t/p/original/${backdrop}`
+		: `https://api.mediathek.community/assets/${backdropup.filename_disk}`;
 }
-function getformat(id: string) {
+
+// Helper function to determine the correct format type
+function getFormatType(id: string): string {
 	switch (id) {
 		case 'mpd':
 			return 'application/dash+xml';
@@ -20,78 +22,74 @@ function getformat(id: string) {
 			return 'application/dash+xml';
 	}
 }
-function sortBySeasonAndEpisode(data) {
-	const sortedData = {};
 
-	data.slinks.forEach((item) => {
-		const season = item.season;
-		const episode = item.episode;
+// Helper function to sort data by season and episode
+function sortBySeasonAndEpisode(data: { slinks: { season: string; episode: string }[] }) {
+	const sortedData: { [season: string]: { season: string; episode: string }[] } = {};
 
+	for (const item of data.slinks) {
+		const { season, episode } = item;
 		if (!sortedData[season]) {
 			sortedData[season] = [];
 		}
-
 		sortedData[season].push(item);
-	});
-	Object.keys(sortedData).forEach((season) => {
+	}
+
+	for (const season in sortedData) {
 		sortedData[season].sort((a, b) => parseFloat(a.episode) - parseFloat(b.episode));
-	});
+	}
+
 	return sortedData;
 }
 
-function getsubformat(id: any[]) {
-	let x = 0;
-	let subs: {
-		kind: string;
-		src: string;
-		srclang: string;
-		label: string;
-		default: boolean;
-		spokenlang: boolean;
-	}[] = [];
-	if (id) {
-		id.forEach((sub) => {
-			subs.push({
-				kind: 'captions',
-				src: sub.sublink,
-				srclang: sub.sublang,
-				label: sub.sublang + ' ' + (sub.spokenlang ? '(Spoken)' : ''),
-				spokenlang: sub.spokenlang,
-				default: false
-			});
-			x++;
-		});
-		return subs;
-	} else {
-		return [];
-	}
+// Type definition for subtitle objects
+interface Subtitle {
+	kind: string;
+	src: string;
+	srclang: string;
+	label: string;
+	default: boolean;
+	spokenlang: boolean;
 }
 
-function getsublangs(id: any[]) {
-	let x = 0;
-	let subs: {
-		srclang: string;
-		label: string;
-		spokenlang: boolean;
-	}[] = [];
-	if (id) {
-		id.forEach((sub) => {
-			subs.push({
-				srclang: sub.sublang,
-				label: sub.sublang + ' ' + (sub.spokenlang ? '(Spoken)' : ''),
-				spokenlang: sub.spokenlang
-			});
-			x++;
-		});
-		return subs;
-	} else {
+// Helper function to format subtitles
+function getSubtitles(subtitles: any[]): Subtitle[] {
+	if (!subtitles) {
 		return [];
 	}
+	return subtitles.map((sub) => ({
+		kind: 'captions',
+		src: sub.sublink,
+		srclang: sub.sublang,
+		label: `${sub.sublang} ${sub.spokenlang ? '(Spoken)' : ''}`,
+		spokenlang: sub.spokenlang,
+		default: false
+	}));
 }
-// Function to fetch data from the GraphQL API
+
+// Type definition for subtitle language objects
+interface SubtitleLanguage {
+	srclang: string;
+	label: string;
+	spokenlang: boolean;
+}
+
+// Helper function to extract subtitle languages
+function getSubtitleLanguages(subtitles: any[]): SubtitleLanguage[] {
+	if (!subtitles) {
+		return [];
+	}
+	return subtitles.map((sub) => ({
+		srclang: sub.sublang,
+		label: `${sub.sublang} ${sub.spokenlang ? '(Spoken)' : ''}`,
+		spokenlang: sub.spokenlang
+	}));
+}
+
+// Function to fetch data from the Directus API
 async function fetchMediathek(id: string) {
 	const directus = getDirectusInstance(fetch);
-	var result = await directus.request(
+	return await directus.request(
 		readItem('mediathek', id, {
 			fields: ['*.*.*'],
 			limit: 10,
@@ -111,59 +109,88 @@ async function fetchMediathek(id: string) {
 			}
 		})
 	);
-	//const result = await client.query(query, { id });
-	//console.log(result);
-	return result;
 }
-function generatePlaylist(slinks: any) {
-	let playlist: any[] = [];
-	if (slinks) {
-		slinks.forEach((link: any) => {
-			playlist.push({
-				title: link.title,
-				src: link.streamlink,
-				thumb: getimage(link.backdropup, link.backdrop),
-				type: getformat(link.streamformat),
-				description: link.description,
-				infoTitle: link.title,
-				infoDescription: link.description,
-				tracks: getsubformat(link.subtitles),
-				episodes: link.episode,
-				season: link.season
-			});
-		});
+
+// Type definition for playlist item
+interface PlaylistItem {
+	title: string;
+	src: string;
+	thumb: string;
+	type: string;
+	description: string;
+	infoTitle: string;
+	infoDescription: string;
+	tracks: Subtitle[];
+	episodes: string;
+	season: string;
+}
+
+// Helper function to generate a playlist
+function generatePlaylist(slinks: any[]): PlaylistItem[] {
+	if (!slinks) {
+		return [];
 	}
-	return playlist;
+	return slinks.map((link: any) => ({
+		title: link.title,
+		src: link.streamlink,
+		thumb: getImageUrl(
+link.backdropup, link.backdrop),
+		type: getFormatType(link.streamformat),
+		description: link.description,
+		infoTitle: link.title,
+		infoDescription: link.description,
+		tracks: getSubtitles(link.subtitles),
+		episodes: link.episode,
+		season: link.season
+	}));
 }
-function videosrc(links: any, backdrop: string, backdropup: string) {
-	let src1: { src?: string; type?: string; tracks?: any[]; poster?: string; skip?: number } = {};
-	if (links.length > 0) {
-		src1.src = links[0].streamlink;
-		src1.type = getformat(links[0].streamformat);
-		src1.tracks = getsubformat(links[0].subtitles);
-		src1.poster = getimage(backdrop, backdropup);
-		src1.skip = 0;
+
+// Type definition for video source
+interface VideoSource {
+	src?: string;
+	type?: string;
+	tracks?: Subtitle[];
+	poster?: string;
+	skip?: number;
+}
+
+// Helper function to generate the video source object
+function generateVideoSource(links: any[], backdrop: string, backdropup: string): VideoSource {
+	if (links.length === 0) {
+		return {};
 	}
-	return src1;
+	return {
+		src: links[0].streamlink,
+		type: getFormatType(links[0].streamformat),
+		tracks: getSubtitles(links[0].subtitles),
+		poster: getImageUrl(backdrop, backdropup),
+		skip: 0
+	};
 }
-function capitalizeFirstLetter(string: string): string {
-	return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+
+// Helper function to capitalize the first letter of a string
+function capitalizeFirstLetter(str: string): string {
+	return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
+
+// Load function for the SvelteKit page
 export async function load({ params, request }) {
 	const mediathek = await fetchMediathek(params.id);
-	const slinks = generatePlaylist(mediathek.slinks);
-	var h1 = request.headers.get('cf-ipcountry') || 'DE';
-	h1 = capitalizeFirstLetter(h1)
- 	const videosrc1 = videosrc(mediathek.links, mediathek.backdrop, mediathek.backdropup);
-	const subl = mediathek.links.length > 0 ? getsublangs(mediathek.links[0].subtitles) : [];
+	const playlist = generatePlaylist(mediathek.slinks);
+	const countryCode = request.headers.get('cf-ipcountry') || 'DE';
+	const capitalizedCountryCode = capitalizeFirstLetter(countryCode);
+	const videoSource = generateVideoSource(mediathek.links, mediathek.backdrop, mediathek.backdropup);
+	const subtitleLanguages =
+		mediathek.links.length > 0 ? getSubtitleLanguages(mediathek.links[0].subtitles) : [];
+
 	return {
 		page: mediathek,
 		groupseasons: sortBySeasonAndEpisode(mediathek),
 		episodes: mediathek.episode,
-		sublangs: subl,
-		geo: capitalizeFirstLetter(h1),
+		sublangs: subtitleLanguages,
+		geo: capitalizedCountryCode,
 		seasons: mediathek.season,
-		playlist: slinks || [],
-		videosource: videosrc1 || {}
+		playlist: playlist,
+		videosource: videoSource
 	};
 }

@@ -9,6 +9,7 @@
 	import Film from 'lucide-svelte/icons/film';
 	import Tv from 'lucide-svelte/icons/tv';
 	import Videoplayer from '$lib/components/Videoplayer.svelte';
+	import Videolink from '$lib/components/Videolink.svelte';
 	import { modalvideo, playlist, seriestype, playlistindex } from '$lib/store';
 	function toHoursAndMinutes(totalMinutes) {
 		const hours = Math.floor(totalMinutes / 60);
@@ -185,6 +186,7 @@
 										</tr>
 									{/if}
 									{#if data1.type == 'movie'}
+									{#if data1.links.length > 0}
 										<tr>
 											<th>Audio Language</th>
 											<td>
@@ -194,6 +196,7 @@
 												{/each}
 											</td>
 										</tr>
+										
 										{#if data.sublangs.length > 0}
 											<tr>
 												<th>Subtitle Language</th>
@@ -227,9 +230,10 @@
 													</div>
 												</td>
 											</tr>
+											{/if}
 										{/if}
 									{/if}
-									{#if data1.type != 'movie'}
+									{#if data1.type != 'movie' && data1.slinks }
 										<tr>
 											<th>Seasons</th>
 											<td>{data1.season}</td>
@@ -303,7 +307,8 @@
 							</div>
 						</div>
 					</div>
-				{:else}
+				{/if}
+				{#if data1.slinks.length > 0}
 					<input
 						type="radio"
 						name="my_tabs_3"

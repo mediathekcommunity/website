@@ -1,28 +1,25 @@
 <script>
 	// @ts-nocheck
 	import { visible } from '$lib/store';
- 	import emblaCarouselSvelte from 'embla-carousel-svelte';
+	import emblaCarouselSvelte from 'embla-carousel-svelte';
 	import Card from './Card.svelte';
-	function getregionname(lang) {
+
+	/**
+	 * Gets the region name in English for a given language code.
+	 * @param {string} lang - The language code (e.g., 'US', 'CA').
+	 * @returns {string} The region name in English.
+	 */
+	function getRegionName(lang) {
 		const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
-		lang = lang.toUpperCase();
-		return regionNames.of(lang);
+		return regionNames.of(lang.toUpperCase());
 	}
-	const regionNamesInEnglish = new Intl.DisplayNames(['en'], { type: 'language' });
-	// @ts-ignore
-	export let langlist = [];
-	export let langdata = {};
-	export let geo = 'Unknown';
 
-	let options = {
-		align: 'start',
-		slidesToScroll: 2,
-		loop: true,
-		dragFree: true,
-		containScroll: 'trimSnaps'
-	};
-
-	// Function to sort countries, putting the user's geo country first
+	/**
+	 * Sorts a list of countries, placing the user's geo country first.
+	 * @param {string[]} countries - The array of country codes.
+	 * @param {string} userGeo - The user's geographic location code.
+	 * @returns {string[]} The sorted array of country codes.
+	 */
 	function sortCountries(countries, userGeo) {
 		return [...countries].sort((a, b) => {
 			if (a === userGeo) return -1;
@@ -31,8 +28,30 @@
 		});
 	}
 
+	/**
+	 * @type {string[]}
+	 */
+	export let langlist = [];
+	/**
+	 * @type {Record<string, any[]>}
+	 */
+	export let langdata = {};
+	/**
+	 * @type {string}
+	 */
+	export let geo = 'Unknown';
+
+	const emblaOptions = {
+		align: 'start',
+		slidesToScroll: 2,
+		loop: true,
+		dragFree: true,
+		containScroll: 'trimSnaps'
+	};
+
 	$: sortedLanglist = sortCountries(langlist, geo);
 </script>
+
 {#each sortedLanglist as lang}
 	<div>
 		<h1 class="section-title">
@@ -40,13 +59,13 @@
 				class="bg-linear-to-br from-blue-500 to-cyan-300 box-decoration-clone bg-clip-text text-transparent"
 			>
 				{#if lang !== 'Unknown'}
-				<span class="fi fi-{lang.toLowerCase()}"></span>
+					<span class="fi fi-{lang.toLowerCase()}"></span>
 				{/if}
-				{getregionname(lang)}
+				{getRegionName(lang)}
 				{lang === geo ? '(Your Location)' : ''}
 			</span>
 		</h1>
-		<div class="embla" use:emblaCarouselSvelte={options}>
+		<div class="embla" use:emblaCarouselSvelte={emblaOptions}>
 			<div class="embla__container">
 				{#each langdata[lang] || [] as item}
 					<div class="embla__slide">
@@ -84,7 +103,7 @@
 
 	@media (max-width: 640px) {
 		.section-title {
-			padding:1.25rem 1.25rem 0.625rem 1.25rem;
+			padding: 1.25rem 1.25rem 0.625rem 1.25rem;
 		}
 	}
 

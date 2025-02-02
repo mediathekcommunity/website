@@ -1,16 +1,15 @@
 <script>
 	export let filter, text1;
- 	console.log(text1)
 </script>
 
 <div class="error-section">
 	<div class="error-content">
-		<h1 class="error-title">No Items Found</h1>
+		<h1 class="error-title">No entries Found</h1>
 		<p class="error-description">
-			We couldn't find any items for the {text1}: <span class="error-filter">{filter}</span>
+			We couldn't find any entries for <span class="error-filter">{filter? filter : text1}</span>
 		</p>
 		<p class="error-suggestion">Try adjusting your search or browse our other categories.</p>
-		<a href="/" class="error-button">Go to Homepage</a>
+		<a href="/" class="error-button">Back to Home</a>
 	</div>
 </div>
 

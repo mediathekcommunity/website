@@ -7,10 +7,13 @@
 	export let title: string;
 	export let poster: string | null;
 	export let channelName: string | null;
-	export let channelIcon: string | "";
+	export let channelIcon: string | '';
+
 	function handleClick() {
 		goto(`/channels/${id}`);
 	}
+
+	$: imageUrl = poster ? `https://img.mediathek.rocks/t/p/w300${poster}` : null;
 </script>
 
 <div
@@ -21,8 +24,8 @@
 	role="button"
 	aria-label={title}
 >
-	{#if poster}
-		<img src="https://img.mediathek.rocks/t/p/w300{poster}" alt={title} />
+	{#if imageUrl}
+		<img src={imageUrl} alt={title} />
 	{:else}
 		<div class="no-image">
 			{#if channelName}
@@ -40,10 +43,7 @@
 		border-radius: 8px;
 		overflow: hidden;
 		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-		transition:
-			transform 0.3s ease,
-			box-shadow 0.3s ease,
-			filter 0.3s ease;
+		transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
 		cursor: pointer;
 		aspect-ratio: 16 / 9;
 		position: relative;
@@ -52,7 +52,8 @@
 	.channel-card:hover,
 	.channel-card:focus {
 		transform: translateY(-5px);
-		box-shadow: 0 0 20px rgba(var(--color-primary-500-rgb), 0.5);
+		box-shadow: 0 0 20px rgba(var(--color-primary-5
+00-rgb), 0.5);
 		filter: brightness(1.1);
 		outline: none;
 	}

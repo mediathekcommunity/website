@@ -1,60 +1,132 @@
-/** @type {import('./$types').PageLoad} */
-import { error } from '@sveltejs/kit';
+import { error, type ServerLoad } from '@sveltejs/kit';
 import getDirectusInstance from '$lib/directus';
-import { readItems, readItem } from '@directus/sdk';
+import { readItems, readItem, type Directus } from '@directus/sdk';
 
-async function query(id: number): Promise<any> {
-	const directus = getDirectusInstance(fetch);
-	var result = await directus.request(
-		readItems('mediathek', {
-			fields: ['*.*'],
-			filter: {
-				channel: {
-					id: {
-						_in: id
-					}
-				}
-			},
-			deep: {
-				channel: {
-					limit: 5
-				},
-				country: {
-					limit: 5
-				}
-			}
-		})
-	);
-	//const result = await client.query(query, { id });
-	console.log(result);
-	return result;
-}
-async function query2(id: number) {
-	const directus = getDirectusInstance(fetch);
-	var result = await directus.request(
-		readItem('channels', id, {
-			fields: ['*.*']
-		})
-	);
-	console.log(result);
-	return result;
+/**
+ * Fetches data from Directus, handling common logic.
+ *
+ * @param {typeof fetch} fetcher - The fetch function.
+ * @param {(directus: Directus<any>) => Promise<any>} dataFetcher - Function to fetch data from Directus.
+ * @param {string} errorMessage - Error message for failed fetch.
+ * @param {number} [channelId] - Optional channel ID for logging.
+ * @returns {Promise<any>} Data fetched from Directus.
+ * @throws {Error} If fetching fails.
+ */
+async function fetchDataFromDirectus(
+  fetcher: typeof fetch,
+  dataFetcher: (directus: Directus<any>) => Promise<any>,
+  errorMessage: string,
+  channelId?: number
+): Promise<any> {
+  const directus = getDirectusInstance(fetcher);
+  try {
+    const result = await dataFetcher(directus);
+    if (channelId !== undefined) {
+      console.log(`Fetched data for channel ${channelId}:`, result);
+    } else {
+      console.log(`Fetched data:`, result);
+    }
+    return result;
+  } catch (err) {
+    console.error(errorMessage, channelId, err);
+    throw new Error(`${errorMessage} ${channelId ? `for channel ${channelId}` : ''}`);
+  }
 }
 
-export async function load({ fetch, params, request }) {
-	const h1 = capitalizeFirstLetter(request.headers.get('cf-ipcountry') || 'De');
-	const data1 = await query(Number(params.id));
-	const data2 = await query2(Number(params.id));
-	if (!data1) {
-		throw error(404, 'Page not found');
-	}
-	return {
-		page: data1,
-		geo: h1,
-		id: params.id,
-		page2: data2
-	};
+/**
+ * Fetches media items related to a specific channel ID from Directus.
+ *
+ * @param {number} channelId - The ID of the channel.
+ * @param {typeof fetch} fetcher - The fetch function.
+ * @returns {Promise<any>} Media items.
+ * @throws {Error} If fetching fails.
+ */
+async function fetchMediaByChannel(channelId: number, fetcher: typeof fetch): Promise<any> {
+  return fetchDataFromDirectus(
+    fetcher,
+    async (directus) =>
+      directus.request(
+        readItems('mediathek', {
+          fields: ['*.*'],
+          filter: {
+            channel: {
+              id: {
+                _in: channelId,
+              },
+            },
+          },
+          deep: {
+            channel: {
+              limit: 5,
+            },
+            country: {
+              limit: 5,
+            },
+          },
+        })
+      ),
+    'Error fetching media',
+    channelId
+  );
 }
 
-function capitalizeFirstLetter(string: string): string {
-	return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+/**
+ * Fetches channel details from Directus by channel ID.
+ *
+ * @param {number} channelId - The ID of the channel.
+ * @param {typeof fetch} fetcher - The fetch function.
+ * @returns {Promise<any>} Channel details.
+ * @throws {Error} If fetching fails.
+ */
+async function fetchChannelDetails(channelId: number, fetcher: typeof fetch): Promise<any> {
+  return fetchDataFromDirectus(
+    fetcher,
+    async (directus) =>
+      directus.request(
+        readItem('channels', channelId, {
+          fields: ['*.*'],
+        })
+      ),
+    'Error fetching channel details',
+    channelId
+  );
 }
+
+/**
+ * Capitalizes the first letter of a string.
+ *
+ * @param {string} str - The string to capitalize.
+ * @returns {string} Capitalized string.
+ */
+function capitalizeFirstLetter(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
+/**
+ * SvelteKit load function for the page.
+ *
+ * @param {object} context - SvelteKit context.
+ * @param {typeof fetch} context.fetch - Fetch function.
+ * @param {object} context.params - Route parameters.
+ * @param {string} context.params.id - Channel ID.
+ * @param {Request} context.request - Request object.
+ * @returns {Promise<{ page: any; geo: string; id: string; page2: any }>} Page data.
+ * @throws {import('@sveltejs/kit').HttpError} If fetching fails.
+ */
+export const load: ServerLoad = async ({ fetch, params, request }) => {
+  const channelId = Number(params.id);
+  const geo = capitalizeFirstLetter(request.headers.get('cf-ipcountry') || 'De');
+
+  try {
+    const mediaData = await fetchMediaByChannel(channelId, fetch);
+    const channelDetails = await fetchChannelDetails(channelId, fetch);
+    return {
+      page: mediaData,
+      geo: geo,
+      id: params.id,
+      page2: channelDetails,
+    };
+  } catch (err) {
+    throw error(404, 'Page not found');
+  }
+};

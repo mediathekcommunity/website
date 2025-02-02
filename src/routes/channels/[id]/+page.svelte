@@ -3,40 +3,36 @@
 	import { visible } from '$lib/store';
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
 	import Card from '$lib/components/Card.svelte';
-	import Slider1 from '$lib/components/Slider1.svelte';
 	import ErrorSection from '$lib/components/ErrorSection.svelte';
 	import HeroSlider from '$lib/components/HeroSlider.svelte';
 
-	let { data } = $props();
+	export let data;
 
-	// State variables for grouped data and country list
-	let langdata = $state({});
-	let langlist = $state([]);
-	// console.log(process.env);
-	// Function to group media items by channel country
-	let heroItems = $derived(data?.page && data.page.length > 0 ? data.page.slice(0, 10) : []);
-	let channelname = $derived(data?.page && data.page.length > 0 ? data.page[0].channel.name : '');
+	// Derived state for hero items and channel name
+	$: heroItems = data?.page && data.page.length > 0 ? data.page.slice(0, 10) : [];
+	$: channelName = data?.page && data.page.length > 0 ? data.page[0].channel.name : '';
+
 	// Carousel options
-	let options = { align: 'start', slidestoscroll: '2', loop: 'true' };
-	let showcountry = false;
-	let countryflag = false;
+	const options = { align: 'start', slidesToScroll: '2', loop: 'true' };
+	const showcountry = false;
+	const countryflag = false;
 </script>
 
 <div>
-	{#if data && data.page && data.page.length > 0}
-		{#if heroItems}
+	{#if data?.page?.length > 0}
+		{#if heroItems.length > 0}
 			<HeroSlider {heroItems} {data} {showcountry} />
 		{/if}
-		<div class="content-section px-4 sm:px-6 lg:px-8">
+		<section class="content-section px-4 sm:px-6 lg:px-8">
 			<div class="maincontent">
 				<h1 class="section-title">
 					<span
 						class="bg-linear-to-br from-blue-500 to-cyan-300 box-decoration-clone bg-clip-text text-transparent"
 					>
-						Recently Added from {channelname}
+						Recently Added from {channelName}
 					</span>
 				</h1>
-				<div class="embla" use:emblaCarouselSvelte={options2}>
+				<div class="embla" use:emblaCarouselSvelte={options}>
 					<div class="embla__container flex">
 						{#each data.page as item}
 							<div class="embla__slide">
@@ -46,9 +42,9 @@
 					</div>
 				</div>
 			</div>
-		</div>
+		</section>
 	{:else}
-		<ErrorSection filter={data.page2.name} text1="Channel" />
+		<ErrorSection filter={data?.page2?.name} text1="Channel" />
 	{/if}
 </div>
 
@@ -59,11 +55,10 @@
 		z-index: 10;
 		background: linear-gradient(to bottom, transparent, rgb(17, 17, 17) 15%);
 		padding-top: 3rem;
-		padding-left: 3rem;
 	}
 
 	.maincontent {
-		margin-bottom: 0rem;
+		margin-bottom: 0;
 	}
 
 	.section-title {
@@ -88,6 +83,7 @@
 		min-width: 0;
 		padding: 0;
 	}
+
 	@media (max-width: 640px) {
 		.content-section {
 			margin-top: -1.5rem;
@@ -103,7 +99,7 @@
 		.content-section {
 			margin-top: -2rem;
 			padding-top: 2.5rem;
-			padding-left: 0rem !important;
+			padding-left: 0 !important;
 		}
 	}
 

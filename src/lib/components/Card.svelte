@@ -1,18 +1,29 @@
-<script>
-	// @ts-nocheck
-
+<script lang="ts">
 	import { slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 	import Icon from '@iconify/svelte';
-	import { Image } from '@unpic/svelte';
+	import { Image, type ImageProps } from '@unpic/svelte';
 
-	export let carddata, countryflag;
+	interface CardData {
+		id: number;
+		title?: string;
+		orgtitle?: string;
+		metascore?: string;
+		type: 'movie' | 'series' | 'music';
+		poster?: string;
+		backdropup?: { filename: string };
+		channel: { country: string };
+	}
+
+	export let carddata: CardData;
+	export let countryflag: boolean;
+
 	$: title = carddata?.title || 'Unknown Title';
 	$: orgtitle = carddata?.orgtitle || 'Unknown';
 	$: metascore = carddata?.metascore || 'Unknown';
 	let isHovered = false;
-	// @ts-ignore
-	function getTypeIcon(type) {
+
+	function getTypeIcon(type: CardData['type']): string {
 		switch (type) {
 			case 'movie':
 				return 'mdi:movie';
@@ -20,33 +31,39 @@
 				return 'mdi:tv';
 			case 'music':
 				return 'mdi:music';
-			default:
-				return 'mdi:movie';
 		}
 	}
+
+	const getPosterUrl = (carddata: CardData): string | null => {
+		if (carddata.poster) {
+			return `https://mediathekc.b-cdn.net/t/p/original${carddata.poster}`;
+		} else if (carddata.backdropup) {
+			return `https://cdn1.mediathek.community/${carddata.backdropup.filename}`;
+		}
+		return null;
+	};
+
+	const imageProps = (carddata: CardData, posterUrl: string): ImageProps => ({
+		src: posterUrl,
+		alt: carddata.poster ? `${title} poster` : `${title} backdrop`,
+		class: 'card-poster',
+		layout: 'fullWidth'
+	});
 </script>
 
 <a href={`/details/${carddata.id}`} class="card">
 	<div
-		class="card"
+		class="card-content"
 		role="button"
 		tabindex="0"
 		on:mouseenter={() => (isHovered = true)}
 		on:mouseleave={() => (isHovered = false)}
 	>
 		<div class="card-image">
-			{#if carddata.poster}
-				<Image
-					src="https://mediathekc.b-cdn.net/t/p/original{carddata.poster}"
-					alt="{title} poster"
-					class="card-poster"
-				/>
-			{:else if carddata.backdropup}
-				<img
-					src="https://cdn1.mediathek.community/{carddata.backdropup.filename}"
-					alt="{title} backdrop"
-					class="card-poster"
-				/>
+			<!-- Move the conditional check into the expression -->
+			{#if getPosterUrl(carddata) !== null}
+				<!-- use it directly -->
+				<Image {...imageProps(carddata, getPosterUrl(carddata) as string)} />
 			{:else}
 				<div class="card-poster-placeholder">{title[0]}</div>
 			{/if}
@@ -77,11 +94,9 @@
 	.card {
 		width: 220px;
 		height: 330px;
-		margin: 0px;
+		margin: 0;
 		position: relative;
-		transition:
-			transform 0.3s ease,
-			box-shadow 0.3s ease;
+		transition: transform 0.3s ease, box-shadow 0.3s ease;
 		cursor: pointer;
 		overflow: hidden;
 		border-radius: 8px;
@@ -92,6 +107,11 @@
 		transform: scale(1.05);
 		box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
 		z-index: 1;
+	}
+
+	.card-content {
+		width: 100%;
+		height: 100%;
 	}
 
 	.card-image {
@@ -172,6 +192,7 @@
 		-webkit-line-clamp: 3;
 		-webkit-box-orient: vertical;
 		word-wrap: break-word;
+		line-clamp: 3;
 	}
 
 	.country-channel-info {
