@@ -3,6 +3,7 @@ import getDirectusInstance from '$lib/directus';
 import { readItems } from '@directus/sdk';
 import type { PageServerLoad } from './$types';
 import { addDays, differenceInDays, isBefore } from 'date-fns';
+import type { MetaTagsProps } from 'svelte-meta-tags';
 
 const directus = getDirectusInstance(fetch);
 
@@ -96,7 +97,18 @@ export const load: PageServerLoad = async ({ fetch, params, request }) => {
     }
 
     const groupedData = groupByChannelCountry(data);
-
+    console.log(data)
+    let t =  id ?  id : "Home"
+    let d1 = id ? 'Watch latest ' + id :'Watch the latest movies, series, music and more.'
+    const pageMetaTags = Object.freeze({
+        title:  t,
+        description:  d1,
+        openGraph: {
+          title: 'Open Graph Title TOP',
+          description: 'Open Graph Description TOP'
+        }
+      }) satisfies MetaTagsProps;
+    
     // Filter and sort items that expire in the next 5 days
     const now = new Date();
     const fiveDaysLater = addDays(now, 5);
@@ -115,6 +127,7 @@ export const load: PageServerLoad = async ({ fetch, params, request }) => {
         filter: id,
         groupbycountry: groupedData,
         countries: Object.keys(groupedData),
-        expiringItems // Add the new value here
+        expiringItems, // Add the new value here
+        pageMetaTags
     };
 };

@@ -1,6 +1,7 @@
-import {error} from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import getDirectusInstance from '$lib/directus';
-import {readItem} from '@directus/sdk';
+import { readItem } from '@directus/sdk';
+import type { MetaTagsProps } from 'svelte-meta-tags';
 
 export const ssr = false;
 
@@ -13,172 +14,173 @@ const DEFAULT_FORMAT_TYPE = 'application/dash+xml';
 
 // Typen
 interface MediaLink {
-    title: string;
-    streamlink: string;
-    backdrop: string;
-    backdropup: { filename_disk: string };
-    streamformat: string;
-    description: string;
-    subtitles: Subtitle[];
-    episode: string;
-    season: string;
-    dyna:boolean;
+	title: string;
+	streamlink: string;
+	backdrop: string;
+	backdropup: { filename_disk: string };
+	streamformat: string;
+	description: string;
+	subtitles: Subtitle[];
+	episode: string;
+	season: string;
+	dyna: boolean;
 }
 
 interface Subtitle {
-    kind: string;
-    src: string;
-    srclang: string;
-    label: string;
-    default: boolean;
-    spokenlang: boolean;
+	kind: string;
+	src: string;
+	srclang: string;
+	label: string;
+	default: boolean;
+	spokenlang: boolean;
 }
 
 interface SubtitleLanguage {
-    srclang: string;
-    label: string;
-    spokenlang: boolean;
+	srclang: string;
+	label: string;
+	spokenlang: boolean;
 }
 
 interface PlaylistItem {
-    title: string;
-    src: string;
-    thumb: string;
-    type: string;
-    description: string;
-    infoTitle: string;
-    infoDescription: string;
-    tracks: Subtitle[];
-    episodes: string;
-    season: string;
+	title: string;
+	src: string;
+	thumb: string;
+	type: string;
+	description: string;
+	infoTitle: string;
+	infoDescription: string;
+	tracks: Subtitle[];
+	episodes: string;
+	season: string;
 }
 
 interface VideoSource {
-    src?: string;
-    type?: string;
-    tracks?: Subtitle[];
-    poster?: string;
-    skip?: number;
+	src?: string;
+	type?: string;
+	tracks?: Subtitle[];
+	poster?: string;
+	skip?: number;
 }
 
 // Hilfsfunktion zur Erstellung der Bild-URL
-function generateImageUrl(
-    backdropFile: string,
-    localFile: { filename_disk: string }
-): string {
-    return backdropFile
-        ? `${BASE_MEDIA_URL}${backdropFile}`
-        : `${BASE_ASSET_URL}${localFile.filename_disk}`;
+function generateImageUrl(backdropFile: string, localFile: { filename_disk: string }): string {
+	return backdropFile
+		? `${BASE_MEDIA_URL}${backdropFile}`
+		: `${BASE_ASSET_URL}${localFile.filename_disk}`;
 }
 
 // Hilfsfunktion für das Format
 function determineFormat(typeId: string): string {
-    const formatTypes: Record<string, string> = {
-        mpd: 'application/dash+xml',
-        m3u8: 'application/x-mpegURL',
-    };
-    return formatTypes[typeId] || DEFAULT_FORMAT_TYPE;
+	const formatTypes: Record<string, string> = {
+		mpd: 'application/dash+xml',
+		m3u8: 'application/x-mpegURL'
+	};
+	return formatTypes[typeId] || DEFAULT_FORMAT_TYPE;
 }
 
 // Sortierung nach Staffel und Episode
 function sortSeasons(data: { slinks: { season: string; episode: string }[] }) {
-    const sorted: Record<string, { season: string; episode: string }[]> = {};
+	const sorted: Record<string, { season: string; episode: string }[]> = {};
 
-    data.slinks.forEach(({season, episode}) => {
-        sorted[season] = sorted[season] || [];
-        sorted[season].push({season, episode});
-    });
+	data.slinks.forEach(({ season, episode }) => {
+		sorted[season] = sorted[season] || [];
+		sorted[season].push({ season, episode });
+	});
 
-    Object.keys(sorted).forEach((season) => {
-        sorted[season].sort((a, b) => parseFloat(a.episode) - parseFloat(b.episode));
-    });
+	Object.keys(sorted).forEach((season) => {
+		sorted[season].sort((a, b) => parseFloat(a.episode) - parseFloat(b.episode));
+	});
 
-    return sorted;
+	return sorted;
 }
 
 // Titel für Untertitel generieren
 function generateSubtitleLabel(lang: string, spoken: boolean): string {
-    return `${lang} ${spoken ? '(Spoken)' : ''}`;
+	return `${lang} ${spoken ? '(Spoken)' : ''}`;
 }
 
 // Hilfsfunktion: Formatiere Untertitel
 function formatSubtitles(subtitles: any[]): Subtitle[] {
-    return subtitles?.map((sub) => ({
-        kind: 'captions',
-        src: sub.sublink,
-        srclang: sub.sublang,
-        label: generateSubtitleLabel(sub.sublang, sub.spokenlang),
-        spokenlang: sub.spokenlang,
-        default: false,
-    })) || [];
+	return (
+		subtitles?.map((sub) => ({
+			kind: 'captions',
+			src: sub.sublink,
+			srclang: sub.sublang,
+			label: generateSubtitleLabel(sub.sublang, sub.spokenlang),
+			spokenlang: sub.spokenlang,
+			default: false
+		})) || []
+	);
 }
 
 // Untertitel-Sprachen extrahieren
-function extractSubtitleLanguages(
-    subtitles: any[]
-): SubtitleLanguage[] {
-    return subtitles?.map((sub) => ({
-        srclang: sub.sublang,
-        label: generateSubtitleLabel(sub.sublang, sub.spokenlang),
-        spokenlang: sub.spokenlang,
-    })) || [];
+function extractSubtitleLanguages(subtitles: any[]): SubtitleLanguage[] {
+	return (
+		subtitles?.map((sub) => ({
+			srclang: sub.sublang,
+			label: generateSubtitleLabel(sub.sublang, sub.spokenlang),
+			spokenlang: sub.spokenlang
+		})) || []
+	);
 }
 
 // Playlist erstellen
 function createPlaylist(mediaLinks: MediaLink[]): PlaylistItem[] {
-    return mediaLinks?.map((link) => ({
-        title: link.title,
-        src: link.streamlink,
-        thumb: generateImageUrl(link.backdrop, link.backdropup),
-        type: determineFormat(link.streamformat),
-        description: link.description,
-        infoTitle: link.title,
-        infoDescription: link.description,
-        tracks: formatSubtitles(link.subtitles),
-        episodes: link.episode,
-        season: link.season,
-    })) || [];
+	return (
+		mediaLinks?.map((link) => ({
+			title: link.title,
+			src: link.streamlink,
+			thumb: generateImageUrl(link.backdrop, link.backdropup),
+			type: determineFormat(link.streamformat),
+			description: link.description,
+			infoTitle: link.title,
+			infoDescription: link.description,
+			tracks: formatSubtitles(link.subtitles),
+			episodes: link.episode,
+			season: link.season
+		})) || []
+	);
 }
 
 // Videoquelle generieren
 function createVideoSource(
-    links: MediaLink[],
-    backdrop: string,
-    localFile: { filename_disk: string }
+	links: MediaLink[],
+	backdrop: string,
+	localFile: { filename_disk: string }
 ): VideoSource {
-    if (links.length === 0) return {};
-    const firstLink = links[0];
-    return {
-        src: firstLink.streamlink,
-        type: determineFormat(firstLink.streamformat),
-        tracks: formatSubtitles(firstLink.subtitles),
-        poster: generateImageUrl(backdrop, localFile),
-        skip: 0,
-    };
+	if (links.length === 0) return {};
+	const firstLink = links[0];
+	return {
+		src: firstLink.streamlink,
+		type: determineFormat(firstLink.streamformat),
+		tracks: formatSubtitles(firstLink.subtitles),
+		poster: generateImageUrl(backdrop, localFile),
+		skip: 0
+	};
 }
 
 // Capitalize-Funktion
 function capitalizeFirst(str: string): string {
-    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+	return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
 // Daten von Directus abrufen
 async function fetchMediaEntry(id: string) {
-    const directus = getDirectusInstance(fetch);
-    return directus.request(
-        readItem('mediathek', id, {
-            fields: ['*.*.*'],
-            limit: 10,
-            deep: {
-                channel: {limit: 5},
-                episodelist: {
-                    limit: 5,
-                    subtitles: {limit: 5}
-                },
-                subtitles: {limit: 5},
-            },
-        })
-    );
+	const directus = getDirectusInstance(fetch);
+	return directus.request(
+		readItem('mediathek', id, {
+			fields: ['*.*.*'],
+			limit: 10,
+			deep: {
+				channel: { limit: 5 },
+				episodelist: {
+					limit: 5,
+					subtitles: { limit: 5 }
+				},
+				subtitles: { limit: 5 }
+			}
+		})
+	);
 }
 
 // Load-Funktion
@@ -223,6 +225,18 @@ export async function load({ params, request }) {
 	// Untertitel-Sprachen extrahieren
 	const firstSubtitles = mediaEntry?.links?.[0]?.subtitles || [];
 	const subtitleLanguages = extractSubtitleLanguages(firstSubtitles);
+	let t = params.id ? mediaEntry.title  + ' on ' + mediaEntry.channel.name: 'Home';
+	let d1 = params.id
+		? 'Watch ' + mediaEntry.title + ' on ' + mediaEntry.channel.name
+		: 'Watch the latest movies, series, music and more.';
+	const pageMetaTags = Object.freeze({
+		title: t,
+		description: d1,
+		openGraph: {
+			title: 'Open Graph Title TOP',
+			description: 'Open Graph Description TOP'
+		}
+	}) satisfies MetaTagsProps;
 
 	// Rückgabe mit potenziellen Fehlern
 	return {
@@ -235,6 +249,7 @@ export async function load({ params, request }) {
 		seasons: mediaEntry?.season || [],
 		playlist,
 		videosource: videoSource || {},
-        dyna: true || false
+		dyna: true || false,
+		pageMetaTags
 	};
 }
