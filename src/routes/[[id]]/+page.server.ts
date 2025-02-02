@@ -53,7 +53,7 @@ const capitalizeFirstLetter = (str: string): string =>
  * @returns Boolean indicating if params are valid.
  */
 const checkparamsok = (params: string | undefined): boolean => {
-	const allowedParams = ['movie', 'series', 'debug', 'music', 'youth'];
+	const allowedParams = ['movie', 'series', 'debug', 'music', 'youth', 'specials'];
 	return !params || allowedParams.includes(params);
 };
 
@@ -75,7 +75,7 @@ const query = async (id?: any): Promise<MediathekItem[]> => {
 					}
 				]
 			})
-		: id = { type: id };
+		: (id = { type: id });
 	console.log(id);
 	const baseOptions = {
 		fields: ['*, channel.country, channel.name, channel.id'],
