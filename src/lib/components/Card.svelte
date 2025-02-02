@@ -9,7 +9,7 @@
 		title?: string;
 		orgtitle?: string;
 		metascore?: string;
-		type: 'movie' | 'series' | 'music';
+		type: 'movie' | 'series' | 'music' | 'y-series' | 'y-movie';
 		poster?: string;
 		backdropup?: { filename: string };
 		channel: { country: string };
@@ -32,6 +32,10 @@
 				return 'mdi:tv';
 			case 'music':
 				return 'mdi:music';
+			case 'y-series':
+				return 'mdi:tv';
+			case 'y-movie':
+				return 'mdi:movie';
 		}
 	}
 
