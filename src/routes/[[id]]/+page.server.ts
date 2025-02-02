@@ -1,4 +1,3 @@
-/** @type {import('./$types').PageServerLoad} */
 import { error } from '@sveltejs/kit';
 import getDirectusInstance from '$lib/directus';
 import { readItems } from '@directus/sdk';
@@ -6,108 +5,103 @@ import type { PageServerLoad } from './$types';
 
 const directus = getDirectusInstance(fetch);
 
-// Define types for better type safety
 interface MediathekChannel {
-    country?: string;
-    name: string; // Add the name property
-    id?: number; // Add the id property
+	country?: string;
+	name: string;
+	id?: number;
 }
 
 interface MediathekItem {
-    [key: string]: any; // Allow any property for flexibility
-    channel?: MediathekChannel;
-    date_created: string;
-    type: string;
+	channel?: MediathekChannel;
+	date_created: string;
+	type: string;
+	[key: string]: any;
 }
 
 interface GroupedByCountry {
-    [country: string]: MediathekItem[];
+	[country: string]: MediathekItem[];
 }
 
 /**
  * Groups mediathek items by channel country.
  * @param items - An array of mediathek items.
- * @returns An object where keys are country names and values are arrays of mediathek items.
+ * @returns Object where country names are keys and values are arrays of mediathek items.
  */
 const groupByChannelCountry = (items: MediathekItem[]): GroupedByCountry => {
-    return items.reduce((acc: GroupedByCountry, item: MediathekItem) => {
-        const country = item.channel?.country || 'Unknown';
-        acc[country] = acc[country] || [];
-        acc[country].push(item);
-        return acc;
-    }, {});
+	return items.reduce((acc: GroupedByCountry, item: MediathekItem) => {
+		const country = item.channel?.country || 'Unknown';
+		acc[country] = acc[country] || [];
+		acc[country].push(item);
+		return acc;
+	}, {});
 };
 
 /**
- * Capitalizes the first letter of a string and converts the rest to lowercase.
- * @param string - The string to capitalize.
- * @returns The capitalized string.
+ * Capitalizes the first letter of a string and lowers the rest.
+ * @param str - The string to process.
+ * @returns Capitalized string.
  */
-function capitalizeFirstLetter(string: string): string {
-    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-}
+const capitalizeFirstLetter = (str: string): string =>
+	str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
 /**
- * Checks if the provided parameter is valid.
- * @param params - The parameter to check.
- * @returns True if the parameter is valid, false otherwise.
+ * Checks whether supplied params are valid.
+ * @param params - The parameter to validate.
+ * @returns Boolean indicating if params are valid.
  */
-function checkparamsok(params: string | undefined): boolean {
-    const allowedParams = ['movie', 'series', 'debug', 'music'];
-    return !params || allowedParams.includes(params);
-}
+const checkparamsok = (params: string | undefined): boolean => {
+	const allowedParams = ['movie', 'series', 'debug', 'music'];
+	return !params || allowedParams.includes(params);
+};
 
 /**
  * Queries the Directus API for mediathek items.
  * @param id - Optional filter ID.
- * @returns An array of mediathek items.
+ * @returns A list of mediathek items, sorted by creation date.
  */
-async function query(id?: string): Promise<MediathekItem[]> {
-    const baseOptions = {
-        fields: ['*, channel.country, channel.name, channel.id'], // Modify the fields to include all channel properties
-        deep: {
-            channel: {
-                limit: 5
-            },
-        }
-    };
-    const queryOptions = id
-        ? { ...baseOptions, filter: { type: id } }
-        : baseOptions;
+const query = async (id?: string): Promise<MediathekItem[]> => {
+	const baseOptions = {
+		fields: ['*, channel.country, channel.name, channel.id'],
+		deep: { channel: { limit: 5 } }
+	};
+	const queryOptions = id ? { ...baseOptions, filter: { type: id } } : baseOptions;
 
-    const data = await directus.request(
-        readItems('mediathek', queryOptions)
-    );
-    // Correctly cast the data to MediathekItem[] and sort by date
-    return (data as MediathekItem[]).sort((a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime());
-}
+	const data = await directus.request(readItems('mediathek', queryOptions));
+	return (data as MediathekItem[]).sort(
+		(a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime()
+	);
+};
 
 /**
- * SvelteKit load function for fetching mediathek data.
+ * Server load function for fetching mediathek data.
+ * @param fetch - The fetch function.
+ * @param params - Route parameters.
+ * @param request - The HTTP request.
+ * @returns Formatted response data.
  */
 export const load: PageServerLoad = async ({ fetch, params, request }) => {
-    // Define the correct type for params here
-    const { id } = params as { id?: string };
-    if (!checkparamsok(id)) {
-        throw error(403, 'forbidden params');
-    }
+	const { id } = params as { id?: string };
 
-    const geo = capitalizeFirstLetter(request.headers.get('cf-ipcountry') || 'De');
-    const data = await query(id);
+	if (!checkparamsok(id)) {
+		throw error(403, 'Forbidden params');
+	}
 
-    if (!data) {
-        throw error(404, 'Page not found');
-    }
+	const geo = capitalizeFirstLetter(request.headers.get('cf-ipcountry') || 'De');
+	const data = await query(id);
 
-    const groupedData = groupByChannelCountry(data);
+	if (!data) {
+		throw error(404, 'Page not found');
+	}
 
-    return {
-        page: data,
-        error: false,
-        count: data.length,
-        geo,
-        filter: id,
-        groupbycountry: groupedData,
-        countries: Object.keys(groupedData)
-    };
+	const groupedData = groupByChannelCountry(data);
+
+	return {
+		page: data,
+		error: false,
+		count: data.length,
+		geo,
+		filter: id,
+		groupbycountry: groupedData,
+		countries: Object.keys(groupedData)
+	};
 };

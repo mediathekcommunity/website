@@ -39,6 +39,8 @@
 	let channelinfo = $state();
 	let backgroundImage = $state('');
 	let showvideo = $state(false);
+	let showdynawarn = $state(false);
+
 	console.log('Details page:', data);
 
 	$effect(() => {
@@ -54,6 +56,9 @@
 			return 1;
 		}
 		return 0;
+	}
+	function toggleDynaWarn() {
+		showdynawarn = !showdynawarn;
 	}
 	function stopvideo() {
 		showvideo = false;
@@ -98,7 +103,6 @@
 			seriestype.set('playlist');
 			playlistindex.set(index);
 			playlist.set(data.playlist);
-			//console.log('playlist:', compRef);
 		} else {
 			stopvideo();
 		}
@@ -122,6 +126,17 @@
 				<div class="video-player-container h-full">
 					<Videoplayer />
 					<button class="close-video-btn" onclick={stopvideo}>Close Video</button>
+				</div>
+			</div>
+		{:else if showdynawarn}
+			<div class="hero-container2 top60 relative w-full">
+				<div class="video-player-container h-full">
+					<Videolink
+						videotitle={data1.title}
+						posterUrl="https://mediathekc.b-cdn.net/t/p/original{data1.backdrop}"
+						channel={data1.channel}
+					/>
+					<button class="close-video-btn" onclick={toggleDynaWarn}>Close Info</button>
 				</div>
 			</div>
 		{:else if data1.backdrop}
@@ -186,54 +201,57 @@
 										</tr>
 									{/if}
 									{#if data1.type == 'movie'}
-									{#if data1.links.length > 0}
-										<tr>
-											<th>Audio Language</th>
-											<td>
-												<!-- svelte-ignore svelte_component_deprecated -->
-												{#each data1.links[0].audiolang as lang, i}
-													<span class="fi fi-{lang.toLowerCase()}"></span>
-												{/each}
-											</td>
-										</tr>
-										
-										{#if data.sublangs.length > 0}
+										{#if data1.links.length > 0}
 											<tr>
-												<th>Subtitle Language</th>
+												<th>Audio Language</th>
 												<td>
 													<!-- svelte-ignore svelte_component_deprecated -->
-													<div class="flex flex-row space-x-2">
-														{#each data.sublangs as lang, i}
-															<div class={lang.spokenlang ? 'tooltip' : ''} data-tip="Spoken lang">
-																<div class="badge badge-neutral">
-																	<span class="fi fi-{lang.srclang.toLowerCase()}"></span>
+													{#each data1.links[0].audiolang as lang, i}
+														<span class="fi fi-{lang.toLowerCase()}"></span>
+													{/each}
+												</td>
+											</tr>
 
-																	{#if lang.spokenlang}
-																		<Icon icon="mdi:speakerphone" height="28px" width="36px" />
-																	{/if}
+											{#if data.sublangs.length > 0}
+												<tr>
+													<th>Subtitle Language</th>
+													<td>
+														<!-- svelte-ignore svelte_component_deprecated -->
+														<div class="flex flex-row space-x-2">
+															{#each data.sublangs as lang, i}
+																<div
+																	class={lang.spokenlang ? 'tooltip' : ''}
+																	data-tip="Spoken lang"
+																>
+																	<div class="badge badge-neutral">
+																		<span class="fi fi-{lang.srclang.toLowerCase()}"></span>
+
+																		{#if lang.spokenlang}
+																			<Icon icon="mdi:speakerphone" height="28px" width="36px" />
+																		{/if}
+																	</div>
 																</div>
-															</div>
-														{/each}
-													</div>
-												</td>
-											</tr>
-										{/if}
-										{#if data1.links[0].fsubtitle}
-											<tr>
-												<th>Forced Subtitle language </th>
-												<td>
-													<!-- svelte-ignore svelte_component_deprecated -->
-													<div class="flex flex-row space-x-2">
-														{#each data1.links[0].fsubtitle_lang as lang, i}
-															<span class="fi fi-{lang.toLowerCase()}"></span>
-														{/each}
-													</div>
-												</td>
-											</tr>
+															{/each}
+														</div>
+													</td>
+												</tr>
+											{/if}
+											{#if data1.links[0].fsubtitle}
+												<tr>
+													<th>Forced Subtitle language </th>
+													<td>
+														<!-- svelte-ignore svelte_component_deprecated -->
+														<div class="flex flex-row space-x-2">
+															{#each data1.links[0].fsubtitle_lang as lang, i}
+																<span class="fi fi-{lang.toLowerCase()}"></span>
+															{/each}
+														</div>
+													</td>
+												</tr>
 											{/if}
 										{/if}
 									{/if}
-									{#if data1.type != 'movie' && data1.slinks }
+									{#if data1.type != 'movie' && data1.slinks}
 										<tr>
 											<th>Seasons</th>
 											<td>{data1.season}</td>
@@ -293,6 +311,35 @@
 												data.geo == data.page.channel.country ? playvideo(data1) : ''}
 										>
 											{#if data.geo == data.page.channel.country}
+												<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
+												<span> Play</span>
+											{:else}
+												<span class="flex items-center gap-1">
+													<span class="fi fi-{data1.channel.country.toLowerCase()}"></span>
+													IP required
+												</span>
+											{/if}
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				{/if}
+				{#if data.dyna == true}
+					<input type="radio" name="my_tabs_3" role="tab" class="tab" aria-label="Links" />
+					<div class="tab-content bg-base-100 border-base-300 p-6">
+						<div class="join join-vertical bg-base-100">
+							<div class="collapse-arrow join-item border-base-300 collapse border">
+								<input type="radio" name="my-accordion-episode" checked="true" />
+								<div class="collapse-title font-semibold">
+									<span>{data1.title}</span>?
+								</div>
+								<div class="collapse-content text-sm">
+									<div class="episode-content">
+										<p class="episode-overview">{data1.description}</p>
+										<button type="button" class="btn btn-accent" onclick={() => toggleDynaWarn()}>
+											{#if data.geo == 'De'}
 												<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
 												<span> Play</span>
 											{:else}
@@ -492,6 +539,7 @@
 		padding: 5px 10px;
 		cursor: pointer;
 		z-index: 10;
+		opacity: 0; /* Initially hidden */
 		display: none; /* Initially hidden */
 	}
 
@@ -500,6 +548,7 @@
 	}
 	.video-player-container:hover .close-video-btn {
 		display: block; /* Show on hover */
+		opacity: 1;
 	}
 
 	.close-video-btn:hover {

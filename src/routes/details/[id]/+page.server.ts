@@ -1,196 +1,240 @@
-import { error } from '@sveltejs/kit';
+import {error} from '@sveltejs/kit';
 import getDirectusInstance from '$lib/directus';
-import { readItem } from '@directus/sdk';
+import {readItem} from '@directus/sdk';
 
 export const ssr = false;
 
-// Helper function to construct image URLs
-function getImageUrl(backdropup: any, backdrop: any): string {
-	return backdrop
-		? `https://mediathekc.b-cdn.net/t/p/original/${backdrop}`
-		: `https://api.mediathek.community/assets/${backdropup.filename_disk}`;
+// Konstante für URLs
+const BASE_MEDIA_URL = 'https://mediathekc.b-cdn.net/t/p/original/';
+const BASE_ASSET_URL = 'https://api.mediathek.community/assets/';
+
+// Konstante für Standard-Format
+const DEFAULT_FORMAT_TYPE = 'application/dash+xml';
+
+// Typen
+interface MediaLink {
+    title: string;
+    streamlink: string;
+    backdrop: string;
+    backdropup: { filename_disk: string };
+    streamformat: string;
+    description: string;
+    subtitles: Subtitle[];
+    episode: string;
+    season: string;
+    dyna:boolean;
 }
 
-// Helper function to determine the correct format type
-function getFormatType(id: string): string {
-	switch (id) {
-		case 'mpd':
-			return 'application/dash+xml';
-		case 'm3u8':
-			return 'application/x-mpegURL';
-		default:
-			return 'application/dash+xml';
-	}
-}
-
-// Helper function to sort data by season and episode
-function sortBySeasonAndEpisode(data: { slinks: { season: string; episode: string }[] }) {
-	const sortedData: { [season: string]: { season: string; episode: string }[] } = {};
-
-	for (const item of data.slinks) {
-		const { season, episode } = item;
-		if (!sortedData[season]) {
-			sortedData[season] = [];
-		}
-		sortedData[season].push(item);
-	}
-
-	for (const season in sortedData) {
-		sortedData[season].sort((a, b) => parseFloat(a.episode) - parseFloat(b.episode));
-	}
-
-	return sortedData;
-}
-
-// Type definition for subtitle objects
 interface Subtitle {
-	kind: string;
-	src: string;
-	srclang: string;
-	label: string;
-	default: boolean;
-	spokenlang: boolean;
+    kind: string;
+    src: string;
+    srclang: string;
+    label: string;
+    default: boolean;
+    spokenlang: boolean;
 }
 
-// Helper function to format subtitles
-function getSubtitles(subtitles: any[]): Subtitle[] {
-	if (!subtitles) {
-		return [];
-	}
-	return subtitles.map((sub) => ({
-		kind: 'captions',
-		src: sub.sublink,
-		srclang: sub.sublang,
-		label: `${sub.sublang} ${sub.spokenlang ? '(Spoken)' : ''}`,
-		spokenlang: sub.spokenlang,
-		default: false
-	}));
-}
-
-// Type definition for subtitle language objects
 interface SubtitleLanguage {
-	srclang: string;
-	label: string;
-	spokenlang: boolean;
+    srclang: string;
+    label: string;
+    spokenlang: boolean;
 }
 
-// Helper function to extract subtitle languages
-function getSubtitleLanguages(subtitles: any[]): SubtitleLanguage[] {
-	if (!subtitles) {
-		return [];
-	}
-	return subtitles.map((sub) => ({
-		srclang: sub.sublang,
-		label: `${sub.sublang} ${sub.spokenlang ? '(Spoken)' : ''}`,
-		spokenlang: sub.spokenlang
-	}));
-}
-
-// Function to fetch data from the Directus API
-async function fetchMediathek(id: string) {
-	const directus = getDirectusInstance(fetch);
-	return await directus.request(
-		readItem('mediathek', id, {
-			fields: ['*.*.*'],
-			limit: 10,
-			deep: {
-				channel: {
-					limit: 5
-				},
-				episodelist: {
-					limit: 5,
-					subtitles: {
-						limit: 5
-					}
-				},
-				subtitles: {
-					limit: 5
-				}
-			}
-		})
-	);
-}
-
-// Type definition for playlist item
 interface PlaylistItem {
-	title: string;
-	src: string;
-	thumb: string;
-	type: string;
-	description: string;
-	infoTitle: string;
-	infoDescription: string;
-	tracks: Subtitle[];
-	episodes: string;
-	season: string;
+    title: string;
+    src: string;
+    thumb: string;
+    type: string;
+    description: string;
+    infoTitle: string;
+    infoDescription: string;
+    tracks: Subtitle[];
+    episodes: string;
+    season: string;
 }
 
-// Helper function to generate a playlist
-function generatePlaylist(slinks: any[]): PlaylistItem[] {
-	if (!slinks) {
-		return [];
-	}
-	return slinks.map((link: any) => ({
-		title: link.title,
-		src: link.streamlink,
-		thumb: getImageUrl(
-link.backdropup, link.backdrop),
-		type: getFormatType(link.streamformat),
-		description: link.description,
-		infoTitle: link.title,
-		infoDescription: link.description,
-		tracks: getSubtitles(link.subtitles),
-		episodes: link.episode,
-		season: link.season
-	}));
-}
-
-// Type definition for video source
 interface VideoSource {
-	src?: string;
-	type?: string;
-	tracks?: Subtitle[];
-	poster?: string;
-	skip?: number;
+    src?: string;
+    type?: string;
+    tracks?: Subtitle[];
+    poster?: string;
+    skip?: number;
 }
 
-// Helper function to generate the video source object
-function generateVideoSource(links: any[], backdrop: string, backdropup: string): VideoSource {
-	if (links.length === 0) {
-		return {};
-	}
-	return {
-		src: links[0].streamlink,
-		type: getFormatType(links[0].streamformat),
-		tracks: getSubtitles(links[0].subtitles),
-		poster: getImageUrl(backdrop, backdropup),
-		skip: 0
-	};
+// Hilfsfunktion zur Erstellung der Bild-URL
+function generateImageUrl(
+    backdropFile: string,
+    localFile: { filename_disk: string }
+): string {
+    return backdropFile
+        ? `${BASE_MEDIA_URL}${backdropFile}`
+        : `${BASE_ASSET_URL}${localFile.filename_disk}`;
 }
 
-// Helper function to capitalize the first letter of a string
-function capitalizeFirstLetter(str: string): string {
-	return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+// Hilfsfunktion für das Format
+function determineFormat(typeId: string): string {
+    const formatTypes: Record<string, string> = {
+        mpd: 'application/dash+xml',
+        m3u8: 'application/x-mpegURL',
+    };
+    return formatTypes[typeId] || DEFAULT_FORMAT_TYPE;
 }
 
-// Load function for the SvelteKit page
+// Sortierung nach Staffel und Episode
+function sortSeasons(data: { slinks: { season: string; episode: string }[] }) {
+    const sorted: Record<string, { season: string; episode: string }[]> = {};
+
+    data.slinks.forEach(({season, episode}) => {
+        sorted[season] = sorted[season] || [];
+        sorted[season].push({season, episode});
+    });
+
+    Object.keys(sorted).forEach((season) => {
+        sorted[season].sort((a, b) => parseFloat(a.episode) - parseFloat(b.episode));
+    });
+
+    return sorted;
+}
+
+// Titel für Untertitel generieren
+function generateSubtitleLabel(lang: string, spoken: boolean): string {
+    return `${lang} ${spoken ? '(Spoken)' : ''}`;
+}
+
+// Hilfsfunktion: Formatiere Untertitel
+function formatSubtitles(subtitles: any[]): Subtitle[] {
+    return subtitles?.map((sub) => ({
+        kind: 'captions',
+        src: sub.sublink,
+        srclang: sub.sublang,
+        label: generateSubtitleLabel(sub.sublang, sub.spokenlang),
+        spokenlang: sub.spokenlang,
+        default: false,
+    })) || [];
+}
+
+// Untertitel-Sprachen extrahieren
+function extractSubtitleLanguages(
+    subtitles: any[]
+): SubtitleLanguage[] {
+    return subtitles?.map((sub) => ({
+        srclang: sub.sublang,
+        label: generateSubtitleLabel(sub.sublang, sub.spokenlang),
+        spokenlang: sub.spokenlang,
+    })) || [];
+}
+
+// Playlist erstellen
+function createPlaylist(mediaLinks: MediaLink[]): PlaylistItem[] {
+    return mediaLinks?.map((link) => ({
+        title: link.title,
+        src: link.streamlink,
+        thumb: generateImageUrl(link.backdrop, link.backdropup),
+        type: determineFormat(link.streamformat),
+        description: link.description,
+        infoTitle: link.title,
+        infoDescription: link.description,
+        tracks: formatSubtitles(link.subtitles),
+        episodes: link.episode,
+        season: link.season,
+    })) || [];
+}
+
+// Videoquelle generieren
+function createVideoSource(
+    links: MediaLink[],
+    backdrop: string,
+    localFile: { filename_disk: string }
+): VideoSource {
+    if (links.length === 0) return {};
+    const firstLink = links[0];
+    return {
+        src: firstLink.streamlink,
+        type: determineFormat(firstLink.streamformat),
+        tracks: formatSubtitles(firstLink.subtitles),
+        poster: generateImageUrl(backdrop, localFile),
+        skip: 0,
+    };
+}
+
+// Capitalize-Funktion
+function capitalizeFirst(str: string): string {
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
+// Daten von Directus abrufen
+async function fetchMediaEntry(id: string) {
+    const directus = getDirectusInstance(fetch);
+    return directus.request(
+        readItem('mediathek', id, {
+            fields: ['*.*.*'],
+            limit: 10,
+            deep: {
+                channel: {limit: 5},
+                episodelist: {
+                    limit: 5,
+                    subtitles: {limit: 5}
+                },
+                subtitles: {limit: 5},
+            },
+        })
+    );
+}
+
+// Load-Funktion
 export async function load({ params, request }) {
-	const mediathek = await fetchMediathek(params.id);
-	const playlist = generatePlaylist(mediathek.slinks);
-	const countryCode = request.headers.get('cf-ipcountry') || 'DE';
-	const capitalizedCountryCode = capitalizeFirstLetter(countryCode);
-	const videoSource = generateVideoSource(mediathek.links, mediathek.backdrop, mediathek.backdropup);
-	const subtitleLanguages =
-		mediathek.links.length > 0 ? getSubtitleLanguages(mediathek.links[0].subtitles) : [];
+	let error: string | null = null;
 
+	// Validierung der params.id
+	if (!params.id) {
+		return { error: 'Missing media ID' };
+	}
+
+	let mediaEntry;
+
+	// Versuch, die Media-Einträge zu laden
+	try {
+		mediaEntry = await fetchMediaEntry(params.id);
+	} catch (err) {
+		console.error('Error fetching media entry:', err);
+		return { error: 'Failed to fetch media entry' };
+	}
+
+	// Prüfen, ob mediaEntry erfolgreich geladen wurde
+	if (!mediaEntry) {
+		error = 'Media entry is undefined';
+	}
+
+	// Prüfen, ob links vorhanden sind
+	if (!Array.isArray(mediaEntry?.links) || mediaEntry.links.length === 0) {
+		error = 'Media entry links are missing or empty';
+	}
+
+	const countryCode = request.headers.get('cf-ipcountry') ?? 'DE';
+
+	// Playlist und Videoquelle erstellen
+	const playlist = createPlaylist(mediaEntry?.slinks || []) || [];
+	const videoSource = createVideoSource(
+		mediaEntry?.links || [],
+		mediaEntry?.backdrop || '',
+		mediaEntry?.backdropup || { filename_disk: '' }
+	);
+
+	// Untertitel-Sprachen extrahieren
+	const firstSubtitles = mediaEntry?.links?.[0]?.subtitles || [];
+	const subtitleLanguages = extractSubtitleLanguages(firstSubtitles);
+
+	// Rückgabe mit potenziellen Fehlern
 	return {
-		page: mediathek,
-		groupseasons: sortBySeasonAndEpisode(mediathek),
-		episodes: mediathek.episode,
+		error,
+		page: mediaEntry || null,
+		groupseasons: sortSeasons(mediaEntry) || {},
+		episodes: mediaEntry?.episode || [],
 		sublangs: subtitleLanguages,
-		geo: capitalizedCountryCode,
-		seasons: mediathek.season,
-		playlist: playlist,
-		videosource: videoSource
+		geo: capitalizeFirst(countryCode),
+		seasons: mediaEntry?.season || [],
+		playlist,
+		videosource: videoSource || {},
+        dyna: true || false
 	};
 }
