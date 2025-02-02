@@ -48,17 +48,18 @@
 		player = videojs(videoElement, videojsOptions);
 		player.nuevo(nuevoOptions);
 		player.hotkeys({ seekStep: 10 });
+		/*if 
 		console.log('initializePlayer');
 		console.log(player);
-		/*if ($modalvideo.skip) {
+		($modalvideo.skip) {
 			player.skipintro({ skipStart: 1, skipDuration: $modalvideo.skip, skipTarget: 30 });
 		}
-		*/
+		
 		console.log($modalvideo);
 		console.log($playlist);
 		console.log($seriestype);
 		console.log($playlistindex);
-
+		*/
 		if ($seriestype === 'playlist') {
 			player.playlist.currentItem($playlistindex);
 		}
@@ -71,7 +72,7 @@
 		switch (type) {
 			case 'playlist':
 				player.playlist($playlist);
-				console.log('playlist', $playlist);
+				// console.log('playlist', $playlist);
 				var index = $playlistindex;
 
 				player.poster($playlist[index].thumb);
@@ -98,7 +99,7 @@
 				break;
 		}
 		player.on('loadeddata', function () {
-			console.log('loadeddata');
+			// console.log('loadeddata');
 			var index = $playlistindex;
 
 			if ($modalvideo.tracks) {
@@ -112,7 +113,7 @@
 		});
 	}
 	$: if (player && ($modalvideo || $seriestype || $playlistindex)) {
-		console.log('updatePlayerSource');
+		//console.log('updatePlayerSource');
 		updatePlayerSource($seriestype);
 		if ($seriestype === 'playlist') {
 			player.playlist.currentItem($playlistindex);

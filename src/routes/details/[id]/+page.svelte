@@ -41,7 +41,7 @@
 	let showvideo = $state(false);
 	let showdynawarn = $state(false);
 
-	console.log('Details page:', data);
+	// console.log('Details page:', data);
 
 	$effect(() => {
 		data1 = data.page;
@@ -530,7 +530,7 @@
 
 	.close-video-btn {
 		position: absolute;
-		top: 10px;
+		top: 20px;
 		left: 10px;
 		background-color: rgba(0, 0, 0, 0.5);
 		color: white;

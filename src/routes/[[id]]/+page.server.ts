@@ -97,7 +97,6 @@ export const load: PageServerLoad = async ({ fetch, params, request }) => {
     }
 
     const groupedData = groupByChannelCountry(data);
-    console.log(data)
     let t =  id ?  id : "Home"
     let d1 = id ? 'Watch latest ' + id :'Watch the latest movies, series, music and more.'
     const pageMetaTags = Object.freeze({

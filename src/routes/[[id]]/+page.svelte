@@ -39,7 +39,6 @@
     function onInit(event) {
         emblaApi = event.detail;
     }
- console.log(data)
 </script>
 
 <div>
