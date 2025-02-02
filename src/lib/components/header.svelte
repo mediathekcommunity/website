@@ -15,7 +15,7 @@
 				<h1 class="site-title">
 					<span class="text-primary">Mediathek</span>
 					<span class="text-white">Community</span>
-					<span class="badge badge-primary text-white">v0.6.9</span>
+					<span class="badge badge-primary text-white">v0.7</span>
 				</h1>
 			</a>
 		</div>
@@ -25,6 +25,10 @@
 				<li><a href="/movie">Movies</a></li>
 				<li><a href="/series">TV Shows</a></li>
 				<li><a href="/music">Music</a></li>
+				<div class="indicator">
+					<span class="indicator-item status status-success"/>
+					<li><a href="/youth">Youth</a></li>
+				</div>
 				<li><a href="/channels">Channels</a></li>
 
 			</ul>

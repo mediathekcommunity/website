@@ -18,10 +18,13 @@
 				To watch {videotitle} you need to go to the homepage of
 				{channel.name}
 			</div>
-			<div>Just press the button below.</div>
-            <button type="button" class="btn btn-accent" onclick={() => window.location.href = "#"}>
-                Go to {channel.name} & watch {videotitle}
-            </button>
+			<button
+				type="button"
+				class="btn btn-accent"
+				onclick={() => (window.location.href = videoUrl)}
+			>
+				Go to {channel.name} & watch {videotitle}
+			</button>
 		</div>
 	</div>
 </div>

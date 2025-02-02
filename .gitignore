@@ -21,4 +21,10 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
-.idx/secrets.nix
+*.mp4.ytdl
+*.mp4
+*.part-Frag2
+*.part
+test.json
+test2.json
+info.json

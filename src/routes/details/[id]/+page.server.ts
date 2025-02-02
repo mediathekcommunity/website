@@ -212,7 +212,7 @@ export async function load({ params, request }) {
 		error = 'Media entry links are missing or empty';
 	}
 
-	const countryCode = request.headers.get('cf-ipcountry') ?? 'DE';
+	const countryCode = request.headers.get('cf-ipcountry') ?? 'DK';
 
 	// Playlist und Videoquelle erstellen
 	const playlist = createPlaylist(mediaEntry?.slinks || []) || [];
@@ -249,7 +249,7 @@ export async function load({ params, request }) {
 		seasons: mediaEntry?.season || [],
 		playlist,
 		videosource: videoSource || {},
-		dyna: false || false,
+		dyna: mediaEntry.dyna,
 		pageMetaTags
 	};
 }

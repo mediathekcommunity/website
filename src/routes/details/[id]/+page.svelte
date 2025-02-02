@@ -41,7 +41,7 @@
 	let showvideo = $state(false);
 	let showdynawarn = $state(false);
 
-	// console.log('Details page:', data);
+	console.log('Details page:', data);
 
 	$effect(() => {
 		data1 = data.page;
@@ -135,6 +135,7 @@
 						videotitle={data1.title}
 						posterUrl="https://mediathekc.b-cdn.net/t/p/original{data1.backdrop}"
 						channel={data1.channel}
+						videoUrl={data1.dynalink}
 					/>
 					<button class="close-video-btn" onclick={toggleDynaWarn}>Close Info</button>
 				</div>
@@ -339,15 +340,8 @@
 									<div class="episode-content">
 										<p class="episode-overview">{data1.description}</p>
 										<button type="button" class="btn btn-accent" onclick={() => toggleDynaWarn()}>
-											{#if data.geo == 'De'}
-												<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
-												<span> Play</span>
-											{:else}
-												<span class="flex items-center gap-1">
-													<span class="fi fi-{data1.channel.country.toLowerCase()}"></span>
-													IP required
-												</span>
-											{/if}
+											<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
+											<span> Play</span>
 										</button>
 									</div>
 								</div>
