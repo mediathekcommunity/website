@@ -26,11 +26,11 @@
 				<li><a href="/series">TV Shows</a></li>
 				<li><a href="/music">Music</a></li>
 				<div class="indicator">
-					<span class="indicator-item status status-success"/>
+					<span class="indicator-item status status-success"></span>
 					<li><a href="/youth">Youth</a></li>
 				</div>
+				<li><a href="#" class="disabled link link-neutral">Specials</a></li>
 				<li><a href="/channels">Channels</a></li>
-
 			</ul>
 		</nav>
 		<button class="mobile-menu-button" onclick={toggleMobileMenu}>☰</button>
@@ -45,12 +45,23 @@
 				<li><a href="/movie" onclick={toggleMobileMenu}>Movies</a></li>
 				<li><a href="/series" onclick={toggleMobileMenu}>TV Shows</a></li>
 				<li><a href="/music" onclick={toggleMobileMenu}>Music</a></li>
+				<div class="indicator">
+					<span class="indicator-item status status-success"></span>
+					<li><a href="/youth" onclick={toggleMobileMenu}>Youth</a></li>
+				</div>
+				<li><a href="#" class="disabled link link-neutral">Specials</a></li>
+				<li><a href="/channels">Channels</a></li>
 			</ul>
 		</nav>
 	</div>
 {/if}
 
 <style>
+	.disabled {
+		pointer-events: none;
+		cursor: default;
+		color: var(--color-error) !important;
+	}
 	header {
 		position: fixed;
 		top: 0;
@@ -78,7 +89,7 @@
 		font-weight: bold;
 		margin: 0;
 	}
- 
+
 	.desktop-nav ul {
 		display: flex;
 		list-style-type: none;
