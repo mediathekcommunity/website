@@ -13,6 +13,7 @@
 		poster?: string;
 		backdropup?: { filename: string };
 		channel: { country: string };
+		remainingDays?: number; // Add remainingDays property
 	}
 
 	export let carddata: CardData;
@@ -67,14 +68,30 @@
 			{:else}
 				<div class="card-poster-placeholder">{title[0]}</div>
 			{/if}
-			<div class="quality-icon">
-				<Icon icon={getTypeIcon(carddata.type)} />
-			</div>
-			{#if countryflag}
-				<div class="country-icon">
-					<span class="fi fi-{carddata.channel.country.toLowerCase()}"></span>
+			<div class="badges">
+				<div class="quality-icon">
+					<Icon icon={getTypeIcon(carddata.type)} />
 				</div>
-			{/if}
+				{#if carddata.remainingDays !== undefined}
+					<div
+						class="remaining-days-badge {carddata.remainingDays === 0
+							? 'red-warning'
+							: 'yellow-warning'}"
+					>
+						<div class="md:hidden"><Icon icon="mdi:alert" /></div>
+						<span class="remaining-days-text hidden sm:block">
+							{carddata.remainingDays === 0
+								? 'Expires today'
+								: `${carddata.remainingDays} days remains`}
+						</span>
+					</div>
+				{/if}
+				{#if countryflag}
+					<div class="country-icon">
+						<span class="fi fi-{carddata.channel.country.toLowerCase()}"></span>
+					</div>
+				{/if}
+			</div>
 			{#if isHovered}
 				<div class="card-overlay" transition:slide={{ duration: 300, delay: 50, easing: quintOut }}>
 					<h3 class="card-title">{title}</h3>
@@ -96,7 +113,9 @@
 		height: 330px;
 		margin: 0;
 		position: relative;
-		transition: transform 0.3s ease, box-shadow 0.3s ease;
+		transition:
+			transform 0.3s ease,
+			box-shadow 0.3s ease;
 		cursor: pointer;
 		overflow: hidden;
 		border-radius: 8px;
@@ -150,11 +169,20 @@
 		overflow-y: auto;
 	}
 
-	.quality-icon {
+	.badges {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 		position: absolute;
 		top: 10px;
+		left: 10px;
 		right: 10px;
 		z-index: 2;
+	}
+
+	.quality-icon,
+	.country-icon,
+	.remaining-days-badge {
 		color: white;
 		background-color: rgba(0, 0, 0, 0.7);
 		border-radius: 6px;
@@ -166,20 +194,22 @@
 		backdrop-filter: blur(4px);
 	}
 
-	.country-icon {
-		position: absolute;
-		top: 10px;
-		left: 10px;
-		z-index: 2;
-		color: white;
-		background-color: rgba(0, 0, 0, 0.7);
-		border-radius: 6px;
-		padding: 4px;
-		font-size: 24px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		backdrop-filter: blur(4px);
+	.remaining-days-badge {
+		font-size: 14px;
+		white-space: nowrap; /* Ensure it is always one line */
+	}
+
+	.remaining-days-text {
+		display: none;
+		font-size: 16px;
+	}
+
+	.red-warning {
+		color: red;
+	}
+
+	.yellow-warning {
+		color: yellow;
 	}
 
 	.card-title {
@@ -217,9 +247,24 @@
 		}
 
 		.quality-icon,
-		.country-icon {
+		.country-icon,
+		.remaining-days-badge {
 			padding: 3px;
 			font-size: 20px;
+		}
+
+		.remaining-days-text {
+			display: none; /* Hide text on small screens */
+		}
+	}
+
+	@media (min-width: 641px) {
+		.remaining-days-badge .mdi-alert {
+			display: none; /* Hide icon on larger screens */
+		}
+
+		.remaining-days-text {
+			display: inline; /* Show text on larger screens */
 		}
 	}
 

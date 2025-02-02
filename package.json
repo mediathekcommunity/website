@@ -44,6 +44,7 @@
 		"@sveltejs/adapter-node": "^5.2.12",
 		"@tailwindcss/vite": "^4.0.3",
 		"@unpic/svelte": "https://pkg.pr.new/@unpic/svelte@748",
+		"date-fns": "^4.1.0",
 		"embla-carousel-autoplay": "^8.5.2",
 		"embla-carousel-fade": "^8.5.2",
 		"lucide-svelte": "^0.474.0",

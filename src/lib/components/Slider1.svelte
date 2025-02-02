@@ -53,7 +53,7 @@
 </script>
 
 {#each sortedLanglist as lang}
-	<div>
+	<div class="lang-container">
 		<h1 class="section-title">
 			<span
 				class="bg-linear-to-br from-blue-500 to-cyan-300 box-decoration-clone bg-clip-text text-transparent"
@@ -100,6 +100,11 @@
 		min-width: 0;
 		padding: 0;
 	}
+
+	/* Add padding-bottom to the last slide */
+	.lang-container:last-child {
+        padding-bottom: 1rem;
+    }
 
 	@media (max-width: 640px) {
 		.section-title {

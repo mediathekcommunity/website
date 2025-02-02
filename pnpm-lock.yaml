@@ -23,6 +23,9 @@ importers:
       '@unpic/svelte':
         specifier: https://pkg.pr.new/@unpic/svelte@748
         version: https://pkg.pr.new/@unpic/svelte@748(svelte@5.19.6)
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
       embla-carousel-autoplay:
         specifier: ^8.5.2
         version: 8.5.2(embla-carousel@8.5.2)
@@ -967,6 +970,9 @@ packages:
 
   data-uri-to-buffer@2.0.2:
     resolution: {integrity: sha512-ND9qDTLc6diwj+Xe5cdAgVTbLVdXbtxTJRXRhli8Mowuaan+0EJOtdqJ0QCHNSSPyoXGx9HX2/VMnKeC34AChA==}
+
+  date-fns@4.1.0:
+    resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==}
 
   dayjs@1.11.13:
     resolution: {integrity: sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==}
@@ -2587,6 +2593,8 @@ snapshots:
   daisyui@5.0.0-beta.5: {}
 
   data-uri-to-buffer@2.0.2: {}
+
+  date-fns@4.1.0: {}
 
   dayjs@1.11.13: {}
 
