@@ -300,7 +300,7 @@
 							<div class="collapse-arrow join-item border-base-300 collapse border">
 								<input type="radio" name="my-accordion-episode" checked="true" />
 								<div class="collapse-title font-semibold">
-									<span>{data1.title}</span>?
+									<span>{data1.title}</span>
 								</div>
 								<div class="collapse-content text-sm">
 									<div class="episode-content">
