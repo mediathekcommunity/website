@@ -64,18 +64,13 @@ const checkparamsok = (params: string | undefined): boolean => {
  */
 const query = async (id?: any): Promise<MediathekItem[]> => {
 	id === 'youth' ? console.log('youth') : console.log('no youth');
-	id === 'youth'
-		? (id = {
-				_or: [
-					{
-						type: 'y-movie'
-					},
-					{
-						type: 'y-series'
-					}
-				]
-			})
-		: (id = { type: id });
+	const filterMap: { [key: string]: any } = {
+		youth: { _or: [{ type: 'y-movie' }, { type: 'y-series' }] },
+		movie: { type: 'movie' },
+		series: { type: 'series' }
+	};
+
+	id = filterMap[id] || { _or: [{ type: 'series' }, { type: 'movie' }] };
 	console.log(id);
 	const baseOptions = {
 		fields: ['*, channel.country, channel.name, channel.id'],
