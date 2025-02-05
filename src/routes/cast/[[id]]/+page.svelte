@@ -11,9 +11,7 @@
 	});
 	let filteredMedia = data.data.mediaSorted.filter((item) => {
 		return item.cast.some((castMember) => castMember.id === Number(data1.paramid));
-	});
-	console.log(data);
-	console.log(filteredMedia);
+	}); 
 </script>
 
 <!-- Hero section with cast bio -->
