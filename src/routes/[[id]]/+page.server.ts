@@ -63,7 +63,6 @@ const checkparamsok = (params: string | undefined): boolean => {
  * @returns A list of mediathek items, sorted by creation date.
  */
 const query = async (id?: any): Promise<MediathekItem[]> => {
-	id === 'youth' ? console.log('youth') : console.log('no youth');
 	const filterMap: { [key: string]: any } = {
 		youth: { _or: [{ type: 'y-movie' }, { type: 'y-series' }] },
 		movie: { type: 'movie' },
@@ -71,13 +70,13 @@ const query = async (id?: any): Promise<MediathekItem[]> => {
 	};
 
 	id = filterMap[id] || { _or: [{ type: 'series' }, { type: 'movie' }] };
-	console.log(id);
+	//console.log(id);
 	const baseOptions = {
 		fields: ['*, channel.country, channel.name, channel.id'],
 		deep: { channel: { limit: 5 } }
 	};
 	const queryOptions = id ? { ...baseOptions, filter: id } : baseOptions;
-	console.log(queryOptions);
+	//console.log(queryOptions);
 	const data = await directus.request(readItems('mediathek', queryOptions));
 	return (data as MediathekItem[]).sort(
 		(a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime()
