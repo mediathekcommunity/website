@@ -12,12 +12,12 @@
 	let filteredMedia = data.data.mediaSorted.filter((item) => {
 		return item.cast.some((castMember) => castMember.id === Number(data1.paramid));
 	});
-    console.log(data);
+	console.log(data);
 	console.log(filteredMedia);
 </script>
 
 <!-- Hero section with cast bio -->
-<div class="hero">
+<div class="hero" style="max-height: 50vh; margin-top: 60px;">
 	<h1>{data1?.person?.name}</h1>
 	<div class="hero-content">
 		<img
@@ -34,10 +34,7 @@
 				<span>Place of Birth:</span>
 				<span>{data1?.person?.place_of_birth || 'N/A'}</span>
 			</div>
-		</div>
-		<div class="hero-bio text-xs">
-			<p>{data1?.person?.bio}</p>
-		</div>
+		</div> 
 	</div>
 </div>
 

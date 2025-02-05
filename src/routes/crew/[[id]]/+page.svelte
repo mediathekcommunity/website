@@ -15,28 +15,28 @@
 </script>
 
 <!-- Hero section with cast bio -->
-<div class="hero">
-	<h1>{data1?.person?.name}</h1>
-	<div class="hero-content">
-		<img
-			class="hero-image"
-			src={data1?.person?.heroImage || '/default-hero.jpg'}
-			alt={data1?.person?.name}
-		/>
-		<div class="hero-details">
-			<div class="hero-details-row">
-				<span>Birthday:</span>
-				<span>{data1?.person?.birthday || 'N/A'}</span>
-			</div>
-			<div class="hero-details-row">
-				<span>Place of Birth:</span>
-				<span>{data1?.person?.place_of_birth || 'N/A'}</span>
-			</div>
-		</div>
-		<div class="hero-bio text-xs">
-			<p>{data1?.person?.bio}</p>
-		</div>
-	</div>
+<div class="hero" style="max-height: 50vh;">
+    <h1>{data1?.person?.name}</h1>
+    <div class="hero-content">
+        <img
+            class="hero-image"
+            src={data1?.person?.heroImage || '/default-hero.jpg'}
+            alt={data1?.person?.name}
+        />
+        <div class="hero-details">
+            <div class="hero-details-row">
+                <span>Birthday:</span>
+                <span>{data1?.person?.birthday || 'N/A'}</span>
+            </div>
+            <div class="hero-details-row">
+                <span>Place of Birth:</span>
+                <span>{data1?.person?.place_of_birth || 'N/A'}</span>
+            </div>
+        </div>
+        <div class="hero-bio text-xs">
+            <p>{data1?.person?.bio}</p>
+        </div>
+    </div>
 </div>
 
 <!-- Media list sorted by channel country -->
