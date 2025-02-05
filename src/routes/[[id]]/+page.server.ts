@@ -72,12 +72,13 @@ const query = async (id?: any): Promise<MediathekItem[]> => {
 	id = filterMap[id] || { _or: [{ type: 'series' }, { type: 'movie' }] };
 	//console.log(id);
 	const baseOptions = {
-		fields: ['*, channel.country, channel.name, channel.id'],
+		fields: ['*.*, channel.country, channel.name, channel.id'],
 		deep: { channel: { limit: 5 } }
 	};
 	const queryOptions = id ? { ...baseOptions, filter: id } : baseOptions;
 	//console.log(queryOptions);
 	const data = await directus.request(readItems('mediathek', queryOptions));
+	//console.log(data);
 	return (data as MediathekItem[]).sort(
 		(a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime()
 	);
