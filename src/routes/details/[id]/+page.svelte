@@ -41,7 +41,7 @@
 	let showvideo = $state(false);
 	let showdynawarn = $state(false);
 
-	console.log('Details page:', data);
+	//console.log('Details page:', data);
 
 	$effect(() => {
 		data1 = data.page;
@@ -284,6 +284,30 @@
 											<Time timestamp={data1.onlineuntil} format="DD.MM.YYYY" />
 										</td>
 									</tr>
+									{#if data.cast.length > 0}
+										<tr>
+											<th>Cast</th>
+											<td>
+												<div class="flex flex-wrap gap-2">
+													{#each data.cast as member}
+														<a href={`/cast/${member.id}`} class="badge badge-primary">{member.name}</a>
+													{/each}
+												</div>
+											</td>
+										</tr>
+									{/if}
+									{#if data.crew.length > 0}
+										<tr>
+											<th>Crew</th>
+											<td>
+												<div class="flex flex-wrap gap-2">
+													{#each data.crew as member}
+														<a href={`/crew/${member.id}`} class="badge badge-secondary">{member.name}</a>
+													{/each}
+												</div>
+											</td>
+										</tr>
+									{/if}
 								</tbody>
 							</table>
 						</div>

@@ -248,6 +248,8 @@ export async function load({ params, request }) {
 		geo: capitalizeFirst(countryCode),
 		seasons: mediaEntry?.season || [],
 		playlist,
+		cast: mediaEntry?.cast &&mediaEntry?.cast.length > 0 ? mediaEntry?.cast.slice(0, 5) : [],
+		crew: mediaEntry?.crew &&mediaEntry?.crew.length > 0 ? mediaEntry?.crew.slice(0, 5) : [],
 		videosource: videoSource || {},
 		dyna: mediaEntry.dyna,
 		pageMetaTags

@@ -263,9 +263,6 @@
 	}
 
 	@media (min-width: 641px) {
-		.remaining-days-badge .mdi-alert {
-			display: none; /* Hide icon on larger screens */
-		}
 
 		.remaining-days-text {
 			display: inline; /* Show text on larger screens */
