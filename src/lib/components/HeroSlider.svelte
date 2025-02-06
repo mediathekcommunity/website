@@ -82,6 +82,11 @@
 							src="https://mediathekc.b-cdn.net/t/p/original{slide.backdrop}"
 							alt={slide.title}
 							layout="fixed"
+							operations={{
+								bunny: {
+									quality: 100
+								}
+							}}
 							class="hero-image absolute inset-0 h-full w-full"
 						/>
 						<div class="gradient-overlay absolute inset-x-0 bottom-0"></div>
@@ -91,7 +96,7 @@
 							<div class="mb-1 flex flex-wrap items-center gap-1 sm:mb-4">
 								<span class="badge-ghost inline-flex items-center px-1 py-1 text-white sm:text-sm">
 									{#if showcountry}
-									<span class="fi fi-{slide.channel.country.toLowerCase()} text-2xl"></span>
+										<span class="fi fi-{slide.channel.country.toLowerCase()} text-2xl"></span>
 									{/if}
 									<Icon icon={slide.channel.icon} height="28px" width="36px" />
 								</span>
