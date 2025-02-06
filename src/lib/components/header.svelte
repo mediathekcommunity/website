@@ -15,7 +15,7 @@
 				<h1 class="site-title">
 					<span class="text-primary">Mediathek</span>
 					<span class="text-white">Community</span>
-					<span class="badge badge-primary text-white">v0.7</span>
+					<span class="badge badge-primary text-white">v0.7.5</span>
 				</h1>
 			</a>
 		</div>
@@ -29,7 +29,7 @@
 					<span class="indicator-item status status-success"></span>
 					<li><a href="/youth">Youth</a></li>
 				</div>
-				<li><a href="#" class="disabled link link-neutral">Specials</a></li>
+				<li><a href="/specials" class="link link-neutral">Specials</a></li>
 				<li><a href="/channels">Channels</a></li>
 			</ul>
 		</nav>
@@ -49,7 +49,7 @@
 					<span class="indicator-item status status-success"></span>
 					<li><a href="/youth" onclick={toggleMobileMenu}>Youth</a></li>
 				</div>
-				<li><a href="#" class="disabled link link-neutral">Specials</a></li>
+				<li><a href="/specials" class="link link-neutral">Specials</a></li>
 				<li><a href="/channels">Channels</a></li>
 			</ul>
 		</nav>

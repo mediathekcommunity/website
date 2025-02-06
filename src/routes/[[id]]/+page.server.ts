@@ -66,10 +66,11 @@ const query = async (id?: any): Promise<MediathekItem[]> => {
 	const filterMap: { [key: string]: any } = {
 		youth: { _or: [{ type: 'y-movie' }, { type: 'y-series' }] },
 		movie: { type: 'movie' },
-		series: { type: 'series' }
+		series: { type: 'series' },
+		music: { type: 'music' }
 	};
 
-	id = filterMap[id] || { _or: [{ type: 'series' }, { type: 'movie' }] };
+	id = filterMap[id];
 	//console.log(id);
 	const baseOptions = {
 		fields: ['*.*, channel.country, channel.name, channel.id'],

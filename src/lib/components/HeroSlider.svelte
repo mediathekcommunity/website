@@ -8,6 +8,7 @@
 	import Fade from 'embla-carousel-fade';
 	let { data, heroItems, geo, showcountry } = $props();
 	import Icon from '@iconify/svelte';
+	import { sl } from 'date-fns/locale';
 	let getqualityicon = (quality) => {
 		if (quality === '4K') {
 			return 'mdi:uhd';
@@ -19,7 +20,20 @@
 			return 'mdi:video-outline';
 		}
 	};
-
+	function getImageUrl(slide) {
+		if (slide.backdrop) {
+			return 'https://mediathekc.b-cdn.net/t/p/original' + slide.backdrop;
+		} else {
+			return 'https://api.mediathek.community/assets/' + slide.backdropup.filename_disk;
+		}
+	}
+	function getposterUrl(slide) {
+		if (slide.backdrop) {
+			return 'https://mediathekc.b-cdn.net/t/p/original' + slide.poster;
+		} else {
+			return 'https://api.mediathek.community/assets/' + slide.posterup.filename_disk;
+		}
+	}
 	// @ts-ignore
 	function getTypeIcon(type) {
 		switch (type) {
@@ -65,7 +79,7 @@
 	function onInit(event) {
 		emblaApi = event.detail;
 	}
-	//console.log(heroItems);
+	console.log(heroItems);
 </script>
 
 <div class="hero-container relative w-full">
@@ -79,7 +93,7 @@
 				<div class="embla__slide">
 					<div class="relative h-full w-full">
 						<Image
-							src="https://mediathekc.b-cdn.net/t/p/original{slide.backdrop}"
+							src={getImageUrl(slide)}
 							alt={slide.title}
 							layout="fixed"
 							operations={{
@@ -116,9 +130,11 @@
 							>
 								{slide.title}
 							</h1>
-							<p class="mb-4 text-sm text-gray-300 italic sm:text-base">
-								Original Title: {slide.orgtitle}
-							</p>
+							{#if slide.title != slide.orgtitle}
+								<p class="mb-4 text-sm text-gray-300 italic sm:text-base">
+									Original Title: {slide.orgtitle}
+								</p>
+							{/if}
 							<a href="/details/{slide.id}">
 								<button class="btn btn-primary" href="/details/{slide.id}"> Details</button></a
 							>
