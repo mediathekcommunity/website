@@ -12,6 +12,7 @@
 		type: 'movie' | 'series' | 'music' | 'y-series' | 'y-movie';
 		poster?: string;
 		backdropup?: { filename: string };
+		posterup?: { filename: string };
 		channel: { country: string };
 		remainingDays?: number; // Add remainingDays property
 	}
@@ -42,8 +43,8 @@
 	const getPosterUrl = (carddata: CardData): string | null => {
 		if (carddata.poster) {
 			return `https://mediathekc.b-cdn.net/t/p/original${carddata.poster}`;
-		} else if (carddata.backdropup) {
-			return `https://cdn1.mediathek.community/${carddata.backdropup.filename}`;
+		} else if (carddata.posterup) {
+			return `https://cdn1.mediathek.community/${carddata.posterup.filename}`;
 		}
 		return null;
 	};
