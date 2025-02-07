@@ -44,7 +44,7 @@
 <div>
     {#if data && data.page && data.page.length > 0 && data.error === false}
         {#if heroItems}
-            <HeroSlider {heroItems} {data} {showcountry} />
+            <HeroSlider {heroItems} {data}   />
         {/if}
         <div class="content-section px-4 sm:px-6 lg:px-8">
             <div class="maincontent">

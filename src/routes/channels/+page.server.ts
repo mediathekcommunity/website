@@ -14,7 +14,7 @@ import { error } from '@sveltejs/kit';
       try {
         const directus = getDirectusInstance(fetcher);
         const response = await directus.request(
-          readItems('channels', {
+          readItems('channel', {
             fields: ['*.*'], // Specify the fields needed
           })
         );
