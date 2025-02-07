@@ -26,6 +26,14 @@
 				return 'application/dash+xml';
 		}
 	}
+
+    function getImageUrl(slide) {
+		if (slide.backdrop) {
+			return 'https://mediathekc.b-cdn.net/t/p/original' + slide.backdrop;
+		} else {
+			return 'https://api.mediathek.community/assets/' + slide.backdropup.filename_disk;
+		}
+	}
 	import videojs from 'video.js';
 
 	let myPlaylist = [];
@@ -140,10 +148,10 @@
 					<button class="close-video-btn" onclick={toggleDynaWarn}>Close Info</button>
 				</div>
 			</div>
-		{:else if data1.backdrop}
+		{:else if data1.backdrop || date1.backdropup.filename_disk}
 			<div class="hero-container relative w-full">
 				<Image
-					src="https://mediathekc.b-cdn.net/t/p/original{data1.backdrop}"
+					src={getimgurl(date)}
 					alt={data1.title}
 					class="hero-image absolute inset-0 h-full w-full"
 				/>
