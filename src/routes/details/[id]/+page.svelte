@@ -54,7 +54,6 @@
 	$effect(() => {
 		data1 = data.page;
 	});
-
 	let tabSet = 0;
 	function sortseasons(a) {
 		if (a.season < b.season) {
@@ -246,7 +245,7 @@
 											{/if}
 										{/if}
 									{/if}
-									{#if data1.type != 'movie' && data1.slinks}
+									{#if data1.type != 'movie' && data1.slinks.length > 0}
 										<tr>
 											<th>Seasons</th>
 											<td>{data1.season}</td>
@@ -260,12 +259,25 @@
 										<th>Channel / Country</th>
 										<td>
 											<div class="flex flex-row space-x-2">
-												<!-- svelte-ignore svelte_component_deprecated -->
-												{data1.channel.name} / <!-- svelte-ignore svelte_component_deprecated -->
+												<Icon icon={data1.channel.icon} height="28px" width="36px" />
 												<span class="fi fi-{data1.channel.country.toLowerCase()}"></span>
 											</div></td
 										>
 									</tr>
+									{#if data1.backdropup?.filename_disk}
+										<tr>
+											<th
+												><p class="icon123 flex align-middle">
+													Images <Icon inline={true} icon="mdi:copyright" class="icon123" />
+												</p></th
+											>
+											<td>
+												<div class="flex flex-wrap gap-2">
+													<Icon icon={data1.channel.icon} height="28px" width="36px" />
+												</div>
+											</td>
+										</tr>
+									{/if}
 									<tr>
 										<th>Quality</th>
 										<td>
@@ -284,7 +296,9 @@
 											<td>
 												<div class="flex flex-wrap gap-2">
 													{#each data.cast as member}
-														<a href={`/cast/${member.id}`} class="badge badge-primary">{member.name}</a>
+														<a href={`/cast/${member.id}`} class="badge badge-primary"
+															>{member.name}</a
+														>
 													{/each}
 												</div>
 											</td>
@@ -296,7 +310,9 @@
 											<td>
 												<div class="flex flex-wrap gap-2">
 													{#each data.crew as member}
-														<a href={`/crew/${member.id}`} class="badge badge-secondary">{member.name}</a>
+														<a href={`/crew/${member.id}`} class="badge badge-secondary"
+															>{member.name}</a
+														>
 													{/each}
 												</div>
 											</td>
@@ -469,6 +485,9 @@
 {/if}
 
 <style>
+	.icon123 {
+		vertical-align: -0.125em !important;
+	}
 	.hero-container {
 		position: relative;
 		width: 100%;

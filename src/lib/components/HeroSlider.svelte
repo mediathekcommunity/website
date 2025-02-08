@@ -2,6 +2,7 @@
 	// @ts-nocheck
 	import { visible } from '$lib/store';
 	import { Image } from '@unpic/svelte';
+	import { transform } from 'unpic/providers/imgix';
 
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
 	import Autoplay from 'embla-carousel-autoplay';

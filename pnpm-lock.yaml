@@ -38,6 +38,9 @@ importers:
       svelte-time:
         specifier: ^2.0.0
         version: 2.0.0
+      unpic:
+        specifier: ^4.1.2
+        version: 4.1.2
     devDependencies:
       '@eslint/compat':
         specifier: ^1.2.6

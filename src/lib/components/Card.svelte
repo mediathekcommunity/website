@@ -43,8 +43,8 @@
 	const getPosterUrl = (carddata: CardData): string | null => {
 		if (carddata.poster) {
 			return `https://mediathekc.b-cdn.net/t/p/original${carddata.poster}`;
-		} else if (carddata.posterup) {
-			return `https://cdn1.mediathek.community/${carddata.posterup.filename}`;
+		} else if (carddata.coverimageup) {
+			return `https://mediathekc.b-cdn.net/${carddata.coverimageup.filename_disk}?host=api`;
 		}
 		return null;
 	};
@@ -53,8 +53,9 @@
 		src: posterUrl,
 		alt: carddata.poster ? `${title} poster` : `${title} backdrop`,
 		class: 'card-poster',
-		layout: 'fullWidth'
-	});
+		layout: 'fullWidth',
+		objectFit: 'fill '
+		 });
 </script>
 
 <a href={`/details/${carddata.id}`} class="card">
@@ -69,7 +70,7 @@
 			<!-- Move the conditional check into the expression -->
 			{#if getPosterUrl(carddata) !== null}
 				<!-- use it directly -->
-				<Image {...imageProps(carddata, getPosterUrl(carddata) as string)} />
+				<Image src={getPosterUrl(carddata)} alt={title} style="object-fit: fill; height:100%"/>
 			{:else}
 				<div class="card-poster-placeholder">{title[0]}</div>
 			{/if}
