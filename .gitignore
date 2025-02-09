@@ -28,3 +28,4 @@ vite.config.ts.timestamp-*
 test.json
 test2.json
 info.json
+*.txt
