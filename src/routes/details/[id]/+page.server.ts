@@ -3,7 +3,6 @@ import getDirectusInstance from '$lib/directus';
 import { readItem } from '@directus/sdk';
 import type { MetaTagsProps } from 'svelte-meta-tags';
 export const ssr = false;
-import { NTPClient } from 'ntpclient';
 
 // Konstante für URLs
 const BASE_MEDIA_URL = 'https://mediathekc.b-cdn.net/t/p/original/';
@@ -250,7 +249,7 @@ export async function load({ params, request }) {
 	return {
 		error,
 		page: mediaEntry || null,
-		groupseasons: sortSeasons(mediaEntry) || {},
+		groupseasons: mediaEntry?.slinks ? sortSeasons({ slinks: mediaEntry.slinks }) : {},
 		episodes: mediaEntry?.episode || [],
 		sublangs: subtitleLanguages,
 		geo: capitalizeFirst(countryCode),

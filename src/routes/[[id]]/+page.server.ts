@@ -125,12 +125,12 @@ export const load: PageServerLoad = async ({ fetch, params, request }) => {
 		.filter((item) => item.onlineuntil && isBefore(new Date(item.onlineuntil), sevenDaysLater))
 		.sort(
 			(a, b) =>
-				differenceInDays(new Date(a.onlineuntil), now) -
-				differenceInDays(new Date(b.onlineuntil), now)
+				differenceInDays(new Date(a.onlineuntil ?? ''), now) -
+				differenceInDays(new Date(b.onlineuntil ?? ''), now)
 		)
 		.map((item) => ({
 			...item,
-			remainingDays: differenceInDays(new Date(item.onlineuntil), now)
+			remainingDays: item.onlineuntil ? differenceInDays(new Date(item.onlineuntil), now) : null
 		}));
 	return {
 		page: data,
