@@ -236,11 +236,12 @@ export async function load({ params, request }) {
 			description: 'Open Graph Description TOP'
 		}
 	}) satisfies MetaTagsProps;
+	/*console.log(time2.hour)
 	// Rückgabe mit potenziellen Fehlern
 	let serverhour;
 	const time1  = await  fetch("https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Berlin")
 	const time2 = await time1.json() 
-	/*console.log(time2.hour)
+	
 	//   
 		let date = new Date(networkTime);
 		serverhour = date.getHours();
@@ -260,6 +261,6 @@ export async function load({ params, request }) {
 		videosource: videoSource || {},
 		dyna: mediaEntry.dyna,
 		pageMetaTags,
-		serverhour: time2.hour
+		serverhour: 23
 	};
 }
