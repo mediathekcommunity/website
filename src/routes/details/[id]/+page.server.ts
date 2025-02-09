@@ -238,12 +238,14 @@ export async function load({ params, request }) {
 	}) satisfies MetaTagsProps;
 	// Rückgabe mit potenziellen Fehlern
 	let serverhour;
-	await new NTPClient().getNetworkTime().then((networkTime) => {
+	const time1  = await  fetch("https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Berlin")
+	const time2 = await time1.json() 
+	/*console.log(time2.hour)
+	//   
 		let date = new Date(networkTime);
 		serverhour = date.getHours();
 	});
-	console.log(serverhour);
-
+	*/
 	return {
 		error,
 		page: mediaEntry || null,
@@ -258,6 +260,6 @@ export async function load({ params, request }) {
 		videosource: videoSource || {},
 		dyna: mediaEntry.dyna,
 		pageMetaTags,
-		serverhour: serverhour
+		serverhour: time2.hour
 	};
 }
