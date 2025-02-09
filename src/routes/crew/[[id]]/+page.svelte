@@ -13,11 +13,10 @@
 	// - mediaSorted: an object where each key is a country and value is an array of media items in which the person appears
 	let { data } = $props();
 	let data1 = $state(data.data);
-	let filteredMedia = $state([]);
+	let filteredMedia = $state();
 	$effect(() => {
 		data1 = data.data;
 	});
-	console.log(data);
 	if (data && data.data) {
 		filteredMedia = data.data.mediaSorted.filter((item) => {
 			return item.crew.some((castMember) => castMember.id === Number(data1?.paramid));

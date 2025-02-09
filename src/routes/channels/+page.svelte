@@ -5,9 +5,6 @@
         import type { PageData, Channel } from '$lib/types/channels'; // Import from the correct location
 
         export let data: PageData;
-
-        console.log('Received data:', data);
-
         let options = { align: 'start', slidesToScroll: 2, loop: true };
 
         // Function to group media items by channel country

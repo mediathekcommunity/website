@@ -19,7 +19,6 @@
 	$effect(() => {
 		data1 = data.data;
 	});
-	console.log(data);
 	if (data && data.data) {
 		filteredMedia = data.data.mediaSorted.filter((item) => {
 			return item.cast.some(
@@ -40,7 +39,6 @@
 		}),
 		Fade()
 	];
-	console.log(filteredMedia);
 </script>
 
 {#if !data.error}

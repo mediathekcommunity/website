@@ -18,10 +18,8 @@ import { error } from '@sveltejs/kit';
             fields: ['*.*'], // Specify the fields needed
           })
         );
-        console.log('Fetched channel data:', response);
         return response;
       } catch (err) {
-        console.error('Error fetching channel data:', err);
         throw new Error('Failed to fetch channel data');
       }
     }

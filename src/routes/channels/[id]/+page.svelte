@@ -7,7 +7,6 @@
 	import HeroSlider from '$lib/components/HeroSlider.svelte';
 
 	export let data;
-	console.log(data);
 	// Derived state for hero items and channel name
 	$: heroItems = data?.page && data.page.length > 0 ? data.page.slice(0, 10) : [];
 	$: channelName = data?.page && data.page.length > 0 ? data.page[0].channel.name : '';

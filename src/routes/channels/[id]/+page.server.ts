@@ -22,13 +22,10 @@ async function fetchDataFromDirectus(
 	try {
 		const result = await dataFetcher(directus);
 		if (channelId !== undefined) {
-			//console.log(`Fetched data for channel ${channelId}:`, result);
 		} else {
-			//console.log(`Fetched data:`, result);
 		}
 		return result;
 	} catch (err) {
-		console.error(errorMessage, channelId, err);
 		throw new Error(`${errorMessage} ${channelId ? `for channel ${channelId}` : ''}`);
 	}
 }
