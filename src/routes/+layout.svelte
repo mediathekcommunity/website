@@ -25,7 +25,7 @@
 <MetaTags {...metaTags} />
 
 <svelte:head>
-	<script defer src="http://stats.mediathek.community/script.js" data-website-id="06766e3b-978c-4a93-93b5-e69739ed571a"></script>
+	<script defer src="https://stats.mediathek.community/script.js" data-website-id="06766e3b-978c-4a93-93b5-e69739ed571a"></script>
 </svelte:head>
 
 <div class="app">
