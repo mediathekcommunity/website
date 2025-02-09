@@ -88,7 +88,7 @@
 						<span class="remaining-days-text hidden sm:block">
 							{carddata.remainingDays === 0
 								? 'Expires today'
-								: `${carddata.remainingDays} days remains`}
+								: `~ ${carddata.remainingDays}d remains`}
 						</span>
 					</div>
 				{/if}

@@ -43,7 +43,10 @@
 		border-radius: 8px;
 		overflow: hidden;
 		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-		transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+		transition:
+			transform 0.3s ease,
+			box-shadow 0.3s ease,
+			filter 0.3s ease;
 		cursor: pointer;
 		aspect-ratio: 16 / 9;
 		position: relative;
@@ -52,8 +55,7 @@
 	.channel-card:hover,
 	.channel-card:focus {
 		transform: translateY(-5px);
-		box-shadow: 0 0 20px rgba(var(--color-primary-5
-00-rgb), 0.5);
+		box-shadow: 0 0 20px rgba(var(--color-primary-5 00-rgb), 0.5);
 		filter: brightness(1.1);
 		outline: none;
 	}
@@ -96,11 +98,5 @@
 		color: var(--color-text-200, #9e9e9e);
 		text-align: center;
 		padding: 1rem;
-	}
-
-	.channel-name {
-		font-size: 1.2rem;
-		font-weight: bold;
-		word-break: break-word;
-	}
+	} 
 </style>
