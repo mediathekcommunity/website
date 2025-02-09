@@ -6,8 +6,8 @@ const directus = getDirectusInstance(fetch);
 
 export async function load({ params, fetch }) {
 	const { id } = params;
-	const res = await fetch(`https://123-u7ush.b-cdn.net/person/${id}`);
-
+	const res = await fetch(`https://tmdbomdbv1-gaoyk.bunny.run/person/${id}`);
+	console.log(res);
 	if (!res.ok) {
 		throw error(res.status, 'Failed to fetch cast information');
 	}
@@ -20,7 +20,10 @@ export async function load({ params, fetch }) {
 		}, {});
 	};
 	const json = await res.json();
-
+	console.log(res);
+	if (json.success == false) {
+		return { error: json.status_code, message: json.status_message, success: json.success };
+	}
 	const baseOptions = {
 		fields: ['*.*.*, channel.country, channel.name, channel.id'],
 		deep: {
@@ -33,7 +36,6 @@ export async function load({ params, fetch }) {
     let id2 = params.id;
     const mediathekData = await directus.request(readItems('mediathek', baseOptions));
     const filteredData = mediathekData.filter((item) => item.id === id2);
-    console.log(filteredData);
     const data = groupByChannelCountry(filteredData);
 	//
 	// Transform the JSON to the shape expected by the page

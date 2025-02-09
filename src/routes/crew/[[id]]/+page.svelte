@@ -1,50 +1,83 @@
-<script lang="ts">
+<script>
 	import Card from '$lib/components/Card.svelte';
+	import ErrorSection from '$lib/components/ErrorSection.svelte';
 
+	import emblaCarouselSvelte from 'embla-carousel-svelte';
+
+	import Autoplay from 'embla-carousel-autoplay';
+	import Fade from 'embla-carousel-fade';
+
+    let emblaApi;
 	// Data is loaded from the page server and contains:
 	// - person: the cast member's bio info (e.g., name, bio, hero image URL, etc.)
 	// - mediaSorted: an object where each key is a country and value is an array of media items in which the person appears
 	let { data } = $props();
 	let data1 = $state(data.data);
+	let filteredMedia = $state([]);
 	$effect(() => {
 		data1 = data.data;
 	});
-	let filteredMedia = data.data.mediaSorted.filter((item) => {
-		return item.crew.some((castMember) => castMember.id === Number(data1.paramid));
-	});
+	console.log(data);
+	if (data && data.data) {
+		filteredMedia = data.data.mediaSorted.filter((item) => {
+			return item.crew.some((castMember) => castMember.id === Number(data1?.paramid));
+		});
+	}
+
+	let options2 = { align: 'start', slidesToScroll: 1, loop: true };
+	let plugins = [
+		Autoplay({
+			delay: 8000,
+			stopOnMouseEnter: false,
+			stopOnFocusIn: false,
+			stopOnInteraction: false
+		}),
+		Fade()
+	];
+	function onInit(event) {
+		emblaApi = event.detail;
+	}
 </script>
 
-<!-- Hero section with cast bio -->
-<div class="hero" style="max-height: 50vh;">
-    <h1>{data1?.person?.name}</h1>
-    <div class="hero-content">
-        <img
-            class="hero-image"
-            src={data1?.person?.heroImage || '/default-hero.jpg'}
-            alt={data1?.person?.name}
-        />
-        <div class="hero-details">
-            <div class="hero-details-row">
-                <span>Birthday:</span>
-                <span>{data1?.person?.birthday || 'N/A'}</span>
-            </div>
-            <div class="hero-details-row">
-                <span>Place of Birth:</span>
-                <span>{data1?.person?.place_of_birth || 'N/A'}</span>
-            </div>
-        </div>
-        <div class="hero-bio text-xs">
-            <p>{data1?.person?.bio}</p>
-        </div>
-    </div>
-</div>
-
-<!-- Media list sorted by channel country -->
-<div class="media-list">
-	{#each filteredMedia as items}
-		<Card carddata={items} countryflag />
-	{/each}
-</div>
+{#if !data.error}
+	<!-- Hero section with cast bio -->
+	<div class="hero" style="max-height: 50vh;">
+		<h1>{data1?.person?.name}</h1>
+		<div class="hero-content">
+			<img
+				class="hero-image"
+				src={data1?.person?.heroImage || '/default-hero.jpg'}
+				alt={data1?.person?.name}
+			/>
+			<div class="hero-details">
+				<div class="hero-details-row">
+					<span>Birthday:</span>
+					<span>{data1?.person?.birthday || 'N/A'}</span>
+				</div>
+				<div class="hero-details-row">
+					<span>Place of Birth:</span>
+					<span>{data1?.person?.place_of_birth || 'N/A'}</span>
+				</div>
+			</div>
+			<div class="hero-bio text-xs">
+				<p>{data1?.person?.bio}</p>
+			</div>
+		</div>
+	</div>
+	<div class="media-list">
+		<div class="embla" use:emblaCarouselSvelte={options2}>
+			<div class="embla__container flex">
+				{#each filteredMedia as item}
+					<div class="embla__slide">
+						<Card carddata={item} countryflag  />
+					</div>
+				{/each}
+			</div>
+		</div> 
+	</div>
+ {:else}
+	<ErrorSection error={data?.error} />
+{/if}
 
 <style>
 	/* Assume header bar height is 60px; adjust the value as needed */
