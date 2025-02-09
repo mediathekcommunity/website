@@ -345,10 +345,11 @@
 
 										{#if data.geo == data.page.channel.country}
 											{#if data.page.fskcheck == true && data.serverhour < 22}
-											<button
-													type="button"
-													class="btn btn-accent"> 
-												<span class="flex items-center gap-1"> FSK ! - Only after 22:00 </span></button>
+												<button type="button" class="btn btn-accent">
+													<span class="flex items-center gap-1">
+														FSK ! - Only after 22:00
+													</span></button
+												>
 											{:else}
 												<button
 													type="button"
@@ -360,13 +361,13 @@
 													<span> Play</span>
 												</button>
 											{/if}
-										{:else}	<button
-										type="button"
-										class="btn btn-accent"> 
-											<span class="flex items-center gap-1">
-												<span class="fi fi-{data1.channel.country.toLowerCase()}"></span>
-												IP required
-											</span></button>
+										{:else}
+											<button type="button" class="btn btn-accent">
+												<span class="flex items-center gap-1">
+													<span class="fi fi-{data1.channel.country.toLowerCase()}"></span>
+													IP required
+												</span></button
+											>
 										{/if}
 									</div>
 								</div>
