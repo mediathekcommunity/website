@@ -17,7 +17,6 @@
 		return `${hours}h${minutes > 0 ? ` ${minutes}m` : ''}`;
 	}
 	let date_ob = new Date();
-	//console.log(date_ob);
 	function getformat(id) {
 		switch (id) {
 			case 'mpd':

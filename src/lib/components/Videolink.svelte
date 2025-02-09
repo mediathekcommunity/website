@@ -6,9 +6,11 @@
 	export let videoUrl: string;
 	export let channel: object;
 	export let videotitle: string;
+	/*
 	console.log(videotitle);
 	console.log(channel);
 	console.log(videoUrl);
+	*/
 </script>
 
 <div class="video-player-container" style="background-image: url({posterUrl});">

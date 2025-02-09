@@ -52,7 +52,6 @@
 		if (bgcolor) {
 			bgcolor = '  ' + bgcolor;
 			var x = 'inline-flex items-center gap-1 text-white sm:text-sm ' + bgcolor;
-			//console.log(x);
 			return x;
 		} else {
 			return 'bg-lime-600';
@@ -80,7 +79,6 @@
 	function onInit(event) {
 		emblaApi = event.detail;
 	}
-	console.log(heroItems);
 </script>
 
 <div class="hero-container relative w-full">

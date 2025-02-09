@@ -23,7 +23,6 @@
         }),
         Fade()
     ];
-    //console.log(data);
     let currentSlide = 0;
     let options2 = { align: 'start', slidesToScroll: 2, loop: true };
     let emblaApi;

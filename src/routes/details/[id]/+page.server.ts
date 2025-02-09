@@ -196,7 +196,6 @@ export async function load({ params, request, setHeaders }) {
 	try {
 		mediaEntry = await fetchMediaEntry(params.id);
 	} catch (err) {
-		// console.error('Error fetching media entry:', err);
 		return { error: 'Failed to fetch media entry' };
 	}
 
