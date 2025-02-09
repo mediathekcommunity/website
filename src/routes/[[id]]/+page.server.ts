@@ -120,9 +120,9 @@ export const load: PageServerLoad = async ({ fetch, params, request }) => {
 
 	// Filter and sort items that expire in the next 5 days
 	const now = new Date();
-	const fiveDaysLater = addDays(now, 5);
+	const sevenDaysLater = addDays(now, 7);
 	const expiringItems = data
-		.filter((item) => item.onlineuntil && isBefore(new Date(item.onlineuntil), fiveDaysLater))
+		.filter((item) => item.onlineuntil && isBefore(new Date(item.onlineuntil), sevenDaysLater))
 		.sort(
 			(a, b) =>
 				differenceInDays(new Date(a.onlineuntil), now) -
