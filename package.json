@@ -13,6 +13,9 @@
 		"format": "prettier --write .",
 		"lint": "prettier --check ./src && eslint ./src --ext .svelte,.js,.ts"
 	},
+	"engines" : { 
+		"node" : ">=22.11.0" 
+	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.6",
 		"@eslint/js": "^9.19.0",
