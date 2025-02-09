@@ -4,11 +4,10 @@ import getDirectusInstance from '$lib/directus';
 import { readItems } from '@directus/sdk';
 const directus = getDirectusInstance(fetch);
 
-export async function load({ params, fetch }) {
+export async function load({ params, fetch ,setHeaders}) {
 	const { id } = params;
 	const res = await fetch(`https://tmdbomdbv1-gaoyk.bunny.run/person/${id}`);
-	console.log(res);
-	if (!res.ok) {
+ 	if (!res.ok) {
 		throw error(res.status, 'Failed to fetch cast information');
 	}
 	const groupByChannelCountry = (items: MediathekItem[]): GroupedByCountry => {
@@ -20,8 +19,7 @@ export async function load({ params, fetch }) {
 		}, {});
 	};
 	const json = await res.json();
-	console.log(res);
-	if (json.success == false) {
+ 	if (json.success == false) {
 		return { error: json.status_code, message: json.status_message, success: json.success };
 	}
 	const baseOptions = {
@@ -51,10 +49,10 @@ export async function load({ params, fetch }) {
 			: '/default-hero.jpg'
 		// You can map any other fields if needed...
 	};
-
+	setHeaders({
+		'cache-control': 'max-age=3600',
+	})
 	// Since no media information is provided, mediaSorted is empty.
-	const mediaSorted = {};
-
 	return {
 		data: {
 			person,

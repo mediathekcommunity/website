@@ -183,7 +183,7 @@ async function fetchMediaEntry(id: string) {
 }
 
 // Load-Funktion
-export async function load({ params, request }) {
+export async function load({ params, request, setHeaders }) {
 	let error: string | null = null;
 	// Validierung der params.id
 	if (!params.id) {
@@ -235,17 +235,10 @@ export async function load({ params, request }) {
 			description: 'Open Graph Description TOP'
 		}
 	}) satisfies MetaTagsProps;
-	/*console.log(time2.hour)
-	// Rückgabe mit potenziellen Fehlern
-	let serverhour;
-	const time1  = await  fetch("https://www.timeapi.io/api/Time/current/zone?timeZone=Europe/Berlin")
-	const time2 = await time1.json() 
-	
-	//   
-		let date = new Date(networkTime);
-		serverhour = date.getHours();
+
+	setHeaders({
+		'cache-control': 'max-age=3600'
 	});
-	*/
 	return {
 		error,
 		page: mediaEntry || null,

@@ -113,13 +113,15 @@ function capitalizeFirstLetter(str: string): string {
  * @returns {Promise<{ page: any; geo: string; id: string; page2: any }>} Page data.
  * @throws {import('@sveltejs/kit').HttpError} If fetching fails.
  */
-export const load: ServerLoad = async ({ fetch, params, request }) => {
+export const load: ServerLoad = async ({ fetch, params, request, setHeaders }) => {
 	const channelId = params.id;
 	if (!channelId) {
 		throw error(400, 'Channel ID is required');
 	}
 	const geo = capitalizeFirstLetter(request.headers.get('cf-ipcountry') || 'De');
-
+	setHeaders({
+		'cache-control': 'max-age=5'
+	});
 	try {
 		const mediaData = await fetchMediaByChannel(channelId, fetch);
 		const channelDetails = await fetchChannelDetails(channelId, fetch);

@@ -43,10 +43,12 @@ import { error } from '@sveltejs/kit';
      * @returns {Promise<PageData>} A promise that resolves to the page data.
      * @throws {import('@sveltejs/kit').HttpError} Throws a 404 error if no channel data is found.
      */
-    export const load = async ({ fetch, params, request }): Promise<PageData> => { // return type here
+    export const load = async ({ fetch, params, request ,setHeaders}): Promise<PageData> => { // return type here
       const countryCode = request.headers.get('cf-ipcountry') || 'De';
       const geo = capitalizeFirstLetter(countryCode);
-
+      setHeaders({
+        'cache-control': 'max-age=3600'
+      });
       const channels = await fetchChannelData(fetch);
 
       if (!channels || channels.length === 0) {

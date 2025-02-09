@@ -4,7 +4,7 @@ import getDirectusInstance from '$lib/directus';
 import { readItems } from '@directus/sdk';
 const directus = getDirectusInstance(fetch);
 
-export async function load({ params, fetch }) {
+export async function load({ params, fetch, setHeaders }) {
 	const { id } = params;
 	const res = await fetch(`https://tmdbomdbv1-gaoyk.bunny.run/person/${id}`);
 
@@ -21,7 +21,6 @@ export async function load({ params, fetch }) {
 		}, {});
 	};
 	const json = await res.json();
-	console.log(json);
 	if (json.success == false) {
 		return { error: json.status_code, message: json.status_message, success: json.success };
 	}
@@ -52,9 +51,10 @@ export async function load({ params, fetch }) {
 			: '/default-hero.jpg'
 		// You can map any other fields if needed...
 	};
-	console.log(person);
+	setHeaders({
+		'cache-control': 'max-age=3600'
+	});
 	// Since no media information is provided, mediaSorted is empty.
-	const mediaSorted = {};
 
 	return {
 		data: {

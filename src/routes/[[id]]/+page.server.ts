@@ -92,7 +92,7 @@ const query = async (id?: any): Promise<MediathekItem[]> => {
  * @param request - The HTTP request.
  * @returns Formatted response data.
  */
-export const load: PageServerLoad = async ({ fetch, params, request }) => {
+export const load = async ({ fetch, params, request, setHeaders }) => {
 	const { id } = params as { id?: string };
 
 	if (!checkparamsok(id)) {
@@ -132,6 +132,9 @@ export const load: PageServerLoad = async ({ fetch, params, request }) => {
 			...item,
 			remainingDays: item.onlineuntil ? differenceInDays(new Date(item.onlineuntil), now) : null
 		}));
+		setHeaders({
+			'cache-control': 'max-age=5',
+		})
 	return {
 		page: data,
 		error: false,
