@@ -55,7 +55,7 @@
 		class: 'card-poster',
 		layout: 'fullWidth',
 		objectFit: 'fill '
-		 });
+	});
 </script>
 
 <a href={`/details/${carddata.id}`} class="card">
@@ -70,7 +70,7 @@
 			<!-- Move the conditional check into the expression -->
 			{#if getPosterUrl(carddata) !== null}
 				<!-- use it directly -->
-				<Image src={getPosterUrl(carddata)} alt={title} style="object-fit: fill; height:100%"/>
+				<Image src={getPosterUrl(carddata)} alt={title} style="object-fit: fill; height:100%" />
 			{:else}
 				<div class="card-poster-placeholder">{title[0]}</div>
 			{/if}
@@ -101,10 +101,12 @@
 			{#if isHovered}
 				<div class="card-overlay" transition:slide={{ duration: 300, delay: 50, easing: quintOut }}>
 					<h3 class="card-title">{title}</h3>
-					<div class="country-channel-info">
-						<h3 class="card-title">O: {orgtitle}</h3>
-					</div>
-					{#if metascore !== 'Unknown'}
+					{#if title !== orgtitle}
+						<div class="country-channel-info">
+							<h3 class="card-title">O: {orgtitle}</h3>
+						</div>
+					{/if}
+					{#if metascore !== 'Unknown' && metascore !== 'N/A'}
 						<p>Metascore: {metascore}</p>
 					{/if}
 				</div>
@@ -265,7 +267,6 @@
 	}
 
 	@media (min-width: 641px) {
-
 		.remaining-days-text {
 			display: inline; /* Show text on larger screens */
 		}

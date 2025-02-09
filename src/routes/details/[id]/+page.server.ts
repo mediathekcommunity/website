@@ -2,8 +2,8 @@ import { error } from '@sveltejs/kit';
 import getDirectusInstance from '$lib/directus';
 import { readItem } from '@directus/sdk';
 import type { MetaTagsProps } from 'svelte-meta-tags';
-
 export const ssr = false;
+import { NTPClient } from 'ntpclient';
 
 // Konstante für URLs
 const BASE_MEDIA_URL = 'https://mediathekc.b-cdn.net/t/p/original/';
@@ -186,7 +186,6 @@ async function fetchMediaEntry(id: string) {
 // Load-Funktion
 export async function load({ params, request }) {
 	let error: string | null = null;
-
 	// Validierung der params.id
 	if (!params.id) {
 		return { error: 'Missing media ID' };
@@ -225,7 +224,7 @@ export async function load({ params, request }) {
 	// Untertitel-Sprachen extrahieren
 	const firstSubtitles = mediaEntry?.links?.[0]?.subtitles || [];
 	const subtitleLanguages = extractSubtitleLanguages(firstSubtitles);
-	let t = params.id ? mediaEntry.title  + ' on ' + mediaEntry.channel.name: 'Home';
+	let t = params.id ? mediaEntry.title + ' on ' + mediaEntry.channel.name : 'Home';
 	let d1 = params.id
 		? 'Watch ' + mediaEntry.title + ' on ' + mediaEntry.channel.name
 		: 'Watch the latest movies, series, music and more.';
@@ -237,8 +236,14 @@ export async function load({ params, request }) {
 			description: 'Open Graph Description TOP'
 		}
 	}) satisfies MetaTagsProps;
-
 	// Rückgabe mit potenziellen Fehlern
+	let serverhour;
+	await new NTPClient().getNetworkTime().then((networkTime) => {
+		let date = new Date(networkTime);
+		serverhour = date.getHours();
+	});
+	console.log(serverhour);
+
 	return {
 		error,
 		page: mediaEntry || null,
@@ -248,10 +253,11 @@ export async function load({ params, request }) {
 		geo: capitalizeFirst(countryCode),
 		seasons: mediaEntry?.season || [],
 		playlist,
-		cast: mediaEntry?.cast &&mediaEntry?.cast.length > 0 ? mediaEntry?.cast.slice(0, 5) : [],
-		crew: mediaEntry?.crew &&mediaEntry?.crew.length > 0 ? mediaEntry?.crew.slice(0, 5) : [],
+		cast: mediaEntry?.cast && mediaEntry?.cast.length > 0 ? mediaEntry?.cast.slice(0, 5) : [],
+		crew: mediaEntry?.crew && mediaEntry?.crew.length > 0 ? mediaEntry?.crew.slice(0, 5) : [],
 		videosource: videoSource || {},
 		dyna: mediaEntry.dyna,
-		pageMetaTags
+		pageMetaTags,
+		serverhour: serverhour
 	};
 }

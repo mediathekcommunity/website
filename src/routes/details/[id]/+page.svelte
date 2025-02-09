@@ -16,6 +16,8 @@
 		const minutes = totalMinutes % 60;
 		return `${hours}h${minutes > 0 ? ` ${minutes}m` : ''}`;
 	}
+	let date_ob = new Date();
+	console.log(date_ob);
 	function getformat(id) {
 		switch (id) {
 			case 'mpd':
@@ -27,7 +29,7 @@
 		}
 	}
 
-    function getImageUrl(slide) {
+	function getImageUrl(slide) {
 		if (slide.backdrop) {
 			return 'https://mediathekc.b-cdn.net/t/p/original' + slide.backdrop;
 		} else {
@@ -114,6 +116,7 @@
 			stopvideo();
 		}
 	}
+	console.log(data);
 </script>
 
 {#if data1}
@@ -339,22 +342,32 @@
 								<div class="collapse-content text-sm">
 									<div class="episode-content">
 										<p class="episode-overview">{data1.description}</p>
-										<button
-											type="button"
-											class="btn btn-accent"
-											onclick={() =>
-												data.geo == data.page.channel.country ? playvideo(data1) : ''}
-										>
-											{#if data.geo == data.page.channel.country}
-												<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
-												<span> Play</span>
+
+										{#if data.geo == data.page.channel.country}
+											{#if data.page.fskcheck == true && data.serverhour < 22}
+											<button
+													type="button"
+													class="btn btn-accent"> 
+												<span class="flex items-center gap-1"> FSK ! - Only after 22:00 </span></button>
 											{:else}
-												<span class="flex items-center gap-1">
-													<span class="fi fi-{data1.channel.country.toLowerCase()}"></span>
-													IP required
-												</span>
+												<button
+													type="button"
+													class="btn btn-accent"
+													onclick={() =>
+														data.geo == data.page.channel.country ? playvideo(data1) : ''}
+												>
+													<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
+													<span> Play</span>
+												</button>
 											{/if}
-										</button>
+										{:else}	<button
+										type="button"
+										class="btn btn-accent"> 
+											<span class="flex items-center gap-1">
+												<span class="fi fi-{data1.channel.country.toLowerCase()}"></span>
+												IP required
+											</span></button>
+										{/if}
 									</div>
 								</div>
 							</div>
