@@ -6,7 +6,7 @@ const directus = getDirectusInstance(fetch);
 
 export async function load({ params, fetch }) {
 	const { id } = params;
-	const res = await fetch(`https://api2.mediathek.community/person/${id}`);
+	const res = await fetch(`https://123-u7ush.b-cdn.net/person/${id}`);
 
 	if (!res.ok) {
 		throw error(res.status, 'Failed to fetch cast information');
