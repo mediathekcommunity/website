@@ -5,7 +5,7 @@
         import type { PageData, Channel } from '$lib/types/channels'; // Import from the correct location
 
         export let data: PageData;
-        let options = { align: 'start', slidesToScroll: 2, loop: true };
+        let options = { align: 'start', slidesToScroll: 1, loop: true };
 
         // Function to group media items by channel country
         const groupByChannelCountry = (channels: Channel[]) => {
@@ -24,14 +24,16 @@
     <div>
         {#if data && data.channels && data.channels.length > 0}
            <div class="content-section px-4 sm:px-6 lg:px-8">
- {#each countries as country}
+ 		{#each countries as country}
                 <div class="maincontent">
-                <div class="country-header">
-                    <!-- svelte-ignore svelte_component_deprecated -->
-                    <span class="fi fi-{country.toLowerCase()}"></span>
-                </div>
-                <div class="embla" use:emblaCarouselSvelte={options}>
-                    <div class="embla__container">
+		<h1 class="section-title">
+			<span class="bg-linear-to-br from-red-500 to-yellow-300 box-decoration-clone bg-clip-text text-transparent">
+			<!-- svelte-ignore svelte_component_deprecated -->
+     	               <span class="fi fi-{country.toLowerCase()}"></span>
+			</span>
+                    </h1>
+		<div class="embla" use:emblaCarouselSvelte={options}>
+                    <div class="embla__container flex">
                         {#each groupedData[country] as channel}
                             <div class="embla__slide">
                                 <ChannelCard
@@ -47,7 +49,7 @@
                     </div>
                 </div>
             {/each}
-</div>
+	</div>
         {:else}
             <ErrorSection filter={data.filter} text1="Channel" />
         {/if}
