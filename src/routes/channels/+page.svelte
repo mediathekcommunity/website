@@ -94,7 +94,7 @@
     }
     @media (max-width: 640px) {
         .content-section {
-            margin-top: -1.5rem;
+            margin-top: 1.5rem;
             padding-top: 2rem;
         }
 
