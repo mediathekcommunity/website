@@ -61,9 +61,6 @@
 				Source
 			</a>
 		</span>
-		<span>
-			Info: Alle hier verlinkten Dateien liegen auf den Servern der entsprechenden Sender.
-		</span>
 	</nav>
 </footer>
 
