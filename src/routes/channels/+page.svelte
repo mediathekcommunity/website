@@ -21,9 +21,10 @@
         $: countries = Object.keys(groupedData).sort();
     </script>
 
-    <div class="channels-container">
+    <div>
         {#if data && data.channels && data.channels.length > 0}
-            {#each countries as country}
+           <div class="channels-container">
+ {#each countries as country}
                 <div class="country-header">
                     <!-- svelte-ignore svelte_component_deprecated -->
                     <span class="fi fi-{country.toLowerCase()}"></span>
@@ -44,6 +45,7 @@
                     </div>
                 </div>
             {/each}
+</div>
         {:else}
             <ErrorSection filter={data.filter} text1="Channel" />
         {/if}
@@ -51,7 +53,12 @@
 
     <style>
         .channels-container {
-            padding: 4rem 1rem 1rem 3em; /* Add horizontal padding */
+            margin-top: -2rem;
+        position: relative;
+        z-index: 10;
+        background: linear-gradient(to bottom, transparent, rgb(17, 17, 17) 15%);
+        padding-top: 3rem;
+        // padding-left: 3rem;
         }
 
         .embla__slide {
