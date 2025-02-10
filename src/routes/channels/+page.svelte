@@ -63,21 +63,64 @@
         // padding-left: 3rem;
 
     }
+
     .maincontent {
         margin-bottom: 0rem;
     }
-        .embla__slide {
-            flex: 0 0 200px !important;
-            min-width: 0;
-            padding: 0 0.5rem; /* Add some space between slides */
+
+    .section-title {
+        font-size: clamp(1.25rem, 2vw, 1.5rem);
+        font-weight: bold;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    .embla {
+        overflow: hidden;
+        margin: 0;
+    }
+
+    .embla__container {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .embla__slide {
+        flex: 0 0 auto;
+        min-width: 0;
+        padding: 0;
+    }
+    @media (max-width: 640px) {
+        .content-section {
+            margin-top: -1.5rem;
+            padding-top: 2rem;
         }
 
-        .embla__container {
-            display: flex;
-            flex-direction: row;
-            margin: 0 -0.5rem; /* Compensate for slide padding */
+        .section-title {
+			padding: 1.25rem 1.25rem 0.625rem 1.25rem;
         }
+    }
 
+    @media (min-width: 641px) and (max-width: 1024px) {
+        .content-section {
+            margin-top: -2rem;
+            padding-top: 2.5rem;
+            padding-left: 0rem !important;
+        }
+		.section-title {
+			padding: 0 1rem 0.5rem 1rem;
+		}
+    }
+
+    @media (min-width: 1025px) {
+        .content-section {
+            margin-top: -2rem;
+            padding-top: 3rem;
+        }
+		.section-title {
+			padding: 1.25rem 1.25rem 0.625rem 1.25rem;
+		}
+    }
         .country-header {
             display: flex;
             align-items: center;
