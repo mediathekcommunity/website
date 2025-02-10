@@ -1,24 +1,12 @@
-node_modules
-
-# Output
-.output
-.vercel
-.netlify
-.wrangler
-/.svelte-kit
-/build
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Env
-.env
-.env.*
-!.env.example
-!.env.test
-
-# Vite
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
-*.mp4
+/*
+!/package.json
+!/package-lock.json
+!/svelte.config.js
+!/tailwind.config.cjs
+!/vite.config.js
+!/postcss.config.cjs
+!/src
+!/static
+!/config
+!/tsconfig.json
+!/vite.config.ts
