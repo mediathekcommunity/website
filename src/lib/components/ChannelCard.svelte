@@ -39,6 +39,8 @@
 
 <style>
 	.channel-card {
+		width: 220px;
+		height: 330px;
 		background-color: var(--color-surface-100, #ffffff);
 		border-radius: 8px;
 		overflow: hidden;
