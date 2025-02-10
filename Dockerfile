@@ -1,8 +1,8 @@
 # syntax = docker/dockerfile:1
 
-# Adjust NODE_VERSION as desired
-ARG NODE_VERSION=22.12.0
-FROM node:${NODE_VERSION}-alpine AS base
+# Adjust BUN_VERSION as desired
+ARG BUN_VERSION=1.2.2
+FROM oven/bun:${BUN_VERSION}-alpine AS base
 
 LABEL fly_launch_runtime="SvelteKit"
 
@@ -12,27 +12,27 @@ WORKDIR /app
 # Set production environment
 ENV NODE_ENV="production"
 
-# Install pnpm
-ARG PNPM_VERSION=10.0.0 
-
-RUN npm install -g pnpm@$PNPM_VERSION
-
 
 # Throw-away build stage to reduce size of final image
 FROM base AS build
 
 # Install packages needed to build node modules
-RUN apk update
+RUN apk update && \
+    apk add build-base pkgconfig python3
 
 # Install node modules
-COPY .npmrc package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile --prod=false
+COPY .npmrc bun.lock package.json ./
+RUN bun install
 
 # Copy application code
 COPY . .
-RUN pnpm run build
+
+# Build application
+RUN bun run build
+
 # Remove development dependencies
-RUN pnpm prune --prod
+RUN rm -rf node_modules && \
+    bun install --ci
 
 
 # Final stage for app image
@@ -45,4 +45,4 @@ COPY --from=build /app/package.json /app
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-CMD [ "pnpm", "run", "start" ]
+CMD [ "bun", "run", "start" ]
