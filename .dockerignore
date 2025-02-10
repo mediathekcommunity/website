@@ -10,3 +10,4 @@
 !/config
 !/tsconfig.json
 !/vite.config.ts
+!/bun.lock
