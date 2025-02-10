@@ -33,7 +33,7 @@
 			</span>
                     </h1>
 		<div class="embla" use:emblaCarouselSvelte={options}>
-                    <div class="embla__container flex">
+                    <div class="embla__container">
                         {#each groupedData[country] as channel}
                             <div class="embla__slide">
                                 <ChannelCard
