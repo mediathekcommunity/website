@@ -1,75 +1,138 @@
-    <script lang="ts">
-        import emblaCarouselSvelte from 'embla-carousel-svelte';
-        import ChannelCard from '$lib/components/ChannelCard.svelte';
-        import ErrorSection from '$lib/components/ErrorSection.svelte';
-        import type { PageData, Channel } from '$lib/types/channels'; // Import from the correct location
+<script lang="ts">
+	import emblaCarouselSvelte from 'embla-carousel-svelte';
+	import ChannelCard from '$lib/components/ChannelCard.svelte';
+	import ErrorSection from '$lib/components/ErrorSection.svelte';
+	import type { PageData, Channel } from '$lib/types/channels';
 
-        export let data: PageData;
-        let options = { align: 'start', slidesToScroll: 2, loop: true };
+	export let data: PageData;
 
-        // Function to group media items by channel country
-        const groupByChannelCountry = (channels: Channel[]) => {
-            return channels.reduce((acc, channel) => {
-                const country = channel?.country || 'Unknown';
-                acc[country] = acc[country] || [];
-                acc[country].push(channel);
-                return acc;
-            }, {} as Record<string, Channel[]>);
-        };
+	// Embla Carousel options
+	const emblaOptions = { align: 'start', slidesToScroll: 1, loop: true };
 
-        $: groupedData = groupByChannelCountry(data.channels);
-        $: countries = Object.keys(groupedData).sort();
-    </script>
+	// Group channels by country
+	const groupChannelsByCountry = (channels: Channel[]): Record<string, Channel[]> => {
+		return channels.reduce((acc, channel) => {
+			const country = channel?.country || 'Unknown';
+			acc[country] = acc[country] || [];
+			acc[country].push(channel);
+			return acc;
+		}, {} as Record<string, Channel[]>);
+	};
 
-    <div class="channels-container">
-        {#if data && data.channels && data.channels.length > 0}
-            {#each countries as country}
-                <div class="country-header">
-                    <!-- svelte-ignore svelte_component_deprecated -->
-                    <span class="fi fi-{country.toLowerCase()}"></span>
-                </div>
-                <div class="embla" use:emblaCarouselSvelte={options}>
-                    <div class="embla__container">
-                        {#each groupedData[country] as channel}
-                            <div class="embla__slide">
-                                <ChannelCard
-                                    id={channel.id}
-                                    title={channel.title}
-                                    poster={channel.poster}
-                                    channelName={channel.name}
-                                    channelIcon={channel.icon}
-                                />
-                            </div>
-                        {/each}
-                    </div>
-                </div>
-            {/each}
-        {:else}
-            <ErrorSection filter={data.filter} text1="Channel" />
-        {/if}
-    </div>
+	$: groupedChannels = groupChannelsByCountry(data.channels);
+	$: sortedCountries = Object.keys(groupedChannels).sort();
+</script>
 
-    <style>
-        .channels-container {
-            padding: 4rem 1rem 1rem 3em; /* Add horizontal padding */
-        }
+<div>
+	{#if data?.channels?.length}
+		<section class="content-section">
+			{#each sortedCountries as country}
+				<article class="country-group">
+					<h2 class="section-title">
+						<span class="flag-icon">
+							<!-- svelte-ignore svelte_component_deprecated -->
+							<span class="fi fi-{country.toLowerCase()}"></span>
+						</span>
+					</h2>
+					<div class="embla" use:emblaCarouselSvelte={emblaOptions}>
+						<div class="embla__container">
+							{#each groupedChannels[country] as channel}
+								<div class="embla__slide">
+									<ChannelCard
+										id={channel.id}
+										title={channel.title}
+										poster={channel.poster}
+										channelName={channel.name}
+										channelIcon={channel.icon}
+									/>
+								</div>
+							{/each}
+						</div>
+					</div>
+				</article>
+			{/each}
+		</section>
+	{:else}
+		<ErrorSection filter={data.filter} text1="Channel" />
+	{/if}
+</div>
 
-        .embla__slide {
-            flex: 0 0 200px !important;
-            min-width: 0;
-            padding: 0 0.5rem; /* Add some space between slides */
-        }
+<style>
+	.content-section {
+		margin-top: -2rem;
+		position: relative;
+		z-index: 10;
+		background: linear-gradient(to bottom, transparent, rgb(17, 17, 17) 15%);
+		padding-top: 3rem;
+	}
 
-        .embla__container {
-            display: flex;
-            flex-direction: row;
-            margin: 0 -0.5rem; /* Compensate for slide padding */
-        }
+	.country-group {
+		margin-bottom: 0;
+	}
 
-        .country-header {
-            display: flex;
-            align-items: center;
-            margin-top: 20px;
-            margin-bottom: 10px;
-        }
-    </style>
+	.section-title {
+		font-size: clamp(1.25rem, 2vw, 1.5rem);
+		font-weight: bold;
+		margin-bottom: 1rem;
+		text-align: center;
+	}
+
+    .flag-icon {
+        background-image: linear-gradient(to bottom right, red 50%, yellow 50%);
+        -webkit-box-decoration-break: clone;
+        box-decoration-break: clone;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+	.embla {
+		overflow: hidden;
+		margin: 0;
+	}
+
+	.embla__container {
+		display: flex;
+		gap: 1rem;
+	}
+
+	.embla__slide {
+		flex: 0 0 auto;
+		min-width: 0;
+		padding: 0;
+	}
+
+	@media (max-width: 640px) {
+		.content-section {
+			margin-top: 1.5rem;
+			padding-top: 2rem;
+		}
+
+		.section-title {
+			padding: 1.25rem;
+		}
+	}
+
+	@media (min-width: 641px) and (max-width: 1024px) {
+		.content-section {
+			margin-top: -2rem;
+			padding-top: 2.5rem;
+			padding-left: 0 !important;
+		}
+
+		.section-title {
+			padding: 0 1rem 0.5rem 1rem;
+		}
+	}
+
+	@media (min-width: 1025px) {
+		.content-section {
+			margin-top: -2rem;
+			padding-top: 3rem;
+		}
+
+		.section-title {
+			padding: 1.25rem;
+		}
+	}
+</style>
