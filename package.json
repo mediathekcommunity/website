@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite dev",
     "start": "vite build",
-    "build": "npm install -g corepack && corepack install -g pnpm@10.1.0 && pnpm i  && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
