@@ -65,6 +65,15 @@
 </footer>
 
 <style>
+	.footer {
+	    grid-auto-flow: row;
+	    place-items: start;
+	    gap: 1rem 1rem !important;
+	    width: 100%;
+	    font-size: .875rem;
+	    line-height: 1.25rem;
+	    display: grid;
+	}	
 	.tmdb-credit {
 		font-size: 0.9rem;
 		color: var(--font-color-light);
