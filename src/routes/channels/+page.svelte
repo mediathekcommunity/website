@@ -23,8 +23,9 @@
 
     <div>
         {#if data && data.channels && data.channels.length > 0}
-           <div class="channels-container">
+           <div class="content-section px-4 sm:px-6 lg:px-8">
  {#each countries as country}
+                <div class="maincontent">
                 <div class="country-header">
                     <!-- svelte-ignore svelte_component_deprecated -->
                     <span class="fi fi-{country.toLowerCase()}"></span>
@@ -41,6 +42,7 @@
                                     channelIcon={channel.icon}
                                 />
                             </div>
+                            </div>
                         {/each}
                     </div>
                 </div>
@@ -52,15 +54,18 @@
     </div>
 
     <style>
-        .channels-container {
-            margin-top: -2rem;
+    .content-section {
+        margin-top: -2rem;
         position: relative;
         z-index: 10;
         background: linear-gradient(to bottom, transparent, rgb(17, 17, 17) 15%);
         padding-top: 3rem;
         // padding-left: 3rem;
-        }
 
+    }
+    .maincontent {
+        margin-bottom: 0rem;
+    }
         .embla__slide {
             flex: 0 0 200px !important;
             min-width: 0;
