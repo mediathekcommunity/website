@@ -45,4 +45,4 @@ COPY --from=build /app/package.json /app
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-CMD [ "bun", "run", "start" ]
+CMD [ "bun", "./build/index.js" ]
