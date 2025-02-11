@@ -40,7 +40,7 @@
 <style>
 	.channel-card {
 		width: 220px;
-		height: 330px;
+		height: 130px;
 		background-color: var(--color-surface-100, #ffffff);
 		border-radius: 8px;
 		overflow: hidden;
@@ -54,31 +54,10 @@
 		position: relative;
 	}
 
-	.channel-card:hover,
 	.channel-card:focus {
-		transform: translateY(-5px);
 		box-shadow: 0 0 20px rgba(var(--color-primary-5 00-rgb), 0.5);
 		filter: brightness(1.1);
 		outline: none;
-	}
-
-	.channel-card::after {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		opacity: 0;
-		box-shadow: 0 0 30px rgba(var(--color-primary-500-rgb), 0.8);
-		transition: opacity 0.3s ease;
-		border-radius: inherit;
-		pointer-events: none;
-	}
-
-	.channel-card:hover::after,
-	.channel-card:focus::after {
-		opacity: 1;
 	}
 
 	.channel-card img {
@@ -100,5 +79,5 @@
 		color: var(--color-text-200, #9e9e9e);
 		text-align: center;
 		padding: 1rem;
-	} 
+	}
 </style>

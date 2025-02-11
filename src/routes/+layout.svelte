@@ -37,7 +37,7 @@
 </div>
 
 <style>
-	/* Global styles für bessere Übersicht */
+ 	/* Global styles für bessere Übersicht */
 	:global(body) {
 		margin: 0;
 		padding: 0;
@@ -51,13 +51,14 @@
 	.app {
 		display: flex;
 		flex-direction: column;
-		min-height: 100vh;
+		min-height: 100lvh;
 	}
 
 	main {
 		flex: 1;
 		width: 100%;
 		max-width: 100%;
+		min-height: 100dvh;
 	}
 
 	@media (max-width: 768px) {

@@ -11,12 +11,15 @@
 
 	// Group channels by country
 	const groupChannelsByCountry = (channels: Channel[]): Record<string, Channel[]> => {
-		return channels.reduce((acc, channel) => {
-			const country = channel?.country || 'Unknown';
-			acc[country] = acc[country] || [];
-			acc[country].push(channel);
-			return acc;
-		}, {} as Record<string, Channel[]>);
+		return channels.reduce(
+			(acc, channel) => {
+				const country = channel?.country || 'Unknown';
+				acc[country] = acc[country] || [];
+				acc[country].push(channel);
+				return acc;
+			},
+			{} as Record<string, Channel[]>
+		);
 	};
 
 	$: groupedChannels = groupChannelsByCountry(data.channels);
@@ -25,7 +28,7 @@
 
 <div>
 	{#if data?.channels?.length}
-		<section class="content-section">
+		<section class="content-section px-4 sm:px-6 lg:px-8">
 			{#each sortedCountries as country}
 				<article class="country-group">
 					<h2 class="section-title">
@@ -59,11 +62,12 @@
 
 <style>
 	.content-section {
-		margin-top: -2rem;
+		margin-top: 1rem;
 		position: relative;
 		z-index: 10;
 		background: linear-gradient(to bottom, transparent, rgb(17, 17, 17) 15%);
 		padding-top: 3rem;
+		min-height: 100dvh;
 	}
 
 	.country-group {
@@ -77,14 +81,14 @@
 		text-align: center;
 	}
 
-    .flag-icon {
-        background-image: linear-gradient(to bottom right, red 50%, yellow 50%);
-        -webkit-box-decoration-break: clone;
-        box-decoration-break: clone;
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-    }
+	.flag-icon {
+		background-image: linear-gradient(to bottom right, red 50%, yellow 50%);
+		-webkit-box-decoration-break: clone;
+		box-decoration-break: clone;
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
 
 	.embla {
 		overflow: hidden;
@@ -115,7 +119,7 @@
 
 	@media (min-width: 641px) and (max-width: 1024px) {
 		.content-section {
-			margin-top: -2rem;
+			margin-top: 1.5 rem;
 			padding-top: 2.5rem;
 			padding-left: 0 !important;
 		}
@@ -127,7 +131,7 @@
 
 	@media (min-width: 1025px) {
 		.content-section {
-			margin-top: -2rem;
+			margin-top: 1rem;
 			padding-top: 3rem;
 		}
 

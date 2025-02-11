@@ -99,6 +99,7 @@
         z-index: 10;
         background: linear-gradient(to bottom, transparent, rgb(17, 17, 17) 15%);
         padding-top: 3rem;
+        min-height: 100dvh;
         // padding-left: 3rem;
 
     }
