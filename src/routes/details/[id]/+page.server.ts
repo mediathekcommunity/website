@@ -209,7 +209,7 @@ export async function load({ params, request, setHeaders }) {
 		error = 'Media entry links are missing or empty';
 	}
 
-	const countryCode = request.headers.get('cf-ipcountry') ?? 'DE';
+	const countryCode = request.headers.get('CDN-RequestCountryCode') ?? 'DE';
 
 	// Playlist und Videoquelle erstellen
 	const playlist = createPlaylist(mediaEntry?.slinks || []) || [];

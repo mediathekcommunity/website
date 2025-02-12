@@ -48,3 +48,4 @@ buns/src/lib/index.js
 buns/src/routes/+layout.svelte
 buns/src/routes/+page.svelte
 buns/static/favicon.png
+dr.json
