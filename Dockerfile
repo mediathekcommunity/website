@@ -1,7 +1,7 @@
 # syntax = docker/dockerfile:1
 
 # Adjust BUN_VERSION as desired
-ARG BUN_VERSION=1.2.2
+ARG BUN_VERSION=1.1.34
 FROM oven/bun:${BUN_VERSION}-alpine AS base
 
 LABEL fly_launch_runtime="SvelteKit"
@@ -21,7 +21,7 @@ RUN apk update && \
     apk add build-base pkgconfig python3
 
 # Install node modules
-COPY .npmrc bun.lock package.json ./
+COPY bun.lock package.json ./
 RUN bun install
 
 # Copy application code
