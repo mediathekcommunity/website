@@ -53,7 +53,7 @@ const capitalizeFirstLetter = (str: string): string =>
  * @returns Boolean indicating if params are valid.
  */
 const checkparamsok = (params: string | undefined): boolean => {
-	const allowedParams = ['movie', 'series', 'debug', 'music', 'youth', 'specials'];
+	const allowedParams = ['movie', 'series', 'debug', 'music', 'youth', 'specials', 'culture'];
 	return !params || allowedParams.includes(params);
 };
 
@@ -67,7 +67,8 @@ const query = async (id?: any): Promise<MediathekItem[]> => {
 		youth: { _or: [{ type: 'y-movie' }, { type: 'y-series' }] },
 		movie: { type: 'movie' },
 		series: { type: 'series' },
-		music: { type: 'music' }
+		music: { type: 'music' },
+		culture: { type: 'culture'}
 	};
 
 	id = filterMap[id];
@@ -105,14 +106,10 @@ export const load = async ({ fetch, params, request, setHeaders }) => {
 
 	const groupedData = groupByChannelCountry(data);
 	let t = id ? id : 'Home';
-	let d1 = id ? 'Watch latest ' + id : 'Watch the latest movies, series, music and more.';
+	let d1 = id ? 'Watch latest ' + id : 'Watch the latest movies, series, music and more from  public  broadcast mediatheks.';
 	const pageMetaTags = Object.freeze({
 		title: t,
-		description: d1,
-		openGraph: {
-			title: 'Open Graph Title TOP',
-			description: 'Open Graph Description TOP'
-		}
+		description: d1
 	}) satisfies MetaTagsProps;
 
 	// Filter and sort items that expire in the next 5 days
