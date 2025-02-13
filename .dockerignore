@@ -1,16 +1,24 @@
-Dockerfile
-.dockerignore
-.git
-.gitignore
-.gitattributes
-README.md
- .prettierrc
-.eslintrc.cjs
-.graphqlrc
-.editorconfig
-.svelte-kit
-.vscode
 node_modules
-build
-package
-**/.env
+
+# Output
+
+.output
+.vercel
+/build
+
+# OS
+
+.DS_Store
+Thumbs.db
+
+# Env
+
+.env
+.env.\*
+!.env.example
+!.env.test
+
+# Vite
+
+vite.config.js.timestamp-_
+vite.config.ts.timestamp-_
