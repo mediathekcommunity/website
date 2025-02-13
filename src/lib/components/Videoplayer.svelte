@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
-	import 'video.js/dist/video-js.css'; // Import default video.js styles first
+	// import 'video.js/dist/video-js.css';  Import default video.js styles first
 	import '../videojs/skins/gold1/videojs.min.css'; // Then override with custom skin
 	import videojs from 'video.js';
 	import '../videojs/plugins/es/nuevo.js';
