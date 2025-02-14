@@ -7,9 +7,9 @@ COPY . .
 # Install packages needed to build node modules
 RUN apk update && \
     apk add build-base pkgconfig python3
-    
+
 # Install the SvelteKit dependencies
-RUN deno install
+RUN deno install --allow-scripts
 
 # Build the SvelteKit application
 RUN deno task build
