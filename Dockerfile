@@ -4,7 +4,10 @@ WORKDIR /app
 
 # Copy application files
 COPY . .
-
+# Install packages needed to build node modules
+RUN apk update && \
+    apk add build-base pkgconfig python3
+    
 # Install the SvelteKit dependencies
 RUN deno install
 
