@@ -25,6 +25,7 @@
 				<li><a href="/movie">Movies</a></li>
 				<li><a href="/series">TV Shows</a></li>
 				<li><a href="/music">Music</a></li>
+				<li><a href="/culture">Culture</a></li>
 				<li><a href="/youth">Youth</a></li>
 				<li><a href="/specials">Specials</a></li>
 				<li><a href="/channels">Channels</a></li>
@@ -42,6 +43,7 @@
 				<li><a href="/movie" onclick={toggleMobileMenu}>Movies</a></li>
 				<li><a href="/series" onclick={toggleMobileMenu}>TV Shows</a></li>
 				<li><a href="/music" onclick={toggleMobileMenu}>Music</a></li>
+				<li><a href="/culture" onclick={toggleMobileMenu}>Culture</a></li>
 				<li><a href="/youth" onclick={toggleMobileMenu}>Youth</a></li>
 				<li><a href="/specials" onclick={toggleMobileMenu}>Specials</a></li>
 				<li><a href="/channels" onclick={toggleMobileMenu}>Channels</a></li>
