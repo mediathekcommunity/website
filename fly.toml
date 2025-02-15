@@ -12,14 +12,15 @@ primary_region = 'fra'
   auto_stop_machines = 'suspend'
   auto_start_machines = true
   min_machines_running = 1
-  processes = ['app']
   [[http_service.checks]]
-    grace_period = "30s"
-    interval = "1m"
+    grace_period = "1m"
+    interval = "30s"
     method = "GET"
-    timeout = "10s"
+    timeout = "20s"
     path = "/"
 [[vm]]
   size = 'shared-cpu-1x'
+    memory = '512mb'
 [deploy]
   strategy = "bluegreen"
+

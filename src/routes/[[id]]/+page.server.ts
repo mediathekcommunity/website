@@ -97,7 +97,7 @@ export const load = async ({ fetch, params, request, setHeaders }) => {
 		throw error(403, 'Forbidden params');
 	}
 
-	const geo = capitalizeFirstLetter(request.headers.get('cf-ipcountry') || 'De');
+	const geo = capitalizeFirstLetter(request.headers.get('CDN-RequestCountryCode') || 'De');
 	const data = await query(id);
 
 	if (!data) {
