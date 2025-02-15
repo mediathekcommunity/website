@@ -12,9 +12,13 @@
     "npm:@sveltejs/kit@^2.17.1": "2.17.1_@sveltejs+vite-plugin-svelte@5.0.3__svelte@5.20.0___acorn@8.14.0__vite@6.1.0___lightningcss@1.29.1_svelte@5.20.0__acorn@8.14.0_vite@6.1.0__lightningcss@1.29.1",
     "npm:@sveltejs/vite-plugin-svelte@^5.0.3": "5.0.3_svelte@5.20.0__acorn@8.14.0_vite@6.1.0__lightningcss@1.29.1",
     "npm:@tailwindcss/vite@^4.0.6": "4.0.6_vite@6.1.0__lightningcss@1.29.1_lightningcss@1.29.1",
+    "npm:@types/node@^22.13.4": "22.13.4",
     "npm:@unpic/svelte@1": "1.0.0_svelte@5.20.0__acorn@8.14.0",
+    "npm:clsx@^2.1.1": "2.1.1",
+    "npm:cookie@^1.0.2": "1.0.2",
     "npm:daisyui@5.0.0-beta.8": "5.0.0-beta.8",
     "npm:date-fns@^4.1.0": "4.1.0",
+    "npm:devalue@^5.1.1": "5.1.1",
     "npm:embla-carousel-autoplay@^8.5.2": "8.5.2_embla-carousel@8.5.2",
     "npm:embla-carousel-fade@^8.5.2": "8.5.2_embla-carousel@8.5.2",
     "npm:embla-carousel-svelte@^8.5.2": "8.5.2_svelte@5.20.0__acorn@8.14.0_embla-carousel@8.5.2",
@@ -26,6 +30,7 @@
     "npm:prettier-plugin-svelte@^3.3.3": "3.3.3_prettier@3.5.1_svelte@5.20.0__acorn@8.14.0",
     "npm:prettier-plugin-tailwindcss@~0.6.11": "0.6.11_prettier@3.5.1_prettier-plugin-svelte@3.3.3__prettier@3.5.1__svelte@5.20.0___acorn@8.14.0_svelte@5.20.0__acorn@8.14.0",
     "npm:prettier@^3.5.0": "3.5.1",
+    "npm:set-cookie-parser@^2.7.1": "2.7.1",
     "npm:svelte-check@^4.1.4": "4.1.4_svelte@5.20.0__acorn@8.14.0_typescript@5.7.3",
     "npm:svelte-meta-tags@^4.1.0": "4.1.0_svelte@5.20.0__acorn@8.14.0_typescript@5.7.3",
     "npm:svelte-time@2": "2.0.0",
@@ -34,7 +39,8 @@
     "npm:typescript@^5.7.3": "5.7.3",
     "npm:unpic@^4.1.2": "4.1.2",
     "npm:video.js@^8.21.0": "8.21.0",
-    "npm:vite@^6.1.0": "6.1.0_lightningcss@1.29.1"
+    "npm:vite@6.1.0": "6.1.0_@types+node@22.13.4",
+    "npm:vite@^6.1.0": "6.1.0_@types+node@22.13.4"
   },
   "npm": {
     "@ampproject/remapping@2.3.0": {
@@ -862,6 +868,12 @@
     "@types/json-schema@7.0.15": {
       "integrity": "sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA=="
     },
+    "@types/node@22.13.4": {
+      "integrity": "sha512-ywP2X0DYtX3y08eFVx5fNIw7/uIv8hYUKgXoK8oayJlLnKcRfEYCxWMVE1XagUdVtCJlZT1AU4LXEABW+L1Peg==",
+      "dependencies": [
+        "undici-types"
+      ]
+    },
     "@types/resolve@1.20.2": {
       "integrity": "sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q=="
     },
@@ -1071,6 +1083,9 @@
     },
     "cookie@0.6.0": {
       "integrity": "sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw=="
+    },
+    "cookie@1.0.2": {
+      "integrity": "sha512-9Kr/j4O16ISv8zBBhJoi4bXOYNTkFLOqSL3UDB0njXxCXNezjeyVrJyGOWtgfs/q2km1gwBcfH8q1yEGoMYunA=="
     },
     "cross-spawn@7.0.6": {
       "integrity": "sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==",
@@ -2197,6 +2212,9 @@
     "ufo@1.5.4": {
       "integrity": "sha512-UsUk3byDzKd04EyoZ7U4DOlxQaD14JUKQl6/P7wiX4FNvUfm3XL246n9W5AmqwW5RSFJ27NAuM0iLscAOYUiGQ=="
     },
+    "undici-types@6.20.0": {
+      "integrity": "sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg=="
+    },
     "undici@5.28.5": {
       "integrity": "sha512-zICwjrDrcrUE0pyyJc1I2QzBkLM8FINsgOrt6WjA+BgajVq9Nxu2PbFFXUrAggLfDXlZGZBVZYw7WNV5KiBiBA==",
       "dependencies": [
@@ -2261,6 +2279,16 @@
     "vite@6.1.0": {
       "integrity": "sha512-RjjMipCKVoR4hVfPY6GQTgveinjNuyLw+qruksLDvA5ktI1150VmcMBKmQaEWJhg/j6Uaf6dNCNA0AfdzUb/hQ==",
       "dependencies": [
+        "esbuild@0.24.2",
+        "fsevents",
+        "postcss",
+        "rollup"
+      ]
+    },
+    "vite@6.1.0_@types+node@22.13.4": {
+      "integrity": "sha512-RjjMipCKVoR4hVfPY6GQTgveinjNuyLw+qruksLDvA5ktI1150VmcMBKmQaEWJhg/j6Uaf6dNCNA0AfdzUb/hQ==",
+      "dependencies": [
+        "@types/node",
         "esbuild@0.24.2",
         "fsevents",
         "postcss",
@@ -2407,9 +2435,13 @@
         "npm:@sveltejs/kit@^2.17.1",
         "npm:@sveltejs/vite-plugin-svelte@^5.0.3",
         "npm:@tailwindcss/vite@^4.0.6",
+        "npm:@types/node@^22.13.4",
         "npm:@unpic/svelte@1",
+        "npm:clsx@^2.1.1",
+        "npm:cookie@^1.0.2",
         "npm:daisyui@5.0.0-beta.8",
         "npm:date-fns@^4.1.0",
+        "npm:devalue@^5.1.1",
         "npm:embla-carousel-autoplay@^8.5.2",
         "npm:embla-carousel-fade@^8.5.2",
         "npm:embla-carousel-svelte@^8.5.2",
@@ -2421,6 +2453,7 @@
         "npm:prettier-plugin-svelte@^3.3.3",
         "npm:prettier-plugin-tailwindcss@~0.6.11",
         "npm:prettier@^3.5.0",
+        "npm:set-cookie-parser@^2.7.1",
         "npm:svelte-check@^4.1.4",
         "npm:svelte-meta-tags@^4.1.0",
         "npm:svelte-time@2",
