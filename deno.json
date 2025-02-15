@@ -1,3 +1,14 @@
 {
-    "nodeModulesDir": "auto"
+    "nodeModulesDir": "auto",
+    "tasks": {
+        "dev": "vite dev",
+        "build": "vite build",
+        "start": "vite build",
+        "preview": "vite preview",
+        "prepare": "svelte-kit sync || echo ''",
+        "check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
+        "check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
+        "format": "prettier --write .",
+        "lint": "prettier --check . && eslint ."
+      }
 }

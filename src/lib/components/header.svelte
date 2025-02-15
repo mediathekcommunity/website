@@ -53,11 +53,6 @@
 {/if}
 
 <style>
-	.disabled {
-		pointer-events: none;
-		cursor: default;
-		color: var(--color-error) !important;
-	}
 	header {
 		position: fixed;
 		top: 0;

@@ -1,5 +1,5 @@
 <script>
-	export let filter, text1,error;
+	export let error;
 
 </script>
 
@@ -45,12 +45,7 @@
 		margin-bottom: 1rem;
 		color: #ccc;
 	}
-
-	.error-filter {
-		font-weight: bold;
-		color: #fff;
-	}
-
+ 
 	.error-suggestion {
 		font-size: 1rem;
 		margin-bottom: 2rem;
