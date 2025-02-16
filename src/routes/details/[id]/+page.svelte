@@ -84,7 +84,10 @@
 		if (!showvideo) {
 			var d = data.videosource;
 			//console.log(data);
+document.body.scrollIntoView();
+
 			showvideo = true; // Always show video for episodes
+
 			//d.skip= 30
 			modalvideo.set(d);
 			seriestype.set('single');
@@ -106,6 +109,8 @@
 	function playepisode(episode, index) {
 		//console.log(showvideo);
 		if (showvideo == false) {
+document.body.scrollIntoView();
+  
 			showvideo = true; // Always show video for episodes
 			myPlaylist = [];
 			seriestype.set('playlist');
