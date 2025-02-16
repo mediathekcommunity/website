@@ -165,7 +165,7 @@ function capitalizeFirst(str: string): string {
 
 // Daten von Directus abrufen
 async function fetchMediaEntry(id: string) {
-	const directus = getDirectusInstance(fetch);
+	const directus = getDirectusInstance();
 	return directus.request(
 		readItem('mediathek', id, {
 			fields: ['*.*.*'],

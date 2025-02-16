@@ -5,7 +5,7 @@ import type { PageServerLoad } from './$types';
 import { addDays, differenceInDays, isBefore } from 'date-fns';
 import type { MetaTagsProps } from 'svelte-meta-tags';
 
-const directus = getDirectusInstance(fetch);
+const directus = getDirectusInstance();
 
 interface MediathekChannel {
 	country?: string;

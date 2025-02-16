@@ -8,25 +8,26 @@
 	import Fade from 'embla-carousel-fade';
 
 	let currentSlide = 0;
-	let options2 = { align: 'start', slidesToScroll: 2, loop: true };
+	let options2 = { slidesToScroll: 2, loop: true };
 	let emblaApi;
 	// Data is loaded from the page server and contains:
 	// - person: the cast member's bio info (e.g., name, bio, hero image URL, etc.)
 	// - mediaSorted: an object where each key is a country and value is an array of media items in which the person appears
 	let { data } = $props();
 	let data1 = $state(data.data);
-	let filteredMedia;
+
+	let filteredMedia = $state([]);
 	$effect(() => {
 		data1 = data.data;
 	});
 	if (data && data.data) {
 		filteredMedia = data.data.mediaSorted.filter((item) => {
-			return item.cast.some(
+			return item?.cast?.some(
 				(castMember: { id: number }) => castMember.id === Number(data1?.paramid)
 			);
 		});
 	}
-	function onInit(event) {
+	function onInit(event: CustomEvent) {
 		emblaApi = event.detail;
 	}
 	let options = { align: 'start', slidesToScroll: 1, loop: true };
@@ -66,7 +67,7 @@
 
 	<!-- Media list sorted by channel country -->
 	<div class="media-list">
-		<div class="embla" use:emblaCarouselSvelte={options2}>
+		<div class="embla" use:emblaCarouselSvelte={{ options: options2, plugins: [] }}>
 			<div class="embla__container flex">
 				{#each filteredMedia as item}
 					<div class="embla__slide">
@@ -77,7 +78,7 @@
 		</div>
 	</div>
 {:else}
-	<ErrorSection text1="We couldn't find any entries that match your search." />
+	<ErrorSection error={data.error} />
 {/if}
 
 <style>

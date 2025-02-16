@@ -2,9 +2,20 @@ import { error } from '@sveltejs/kit';
 
 import getDirectusInstance from '$lib/directus';
 import { readItems } from '@directus/sdk';
-const directus = getDirectusInstance(fetch);
+const directus = getDirectusInstance();
 
-export async function load({ params, fetch ,setHeaders}) {
+type MediathekItem = {
+	id: string;
+	channel?: {
+		country?: string;
+	};
+};
+
+type GroupedByCountry = {
+	[country: string]: MediathekItem[];
+};
+
+export async function load({ params, fetch, setHeaders }) {
 	const { id } = params;
 	const res = await fetch(`https://tmdbomdbv1-gaoyk.bunny.run/person/${id}`);
  	if (!res.ok) {
@@ -32,7 +43,7 @@ export async function load({ params, fetch ,setHeaders}) {
         }
 	};
     let id2 = params.id;
-    const mediathekData = await directus.request(readItems('mediathek', baseOptions));
+	const mediathekData = await directus.request<MediathekItem[]>(readItems('mediathek', baseOptions));
     const filteredData = mediathekData.filter((item) => item.id === id2);
     const data = groupByChannelCountry(filteredData);
 	//
