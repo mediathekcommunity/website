@@ -37,10 +37,7 @@ export async function load({ params, fetch, setHeaders }) {
 		fields: ['*.*.*, channel.country, channel.name, channel.id'],
 		deep: {
 			channel: { limit: 5 }
-		},
-        filter: {
-            type: 'movie'
-        }
+		}
 	};
     let id2 = params.id;
 	const mediathekData = await directus.request<MediathekItem[]>(readItems('mediathek', baseOptions));
