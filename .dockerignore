@@ -8,9 +8,6 @@ build
 .DS_Store
 coverage
 .svelte-kit
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
 README.md
 *.log
 .vscode
