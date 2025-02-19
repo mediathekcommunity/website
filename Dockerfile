@@ -19,14 +19,15 @@ FROM base AS build
 RUN apk update
 
 # Install node modules
-COPY .npmrc package.json ./
-RUN npm install ci
+COPY .npmrc package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile --prod=false
+
 
 # Copy application code
 COPY . .
-RUN npm run build
+RUN pnpm run build
 # Remove development dependencies
-RUN npm prune --prod
+RUN pnpm prune --prod
 
 
 # Final stage for app image
