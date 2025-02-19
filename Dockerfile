@@ -2,20 +2,14 @@
 
 # Adjust NODE_VERSION as desired
 ARG NODE_VERSION=22.12.0
-FROM node:${NODE_VERSION}-alpine AS base
+FROM node:latest-alpine AS base
 
-LABEL fly_launch_runtime="SvelteKit"
 
 # SvelteKit app lives here
 WORKDIR /app
 
 # Set production environment
 ENV NODE_ENV="production"
-
-# Install pnpm
-ARG PNPM_VERSION=10.0.0 
-
-RUN npm install -g pnpm@$PNPM_VERSION
 
 
 # Throw-away build stage to reduce size of final image
@@ -25,14 +19,14 @@ FROM base AS build
 RUN apk update
 
 # Install node modules
-COPY .npmrc package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile --prod=false
+COPY .npmrc package.json ./
+RUN npm install ci
 
 # Copy application code
 COPY . .
-RUN pnpm run build
+RUN npm run build
 # Remove development dependencies
-RUN pnpm prune --prod
+RUN npm prune --prod
 
 
 # Final stage for app image
