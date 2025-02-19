@@ -2,7 +2,7 @@
 
 # Adjust NODE_VERSION as desired
 ARG NODE_VERSION=22.12.0
-FROM node:latest-alpine AS base
+FROM node:current-alpine AS base
 
 
 # SvelteKit app lives here
