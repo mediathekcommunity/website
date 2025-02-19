@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "npm install -g corepack && corepack install -g pnpm@10.1.0 && pnpm i  && vite build",
+    "build": "vite build",
     "start": "vite build",
     "preview": "vite preview",
     "prepare": "svelte-kit sync || echo ''",
