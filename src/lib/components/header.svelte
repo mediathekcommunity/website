@@ -1,21 +1,23 @@
 <script>
 	import { slide } from 'svelte/transition';
-	let isMobileMenuOpen = $state(false);
-	let { isScrolled } = $props();
+	import { writable } from 'svelte/store';
+
+	const isMobileMenuOpen = writable(false);
+	export let isScrolled = false;
 
 	function toggleMobileMenu() {
-		isMobileMenuOpen = !isMobileMenuOpen;
+		isMobileMenuOpen.update(value => !value);
 	}
 </script>
 
-<header class:glass2={isScrolled || isMobileMenuOpen}>
+<header class:glass2={isScrolled || $isMobileMenuOpen}>
 	<div class="header-content">
 		<div class="logo">
 			<a href="/">
 				<h1 class="site-title">
 					<span class="text-primary">Mediathek</span>
 					<span class="text-white">Community</span>
-					<span class="badge badge-primary text-white">v0.8.0</span>
+					<span class="badge badge-primary text-white">v0.9.0</span>
 				</h1>
 			</a>
 		</div>
@@ -35,7 +37,7 @@
 	</div>
 </header>
 
-{#if isMobileMenuOpen}
+{#if $isMobileMenuOpen}
 	<div class="mobile-menu" transition:slide={{ duration: 300 }}>
 		<nav>
 			<ul>

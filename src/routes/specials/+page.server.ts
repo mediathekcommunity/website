@@ -2,8 +2,8 @@ import { error } from '@sveltejs/kit';
 import getDirectusInstance from '$lib/directus';
 import { readItems } from '@directus/sdk';
 
-const groupByChannelCountry = (items: MediathekItem[]): GroupedByCountry => {
-	return items.reduce((acc: GroupedByCountry, item: MediathekItem) => {
+const groupByChannelCountry = (items: any[]) => {
+	return items.reduce((acc: { [x: string]: any[]; }, item: { special: { name: string; }; }) => {
 		const country = item.special?.name || 'Unknown';
 		acc[country] = acc[country] || [];
 		acc[country].push(item);
@@ -18,9 +18,9 @@ const groupByChannelCountry = (items: MediathekItem[]): GroupedByCountry => {
  * @returns {Promise<Channel[]>} A promise that resolves to the fetched channel data.
  * @throws {Error} Throws an error if the Directus request fails.
  */
-async function fetchChannelData(fetcher: typeof fetch): Promise<Channel[]> {
+async function fetchChannelData(): Promise<any[]> {
 	try {
-		const directus = getDirectusInstance(fetcher);
+		const directus = getDirectusInstance();
 		const response = await directus.request(
 			readItems('mediathek', {
 				filter: {
@@ -55,14 +55,14 @@ function capitalizeFirstLetter(str: string): string {
  * @returns {Promise<PageData>} A promise that resolves to the page data.
  * @throws {import('@sveltejs/kit').HttpError} Throws a 404 error if no channel data is found.
  */
-export const load = async ({ fetch, params, request, setHeaders }): Promise<PageData> => {
+export const load = async ({ params, request, setHeaders }): Promise<any> => {
 	// return type here
 	const countryCode = request.headers.get('cf-ipcountry') || 'De';
 	const geo = capitalizeFirstLetter(countryCode);
 	setHeaders({
 		'cache-control': 'max-age=3600'
 	});
-	const channels = await fetchChannelData(fetch);
+	const channels = await fetchChannelData();
 
 	if (!channels || channels.length === 0) {
 		throw error(404, 'Page not found');
@@ -76,6 +76,6 @@ export const load = async ({ fetch, params, request, setHeaders }): Promise<Page
 		geo,
     filterd:groupedData,
     filterdkeys: keys,
-		filter: params.id
+		filter: params
 	};
 };

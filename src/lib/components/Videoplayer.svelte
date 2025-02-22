@@ -8,8 +8,7 @@
 	import '../videojs/plugins/es/videojs.skipintro';
 	import { modalvideo, playlist, subs, seriestype, playlistindex } from '$lib/store';
  
- 
-	let player  = null;
+	let player: any = null;
 	let videoSource: {
 		sources: { src: string; type: string }[];
 		poster: string;
@@ -73,7 +72,7 @@
 		switch (type) {
 			case 'playlist':
 				player.playlist($playlist);
-				const playlistItem: PlaylistItem = $playlist[$playlistindex];
+				const playlistItem = $playlist[$playlistindex];
 				if (playlistItem) {
 					player.poster(playlistItem.thumb);
 				}
@@ -81,7 +80,11 @@
 			case 'single':
 			case 'default':
 				if ($modalvideo) {
-					setCommonSource($modalvideo.src, $modalvideo.thumb || $modalvideo.poster, $modalvideo.type);
+					setCommonSource(
+						$modalvideo.src,
+						$modalvideo.thumb || $modalvideo.poster,
+						$modalvideo.type
+					);
 				}
 				break;
 		}
@@ -91,8 +94,8 @@
 
 	function handleLoadedData() {
 		const index = $playlistindex;
-		const currentModalVideo: ModalVideo | undefined = $modalvideo;
-		const currentPlaylist: PlaylistItem[] | undefined = $playlist;
+		const currentModalVideo = $modalvideo;
+		const currentPlaylist = $playlist;
 
 		if (currentModalVideo?.tracks) {
 			player?.loadTracks(currentModalVideo.tracks);
