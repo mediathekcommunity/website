@@ -57,8 +57,8 @@
 			} else if (carddata.backdropup?.filename) {
 				posterUrl = `https://mediathekc.b-cdn.net/${carddata.backdropup.filename}?host=api`;
 			}
-			      posterUrlStore.set(posterUrl);
-			  }
+		      posterUrlStore.set(posterUrl);
+		  }
 	}
 	
 	
@@ -69,7 +69,7 @@
 	  layout: 'fullWidth',
 	  objectFit: 'fill'
 	});
-	</script>
+</script>
 
 <a href={`/details/${carddata.id}`} class="card">
 	<div
