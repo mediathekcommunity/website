@@ -41,49 +41,41 @@
 </script>
 
 <div>
-	{#if data && data.page && data.page.length > 0 && data.error === false}
+	{#if data && data.page && data.page.length > 0}
 		{#if heroItems}
-			<HeroSlider {heroItems} {data} />
+			<HeroSlider {heroItems} {data} special />
 		{/if}
-		<div class="content-section px-4 sm:px-6 lg:px-8">
-			<div class="maincontent">
-				<h1 class="section-title">
-					<span class="bg-linear-to-br from-blue-500 to-cyan-300 box-decoration-clone bg-clip-text text-transparent">
-						Recently Added
-					</span>
-				</h1>
-				<div class="embla" use:emblaCarouselSvelte={options2} oninit={onInit}>
-					<div class="embla__container flex">
-						{#each data.page as item}
-							<div class="embla__slide">
-								<Card carddata={item} countryflag geo={data.geo} />
-							</div>
-						{/each}
-					</div>
-				</div>
-			</div>
-			{#if data.expiringItems.length > 0}
+		{console.log(data.filterd)}
+
+		{#each data.filterdkeys as item}
+			<div class="content-section px-4 sm:px-6 lg:px-8">
 				<div class="maincontent">
 					<h1 class="section-title">
-						<span class="bg-linear-to-br from-red-500 to-yellow-300 box-decoration-clone bg-clip-text text-transparent">
-							Expiring Soon
+						<span
+							class="bg-linear-to-br from-red-500 to-yellow-300 box-decoration-clone bg-clip-text text-transparent"
+						>
+							{item}
 						</span>
 					</h1>
 					<div class="embla" use:emblaCarouselSvelte={options2} oninit={onInit}>
 						<div class="embla__container flex">
-							{#each data.expiringItems as item}
+							{#each data.filterd[item] as item}
 								<div class="embla__slide">
-									<Card carddata={item} countryflag geo={data.geo} remainingDays={item.remainingDays} />
+									<Card
+										carddata={item}
+										countryflag
+										geo={data.geo}
+										remainingDays={item.remainingDays}
+									/>
 								</div>
 							{/each}
 						</div>
 					</div>
 				</div>
-			{/if}
-			<Slider1 langlist={data.countries} langdata={data.groupbycountry} geo={data.geo} />
-		</div>
+			</div>
+		{/each}
 	{:else}
-		<ErrorSection filter={data?.filter} />
+		<ErrorSection />
 	{/if}
 </div>
 
@@ -123,7 +115,6 @@
 		min-width: 0;
 		padding: 0;
 	}
-
 	@media (max-width: 640px) {
 		.content-section {
 			margin-top: -1.5rem;
@@ -141,7 +132,6 @@
 			padding-top: 2.5rem;
 			padding-left: 0rem !important;
 		}
-
 		.section-title {
 			padding: 0 1rem 0.5rem 1rem;
 		}
@@ -152,7 +142,6 @@
 			margin-top: -2rem;
 			padding-top: 3rem;
 		}
-
 		.section-title {
 			padding: 1.25rem 1.25rem 0.625rem 1.25rem;
 		}
