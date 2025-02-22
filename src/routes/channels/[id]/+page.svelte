@@ -9,9 +9,9 @@
 
 	let { data } = $props<{ data: PageData }>();
 
-	// Derived state for hero items and channel name with proper typing
-	$: heroItems = $derived(data?.page?.slice?.(0, 10) ?? []);
-	$: channelName = $derived(data?.page?.[0]?.channel?.name ?? '');
+	// Replace $: with $derived
+	const heroItems = $derived(data?.page?.slice?.(0, 10) ?? []);
+	const channelName = $derived(data?.page?.[0]?.channel?.name ?? '');
 
 	// Optimized carousel options
 	const options = {
