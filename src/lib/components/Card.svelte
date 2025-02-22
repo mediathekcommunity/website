@@ -3,60 +3,73 @@
 	import { quintOut } from 'svelte/easing';
 	import Icon from '@iconify/svelte';
 	import { Image, type ImageProps } from '@unpic/svelte';
-
+	import { writable } from 'svelte/store';
+	
+	// --- Types ---
 	interface CardData {
-		id: number;
-		title?: string;
-		orgtitle?: string;
-		metascore?: string;
-		type: 'movie' | 'series' | 'music' | 'y-series' | 'y-movie';
-		poster?: string;
-		backdropup?: { filename: string };
-		posterup?: { filename: string };
-		channel: { country: string };
-		remainingDays?: number; // Add remainingDays property
+	  id: number;
+	  title?: string;
+	  orgtitle?: string;
+	  metascore?: string;
+	  type: 'movie' | 'series' | 'music' | 'y-series' | 'y-movie';
+	  poster?: string;
+	  backdropup?: { filename: string };
+	  posterup?: { filename: string };
+	  channel: { country: string };
+	  remainingDays?: number;
 	}
-
+	
+	// --- Props ---
 	export let carddata: CardData;
 	export let countryflag: boolean;
-
+	
+	// --- Reactive Variables ---
 	$: title = carddata?.title || 'Unknown Title';
 	$: orgtitle = carddata?.orgtitle || 'Unknown';
 	$: metascore = carddata?.metascore || 'Unknown';
 	let isHovered = false;
-
-	function getTypeIcon(type: CardData['type']): string {
-		switch (type) {
-			case 'movie':
-				return 'mdi:movie';
-			case 'series':
-				return 'mdi:tv';
-			case 'music':
-				return 'mdi:music';
-			case 'y-series':
-				return 'mdi:tv';
-			case 'y-movie':
-				return 'mdi:movie';
-		}
-	}
-
-	const getPosterUrl = (carddata: CardData): string | null => {
-		if (carddata.poster) {
-			return `https://mediathekc.b-cdn.net/t/p/original${carddata.poster}`;
-		} else if (carddata.coverimageup) {
-			return `https://mediathekc.b-cdn.net/${carddata.coverimageup.filename_disk}?host=api`;
-		}
-		return null;
+	
+	// --- Helper Functions ---
+	
+	// Type-safe icon mapping
+	const typeIconMap: Record<CardData['type'], string> = {
+	  movie: 'mdi:movie',
+	  series: 'mdi:tv',
+	  music: 'mdi:music',
+	  'y-series': 'mdi:tv',
+	  'y-movie': 'mdi:movie',
 	};
-
-	const imageProps = (carddata: CardData, posterUrl: string): ImageProps => ({
-		src: posterUrl,
-		alt: carddata.poster ? `${title} poster` : `${title} backdrop`,
-		class: 'card-poster',
-		layout: 'fullWidth',
-		objectFit: 'fill '
+	
+	function getTypeIcon(type: CardData['type']): string {
+	  return typeIconMap[type] || 'mdi:movie'; // Default icon if type is unknown
+	}
+	
+	// Memoized poster URL calculation
+	const posterUrlStore = writable<string | null>(null);
+	
+	$: {
+	    if (!carddata) {
+	        posterUrlStore.set(null);
+	    } else {
+	        let posterUrl: string | null = null;
+			if (carddata.poster) {
+				posterUrl = `https://mediathekc.b-cdn.net/t/p/original${carddata.poster}`;
+			} else if (carddata.backdropup?.filename) {
+				posterUrl = `https://mediathekc.b-cdn.net/${carddata.backdropup.filename}?host=api`;
+			}
+			      posterUrlStore.set(posterUrl);
+			  }
+	}
+	
+	
+	const imageProps = (carddata: CardData, posterUrl: string | null): ImageProps => ({
+	  src: posterUrl || '', // Provide empty string as fallback
+	  alt: `${title} ${carddata?.poster ? 'poster' : 'backdrop'}`,
+	  class: 'card-poster',
+	  layout: 'fullWidth',
+	  objectFit: 'fill'
 	});
-</script>
+	</script>
 
 <a href={`/details/${carddata.id}`} class="card">
 	<div
@@ -67,13 +80,15 @@
 		on:mouseleave={() => (isHovered = false)}
 	>
 		<div class="card-image">
-			<!-- Move the conditional check into the expression -->
-			{#if getPosterUrl(carddata) !== null}
-				<!-- use it directly -->
-				<Image src={getPosterUrl(carddata)} alt={title} style="object-fit: fill; height:100%" />
-			{:else}
-				<div class="card-poster-placeholder">{title[0]}</div>
-			{/if}
+			{#if carddata}
+			             {#if $posterUrlStore !== null}
+			                 <Image {...imageProps(carddata, $posterUrlStore)} style="object-fit: fill; height:100%" />
+			             {:else}
+			                 <div class="card-poster-placeholder">{title[0]}</div>
+			             {/if}
+			         {:else}
+			             <div class="card-poster-placeholder">?</div>
+			         {/if}
 			<div class="badges">
 				<div class="quality-icon">
 					<Icon icon={getTypeIcon(carddata.type)} />
@@ -116,167 +131,188 @@
 </a>
 
 <style>
-	.card {
-		width: 220px;
-		height: 330px;
-		margin: 0;
-		position: relative;
-		transition:
-			transform 0.3s ease,
-			box-shadow 0.3s ease;
-		cursor: pointer;
-		overflow: hidden;
-		border-radius: 8px;
-		background: rgb(17, 17, 17);
+	:root {
+		--card-bg-color: rgb(17, 17, 17);
+		--card-placeholder-bg-color: rgb(23, 23, 23);
+		--card-overlay-bg-color: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.7) 100%);
+		--badge-bg-color: rgba(0, 0, 0, 0.7);
+        --badge-text-color: white;
+		--red-warning-color: red;
+		--yellow-warning-color: yellow;
 	}
 
-	.card:hover {
-		transform: scale(1.05);
-		box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-		z-index: 1;
-	}
+    .card {
+        width: 220px;
+        height: 330px;
+        margin: 0;
+        position: relative;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        overflow: hidden;
+        border-radius: 8px;
+        background: var(--card-bg-color);
+    }
 
-	.card-content {
-		width: 100%;
-		height: 100%;
-	}
+    .card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+        z-index: 1;
+    }
 
-	.card-image {
-		width: 100%;
-		height: 100%;
-		position: relative;
-	}
+    .card-content {
+        width: 100%;
+        height: 100%;
+    }
 
-	.card-poster,
-	.card-poster-placeholder {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		background: rgb(23, 23, 23);
-	}
+    .card-image {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
 
-	.card-poster-placeholder {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background-color: rgb(23, 23, 23);
-		color: white;
-		font-size: 48px;
-		font-weight: bold;
-	}
+    .card-poster,
+    .card-poster-placeholder {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        background: var(--card-placeholder-bg-color);
+    }
 
-	.card-overlay {
-		position: absolute;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.7) 100%);
-		color: white;
-		padding: 15px;
-		max-height: 70%;
-		overflow-y: auto;
-	}
+    .card-poster-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--card-placeholder-bg-color);
+        color: white;
+        font-size: 48px;
+        font-weight: bold;
+    }
 
-	.badges {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		position: absolute;
-		top: 10px;
-		left: 10px;
-		right: 10px;
-		z-index: 2;
-	}
+    .card-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--card-overlay-bg-color);
+        color: white;
+        padding: 15px;
+        max-height: 70%;
+        overflow-y: auto;
+    }
 
-	.quality-icon,
-	.country-icon,
-	.remaining-days-badge {
-		color: white;
-		background-color: rgba(0, 0, 0, 0.7);
-		border-radius: 6px;
-		padding: 4px;
-		font-size: 24px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		backdrop-filter: blur(4px);
-	}
+    .badges {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        z-index: 2;
+    }
 
-	.remaining-days-badge {
-		font-size: 14px;
-		white-space: nowrap; /* Ensure it is always one line */
-	}
+	/* Utility class for badges */
+    .badge {
+        color: var(--badge-text-color);
+        background-color: var(--badge-bg-color);
+        border-radius: 6px;
+        padding: 4px;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(4px);
+    }
+   
+       .quality-icon,
+       .country-icon,
+       .remaining-days-badge {
+    	color: var(--badge-text-color);
+    	background-color: var(--badge-bg-color);
+    	border-radius: 6px;
+    	padding: 4px;
+    	font-size: 24px;
+    	display: flex;
+    	align-items: center;
+    	justify-content: center;
+    	backdrop-filter: blur(4px);
+       }
+   
+       .remaining-days-badge {
+           font-size: 14px;
+           white-space: nowrap; /* Ensure it is always one line */
+       }
 
-	.remaining-days-text {
-		display: none;
-		font-size: 16px;
-	}
+    .remaining-days-text {
+        display: none;
+        font-size: 16px;
+    }
 
-	.red-warning {
-		color: red;
-	}
+    .red-warning {
+        color: var(--red-warning-color);
+    }
 
-	.yellow-warning {
-		color: yellow;
-	}
+    .yellow-warning {
+        color: var(--yellow-warning-color);
+    }
 
-	.card-title {
-		margin: 0 0 8px 0;
-		font-size: 1rem;
-		line-height: 1.3;
-		max-height: 3.9em;
-		overflow: hidden;
-		display: -webkit-box;
-		-webkit-line-clamp: 3;
-		-webkit-box-orient: vertical;
-		word-wrap: break-word;
-		line-clamp: 3;
-	}
+    .card-title {
+        margin: 0 0 8px 0;
+        font-size: 1rem;
+        line-height: 1.3;
+        max-height: 3.9em;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        word-wrap: break-word;
+        line-clamp: 3;
+    }
 
-	.country-channel-info {
-		display: flex;
-		align-items: center;
-		margin-bottom: 8px;
-		font-size: 0.9rem;
-	}
+    .country-channel-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
 
-	.country-channel-info > * {
-		margin-right: 8px;
-	}
+    .country-channel-info > * {
+        margin-right: 8px;
+    }
 
-	@media (max-width: 640px) {
-		.card {
-			width: 160px;
-			height: 240px;
-		}
+    @media (max-width: 640px) {
+        .card {
+            width: 160px;
+            height: 240px;
+        }
 
-		.card-title {
-			font-size: 0.9rem;
-		}
+        .card-title {
+            font-size: 0.9rem;
+        }
 
-		.quality-icon,
-		.country-icon,
-		.remaining-days-badge {
-			padding: 3px;
-			font-size: 20px;
-		}
+        .quality-icon,
+        .country-icon,
+        .remaining-days-badge {
+            padding: 3px;
+            font-size: 20px;
+        }
 
-		.remaining-days-text {
-			display: none; /* Hide text on small screens */
-		}
-	}
+        .remaining-days-text {
+            display: none; /* Hide text on small screens */
+        }
+    }
 
-	@media (min-width: 641px) {
-		.remaining-days-text {
-			display: inline; /* Show text on larger screens */
-		}
-	}
+    @media (min-width: 641px) {
+        .remaining-days-text {
+            display: inline; /* Show text on larger screens */
+        }
+    }
 
-	@media (min-width: 641px) and (max-width: 1024px) {
-		.card {
-			width: 180px;
-			height: 270px;
-			margin: 8px;
-		}
-	}
+    @media (min-width: 641px) and (max-width: 1024px) {
+        .card {
+            width: 180px;
+            height: 270px;
+            margin: 8px;
+        }
+    }
 </style>
