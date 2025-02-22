@@ -33,7 +33,6 @@ async function fetchChannelData(): Promise<any[]> {
 		);
 		return response;
 	} catch (err) {
-    console.error(err);
 		throw new Error('Failed to fetch channel data');
 	}
 }

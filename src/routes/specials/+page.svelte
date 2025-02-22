@@ -45,8 +45,6 @@
 		{#if heroItems}
 			<HeroSlider {heroItems} {data} special />
 		{/if}
-		{console.log(data.filterd)}
-
 		{#each data.filterdkeys as item}
 			<div class="content-section px-4 sm:px-6 lg:px-8">
 				<div class="maincontent">
