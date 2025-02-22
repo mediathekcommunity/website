@@ -50,7 +50,7 @@
 				<div 
 					class="embla" 
 					use:emblaCarouselSvelte={{ options }}
-					on:init:once={({ detail }) => emblaApi = detail}
+					oninit:once={({ detail }) => emblaApi = detail}
 				>
 					<div class="embla__container">
 						{#each data.page as item (item.id)}

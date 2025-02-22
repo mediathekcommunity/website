@@ -55,7 +55,7 @@
 							{item}
 						</span>
 					</h1>
-					<div class="embla" use:emblaCarouselSvelte={options2} oninit={onInit}>
+					<div class="embla" use:emblaCarouselSvelte={ options2} oninit:once={event => emblaApi = event.detail}>
 						<div class="embla__container flex">
 							{#each data.filterd[item] as item}
 								<div class="embla__slide">

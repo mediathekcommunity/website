@@ -66,8 +66,8 @@
 			
 			<div 
 				class="embla" 
-				use:emblaCarouselSvelte={{ options: carouselOptions }}
-				on:init:once={({ detail }) => emblaApi = detail}
+				use:emblaCarouselSvelte={carouselOptions}
+				oninit:once={({ detail }) => emblaApi = detail}
 			>
 				<div class="embla__container">
 					{#each langdata[country] as item (item.id)}
