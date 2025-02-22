@@ -1,14 +1,25 @@
-<script>
-	export let error;
+<script lang="ts">
+	interface ErrorProps {
+		error?: boolean;
+		filter?: string;
+		text1?: string;
+	}
 
+	let { error, filter, text1 } = $props<ErrorProps>();
+
+	const errorMessage = $derived(
+		error 
+			? "We couldn't find any entries that match your search."
+			: filter 
+				? `We couldn't find any ${text1 || 'entries'} for "${filter}".`
+				: "We couldn't find any entries that match your search."
+	);
 </script>
 
-<div class="error-section">
+<div class="error-section" role="alert">
 	<div class="error-content">
 		<h1 class="error-title">404 Not Found</h1>
-		<p class="error-description">
-			{error ? "":"We couldn't find any entries that match your search."}
-		</p>
+		<p class="error-description">{errorMessage}</p>
 		<p class="error-suggestion">Try adjusting your search.</p>
 		<a href="/" class="error-button">Back to Home</a>
 	</div>
@@ -23,15 +34,18 @@
 		align-items: center;
 		background: linear-gradient(to bottom, #1a1a1a, #0a0a0a);
 		padding: 2rem;
+		contain: content;
 	}
 
 	.error-content {
 		text-align: center;
 		max-width: 600px;
+		transform: translateZ(0);
+		will-change: transform;
 	}
 
 	.error-title {
-		font-size: 3rem;
+		font-size: clamp(2rem, 5vw, 3rem);
 		font-weight: bold;
 		margin-bottom: 1rem;
 		background: linear-gradient(to right, #ff4b2b, #ff416c);
@@ -41,63 +55,31 @@
 	}
 
 	.error-description {
-		font-size: 1.2rem;
+		font-size: clamp(0.9rem, 2vw, 1.2rem);
 		margin-bottom: 1rem;
 		color: #ccc;
 	}
  
 	.error-suggestion {
-		font-size: 1rem;
+		font-size: clamp(0.8rem, 1.5vw, 1rem);
 		margin-bottom: 2rem;
 		color: #999;
 	}
 
 	.error-button {
 		display: inline-block;
-		padding: 10px 20px;
-		font-size: 1rem;
+		padding: clamp(8px, 2vw, 10px) clamp(16px, 3vw, 20px);
+		font-size: clamp(0.9rem, 1.5vw, 1rem);
 		font-weight: bold;
 		text-decoration: none;
 		color: #fff;
 		background-color: #ff4b2b;
 		border-radius: 5px;
-		transition: background-color 0.3s ease;
+		transition: transform 0.2s ease, background-color 0.3s ease;
 	}
 
 	.error-button:hover {
 		background-color: #ff416c;
-	}
-
-	@media (max-width: 768px) {
-		.error-title {
-			font-size: 2.5rem;
-		}
-
-		.error-description {
-			font-size: 1rem;
-		}
-
-		.error-suggestion {
-			font-size: 0.9rem;
-		}
-	}
-
-	@media (max-width: 480px) {
-		.error-title {
-			font-size: 2rem;
-		}
-
-		.error-description {
-			font-size: 0.9rem;
-		}
-
-		.error-suggestion {
-			font-size: 0.8rem;
-		}
-
-		.error-button {
-			font-size: 0.9rem;
-			padding: 8px 16px;
-		}
+		transform: translateY(-2px);
 	}
 </style>

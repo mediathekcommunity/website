@@ -1,5 +1,16 @@
-<script>
-	import { page } from '$app/state';
+<script lang="ts">
+	import ErrorBoundary from '$lib/components/ErrorBoundary.svelte';
+	import { page } from '$app/stores';
+
+	// Extract error details from the page store
+	$: error = $page.error;
+	$: status = $page.status;
+	$: isDev = import.meta.env.DEV;
 </script>
 
-<h1>{page.status}: {page.error?.message}</h1>
+<ErrorBoundary 
+	message={error?.message} 
+	status={status} 
+	stack={error?.stack} 
+	dev={isDev}
+/>

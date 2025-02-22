@@ -1,64 +1,70 @@
 import { error } from '@sveltejs/kit';
-
 import getDirectusInstance from '$lib/directus';
 import { readItems } from '@directus/sdk';
-const directus = getDirectusInstance(fetch);
+import { groupByChannelCountry } from '$lib/utils';
+
+const directus = getDirectusInstance();
+
+type MediathekItem = {
+    id: string;
+    channel?: {
+        country?: string;
+        name?: string;
+        id?: string;
+    };
+    // Add other relevant fields based on your data structure
+};
+
+type GroupedByCountry = {
+    [country: string]: MediathekItem[];
+};
 
 export async function load({ params, fetch, setHeaders }) {
-	const { id } = params;
-	const res = await fetch(`https://tmdbomdbv1-gaoyk.bunny.run/person/${id}`);
+    const { id } = params;
+    const res = await fetch(`https://tmdbomdbv1-gaoyk.bunny.run/person/${id}`);
 
-	if (!res.ok) {
-		var status = res.status;
-		return { error: status };
-	}
-	const groupByChannelCountry = (items: MediathekItem[]): GroupedByCountry => {
-		return items.reduce((acc: GroupedByCountry, item: MediathekItem) => {
-			const country = item.channel?.country || 'Unknown';
-			acc[country] = acc[country] || [];
-			acc[country].push(item);
-			return acc;
-		}, {});
-	};
-	const json = await res.json();
-	if (json.success == false) {
-		return { error: json.status_code, message: json.status_message, success: json.success };
-	}
-	const baseOptions = {
-		fields: ['*.*.*, channel.country, channel.name, channel.id'],
-		deep: {
-			channel: { limit: 5 }
-		}
-	};
-	let id2 = params.id;
-	const mediathekData = await directus.request(readItems('mediathek', baseOptions));
-	const filteredData = mediathekData.filter((item) => item.id === id2);
-	const data = groupByChannelCountry(filteredData);
-	//
-	// Transform the JSON to the shape expected by the page
-	const person = {
-		raw: json,
-		grouped: data,
-		name: json.name,
-		birthday: json.birthday,
-		place_of_birth: json.place_of_birth,
-		bio: json.biography,
-		heroImage: json.profile_path
-			? `https://image.tmdb.org/t/p/w500${json.profile_path}`
-			: '/default-hero.jpg'
-		// You can map any other fields if needed...
-	};
-	setHeaders({
-		'cache-control': 'max-age=3600'
-	});
-	// Since no media information is provided, mediaSorted is empty.
+    if (!res.ok) {
+        throw error(res.status, 'Failed to fetch crew information');
+    }
+    
+    const json = await res.json();
+    if (json.success === false) {
+        return { error: json.status_code, message: json.status_message, success: json.success };
+    }
 
-	return {
-		data: {
-			person,
-			raw: json,
-			mediaSorted: mediathekData,
-			paramid: id2
-		}
-	};
+    const baseOptions = {
+        fields: ['*.*.*, channel.country, channel.name, channel.id'],
+        deep: {
+            channel: { limit: 5 }
+        }
+    };
+    let id2 = params.id;
+    const mediathekData = await directus.request<MediathekItem[]>(readItems('mediathek', baseOptions));
+    const filteredData = mediathekData.filter((item) => item.id === id2);
+    const data = groupByChannelCountry(filteredData);
+
+    const person = {
+        raw: json,
+        grouped: data,
+        name: json.name,
+        birthday: json.birthday,
+        place_of_birth: json.place_of_birth,
+        bio: json.biography,
+        heroImage: json.profile_path
+            ? `https://image.tmdb.org/t/p/w500${json.profile_path}`
+            : '/default-hero.jpg'
+    };
+    
+    setHeaders({
+        'cache-control': 'max-age=3600'
+    });
+
+    return {
+        data: {
+            person,
+            raw: json,
+            mediaSorted: mediathekData,
+            paramid: id2
+        }
+    };
 }

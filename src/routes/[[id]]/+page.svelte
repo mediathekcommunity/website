@@ -40,7 +40,7 @@
 	}
 </script>
 
-<div>
+<div class="contents">
 	{#if data && data.page && data.page.length > 0 && data.error === false}
 		{#if heroItems}
 			<HeroSlider {heroItems} {data} />
@@ -48,7 +48,9 @@
 		<div class="content-section px-4 sm:px-6 lg:px-8">
 			<div class="maincontent">
 				<h1 class="section-title">
-					<span class="bg-linear-to-br from-blue-500 to-cyan-300 box-decoration-clone bg-clip-text text-transparent">
+					<span
+						class="bg-linear-to-br from-blue-500 to-cyan-300 box-decoration-clone bg-clip-text text-transparent"
+					>
 						Recently Added
 					</span>
 				</h1>
@@ -65,7 +67,9 @@
 			{#if data.expiringItems.length > 0}
 				<div class="maincontent">
 					<h1 class="section-title">
-						<span class="bg-linear-to-br from-red-500 to-yellow-300 box-decoration-clone bg-clip-text text-transparent">
+						<span
+							class="bg-linear-to-br from-red-500 to-yellow-300 box-decoration-clone bg-clip-text text-transparent"
+						>
 							Expiring Soon
 						</span>
 					</h1>
@@ -73,7 +77,12 @@
 						<div class="embla__container flex">
 							{#each data.expiringItems as item}
 								<div class="embla__slide">
-									<Card carddata={item} countryflag geo={data.geo} remainingDays={item.remainingDays} />
+									<Card
+										carddata={item}
+										countryflag
+										geo={data.geo}
+										remainingDays={item.remainingDays}
+									/>
 								</div>
 							{/each}
 						</div>

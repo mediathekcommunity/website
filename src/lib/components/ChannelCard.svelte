@@ -2,82 +2,133 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import Icon from '@iconify/svelte';
+	import { Image } from '@unpic/svelte';
 
-	export let id: string;
-	export let title: string;
-	export let poster: string | null;
-	export let channelName: string | null;
-	export let channelIcon: string | '';
+	interface Props {
+		id: string;
+		title: string;
+		poster: string | null;
+		channelName: string | null;
+		channelIcon: string;
+	}
+
+	let { id, title, poster, channelName, channelIcon } = $props();
 
 	function handleClick() {
 		goto(`/channels/${id}`);
 	}
 
-	$: imageUrl = poster ? `https://img.mediathek.rocks/t/p/w300${poster}` : null;
+	function handleKeydown(e: KeyboardEvent) {
+		if (e.key === 'Enter' || e.key === 'Space') {
+			e.preventDefault();
+			handleClick();
+		}
+	}
+
+	const imageUrl = $derived(poster ? `https://img.mediathek.rocks/t/p/w300${poster}` : null);
 </script>
 
 <div
-	class="channel-card"
-	on:click={handleClick}
-	on:keydown={(e) => e.key === 'Enter' && handleClick()}
+	class="card"
+	onclick={handleClick}
+	onkeydown={handleKeydown}
 	tabindex="0"
 	role="button"
-	aria-label={title}
+	aria-label={`${channelName}: ${title}`}
 >
-	{#if imageUrl}
-		<img src={imageUrl} alt={title} />
-	{:else}
-		<div class="no-image">
-			{#if channelName}
-				<Icon icon={channelIcon} height="68px" width="66px" />
-			{:else}
-				<span>No Image Available</span>
-			{/if}
-		</div>
-	{/if}
+	<div class="content">
+		{#if imageUrl}
+			<Image
+				src={imageUrl}
+				alt={title}
+				class="image"
+				layout="fullWidth"
+				loading="lazy"
+				width={300}
+				height={169}
+			/>
+		{:else}
+			<div class="no-image" aria-hidden="true">
+				{#if channelName}
+					<Icon icon={channelIcon} width="66" height="68" class="icon" />
+					<span class="name">{channelName}</span>
+				{:else}
+					<span class="placeholder-text">No Image</span>
+				{/if}
+			</div>
+		{/if}
+	</div>
 </div>
 
 <style>
-	.channel-card {
+	.card {
 		width: 220px;
 		height: 130px;
-		background-color: var(--color-surface-100, #ffffff);
+		background-color: var(--color-surface-100, #1a1a1a);
 		border-radius: 8px;
 		overflow: hidden;
-		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-		transition:
-			transform 0.3s ease,
-			box-shadow 0.3s ease,
-			filter 0.3s ease;
+		transition: transform 0.2s ease;
 		cursor: pointer;
-		aspect-ratio: 16 / 9;
 		position: relative;
+		contain: content;
 	}
 
-	.channel-card:focus {
-		box-shadow: 0 0 20px rgba(var(--color-primary-5 00-rgb), 0.5);
-		filter: brightness(1.1);
+	.card:hover,
+	.card:focus {
+		transform: translateY(-2px);
 		outline: none;
 	}
 
-	.channel-card img {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
+	.card:focus-visible {
+		outline: 2px solid var(--color-primary-500, #4a90e2);
+		outline-offset: 2px;
 	}
 
+	.content {
+		width: 100%;
+		height: 100%;
+		transform: translateZ(0);
+		will-change: transform;
+	}
+
+
 	.no-image {
-		position: absolute;
-		top: 0;
-		left: 0;
 		width: 100%;
 		height: 100%;
 		display: flex;
+		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		background-color: var(--color-surface-300, #e0e0e0);
-		color: var(--color-text-200, #9e9e9e);
-		text-align: center;
+		background: var(--color-surface-200, #2a2a2a);
 		padding: 1rem;
+		gap: 0.5rem;
+	}
+
+
+	.name {
+		font-size: 0.875rem;
+		color: var(--color-text-200, #e2e8f0);
+		text-align: center;
+		max-width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.placeholder-text {
+		color: var(--color-text-300, #cbd5e0);
+		font-size: 0.875rem;
+	}
+
+	@media (max-width: 640px) {
+		.card {
+			width: 180px;
+			height: 106px;
+		}
+
+
+		.name {
+			font-size: 0.75rem;
+		}
 	}
 </style>

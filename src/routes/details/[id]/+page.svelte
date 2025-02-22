@@ -84,7 +84,7 @@
 		if (!showvideo) {
 			var d = data.videosource;
 			//console.log(data);
-document.body.scrollIntoView();
+			document.body.scrollIntoView();
 
 			showvideo = true; // Always show video for episodes
 
@@ -109,8 +109,8 @@ document.body.scrollIntoView();
 	function playepisode(episode, index) {
 		//console.log(showvideo);
 		if (showvideo == false) {
-document.body.scrollIntoView();
-  
+			document.body.scrollIntoView();
+
 			showvideo = true; // Always show video for episodes
 			myPlaylist = [];
 			seriestype.set('playlist');
@@ -124,7 +124,7 @@ document.body.scrollIntoView();
 </script>
 
 {#if data1}
-	<div>
+	<div class="contents">
 		{#if data1.channel.info}
 			<aside class="gradient-text">
 				<div class="gradient-text-light b21">

@@ -4,70 +4,74 @@
 	import Icon from '@iconify/svelte';
 	import { Image, type ImageProps } from '@unpic/svelte';
 	import { writable } from 'svelte/store';
-	
+
 	// --- Types ---
 	interface CardData {
-	  id: number;
-	  title?: string;
-	  orgtitle?: string;
-	  metascore?: string;
-	  type: 'movie' | 'series' | 'music' | 'y-series' | 'y-movie';
-	  poster?: string;
-	  backdropup?: { filename: string };
-	  posterup?: { filename: string };
-	  channel: { country: string };
-	  remainingDays?: number;
+		id: number;
+		title?: string;
+		orgtitle?: string;
+		metascore?: string;
+		type: 'movie' | 'series' | 'music' | 'y-series' | 'y-movie';
+		poster?: string;
+		backdropup?: { filename: string };
+		posterup?: { filename: string };
+		channel: { country: string };
+		remainingDays?: number;
 	}
-	
+
 	// --- Props ---
 	export let carddata: CardData;
 	export let countryflag: boolean;
-	
+
 	// --- Reactive Variables ---
 	$: title = carddata?.title || 'Unknown Title';
-	$: orgtitle = carddata?.orgtitle || 'Unknown';
+	$: orgtitle = carddata?.orgtitle || null;
 	$: metascore = carddata?.metascore || 'Unknown';
+
+	// Add debug log
+
+	// Optimize hover state with a single reactive statement
 	let isHovered = false;
-	
-	// --- Helper Functions ---
-	
-	// Type-safe icon mapping
-	const typeIconMap: Record<CardData['type'], string> = {
-	  movie: 'mdi:movie',
-	  series: 'mdi:tv',
-	  music: 'mdi:music',
-	  'y-series': 'mdi:tv',
-	  'y-movie': 'mdi:movie',
-	};
-	
-	function getTypeIcon(type: CardData['type']): string {
-	  return typeIconMap[type] || 'mdi:movie'; // Default icon if type is unknown
-	}
-	
-	// Memoized poster URL calculation
+
+	// Memoized type icon mapping
+	const typeIconMap = {
+		movie: 'mdi:movie',
+		series: 'mdi:tv',
+		music: 'mdi:music',
+		'y-series': 'mdi:tv',
+		'y-movie': 'mdi:movie'
+	} as const;
+
+	const getTypeIcon = (type: CardData['type']) => typeIconMap[type] || 'mdi:movie';
+
+	// Optimize poster URL generation with memoization
 	const posterUrlStore = writable<string | null>(null);
-	
+
 	$: {
-	    if (!carddata) {
-	        posterUrlStore.set(null);
-	    } else {
-	        let posterUrl: string | null = null;
+		if (carddata) {
+			let posterUrl: string | null = null;
 			if (carddata.poster) {
-				posterUrl = `https://mediathekc.b-cdn.net/t/p/original${carddata.poster}`;
+				posterUrl = `https://mediathekc.b-cdn.net/t/p/w300${carddata.poster}`;
+			} else if (carddata.posterup?.filename) {
+				posterUrl = `https://mediathekc.b-cdn.net/${carddata.posterup.filename}?width=300`;
 			} else if (carddata.backdropup?.filename) {
-				posterUrl = `https://mediathekc.b-cdn.net/${carddata.backdropup.filename}?host=api`;
+				posterUrl = `https://mediathekc.b-cdn.net/${carddata.backdropup.filename}?width=300`;
 			}
-		      posterUrlStore.set(posterUrl);
-		  }
+			posterUrlStore.set(posterUrl);
+		} else {
+			posterUrlStore.set(null);
+		}
 	}
-	
-	
+
+	// Optimize image props generation
 	const imageProps = (carddata: CardData, posterUrl: string | null): ImageProps => ({
-	  src: posterUrl || '', // Provide empty string as fallback
-	  alt: `${title} ${carddata?.poster ? 'poster' : 'backdrop'}`,
-	  class: 'card-poster',
-	  layout: 'fullWidth',
-	  objectFit: 'fill'
+		src: posterUrl || '',
+		alt: `${title} ${carddata?.poster ? 'poster' : 'backdrop'}`,
+		class: 'card-poster',
+		layout: 'fullWidth',
+		objectFit: 'fill',
+		loading: 'lazy',
+		priority: false
 	});
 </script>
 
@@ -81,14 +85,15 @@
 	>
 		<div class="card-image">
 			{#if carddata}
-			             {#if $posterUrlStore !== null}
-			                 <Image {...imageProps(carddata, $posterUrlStore)} style="object-fit: fill; height:100%" />
-			             {:else}
-			                 <div class="card-poster-placeholder">{title[0]}</div>
-			             {/if}
-			         {:else}
-			             <div class="card-poster-placeholder">?</div>
-			         {/if}
+				{#if $posterUrlStore}
+					<Image {...imageProps(carddata, $posterUrlStore)} />
+				{:else}
+					<div class="card-poster-placeholder" aria-label={title}>{title[0]}</div>
+				{/if}
+			{:else}
+				<div class="card-poster-placeholder" aria-label="Loading">?</div>
+			{/if}
+
 			<div class="badges">
 				<div class="quality-icon">
 					<Icon icon={getTypeIcon(carddata.type)} />
@@ -108,21 +113,18 @@
 					</div>
 				{/if}
 				{#if countryflag}
-					<div class="country-icon">
-						<span class="fi fi-{carddata.channel.country.toLowerCase()}"></span>
-					</div>
+					<span class="fi fi-{carddata.channel.country.toLowerCase()}"></span>
 				{/if}
 			</div>
+
 			{#if isHovered}
-				<div class="card-overlay" transition:slide={{ duration: 300, delay: 50, easing: quintOut }}>
+				<div class="card-overlay" transition:slide={{ duration: 200, easing: quintOut }}>
 					<h3 class="card-title">{title}</h3>
-					{#if title !== orgtitle}
-						<div class="country-channel-info">
-							<h3 class="card-title">O: {orgtitle}</h3>
-						</div>
+					{#if orgtitle && orgtitle !== title}
+						<p class="card-subtitle">{orgtitle}</p>
 					{/if}
-					{#if metascore !== 'Unknown' && metascore !== 'N/A'}
-						<p>Metascore: {metascore}</p>
+					{#if metascore !== 'Unknown'}
+						<p class="metascore">Score: {metascore}</p>
 					{/if}
 				</div>
 			{/if}
@@ -132,187 +134,154 @@
 
 <style>
 	:root {
-		--card-bg-color: rgb(17, 17, 17);
-		--card-placeholder-bg-color: rgb(23, 23, 23);
-		--card-overlay-bg-color: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.7) 100%);
+		--card-bg-color: #1a1a1a;
+		--card-placeholder-bg-color: #2a2a2a;
+		--card-overlay-bg-color: linear-gradient(
+			to top,
+			rgba(0, 0, 0, 0.95) 0%,
+			rgba(0, 0, 0, 0.7) 100%
+		);
 		--badge-bg-color: rgba(0, 0, 0, 0.7);
-        --badge-text-color: white;
+		--badge-text-color: white;
 		--red-warning-color: red;
 		--yellow-warning-color: yellow;
 	}
 
-    .card {
-        width: 220px;
-        height: 330px;
-        margin: 0;
-        position: relative;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        cursor: pointer;
-        overflow: hidden;
-        border-radius: 8px;
-        background: var(--card-bg-color);
-    }
+	.card {
+		width: 220px;
+		height: 330px;
+		margin: 0;
+		position: relative;
+		transform: translateZ(0);
+		will-change: transform;
+		transition: transform 0.3s ease;
+		cursor: pointer;
+		overflow: hidden;
+		border-radius: 8px;
+		background: var(--card-bg-color);
+	}
 
-    .card:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-        z-index: 1;
-    }
+	.card:hover {
+		transform: scale(1.05) translateZ(0);
+	}
 
-    .card-content {
-        width: 100%;
-        height: 100%;
-    }
+	.card-content {
+		width: 100%;
+		height: 100%;
+	}
 
-    .card-image {
-        width: 100%;
-        height: 100%;
-        position: relative;
-    }
+	.card-image {
+		width: 100%;
+		height: 100%;
+		position: relative;
+	}
 
-    .card-poster,
-    .card-poster-placeholder {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        background: var(--card-placeholder-bg-color);
-    }
+	.card-poster,
+	.card-poster-placeholder {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		background: var(--card-placeholder-bg-color);
+	}
 
-    .card-poster-placeholder {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: var(--card-placeholder-bg-color);
-        color: white;
-        font-size: 48px;
-        font-weight: bold;
-    }
+	.card-poster-placeholder {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: white;
+		font-size: 48px;
+		font-weight: bold;
+	}
 
-    .card-overlay {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: var(--card-overlay-bg-color);
-        color: white;
-        padding: 15px;
-        max-height: 70%;
-        overflow-y: auto;
-    }
+	.card-overlay {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		background: var(--card-overlay-bg-color);
+		color: white;
+		padding: 15px;
+		max-height: 70%;
+		overflow-y: auto;
+	}
 
-    .badges {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        right: 10px;
-        z-index: 2;
-    }
+	.card-title {
+		font-size: clamp(0.875rem, 2vw, 1rem);
+		font-weight: 600;
+		margin-bottom: 0.5rem;
+		line-height: 1.2;
+	}
 
-	/* Utility class for badges */
-    .badge {
-        color: var(--badge-text-color);
-        background-color: var(--badge-bg-color);
-        border-radius: 6px;
-        padding: 4px;
-        font-size: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        backdrop-filter: blur(4px);
-    }
-   
-       .quality-icon,
-       .country-icon,
-       .remaining-days-badge {
-    	color: var(--badge-text-color);
-    	background-color: var(--badge-bg-color);
-    	border-radius: 6px;
-    	padding: 4px;
-    	font-size: 24px;
-    	display: flex;
-    	align-items: center;
-    	justify-content: center;
-    	backdrop-filter: blur(4px);
-       }
-   
-       .remaining-days-badge {
-           font-size: 14px;
-           white-space: nowrap; /* Ensure it is always one line */
-       }
+	.card-subtitle {
+		font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+		opacity: 0.9;
+		margin-bottom: 0.5rem;
+		line-height: 1.3;
+	}
 
-    .remaining-days-text {
-        display: none;
-        font-size: 16px;
-    }
+	.metascore {
+		font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+		color: #00ff00;
+	}
 
-    .red-warning {
-        color: var(--red-warning-color);
-    }
+	.badges {
+		display: flex;
+		gap: 8px;
+		position: absolute;
+		top: 10px;
+		left: 10px;
+		z-index: 1;
+	}
 
-    .yellow-warning {
-        color: var(--yellow-warning-color);
-    }
+	.quality-icon,
+	.country-icon,
+	.remaining-days-badge {
+		background: var(--badge-bg-color);
+		padding: 4px 8px;
+		border-radius: 4px;
+		backdrop-filter: blur(4px);
+		display: flex;
+		align-items: center;
+		gap: 4px;
+	}
 
-    .card-title {
-        margin: 0 0 8px 0;
-        font-size: 1rem;
-        line-height: 1.3;
-        max-height: 3.9em;
-        overflow: hidden;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        word-wrap: break-word;
-        line-clamp: 3;
-    }
+	.remaining-days-badge.red-warning {
+		color: var(--red-warning-color);
+	}
 
-    .country-channel-info {
-        display: flex;
-        align-items: center;
-        margin-bottom: 8px;
-        font-size: 0.9rem;
-    }
+	.remaining-days-badge.yellow-warning {
+		color: var(--yellow-warning-color);
+	}
 
-    .country-channel-info > * {
-        margin-right: 8px;
-    }
+	.card-title {
+		font-size: 1rem;
+		font-weight: bold;
+		margin-bottom: 0.5rem;
+	}
 
-    @media (max-width: 640px) {
-        .card {
-            width: 160px;
-            height: 240px;
-        }
+	.card-subtitle {
+		font-size: 0.875rem;
+		opacity: 0.8;
+		margin-bottom: 0.5rem;
+	}
 
-        .card-title {
-            font-size: 0.9rem;
-        }
+	.metascore {
+		font-size: 0.875rem;
+		color: #00ff00;
+	}
 
-        .quality-icon,
-        .country-icon,
-        .remaining-days-badge {
-            padding: 3px;
-            font-size: 20px;
-        }
+	@media (max-width: 640px) {
+		.card {
+			width: 160px;
+			height: 240px;
+		}
 
-        .remaining-days-text {
-            display: none; /* Hide text on small screens */
-        }
-    }
+		.card-title {
+			font-size: 0.875rem;
+		}
 
-    @media (min-width: 641px) {
-        .remaining-days-text {
-            display: inline; /* Show text on larger screens */
-        }
-    }
-
-    @media (min-width: 641px) and (max-width: 1024px) {
-        .card {
-            width: 180px;
-            height: 270px;
-            margin: 8px;
-        }
-    }
+		.card-subtitle {
+			font-size: 0.75rem;
+		}
+	}
 </style>

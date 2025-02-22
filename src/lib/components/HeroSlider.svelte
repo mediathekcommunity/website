@@ -4,22 +4,7 @@
 	import Autoplay from 'embla-carousel-autoplay';
 	import Fade from 'embla-carousel-fade';
 	import Icon from '@iconify/svelte';
-	// Ensure the module is installed
-	// npm install embla-carousel
 
-	/**
-	 * Component Props Interface
-	 */
-	interface HeroProps {
-		data: any; // Consider defining a more specific type for 'data'
-		heroItems: HeroItem[];
-		geo: string;
-		showcountry: boolean;
-	}
-
-	/**
-	 * Hero Item Interface - Define the structure of heroItems
-	 */
 	interface HeroItem {
 		backdrop?: string;
 		backdropup?: { filename_disk: string };
@@ -32,124 +17,70 @@
 			country: string;
 			icon: string;
 		};
-		quality: '4K' | 'fhd' | 'hd' | string; // Define possible quality types
-		type: 'movie' | 'series' | 'music' | string; // Define possible type values
+		quality: '4K' | 'fhd' | 'hd' | string;
+		type: 'movie' | 'series' | 'music' | string;
+		special?: { name: string };
 	}
 
-	let { heroItems, showcountry, special } = $props();
+	// Replace $props declarations with proper Svelte props
+    export let heroItems: HeroItem[] = [];
+    export let showcountry: boolean = false;
+    export let special: boolean = false;
+    
+    // Change from $state to let for mutability
+    let emblaApi: any;
 
-	/**
-	 * Gets the icon name based on the video quality.
-	 * @param quality - The quality string ('4K', 'fhd', 'hd', etc.).
-	 * @returns The icon name from Material Design Icons or Material Symbols.
-	 */
-	const getqualityicon = (quality: string): string => {
+	const getqualityicon = (quality: string) => {
 		switch (quality) {
-			case '4K':
-				return 'mdi:uhd';
-			case 'fhd':
-				return 'material-symbols:full-hd';
-			case 'hd':
-				return 'mdi:video';
-			default:
-				return 'mdi:video-outline';
+			case '4K': return 'mdi:uhd';
+			case 'fhd': return 'material-symbols:full-hd';
+			case 'hd': return 'mdi:video';
+			default: return 'mdi:video-outline';
 		}
-	};
+	}
 
-	/**
-	 * Constructs the image URL for the backdrop.
-	 * @param slide - The hero item slide data.
-	 * @returns The backdrop image URL.
-	 */
-	const getImageUrl = (slide: HeroItem): string => {
-		if (slide.backdrop) {
-			return 'https://mediathekc.b-cdn.net/t/p/original' + slide.backdrop;
-		} else if (slide.backdropup?.filename_disk) {
-			return 'https://api.mediathek.community/assets/' + slide.backdropup.filename_disk;
-		}
-		return ''; // Return empty string as fallback, handle in component if needed
-	};
+	const getImageUrl = (slide: HeroItem) => 
+		slide.backdrop 
+			? 'https://mediathekc.b-cdn.net/t/p/original' + slide.backdrop
+			: slide.backdropup?.filename_disk 
+				? 'https://api.mediathek.community/assets/' + slide.backdropup.filename_disk
+				: '';
 
-	/**
-	 * Constructs the image URL for the poster.
-	 * @param slide - The hero item slide data.
-	 * @returns The poster image URL.
-	 */
-	const getposterUrl = (slide: HeroItem): string => {
-		if (slide.poster) {
-			return 'https://mediathekc.b-cdn.net/t/p/original' + slide.poster;
-		} else if (slide.posterup?.filename_disk) {
-			return 'https://api.mediathek.community/assets/' + slide.posterup.filename_disk;
-		}
-		return ''; // Return empty string as fallback, handle in component if needed
-	};
+	const getposterUrl = (slide: HeroItem) =>
+		slide.poster
+			? 'https://mediathekc.b-cdn.net/t/p/original' + slide.poster
+			: slide.posterup?.filename_disk
+				? 'https://api.mediathek.community/assets/' + slide.posterup.filename_disk
+				: '';
 
-	/**
-	 * Gets the icon name based on the content type.
-	 * @param type - The content type ('movie', 'series', 'music', etc.).
-	 * @returns The icon name from Material Design Icons.
-	 */
-	const getTypeIcon = (type: string): string => {
+	const getTypeIcon = (type: string) => {
 		switch (type) {
-			case 'movie':
-				return 'mdi:movie';
-			case 'series':
-				return 'mdi:tv';
-			case 'music':
-				return 'mdi:music';
-			default:
-				return 'mdi:movie'; // Default icon for unknown types
+			case 'movie': return 'mdi:movie';
+			case 'series': return 'mdi:tv';
+			case 'music': return 'mdi:music';
+			default: return 'mdi:movie';
 		}
-	};
+	}
 
-	/**
-	 * Gets the background color class (not used in the provided template, consider removing or using).
-	 * @param bgcolor - The background color string (not used).
-	 * @returns The background color class string (currently hardcoded fallback).
-	 * @deprecated This function seems unused and has a hardcoded fallback.
-	 */
-	const getbgcolor = (bgcolor: string | undefined): string => {
-		if (bgcolor) {
-			bgcolor = '  ' + bgcolor;
-			return 'inline-flex items-center gap-1 text-white sm:text-sm ' + bgcolor;
-		} else {
-			return 'bg-lime-600'; // Hardcoded fallback, consider if this is intended
-		}
-	};
-
-	/**
-	 * Embla Carousel plugins configuration.
-	 */
 	const plugins = [
 		Autoplay({
 			delay: 8000,
-			stopOnMouseEnter: false,
-			stopOnFocusIn: false,
 			stopOnInteraction: false
 		}),
 		Fade()
 	];
 
-	/**
-	 * Embla Carousel options configuration.
-	 */
 	const options = {
-		align: 'center',
+		align: 'start' as const,
 		slidesToScroll: 1,
 		loop: true,
-		containScroll: 'keepSnaps',
+		containScroll: 'keepSnaps' as const, // Type assertion to fix type error
 		dragFree: false,
 		skipSnaps: false,
 		startIndex: 0
 	};
 
-	let emblaApi: any; // Type should be EmblaAPI if types are available
-	/**
-	 * Callback function for Embla Carousel initialization event.
-	 * @param event - The CustomEvent<{ embla: EmblaAPI }> from emblaCarouselSvelte.
-	 */
 	function onInit(event: CustomEvent<any>) {
-		// Consider typing event detail more accurately
 		emblaApi = event.detail;
 	}
 </script>
@@ -209,9 +140,11 @@
 							{/if}
 
 							{#if special}
-								<p class="mb-4 text-sm text-gray-300 italic sm:text-base">
-									Special: {slide.special.name}
-								</p>
+								{#if slide.special}
+									<p class="mb-4 text-sm text-gray-300 italic sm:text-base">
+										Special: {slide.special.name}
+									</p>
+								{/if}
 							{/if}
 							<a href="/details/{slide.id}">
 								<button class="btn btn-primary"> Details</button>

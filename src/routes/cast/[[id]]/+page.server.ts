@@ -2,12 +2,16 @@ import { error } from '@sveltejs/kit';
 
 import getDirectusInstance from '$lib/directus';
 import { readItems } from '@directus/sdk';
+import { groupByChannelCountry } from '$lib/utils';
+
 const directus = getDirectusInstance();
 
 type MediathekItem = {
 	id: string;
 	channel?: {
 		country?: string;
+		name?: string;
+		id?: string;
 	};
 };
 
@@ -18,21 +22,15 @@ type GroupedByCountry = {
 export async function load({ params, fetch, setHeaders }) {
 	const { id } = params;
 	const res = await fetch(`https://tmdbomdbv1-gaoyk.bunny.run/person/${id}`);
- 	if (!res.ok) {
+	if (!res.ok) {
 		throw error(res.status, 'Failed to fetch cast information');
 	}
-	const groupByChannelCountry = (items: MediathekItem[]): GroupedByCountry => {
-		return items.reduce((acc: GroupedByCountry, item: MediathekItem) => {
-			const country = item.channel?.country || 'Unknown';
-			acc[country] = acc[country] || [];
-			acc[country].push(item);
-			return acc;
-		}, {});
-	};
+	
 	const json = await res.json();
- 	if (json.success == false) {
+	if (json.success === false) {
 		return { error: json.status_code, message: json.status_message, success: json.success };
 	}
+
 	const baseOptions = {
 		fields: ['*.*.*, channel.country, channel.name, channel.id'],
 		deep: {
@@ -43,8 +41,7 @@ export async function load({ params, fetch, setHeaders }) {
 	const mediathekData = await directus.request<MediathekItem[]>(readItems('mediathek', baseOptions));
     const filteredData = mediathekData.filter((item) => item.id === id2);
     const data = groupByChannelCountry(filteredData);
-	//
-	// Transform the JSON to the shape expected by the page
+	
 	const person = {
 		raw: json,
 		grouped: data,
@@ -55,12 +52,12 @@ export async function load({ params, fetch, setHeaders }) {
 		heroImage: json.profile_path
 			? `https://image.tmdb.org/t/p/w500${json.profile_path}`
 			: '/default-hero.jpg'
-		// You can map any other fields if needed...
 	};
+	
 	setHeaders({
 		'cache-control': 'max-age=3600',
-	})
-	// Since no media information is provided, mediaSorted is empty.
+	});
+
 	return {
 		data: {
 			person,
