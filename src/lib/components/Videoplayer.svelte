@@ -55,6 +55,7 @@
 			player.playlist.currentItem($playlistindex);
 		}
 		player.pause();
+		updatePlayerSource($seriestype)
 	}
 
 	function updatePlayerSource(type: 'playlist' | 'single' | 'default') {
@@ -79,6 +80,8 @@
 					player.poster(playlistItem.thumb);
 					player.pause();
 				}
+				player.playlist.currentItem($playlistindex+1);
+				//console.log('playlist', $playlistindex);
 				break;
 			case 'single':
 			case 'default':
@@ -99,20 +102,25 @@
 		const index = $playlistindex;
 		const currentModalVideo = $modalvideo;
 		const currentPlaylist = $playlist;
-
+		player.playlist($playlist)
 		if (currentModalVideo?.tracks) {
 			player?.loadTracks(currentModalVideo.tracks);
 		} else if (currentPlaylist && currentPlaylist[index]?.tracks) {
 			player?.loadTracks(currentPlaylist[index].tracks);
 		}
 		player?.pause();
+		if ($seriestype === 'playlist') {
+			player.playlist.currentItem($playlistindex+1);
+		}
 		player?.off('loadeddata', handleLoadedData);
+		console.log('loadeddata', $playlistindex, currentModalVideo, currentPlaylist,player);
+
 	}
 
-	$: if (player && ($modalvideo || $seriestype || $playlistindex)) {
-		updatePlayerSource($seriestype as 'playlist' | 'single' | 'default');
+	$: if (player && ($modalvideo || $seriestype || $playlistindex || $playlist)) {
+		updatePlayerSource($seriestype);
 		if ($seriestype === 'playlist') {
-			player.playlist.currentItem($playlistindex);
+			player.playlist.currentItem($playlistindex+1);
 		}
 	}
 

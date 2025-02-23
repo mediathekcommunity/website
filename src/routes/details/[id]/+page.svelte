@@ -106,16 +106,22 @@
 			return 'mdi:video-outline';
 		}
 	};
-	function playepisode(episode, index) {
-		//console.log(showvideo);
+	function playepisode(episode, index, type) {
+		type ? type : 'nonov';
+		//console.log(data.playlist,index);
 		document.body.scrollIntoView();
 
 		showvideo = true; // Always show video for episodes
 		myPlaylist = [];
 		seriestype.set('playlist');
 		playlistindex.set(index);
-		playlist.set(data.playlist);
-		//console.log('playlist:', $playlist);
+		playlist.set('');
+		if (type == 'ov') {
+			playlist.set(data.playlist.ov);
+		} else {
+			playlist.set(data.playlist.regular);
+		}
+		//console.log('playlist:', $playlist.sort((a, b) => parseInt(a.episodes) - parseInt(b.episodes)));
 	}
 	//console.log(data);
 </script>
@@ -400,7 +406,7 @@
 				{/if}
 				{#if data1.episodes.length > 0}
 					{#each { length: data1.season }, season}
-						{#if data.groupseasons[season + 1]}
+						{#if data.groupseasons.grouped[season + 1]}
 							<input
 								type="radio"
 								name="my_tabs_3"
@@ -410,7 +416,7 @@
 							/>
 							<div class="tab-content bg-base-100 border-base-300 p-6">
 								<div class="join join-vertical bg-base-100">
-									{#each data.groupseasons[season + 1] as link, index1}
+									{#each data.groupseasons.grouped[season + 1] as link, index1 (link.episode)}
 										<div class="collapse-arrow join-item border-base-300 collapse border">
 											<input type="radio" name="my-accordion-s{season}" checked={index1 == 0} />
 											<div class="collapse-title font-semibold">
@@ -427,6 +433,52 @@
 														class="btn btn-accent"
 														onclick={() =>
 															data.geo != data1.channel.geo ? playepisode(link, index1) : ''}
+													>
+														{#if data.geo != data1.channel.geo}
+															<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
+															<span> Play Episode</span>
+														{:else}
+															<span class="flex items-center gap-1">
+																<span class="fi fi-{data1.channel.country.toLowerCase()}"></span>
+																IP required
+															</span>
+														{/if}
+													</button>
+												</div>
+											</div>
+										</div>
+									{/each}
+								</div>
+							</div>
+						{/if}
+
+						{#if data.groupseasons.groupedov[season + 1]}
+							<input
+								type="radio"
+								name="my_tabs_3"
+								role="tab"
+								class="tab"
+								aria-label={data1.season > 1 ? 'Season ' + (season + 1) + ' OV' : 'Episodes'}
+							/>
+							<div class="tab-content bg-base-100 border-base-300 p-6">
+								<div class="join join-vertical bg-base-100">
+									{#each data.groupseasons.groupedov[season + 1] as link, index2 (link.episode)}
+										<div class="collapse-arrow join-item border-base-300 collapse border">
+											<input type="radio" name="my-accordion-ov-s{season}" checked={index2 == 0} />
+											<div class="collapse-title font-semibold">
+												<span class="episode-number">S{link.season}-E{link.episode}:</span>
+												<span>{link.title}</span>
+											</div>
+											<div class="collapse-content text-sm">
+												<div class="episode-content">
+													<p class="episode-overview">
+														{link.description ? link.description : 'no description'}
+													</p>
+													<button
+														type="button"
+														class="btn btn-accent"
+														onclick={() =>
+															data.geo != data1.channel.geo ? playepisode(link, index2, 'ov') : ''}
 													>
 														{#if data.geo != data1.channel.geo}
 															<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
@@ -739,7 +791,7 @@
 		top: 60px;
 	}
 	.top602 {
-		margin-top: 30px;
+		margin-top: 70px;
 	}
 
 	@media (max-width: 480px) {

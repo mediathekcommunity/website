@@ -23,6 +23,7 @@ interface MediaLink {
 	episode: string;
 	season: string;
 	dyna: boolean;
+	ov: boolean;
 }
 
 interface Subtitle {
@@ -49,8 +50,9 @@ interface PlaylistItem {
 	infoTitle: string;
 	infoDescription: string;
 	tracks: Subtitle[];
-	episodes: string;
+	episode: string;
 	season: string;
+	ov: boolean;
 }
 
 interface VideoSource {
@@ -84,19 +86,40 @@ function determineFormat(typeId: string): string {
 	return formatTypes[typeId] || DEFAULT_FORMAT_TYPE;
 }
 const sorted: Record<string, { season: string; episode: string }[]> = {};
-
 function groupEpisodesBySeason(
 	episodes: { season: string; episode: string; [key: string]: any }[]
-): Record<string, { season: string; episode: string; [key: string]: any }[]> {
+): {
+	grouped: Record<string, { season: string; episode: string; [key: string]: any }[]>;
+	groupedov: Record<string, { season: string; episode: string; [key: string]: any }[]>;
+} {
 	const grouped: Record<string, { season: string; episode: string; [key: string]: any }[]> = {};
+	const groupedov: Record<string, { season: string; episode: string; [key: string]: any }[]> = {};
+
 	episodes.forEach((episode) => {
-		const { season } = episode;
-		if (!grouped[season]) {
-			grouped[season] = [];
+		if (episode.ov == true) {
+			const { season } = episode;
+			if (!groupedov[season]) {
+				groupedov[season] = [];
+			}
+			groupedov[season].push(episode);
+		} else {
+			const { season } = episode;
+			if (!grouped[season]) {
+				grouped[season] = [];
+			}
+			grouped[season].push(episode);
 		}
-		grouped[season].push(episode);
 	});
-	return grouped;
+
+	// Sort grouped and groupedov by episode
+	for (const season in grouped) {
+		grouped[season].sort((a, b) => parseInt(a.episode) - parseInt(b.episode));
+	}
+	for (const season in groupedov) {
+		groupedov[season].sort((a, b) => parseInt(a.episode) - parseInt(b.episode));
+	}
+
+	return { grouped, groupedov };
 }
 
 // Titel für Untertitel generieren
@@ -130,9 +153,15 @@ function extractSubtitleLanguages(subtitles: any[]): SubtitleLanguage[] {
 }
 
 // Playlist erstellen
-function createPlaylist(mediaLinks: MediaLink[], data: any): PlaylistItem[] {
-	return (
-		mediaLinks?.map((link) => ({
+function createPlaylist(
+	mediaLinks: MediaLink[],
+	data: any
+): { regular: PlaylistItem[]; ov: PlaylistItem[] } {
+	const regular: PlaylistItem[] = [];
+	const ov: PlaylistItem[] = [];
+
+	mediaLinks?.forEach((link) => {
+		const playlistItem: PlaylistItem = {
 			title: link.title,
 			src: link.streamlink,
 			thumb: generateImageUrl(
@@ -145,10 +174,23 @@ function createPlaylist(mediaLinks: MediaLink[], data: any): PlaylistItem[] {
 			infoTitle: link.title,
 			infoDescription: link.description,
 			tracks: formatSubtitles(link.subtitles),
-			episodes: link.episode,
-			season: link.season
-		})) || []
-	);
+			episode: link.episode,
+			season: link.season,
+			ov: link.ov
+		};
+
+		if (link.ov == true) {
+			ov.push(playlistItem);
+		} else {
+			regular.push(playlistItem);
+		}
+	});
+
+	// Sort regular and ov by episodes field
+	regular.sort((a, b) => parseInt(a.episode) - parseInt(b.episode));
+	ov.sort((a, b) => parseInt(a.episode) - parseInt(b.episode));
+
+	return { regular, ov };
 }
 
 // Videoquelle generieren
