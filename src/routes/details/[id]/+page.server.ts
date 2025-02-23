@@ -62,12 +62,19 @@ interface VideoSource {
 }
 
 // Hilfsfunktion zur Erstellung der Bild-URL
-function generateImageUrl(backdropFile: string, localFile: { filename_disk: string }): string {
-	return backdropFile
-		? `${BASE_MEDIA_URL}${backdropFile}`
-		: `${BASE_ASSET_URL}${localFile.filename_disk}`;
+function generateImageUrl(
+	backdropFile: string,
+	localFile: { filename_disk: string },
+	data: any
+): string {
+	if (backdropFile && backdropFile.trim() !== '') {
+		return `${BASE_MEDIA_URL}${backdropFile}`;
+	} else if (localFile.filename_disk && localFile.filename_disk.trim() !== '') {
+		return `${BASE_ASSET_URL}${localFile.filename_disk}`;
+	} else {
+		return `${BASE_MEDIA_URL}${data.backdrop}`;
+	}
 }
-
 // Hilfsfunktion für das Format
 function determineFormat(typeId: string): string {
 	const formatTypes: Record<string, string> = {
@@ -76,21 +83,20 @@ function determineFormat(typeId: string): string {
 	};
 	return formatTypes[typeId] || DEFAULT_FORMAT_TYPE;
 }
+const sorted: Record<string, { season: string; episode: string }[]> = {};
 
-// Sortierung nach Staffel und Episode
-function sortSeasons(data: { slinks: { season: string; episode: string }[] }) {
-	const sorted: Record<string, { season: string; episode: string }[]> = {};
-
-	data.slinks.forEach(({ season, episode }) => {
-		sorted[season] = sorted[season] || [];
-		sorted[season].push({ season, episode });
+function groupEpisodesBySeason(
+	episodes: { season: string; episode: string; [key: string]: any }[]
+): Record<string, { season: string; episode: string; [key: string]: any }[]> {
+	const grouped: Record<string, { season: string; episode: string; [key: string]: any }[]> = {};
+	episodes.forEach((episode) => {
+		const { season } = episode;
+		if (!grouped[season]) {
+			grouped[season] = [];
+		}
+		grouped[season].push(episode);
 	});
-
-	Object.keys(sorted).forEach((season) => {
-		sorted[season].sort((a, b) => parseFloat(a.episode) - parseFloat(b.episode));
-	});
-
-	return sorted;
+	return grouped;
 }
 
 // Titel für Untertitel generieren
@@ -124,12 +130,16 @@ function extractSubtitleLanguages(subtitles: any[]): SubtitleLanguage[] {
 }
 
 // Playlist erstellen
-function createPlaylist(mediaLinks: MediaLink[]): PlaylistItem[] {
+function createPlaylist(mediaLinks: MediaLink[], data: any): PlaylistItem[] {
 	return (
 		mediaLinks?.map((link) => ({
 			title: link.title,
 			src: link.streamlink,
-			thumb: generateImageUrl(link.backdrop, link.backdropup),
+			thumb: generateImageUrl(
+				link.backdrop == undefined ? link.backdrop : '',
+				link.backdropup != null ? link.backdropup : { filename_disk: '' },
+				data
+			),
 			type: determineFormat(link.streamformat),
 			description: link.description,
 			infoTitle: link.title,
@@ -206,13 +216,13 @@ export async function load({ params, request, setHeaders }) {
 
 	// Prüfen, ob links vorhanden sind
 	if (!Array.isArray(mediaEntry?.links) || mediaEntry.links.length === 0) {
-		error = 'Media entry links are missing or empty';
+		error = 'Media entry links are missing  or type is series';
 	}
 
 	const countryCode = request.headers.get('CDN-RequestCountryCode') ?? 'DE';
 
 	// Playlist und Videoquelle erstellen
-	const playlist = createPlaylist(mediaEntry?.slinks || []) || [];
+	const playlist = createPlaylist(mediaEntry?.episodes || [], mediaEntry) || [];
 	const videoSource = createVideoSource(
 		mediaEntry?.links || [],
 		mediaEntry?.backdrop || '',
@@ -241,7 +251,7 @@ export async function load({ params, request, setHeaders }) {
 	return {
 		error,
 		page: mediaEntry || null,
-		groupseasons: mediaEntry?.slinks ? sortSeasons({ slinks: mediaEntry.slinks }) : {},
+		groupseasons: mediaEntry?.episodes ? groupEpisodesBySeason(mediaEntry.episodes) : {},
 		episodes: mediaEntry?.episode || [],
 		sublangs: subtitleLanguages,
 		geo: capitalizeFirst(countryCode),

@@ -39,12 +39,15 @@
 		}
 	}
 
-	const getImageUrl = (slide: HeroItem) => 
-		slide.backdrop 
+	const getImageUrl = (slide: HeroItem) => {
+		if (!slide.backdrop && !slide.backdropup?.filename_disk) {
+			console.warn('No backdrop found for slide', slide);
+			return 'https://api.mediathek.community/assets/default-backdrop.jpg';
+		}
+		return slide.backdrop 
 			? 'https://mediathekc.b-cdn.net/t/p/original' + slide.backdrop
-			: slide.backdropup?.filename_disk 
-				? 'https://api.mediathek.community/assets/' + slide.backdropup.filename_disk
-				: '';
+			: 'https://api.mediathek.community/assets/' + slide.backdropup?.filename_disk;
+	};
 
 	const getposterUrl = (slide: HeroItem) =>
 		slide.poster

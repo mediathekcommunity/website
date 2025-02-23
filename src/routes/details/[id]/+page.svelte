@@ -116,11 +116,12 @@
 			seriestype.set('playlist');
 			playlistindex.set(index);
 			playlist.set(data.playlist);
+			console.log('playlist:', playlist);
 		} else {
 			stopvideo();
 		}
 	}
-	//console.log(data);
+	console.log(data);
 </script>
 
 {#if data1}
@@ -252,9 +253,9 @@
 											{/if}
 										{/if}
 									{/if}
-									{#if data1.type != 'movie' && data1.slinks.length > 0}
+									{#if data1.type != 'movie'}
 										<tr>
-											<th>Seasons</th>
+											<th>Seasons (total)</th>
 											<td>{data1.season}</td>
 										</tr>
 										<tr>
@@ -401,7 +402,54 @@
 						</div>
 					</div>
 				{/if}
-				{#if data1.slinks.length > 0}
+				{#if data1.episodes.length > 0}
+					{#each { length: data1.season }, season}
+						{#if data.groupseasons[season + 1]}
+							<input
+								type="radio"
+								name="my_tabs_3"
+								role="tab"
+								class="tab"
+								aria-label={data1.season > 1 ? 'Season ' + (season + 1) : 'Episodes'}
+							/>
+							<div class="tab-content bg-base-100 border-base-300 p-6">
+								<div class="join join-vertical bg-base-100">
+									{#each data.groupseasons[season + 1] as link, index1}
+										<div class="collapse-arrow join-item border-base-300 collapse border">
+											<input type="radio" name="my-accordion-s{season}" checked={index1 == 0} />
+											<div class="collapse-title font-semibold">
+												<span class="episode-number">S{link.season}-E{link.episode}:</span>
+												<span>{link.title}</span>
+											</div>
+											<div class="collapse-content text-sm">
+												<div class="episode-content">
+													<p class="episode-overview">
+														{link.description ? link.description : 'no description'}
+													</p>
+													<button
+														type="button"
+														class="btn btn-accent"
+														onclick={() =>
+															data.geo != data1.channel.geo ? playepisode(link, index1) : ''}
+													>
+														{#if data.geo != data1.channel.geo}
+															<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
+															<span> Play Episode</span>
+														{:else}
+															<span class="flex items-center gap-1">
+																<span class="fi fi-{data1.channel.country.toLowerCase()}"></span>
+																IP required
+															</span>
+														{/if}
+													</button>
+												</div>
+											</div>
+										</div>
+									{/each}
+								</div>
+							</div>
+						{/if}
+					{/each}<!-- 
 					<input
 						type="radio"
 						name="my_tabs_3"
@@ -415,16 +463,14 @@
 								{#each { length: data1.season }, season}
 									<input
 										type="radio"
-										name="seasons_tab"
+										name="my_tabs_S{3 + season + 1}"
 										role="tab"
 										class="tab"
 										aria-label="S{season + 1}"
-										checked={season == 0}
 									/>
 									<div class="tab-content bg-base-100 border-base-300 p-6">
 										<div class="join join-vertical bg-base-100">
-											<!-- begin episode for seasons -->
-											{#each data.groupseasons[season + 1] as link, index1}
+ 											{#each data.groupseasons[season + 1] as link, index1}
 												<div class="collapse-arrow join-item border-base-300 collapse border">
 													<input type="radio" name="my-accordion-s{season}" checked={index1 == 0} />
 													<div class="collapse-title font-semibold">
@@ -495,7 +541,7 @@
 								{/each}
 							</div>
 						{/if}
-					</div>
+					</div>-->
 				{/if}
 			</div>
 		</div>
