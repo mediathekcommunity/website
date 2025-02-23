@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
-	import '../videojs/skins/gold1/videojs.min.css';
+	import '../videojs/skins/gold1/videojs.min.css'; // Then override with custom skin
 	import videojs from 'video.js';
 	import '../videojs/plugins/es/nuevo.js';
 	import '../videojs/plugins/es/playlist.js';
@@ -9,16 +9,12 @@
 	import { modalvideo, playlist, subs, seriestype, playlistindex } from '$lib/store';
  
 	let player: any = null;
-	let videoElement: HTMLVideoElement;
-	let isInitialized = $state(false);
-	let updateTimeout: ReturnType<typeof setTimeout>;
+	let videoSource: {
+		sources: { src: string; type: string }[];
+		poster: string;
+		title: string;
+	} | null = null;
 
-	interface PlaylistItem {
-		thumb?: string;
-		tracks?: any[];
-	}
-
-	// Memoized video options
 	const videojsOptions = {
 		license: '0902555a051359560f49525c090a445d0d1348',
 		controls: true,
@@ -26,7 +22,6 @@
 		fill: true,
 		hotkeys: true,
 		resume: true,
-		preload: 'metadata', // Optimize initial loading
 		html5: {
 			hlsjsConfig: {
 				debug: false,
@@ -51,128 +46,97 @@
 		rewindforward: 30
 	};
 
-	// Optimized player initialization with lazy loading
-	async function initializePlayer() {
-		if (!videoElement || isInitialized) return;
-		
+	function initializePlayer(videoElement: HTMLVideoElement) {
 		player = videojs(videoElement, videojsOptions);
 		player.nuevo(nuevoOptions);
 		player.hotkeys({ seekStep: 10 });
 
-		if ($seriestype === 'playlist' && $playlist?.length > 0) {
-			player.playlist($playlist);
-			player.playlist.currentItem(Number($playlistindex) || 0);
+		if ($seriestype === 'playlist') {
+			player.playlist.currentItem($playlistindex);
 		}
-		
-		isInitialized = true;
 		player.pause();
 	}
 
-	// Optimized source update with type checking
 	function updatePlayerSource(type: 'playlist' | 'single' | 'default') {
-		if (!player || !isInitialized) return;
+		if (!player) return;
+		player.currentTime(0);
 
-		try {
-			player.currentTime(0);
+		const setCommonSource = (src: string, poster: string, videoType: string) => {
+			videoSource = {
+				sources: [{ src, type: videoType }],
+				poster,
+				title: $modalvideo?.title || ''
+			};
+			player.poster(poster);
+			player.src(videoSource.sources);
+		};
 
-			if (type === 'playlist' && Array.isArray($playlist) && $playlist.length > 0) {
+		switch (type) {
+			case 'playlist':
 				player.playlist($playlist);
-				const index = Number($playlistindex) || 0;
-				const playlistItem = $playlist[index] as PlaylistItem;
-				if (playlistItem?.thumb) {
+				const playlistItem = $playlist[$playlistindex];
+				if (playlistItem) {
 					player.poster(playlistItem.thumb);
 				}
-			} else if ($modalvideo) {
-				const { src, thumb, poster, type: videoType, title } = $modalvideo;
-				player.poster(thumb || poster);
-				player.src([{ src, type: videoType }]);
-			}
-
-			player.one('loadeddata', handleLoadedData);
-		} catch (error) {
-			console.error('Error updating video source:', error);
+				break;
+			case 'single':
+			case 'default':
+				if ($modalvideo) {
+					setCommonSource(
+						$modalvideo.src,
+						$modalvideo.thumb || $modalvideo.poster,
+						$modalvideo.type
+					);
+				}
+				break;
 		}
+
+		player.on('loadeddata', handleLoadedData);
 	}
 
-	// Optimized track loading
 	function handleLoadedData() {
-		try {
-			let tracks;
-			if ($seriestype === 'playlist' && Array.isArray($playlist) && $playlist.length > 0) {
-				const index = Number($playlistindex) || 0;
-				const playlistItem = $playlist[index] as PlaylistItem;
-				tracks = playlistItem?.tracks;
-			} else {
-				tracks = $modalvideo?.tracks;
-			}
+		const index = $playlistindex;
+		const currentModalVideo = $modalvideo;
+		const currentPlaylist = $playlist;
 
-			if (tracks && player?.loadTracks) {
-				player.loadTracks(tracks);
-			}
-			
-			player?.pause();
-		} catch (error) {
-			console.error('Error handling loaded data:', error);
+		if (currentModalVideo?.tracks) {
+			player?.loadTracks(currentModalVideo.tracks);
+		} else if (currentPlaylist && currentPlaylist[index]?.tracks) {
+			player?.loadTracks(currentPlaylist[index].tracks);
 		}
+		player?.pause();
+		player?.off('loadeddata', handleLoadedData);
 	}
 
-	// Reactive update with debouncing
-	$effect(() => {
-		if (!player || !isInitialized) return;
-
-		if (updateTimeout) {
-			clearTimeout(updateTimeout);
+	$: if (player && ($modalvideo || $seriestype || $playlistindex)) {
+		updatePlayerSource($seriestype as 'playlist' | 'single' | 'default');
+		if ($seriestype === 'playlist') {
+			player.playlist.currentItem($playlistindex);
 		}
-
-		updateTimeout = setTimeout(() => {
-			if ($modalvideo || $seriestype || (Array.isArray($playlist) && $playlist.length > 0)) {
-				updatePlayerSource($seriestype as 'playlist' | 'single' | 'default');
-			}
-		}, 100);
-	});
+	}
 
 	onMount(() => {
+		const videoElement = document.getElementById('my-video') as HTMLVideoElement;
 		if (videoElement) {
-			initializePlayer();
+			initializePlayer(videoElement);
 		}
 	});
 
 	onDestroy(() => {
-		if (updateTimeout) {
-			clearTimeout(updateTimeout);
-		}
 		if (player) {
 			player.dispose();
 			player = null;
 		}
-		isInitialized = false;
 	});
 </script>
 
-<!-- We disable the a11y warning since captions are handled by video.js -->
 <!-- svelte-ignore a11y_media_has_caption -->
-<video 
-	bind:this={videoElement}
-	id="my-video" 
-	playsinline 
-	class="video-js overflow-hidden"
-	preload="metadata"
->
-	<!-- Placeholder track to satisfy accessibility requirements -->
-	<track kind="captions" src="" label="Captions" />
-</video>
+<video id="my-video" playsinline class="video-js overflow-hidden"></video>
 
 <style>
 	.overflow-hidden {
 		overflow: hidden !important;
-		contain: content;
-		will-change: transform;
 	}
-	
-	:global(.video-js) {
-		transform: translateZ(0);
-	}
-
 	:root {
 		--controlbar-bg-color: transparent;
 		--big-play-bg-color: #708090;
