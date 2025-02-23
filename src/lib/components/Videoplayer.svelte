@@ -7,7 +7,7 @@
 	import '../videojs/plugins/es/videojs.hotkeys';
 	import '../videojs/plugins/es/videojs.skipintro';
 	import { modalvideo, playlist, subs, seriestype, playlistindex } from '$lib/store';
- 
+
 	let player: any = null;
 	let videoSource: {
 		sources: { src: string; type: string }[];
@@ -77,6 +77,7 @@
 				const playlistItem = $playlist[$playlistindex];
 				if (playlistItem) {
 					player.poster(playlistItem.thumb);
+					player.pause();
 				}
 				break;
 			case 'single':

@@ -136,7 +136,7 @@ function createPlaylist(mediaLinks: MediaLink[], data: any): PlaylistItem[] {
 			title: link.title,
 			src: link.streamlink,
 			thumb: generateImageUrl(
-				link.backdrop == undefined ? link.backdrop : '',
+				link.backdrop != undefined ? link.backdrop : '',
 				link.backdropup != null ? link.backdropup : { filename_disk: '' },
 				data
 			),
@@ -163,7 +163,7 @@ function createVideoSource(
 		src: firstLink.streamlink,
 		type: determineFormat(firstLink.streamformat),
 		tracks: formatSubtitles(firstLink.subtitles),
-		poster: generateImageUrl(backdrop, localFile),
+		poster: generateImageUrl(backdrop, localFile, {}),
 		skip: 0
 	};
 }

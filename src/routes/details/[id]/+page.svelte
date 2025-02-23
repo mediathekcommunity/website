@@ -108,20 +108,16 @@
 	};
 	function playepisode(episode, index) {
 		//console.log(showvideo);
-		if (showvideo == false) {
-			document.body.scrollIntoView();
+		document.body.scrollIntoView();
 
-			showvideo = true; // Always show video for episodes
-			myPlaylist = [];
-			seriestype.set('playlist');
-			playlistindex.set(index);
-			playlist.set(data.playlist);
-			console.log('playlist:', playlist);
-		} else {
-			stopvideo();
-		}
+		showvideo = true; // Always show video for episodes
+		myPlaylist = [];
+		seriestype.set('playlist');
+		playlistindex.set(index);
+		playlist.set(data.playlist);
+		//console.log('playlist:', $playlist);
 	}
-	console.log(data);
+	//console.log(data);
 </script>
 
 {#if data1}
@@ -740,7 +736,7 @@
 	}
 
 	.top60 {
-		top: 40px;
+		top: 60px;
 	}
 	.top602 {
 		margin-top: 30px;
