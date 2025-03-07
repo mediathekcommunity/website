@@ -20,6 +20,15 @@
 		quality: '4K' | 'fhd' | 'hd' | string;
 		type: 'movie' | 'series' | 'music' | string;
 		special?: { name: string };
+		language?: string;
+		episode?: {
+			season: number;
+			episode: number;
+			lang?: string;
+		};
+		links?: Array<{
+			audiolang: string[];
+		}>;
 	}
 
 	// Replace $props declarations with proper Svelte props
@@ -64,6 +73,54 @@
 			default: return 'mdi:movie';
 		}
 	}
+
+	const getLanguageIcon = (slide: HeroItem) => {
+		let lang;
+		
+		// Check links[0].audiolang[0] first
+		if (slide.links?.[0]?.audiolang?.[0]) {
+			//console.log('slide.links[0].audiolang[0]', slide.links[0].audiolang[0]);
+			lang = slide.links[0].audiolang[0];
+		}
+		// Then check episode[0].lang
+		else if (slide.episode?.lang) {
+			lang = slide.episode.lang;
+		}
+		// Finally fallback to channel country
+		else {
+			lang = "english";
+		}
+
+		if (!lang) return 'mdi:web';
+		
+		switch (lang.toLowerCase()) {
+			case 'de':
+			case 'ger':
+			case 'german': 
+				return 'emojione:flag-for-germany';
+			case 'en':
+			case 'eng':
+			case 'gb':
+			case 'english': 
+				return 'emojione:flag-for-united-kingdom';
+			case 'fr':
+			case 'fra':
+			case 'french': 
+				return 'emojione:flag-for-france';
+			case 'es':
+			case 'spa':
+			case 'spanish': 
+				return 'emojione:flag-for-spain';
+			case 'it': 
+				return 'emojione:flag-for-italy';
+			case 'sw': 
+			case 'swe':
+			case 'swedish':
+				return 'emojione:flag-for-sweden';
+			default: 
+				return 'mdi:web';
+		}
+	};
 
 	const plugins = [
 		Autoplay({
@@ -120,6 +177,7 @@
 									{/if}
 									<Icon icon={slide.channel.icon} height="28px" width="36px" />
 								</span>
+
 								<span
 									class="badge-ghost inline-flex items-center gap-1 px-1 py-1 text-white sm:text-sm"
 								>
@@ -129,6 +187,27 @@
 									class="badge-ghost inline-flex items-center gap-1 px-1 py-1 text-white sm:text-sm"
 								>
 									<Icon icon={getTypeIcon(slide.type)} height="28px" />
+								</span>
+								{#if slide.episode}
+									<span
+										class="badge-ghost inline-flex items-center gap-1 px-1 py-1 text-white sm:text-sm"
+									>
+										<Icon icon="mdi:video-vintage" height="28px" />
+										Episode S{slide.episode.season}E{slide.episode.episode}
+									</span>
+								{:else}
+									<span
+										class="badge-ghost inline-flex items-center gap-1 px-1 py-1 text-white sm:text-sm"
+									>
+										<Icon icon="mdi:video-wireless" height="28px" />
+										Stream
+									</span>
+								{/if}
+								<span
+									class="badge-ghost inline-flex items-center gap-1 px-1 py-1 text-white sm:text-sm"
+								>
+									<Icon icon="mdi:translate" height="28px" />
+									<Icon icon={getLanguageIcon(slide)} height="28px" width="36px" />
 								</span>
 							</div>
 							<h1

@@ -14,7 +14,7 @@
 		geo: string;
 	}
 
-	let { langlist, langdata, geo } = $props<Props>();
+	let { langlist, langdata, geo } = $props();
 
 	// Cache for region names
 	const regionNamesCache = new Map<string, string>();
@@ -32,7 +32,7 @@
 
 	// Optimized sorting with memoization for region names
 	const sortedLanglist = $derived(
-		langlist?.sort((a, b) => {
+		langlist?.sort((a: string, b: string) => {
 			if (a === geo) return -1;
 			if (b === geo) return 1;
 			return getRegionName(a).localeCompare(getRegionName(b));
@@ -41,11 +41,13 @@
 
 	// Optimized carousel options for performance
 	const carouselOptions = {
-		align: 'start',
-		slidesToScroll: 2,
-		dragFree: true,
-		containScroll: 'trimSnaps',
-		watchDrag: true,
+		options: {
+			align: 'start',
+			slidesToScroll: 2,
+			dragFree: true,
+			containScroll: 'trimSnaps',
+			watchDrag: true
+		}
 	};
 
 	// Automatic cleanup
@@ -60,15 +62,11 @@
 	{#if langdata[country]?.length > 0}
 		<section class="country-section">
 			<h2 class="country-title">
-				<span class="fi fi-{country.toLowerCase()}" aria-hidden="true" />
+				<span class="fi fi-{country.toLowerCase()}" aria-hidden="true"></span>
 				<span>{getRegionName(country)}</span>
 			</h2>
-			
-			<div 
-				class="embla" 
-				use:emblaCarouselSvelte={carouselOptions}
-				oninit:once={({ detail }) => emblaApi = detail}
-			>
+
+			<div class="embla" use:emblaCarouselSvelte={carouselOptions} bind:this={emblaApi}>
 				<div class="embla__container">
 					{#each langdata[country] as item (item.id)}
 						<div class="embla__slide">

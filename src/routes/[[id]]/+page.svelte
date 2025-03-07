@@ -123,6 +123,7 @@
 	.embla {
 		overflow: hidden;
 		margin: 0;
+		padding: 0 1rem;
 	}
 
 	.embla__container {
