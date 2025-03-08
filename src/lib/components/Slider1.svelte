@@ -53,7 +53,6 @@
 	// Automatic cleanup
 	let emblaApi: any;
 	onDestroy(() => {
-		emblaApi?.destroy();
 		emblaApi = null;
 	});
 </script>
