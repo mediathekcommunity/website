@@ -5,7 +5,6 @@
 	import { page } from '$app/state';
 	import { MetaTags, deepMerge } from 'svelte-meta-tags';
 	let { data, children } = $props();
-	import { slide } from 'svelte/transition';
 	import { writable } from 'svelte/store';
 
 	const desktopDrawerOpen = writable(false);

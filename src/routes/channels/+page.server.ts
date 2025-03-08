@@ -12,7 +12,7 @@ import { error } from '@sveltejs/kit';
      */
     async function fetchChannelData(fetcher: typeof fetch): Promise<Channel[]> {
       try {
-        const directus = getDirectusInstance(fetcher);
+        const directus = getDirectusInstance();
         const response = await directus.request(
           readItems('channel', {
             fields: ['*.*'], // Specify the fields needed

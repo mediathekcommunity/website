@@ -24,11 +24,10 @@
 
 	// Flags for component configuration
 	const showcountry = false;
-	const countryflag = false;
 
 	// Track embla instance for cleanup
 	let emblaApi: any;
-	
+
 	onDestroy(() => {
 		emblaApi?.destroy();
 		emblaApi = null;
@@ -47,15 +46,15 @@
 						Recently Added from {channelName}
 					</span>
 				</h1>
-				<div 
-					class="embla" 
+				<div
+					class="embla"
 					use:emblaCarouselSvelte={{ options }}
-					oninit:once={({ detail }) => emblaApi = detail}
+					oninit:once={({ detail }) => (emblaApi = detail)}
 				>
 					<div class="embla__container">
 						{#each data.page as item (item.id)}
 							<div class="embla__slide">
-								<Card {item} {countryflag} geo={data.geo} />
+								<Card carddata={item} countryflag />
 							</div>
 						{/each}
 					</div>

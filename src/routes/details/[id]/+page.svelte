@@ -49,9 +49,6 @@
 	let backgroundImage = $state('');
 	let showvideo = $state(false);
 	let showdynawarn = $state(false);
-
-	//console.log('Details page:', data);
-
 	$effect(() => {
 		data1 = data.page;
 	});
@@ -77,18 +74,15 @@
 			title: ''
 		});
 		const player = videojs.getPlayers()['my-video'];
-		//console.log('player:', player);
 		player.dispose();
 	}
 	function playvideo() {
 		if (!showvideo) {
 			var d = data.videosource;
-			//console.log(data);
 			document.body.scrollIntoView();
 
 			showvideo = true; // Always show video for episodes
 
-			//d.skip= 30
 			modalvideo.set(d);
 			seriestype.set('single');
 		} else {
@@ -108,7 +102,6 @@
 	};
 	function playepisode(episode, index, type) {
 		type ? type : 'nonov';
-		//console.log(data.playlist,index);
 		document.body.scrollIntoView();
 
 		showvideo = true; // Always show video for episodes
@@ -121,9 +114,7 @@
 		} else {
 			playlist.set(data.playlist.regular);
 		}
-		//console.log('playlist:', $playlist.sort((a, b) => parseInt(a.episodes) - parseInt(b.episodes)));
 	}
-	//console.log(data);
 </script>
 
 {#if data1}
@@ -498,97 +489,7 @@
 							</div>
 						{/if}
 					{/each}<!-- 
-					<input
-						type="radio"
-						name="my_tabs_3"
-						role="tab"
-						class="tab"
-						aria-label={data1.season > 1 ? 'Seasons' : 'Episodes'}
-					/>
-					<div class="tab-content bg-base-100 border-base-300 p-6">
-						{#if data1.season > 1}
-							<div role="tablist" class="tabs tabs-lift">
-								{#each { length: data1.season }, season}
-									<input
-										type="radio"
-										name="my_tabs_S{3 + season + 1}"
-										role="tab"
-										class="tab"
-										aria-label="S{season + 1}"
-									/>
-									<div class="tab-content bg-base-100 border-base-300 p-6">
-										<div class="join join-vertical bg-base-100">
- 											{#each data.groupseasons[season + 1] as link, index1}
-												<div class="collapse-arrow join-item border-base-300 collapse border">
-													<input type="radio" name="my-accordion-s{season}" checked={index1 == 0} />
-													<div class="collapse-title font-semibold">
-														<span class="episode-number">S{link.season}-E{link.episode}:</span>
-														<span>{link.title} {index1}</span>
-													</div>
-													<div class="collapse-content text-sm">
-														<div class="episode-content">
-															<p class="episode-overview">
-																{link.description ? link.description : 'no description'}
-															</p>
-															<button
-																type="button"
-																class="btn btn-accent"
-																onclick={() =>
-																	data.geo == data1.channel.geo ? playepisode(link, index1) : ''}
-															>
-																{#if data.geo == data1.channel.geo}
-																	<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
-																	<span> Play Episode</span>
-																{:else}
-																	<span class="flex items-center gap-1">
-																		<span class="fi fi-{data1.channel.country.toLowerCase()}"
-																		></span>
-																		IP required
-																	</span>
-																{/if}
-															</button>
-														</div>
-													</div>
-												</div>
-											{/each}
-										</div>
-									</div>
-								{/each}
-							</div>
-						{:else}
-							<div class="join join-vertical bg-base-100">
-								{#each data.groupseasons[1] as link2, index3}
-									<div class="collapse-arrow join-item border-base-300 collapse border">
-										<input type="radio" name="my-accordion-episode" checked={index3 == 0} />
-										<div class="collapse-title font-semibold">
-											<span class="episode-number">S{link2.season}-E{link2.episode}:</span>
-											<span>{link2.title}</span>?
-										</div>
-										<div class="collapse-content text-sm">
-											<div class="episode-content">
-												<p class="episode-overview">{link2.description}</p>
-												<button
-													type="button"
-													class="btn btn-accent"
-													onclick={() =>
-														data.geo == data.page.channel.country ? playepisode(link2, index3) : ''}
-												>
-													{#if data.geo == data.page.channel.country}
-														<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
-														<span> Play Episode </span>
-													{:else}
-														<span class="flex items-center gap-1">
-															<span class="fi fi-{data1.channel.country.toLowerCase()}"></span>
-															IP required
-														</span>
-													{/if}
-												</button>
-											</div>
-										</div>
-									</div>
-								{/each}
-							</div>
-						{/if}
+					 
 					</div>-->
 				{/if}
 			</div>

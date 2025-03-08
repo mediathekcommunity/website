@@ -18,26 +18,28 @@
 
 	// Group channels by country with memoization
 	const groupChannelsByCountry = (channels: Channel[]): Record<string, Channel[]> => {
-		return channels?.reduce(
-			(acc, channel) => {
-				const country = channel?.country || 'Unknown';
-				acc[country] = acc[country] || [];
-				acc[country].push(channel);
-				return acc;
-			},
-			{} as Record<string, Channel[]>
-		) || {};
+		return (
+			channels?.reduce(
+				(acc, channel) => {
+					const country = channel?.country || 'Unknown';
+					acc[country] = acc[country] || [];
+					acc[country].push(channel);
+					return acc;
+				},
+				{} as Record<string, Channel[]>
+			) || {}
+		);
 	};
 
 	// Reactive states with proper typing
 	const groupedChannels = $derived(groupChannelsByCountry(data?.channels || []));
 	const sortedCountries = $derived(Object.keys(groupedChannels).sort());
-	
+
 	// Track embla instances for cleanup
 	let emblaInstances: any[] = $state([]);
-	
+
 	onDestroy(() => {
-		emblaInstances.forEach(instance => instance?.destroy());
+		emblaInstances.forEach((instance) => instance?.destroy());
 		emblaInstances = [];
 	});
 </script>
@@ -53,9 +55,9 @@
 						</span>
 						<span class="country-name">{country}</span>
 					</h2>
-					<div 
-						class="embla" 
-						use:emblaCarouselSvelte={{ 
+					<div
+						class="embla"
+						use:emblaCarouselSvelte={{
 							options: emblaOptions,
 							plugins: []
 						}}
@@ -64,7 +66,7 @@
 						<div class="embla__container">
 							{#each groupedChannels[country] as channel (channel.id)}
 								<div class="embla__slide">
-									<ChannelCard 
+									<ChannelCard
 										id={channel.id}
 										title={channel.title}
 										poster={channel.poster}

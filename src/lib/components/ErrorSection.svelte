@@ -8,10 +8,10 @@
 	let { error, filter, text1 } = $props<ErrorProps>();
 
 	const errorMessage = $derived(
-		error 
+		error
 			? "We couldn't find any entries that match your search."
-			: filter 
-				? `We couldn't find any ${text1 || 'entries'} for "${filter}".`
+			: filter
+				? `We couldn't find any ${text1 == 'Channel' ? 'entries' : text1 || 'entries'} for "${filter}".`
 				: "We couldn't find any entries that match your search."
 	);
 </script>
@@ -59,7 +59,7 @@
 		margin-bottom: 1rem;
 		color: #ccc;
 	}
- 
+
 	.error-suggestion {
 		font-size: clamp(0.8rem, 1.5vw, 1rem);
 		margin-bottom: 2rem;
@@ -75,7 +75,9 @@
 		color: #fff;
 		background-color: #ff4b2b;
 		border-radius: 5px;
-		transition: transform 0.2s ease, background-color 0.3s ease;
+		transition:
+			transform 0.2s ease,
+			background-color 0.3s ease;
 	}
 
 	.error-button:hover {
