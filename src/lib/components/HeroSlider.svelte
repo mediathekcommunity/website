@@ -32,28 +32,32 @@
 	}
 
 	// Replace $props declarations with proper Svelte props
-    export let heroItems: HeroItem[] = [];
-    export let showcountry: boolean = false;
-    export let special: boolean = false;
-    
-    // Change from $state to let for mutability
-    let emblaApi: any;
+	export let heroItems: HeroItem[] = [];
+	export let showcountry: boolean = false;
+	export let special: boolean = false;
+
+	// Change from $state to let for mutability
+	let emblaApi: any;
 
 	const getqualityicon = (quality: string) => {
 		switch (quality) {
-			case '4K': return 'mdi:uhd';
-			case 'fhd': return 'material-symbols:full-hd';
-			case 'hd': return 'mdi:video';
-			default: return 'mdi:video-outline';
+			case '4K':
+				return 'mdi:uhd';
+			case 'fhd':
+				return 'material-symbols:full-hd';
+			case 'hd':
+				return 'mdi:video';
+			default:
+				return 'mdi:video-outline';
 		}
-	}
+	};
 
 	const getImageUrl = (slide: HeroItem) => {
 		if (!slide.backdrop && !slide.backdropup?.filename_disk) {
 			console.warn('No backdrop found for slide', slide);
 			return 'https://api.mediathek.community/assets/default-backdrop.jpg';
 		}
-		return slide.backdrop 
+		return slide.backdrop
 			? 'https://mediathekc.b-cdn.net/t/p/original' + slide.backdrop
 			: 'https://api.mediathek.community/assets/' + slide.backdropup?.filename_disk;
 	};
@@ -67,16 +71,20 @@
 
 	const getTypeIcon = (type: string) => {
 		switch (type) {
-			case 'movie': return 'mdi:movie';
-			case 'series': return 'mdi:tv';
-			case 'music': return 'mdi:music';
-			default: return 'mdi:movie';
+			case 'movie':
+				return 'mdi:movie';
+			case 'series':
+				return 'mdi:tv';
+			case 'music':
+				return 'mdi:music';
+			default:
+				return 'mdi:movie';
 		}
-	}
+	};
 
 	const getLanguageIcon = (slide: HeroItem) => {
 		let lang;
-		
+
 		// Check links[0].audiolang[0] first
 		if (slide.links?.[0]?.audiolang?.[0]) {
 			//console.log('slide.links[0].audiolang[0]', slide.links[0].audiolang[0]);
@@ -88,36 +96,36 @@
 		}
 		// Finally fallback to channel country
 		else {
-			lang = "english";
+			lang = 'english';
 		}
 
 		if (!lang) return 'mdi:web';
-		
+
 		switch (lang.toLowerCase()) {
 			case 'de':
 			case 'ger':
-			case 'german': 
+			case 'german':
 				return 'emojione:flag-for-germany';
 			case 'en':
 			case 'eng':
 			case 'gb':
-			case 'english': 
+			case 'english':
 				return 'emojione:flag-for-united-kingdom';
 			case 'fr':
 			case 'fra':
-			case 'french': 
+			case 'french':
 				return 'emojione:flag-for-france';
 			case 'es':
 			case 'spa':
-			case 'spanish': 
+			case 'spanish':
 				return 'emojione:flag-for-spain';
-			case 'it': 
+			case 'it':
 				return 'emojione:flag-for-italy';
-			case 'sw': 
+			case 'sw':
 			case 'swe':
 			case 'swedish':
 				return 'emojione:flag-for-sweden';
-			default: 
+			default:
 				return 'mdi:web';
 		}
 	};
@@ -188,21 +196,7 @@
 								>
 									<Icon icon={getTypeIcon(slide.type)} height="28px" />
 								</span>
-								{#if slide.episode}
-									<span
-										class="badge-ghost inline-flex items-center gap-1 px-1 py-1 text-white sm:text-sm"
-									>
-										<Icon icon="mdi:video-vintage" height="28px" />
-										Episode S{slide.episode.season}E{slide.episode.episode}
-									</span>
-								{:else}
-									<span
-										class="badge-ghost inline-flex items-center gap-1 px-1 py-1 text-white sm:text-sm"
-									>
-										<Icon icon="mdi:video-wireless" height="28px" />
-										Stream
-									</span>
-								{/if}
+
 								<span
 									class="badge-ghost inline-flex items-center gap-1 px-1 py-1 text-white sm:text-sm"
 								>
