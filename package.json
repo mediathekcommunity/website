@@ -42,7 +42,7 @@
 		"@formkit/auto-animate": "^0.8.2",
 		"@sveltejs/adapter-node": "^5.2.12",
 		"@tailwindcss/vite": "^4.0.12",
-		"@types/node": "^22.13.9",
+		"@types/node": "^22.13.10",
 		"@unpic/svelte": "^1.0.0",
 		"clsx": "^2.1.1",
 		"cookie": "^1.0.2",
