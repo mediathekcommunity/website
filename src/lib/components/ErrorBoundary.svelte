@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { error } from '$app/navigation';
 	import Icon from '@iconify/svelte';
 
 	interface Props {
@@ -33,27 +32,27 @@
 <div class="error-boundary" role="alert" aria-live="polite">
 	<div class="error-content">
 		<div class="error-icon">
-			<Icon 
-				icon={status === 404 ? 'lucide:file-question' : 'lucide:alert-triangle'} 
-				width="48" 
+			<Icon
+				icon={status === 404 ? 'lucide:file-question' : 'lucide:alert-triangle'}
+				width="48"
 				height="48"
 			/>
 		</div>
-		
+
 		<h1 class="error-title">{status}</h1>
 		<p class="error-description">{getErrorMessage(status)}</p>
 
 		<div class="error-actions">
-			<button 
-				class="action-button primary" 
+			<button
+				class="action-button primary"
 				onclick={handleBack}
 				type="button"
 			>
 				<Icon icon="lucide:arrow-left" />
 				Go Back
 			</button>
-			<button 
-				class="action-button secondary" 
+			<button
+				class="action-button secondary"
 				onclick={handleRetry}
 				type="button"
 			>

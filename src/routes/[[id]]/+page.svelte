@@ -12,7 +12,7 @@
 	import { derived } from 'svelte/store';
 	let { data } = $props();
 	let showcountry = true;
-	let heroItems = $derived(data?.page && data.page.length > 0 ? data.page.slice(0, 10) : []);
+	let heroItems = $derived(data?.page && data.page.length > 0 ? data.page.slice(0, 5) : []);
 	let options = { align: 'start', slidesToScroll: 1, loop: true };
 	let plugins = [
 		Autoplay({
@@ -26,7 +26,7 @@
 	let currentSlide = 0;
 	let options2 = { align: 'start', slidesToScroll: 2, loop: true };
 	let emblaApi;
-
+	//	console.log(data)
 	function getimgurl(img) {
 		if (img.backdrop) {
 			return 'https://img.mediathek.community/t/p/original' + img.backdrop;
@@ -41,7 +41,7 @@
 </script>
 
 <div class="contents">
-	{#if data && data.page && data.page.length > 0 && data.error === false}
+	{#if data && data.page && data.page.length > 0}
 		{#if heroItems}
 			<HeroSlider {heroItems} {data} />
 		{/if}
