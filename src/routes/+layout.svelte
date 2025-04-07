@@ -42,7 +42,7 @@
 		<input id="my-drawer-3" type="checkbox" class="drawer-toggle" />
 		<div class="drawer-content flex flex-col">
 			<!-- Navbar -->
-			<div class="navbar bg-base-300 header w-full" class:glass2={isScrolled || $isMobileMenuOpen}>
+			<div class="navbar bg-base-300 header w-full" class:navbar-glass={isScrolled || $isMobileMenuOpen}>
 				<div class="flex-none lg:hidden">
 					<label for="my-drawer-3" aria-label="open sidebar" class="btn btn-square btn-ghost">
 						<svg
@@ -132,7 +132,7 @@
 		flex-direction: column;
 		min-height: 100lvh;
 	}
-	.glass2 {
+	.navbar-glass {
 		background-color: rgba(20, 20, 20, 0.9);
 	}
 	main {
