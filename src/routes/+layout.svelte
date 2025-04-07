@@ -64,7 +64,7 @@
 					<h1 class="site-title">
 						<span class="text-primary">Mediathek</span>
 						<span class="text-white">Community</span>
-						<span class="badge badge-primary text-white">v0.9.2</span>
+						<span class="badge badge-primary text-white">v0.9.5</span>
 					</h1>
 				</div>
 				<div class="hidden flex-none lg:block">
@@ -76,6 +76,7 @@
 						<li><a href="/music">Music</a></li>
 						<li><a href="/culture">Culture</a></li>
 						<li><a href="/youth">Youth</a></li>
+						<li><a href="/audiobooks" style="pointer-events: none; color: grey;">Audiobooks</a></li>
 						<li><a href="/specials">Specials</a></li>
 						<li><a href="/channels">Channels</a></li>
 					</ul>
@@ -96,6 +97,7 @@
 				<li><a href="/music">Music</a></li>
 				<li><a href="/culture">Culture</a></li>
 				<li><a href="/youth">Youth</a></li>
+				<li><a href="/audiobooks" style="pointer-events: none; color: grey;">Audiobooks</a></li>
 				<li><a href="/specials">Specials</a></li>
 				<li><a href="/channels">Channels</a></li>
 			</ul>
