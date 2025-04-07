@@ -1,5 +1,10 @@
 {
     "IDX.aI.enableInlineCompletion": true,
     "IDX.aI.enableCodebaseIndexing": true,
-    "CodeGPT.apiKey": "Google AI Studio"
+    "CodeGPT.apiKey": "Google AI Studio",
+    "github.copilot.chat.codeGeneration.instructions": [
+        {
+          "file": "./.vscode/daisyui.md"
+        }
+      ]
 }
