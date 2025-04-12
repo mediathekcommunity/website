@@ -54,6 +54,7 @@
 						Recently Added
 					</span>
 				</h1>
+				<!-- svelte-ignore attribute_illegal_colon -->
 				<div class="embla" 
 					use:emblaCarouselSvelte={{ options2 }}
 					oninit:once={event => emblaApi = event.detail}

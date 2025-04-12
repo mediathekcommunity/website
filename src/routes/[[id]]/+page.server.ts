@@ -50,15 +50,26 @@ const fetchMediathekItems = async (filterType?: string): Promise<MediathekItem[]
 		culture: { type: 'culture' },
 	};
 
-	const filter = filterType ? filterMap[filterType] : undefined;
-
-	const queryOptions = {
+	let queryOptions = {
 		fields: ['*.*', 'channel.country', 'channel.name', 'channel.id'],
 		deep: { channel: { _limit: 1 } }, // Assuming only one channel per item is needed
 		sort: ['-date_created'], // Sorting directly in the query
-		...(filter && { filter }), // Conditionally add filter
 	};
 
+	if (filterType) {
+		const filterMap: Record<string, object> = {
+			youth: { _or: [{ type: 'y-movie' }, { type: 'y-series' }] },
+			movie: { type: 'movie' },
+			series: { type: 'series' },
+			music: { type: 'music' },
+			culture: { type: 'culture' },
+		};
+
+		queryOptions = {
+			...queryOptions,
+			filter: filterMap[filterType]
+		};
+	}
 	try {
 		const data = await directus.request(readItems('mediathek', queryOptions));
 		// Ensure data is always an array
