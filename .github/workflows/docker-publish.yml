@@ -9,7 +9,7 @@ on:
 #  schedule:
 #    - cron: '34 17 * * *'
   push:
-    branches: [ "main" ]
+    branches: [ "main-skeleton" ]
 #  pull_request:
 #    branches: [ "main-skeleton" ]
 
