@@ -3,7 +3,6 @@
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
 	import Card from './Card.svelte';
 	import { derived } from 'svelte/store';
-
 	interface LanguageData {
 		[langCode: string]: any[];
 	}
@@ -15,6 +14,7 @@
 	}
 
 	let { langlist, langdata, geo } = $props();
+	console.log(langlist);
 
 	// Cache for region names
 	const regionNamesCache = new Map<string, string>();

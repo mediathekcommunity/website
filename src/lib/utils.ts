@@ -1,12 +1,14 @@
 export type MediathekItem = {
-    id?: string;
-    channel?: {
-        country?: string;
-    };
+	id?: string;
+	expand?: {
+		channel?: {
+			country?: string;
+		};
+	};
 };
 
 export type GroupedByCountry = {
-    [country: string]: MediathekItem[];
+	[country: string]: MediathekItem[];
 };
 
 /**
@@ -15,12 +17,12 @@ export type GroupedByCountry = {
  * @returns Object where country names are keys and values are arrays of mediathek items.
  */
 export const groupByChannelCountry = (items: MediathekItem[]): GroupedByCountry => {
-    return items.reduce((acc: GroupedByCountry, item: MediathekItem) => {
-        const country = item.channel?.country || 'Unknown';
-        acc[country] = acc[country] || [];
-        acc[country].push(item);
-        return acc;
-    }, {});
+	return items.reduce((acc: GroupedByCountry, item: MediathekItem) => {
+		const country = item.expand?.channel?.country || 'Unknown';
+		acc[country] = acc[country] || [];
+		acc[country].push(item);
+		return acc;
+	}, {});
 };
 
 /**
@@ -29,6 +31,6 @@ export const groupByChannelCountry = (items: MediathekItem[]): GroupedByCountry 
  * @returns Formatted date string
  */
 export function formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
+	const date = new Date(dateString);
+	return date.toLocaleDateString();
 }

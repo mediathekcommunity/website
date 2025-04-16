@@ -35,7 +35,6 @@ const isValidFilterParam = (param: string | undefined): boolean => {
 const capitalizeFirstLetter = (str: string): string =>
 	str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : ''; // Added check for empty string
 
-
 /**
  * Queries the Directus API for mediathek items based on an optional filter type.
  * @param filterType - Optional filter type (e.g., 'movie', 'series').
@@ -47,13 +46,13 @@ const fetchMediathekItems = async (filterType?: string): Promise<MediathekItem[]
 		movie: { type: 'movie' },
 		series: { type: 'series' },
 		music: { type: 'music' },
-		culture: { type: 'culture' },
+		culture: { type: 'culture' }
 	};
 
 	let queryOptions = {
 		fields: ['*.*', 'channel.country', 'channel.name', 'channel.id'],
 		deep: { channel: { _limit: 1 } }, // Assuming only one channel per item is needed
-		sort: ['-date_created'], // Sorting directly in the query
+		sort: ['-date_created'] // Sorting directly in the query
 	};
 
 	if (filterType) {
@@ -62,7 +61,7 @@ const fetchMediathekItems = async (filterType?: string): Promise<MediathekItem[]
 			movie: { type: 'movie' },
 			series: { type: 'series' },
 			music: { type: 'music' },
-			culture: { type: 'culture' },
+			culture: { type: 'culture' }
 		};
 
 		queryOptions = {
@@ -75,7 +74,7 @@ const fetchMediathekItems = async (filterType?: string): Promise<MediathekItem[]
 		// Ensure data is always an array
 		return Array.isArray(data) ? (data as MediathekItem[]) : [];
 	} catch (err) {
-		console.error("Error fetching Mediathek items:", err);
+		console.error('Error fetching Mediathek items:', err);
 		// Throw SvelteKit error for API issues
 		throw error(500, 'Failed to fetch data from CMS');
 	}
@@ -87,16 +86,19 @@ const fetchMediathekItems = async (filterType?: string): Promise<MediathekItem[]
  * @param daysThreshold - The number of days within which items are considered expiring.
  * @returns A list of expiring items with remaining days calculated.
  */
-const getExpiringItems = (items: MediathekItem[], daysThreshold: number): (MediathekItem & { remainingDays: number | null })[] => {
+const getExpiringItems = (
+	items: MediathekItem[],
+	daysThreshold: number
+): (MediathekItem & { remainingDays: number | null })[] => {
 	const now = new Date();
 	const thresholdDate = addDays(now, daysThreshold);
-
+	console.log(new Date(items[0].onlineuntil));
 	return items
 		.filter((item) => item.onlineuntil && isBefore(new Date(item.onlineuntil), thresholdDate))
 		.map((item) => ({
 			...item,
 			// Ensure onlineuntil exists before calculating difference
-			remainingDays: item.onlineuntil ? differenceInDays(new Date(item.onlineuntil), now) : null,
+			remainingDays: item.onlineuntil ? differenceInDays(new Date(item.onlineuntil), now) : null
 		}))
 		.sort((a, b) => (a.remainingDays ?? Infinity) - (b.remainingDays ?? Infinity)); // Sort by remaining days ascending
 };
@@ -115,9 +117,8 @@ const createPageMetaTags = (filterId?: string): MetaTagsProps => {
 	return Object.freeze({ title, description });
 };
 
-
 // Server load function
-export const load: PageServerLoad = async ({ params, request, setHeaders }) => {
+export const load: PageServerLoad = async ({ params, request, setHeaders, locals }) => {
 	const { id: filterId } = params as { id?: string };
 
 	if (!isValidFilterParam(filterId)) {
@@ -129,15 +130,16 @@ export const load: PageServerLoad = async ({ params, request, setHeaders }) => {
 	const geo = capitalizeFirstLetter(countryCode);
 
 	try {
-		const allItems = await fetchMediathekItems(filterId);
+		const allItems = await locals.pb.collection('mediathek').getFullList({ expand: 'channel' });
+
+		//const allItems = await fetchMediathekItems(filterId);
 
 		// Assuming groupByChannelCountry is correctly imported from utils
 		const groupedData = groupByChannelCountry(allItems);
 		const expiringItems = getExpiringItems(allItems, EXPIRATION_THRESHOLD_DAYS);
 		const pageMetaTags = createPageMetaTags(filterId);
-
 		setHeaders({
-			'cache-control': `public, max-age=${CACHE_MAX_AGE_SECONDS}`,
+			'cache-control': `public, max-age=${CACHE_MAX_AGE_SECONDS}`
 		});
 
 		return {
@@ -148,20 +150,20 @@ export const load: PageServerLoad = async ({ params, request, setHeaders }) => {
 			groupbycountry: groupedData,
 			countries: Object.keys(groupedData).sort(), // Sort countries for consistent order
 			expiringItems,
-			pageMetaTags,
+			pageMetaTags
 			// No need to explicitly return `error: false` on success
 		};
 	} catch (err: any) {
-        // Catch errors thrown from fetchMediathekItems or other synchronous code
-        // Log the detailed error on the server
-        console.error(`Error loading page for filter "${filterId}":`, err);
+		// Catch errors thrown from fetchMediathekItems or other synchronous code
+		// Log the detailed error on the server
+		console.error(`Error loading page for filter "${filterId}":`, err);
 
-        // Throw SvelteKit error to be handled by hooks or error pages
-        // Avoid exposing internal error details to the client unless necessary
-        if (err.status && err.body) {
-           throw error(err.status, err.body.message || 'An unexpected error occurred');
-        } else {
-           throw error(500, 'An unexpected server error occurred.');
-        }
+		// Throw SvelteKit error to be handled by hooks or error pages
+		// Avoid exposing internal error details to the client unless necessary
+		if (err.status && err.body) {
+			throw error(err.status, err.body.message || 'An unexpected error occurred');
+		} else {
+			throw error(500, 'An unexpected server error occurred.');
+		}
 	}
 };

@@ -65,12 +65,13 @@
 						<span class="text-primary">Mediathek</span>
 						<span class="text-white">Community</span>
 						<span class="badge badge-primary text-white">v0.9.5</span>
+						<span class="badge badge-primary text-white">Switching to Pocketbase Backend, links will be broken for a few days</span>
 					</h1>
 				</div>
 				<div class="hidden flex-none lg:block">
 					<ul class="menu menu-horizontal">
 						<!-- Navbar menu content here -->
-						<li><a href="/">Home</a></li>
+						<li><a href="/">Home</a></li><!--
 						<li><a href="/movie">Movies</a></li>
 						<li><a href="/series">TV Shows</a></li>
 						<li><a href="/music">Music</a></li>
@@ -78,7 +79,7 @@
 						<li><a href="/youth">Youth</a></li>
 						<li><a href="/audiobooks" style="pointer-events: none; color: grey;">Audiobooks</a></li>
 						<li><a href="/specials">Specials</a></li>
-						<li><a href="/channels">Channels</a></li>
+						<li><a href="/channels">Channels</a></li>-->
 					</ul>
 				</div>
 			</div>
@@ -91,15 +92,15 @@
 			<label for="my-drawer-3" aria-label="close sidebar" class="drawer-overlay"></label>
 			<ul class="menu bg-base-200 min-h-full w-80 p-4 pt-12">
 				<!-- Sidebar content here -->
-				<li><a href="/">Home</a></li>
-				<li><a href="/movie">Movies</a></li>
-				<li><a href="/series">TV Shows</a></li>
-				<li><a href="/music">Music</a></li>
-				<li><a href="/culture">Culture</a></li>
-				<li><a href="/youth">Youth</a></li>
-				<li><a href="/audiobooks" style="pointer-events: none; color: grey;">Audiobooks</a></li>
-				<li><a href="/specials">Specials</a></li>
-				<li><a href="/channels">Channels</a></li>
+				<li><a href="/">Home</a></li><!--
+					<li><a href="/movie">Movies</a></li>
+					<li><a href="/series">TV Shows</a></li>
+					<li><a href="/music">Music</a></li>
+					<li><a href="/culture">Culture</a></li>
+					<li><a href="/youth">Youth</a></li>
+					<li><a href="/audiobooks" style="pointer-events: none; color: grey;">Audiobooks</a></li>
+					<li><a href="/specials">Specials</a></li>
+					<li><a href="/channels">Channels</a></li>-->
 			</ul>
 		</div>
 	</div>
