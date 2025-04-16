@@ -1,10 +1,6 @@
 export type MediathekItem = {
 	id?: string;
-	expand?: {
-		channel?: {
-			country?: string;
-		};
-	};
+	channelcountry?: string;
 };
 
 export type GroupedByCountry = {
@@ -18,7 +14,7 @@ export type GroupedByCountry = {
  */
 export const groupByChannelCountry = (items: MediathekItem[]): GroupedByCountry => {
 	return items.reduce((acc: GroupedByCountry, item: MediathekItem) => {
-		const country = item.expand?.channel?.country || 'Unknown';
+		const country = item?.channelcountry || 'Unknown';
 		acc[country] = acc[country] || [];
 		acc[country].push(item);
 		return acc;

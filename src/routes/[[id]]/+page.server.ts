@@ -131,11 +131,12 @@ export const load: PageServerLoad = async ({ params, request, setHeaders, locals
 
 	try {
 		const allItems = await locals.pb.collection('mediathek').getFullList({ expand: 'channel' });
+		const allItems2 = await locals.pb.collection('movies').getFullList();
 
 		//const allItems = await fetchMediathekItems(filterId);
 
 		// Assuming groupByChannelCountry is correctly imported from utils
-		const groupedData = groupByChannelCountry(allItems);
+		const groupedData = groupByChannelCountry(allItems2);
 		const expiringItems = getExpiringItems(allItems, EXPIRATION_THRESHOLD_DAYS);
 		const pageMetaTags = createPageMetaTags(filterId);
 		setHeaders({
@@ -150,7 +151,8 @@ export const load: PageServerLoad = async ({ params, request, setHeaders, locals
 			groupbycountry: groupedData,
 			countries: Object.keys(groupedData).sort(), // Sort countries for consistent order
 			expiringItems,
-			pageMetaTags
+			pageMetaTags,
+			test:allItems2
 			// No need to explicitly return `error: false` on success
 		};
 	} catch (err: any) {

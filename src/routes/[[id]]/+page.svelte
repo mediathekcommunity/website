@@ -55,12 +55,13 @@
 					</span>
 				</h1>
 				<!-- svelte-ignore attribute_illegal_colon -->
-				<div class="embla" 
+				<div
+					class="embla"
 					use:emblaCarouselSvelte={{ options2 }}
-					oninit:once={event => emblaApi = event.detail}
+					oninit:once={(event) => (emblaApi = event.detail)}
 				>
 					<div class="embla__container flex">
-						{#each data.page as item}
+						{#each data.test as item}
 							<div class="embla__slide">
 								<Card carddata={item} countryflag geo={data.geo} />
 							</div>

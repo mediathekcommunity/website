@@ -20,14 +20,15 @@
 	}
 
 	// --- Props ---
-	export let carddata: CardData;
-	export let countryflag: boolean;
-	carddata.channel = carddata.expand.channel || carddata.channel;
+	let { carddata, countryflag,ico1 } = $props();
 	// --- Reactive Variables ---
-	$: title = carddata?.title || 'Unknown Title';
-	$: orgtitle = carddata?.orgtitle || null;
-	$: metascore = carddata?.metascore || 'Unknown';
-
+	var title = carddata?.title || 'Unknown Title';
+	carddata.icon = 'fi fi-' + carddata.channelcountry || 'mdi:movie';
+	var orgtitle = carddata?.orgtitle || null;
+	var metascore = carddata?.metascore || 'Unknown';
+	console.log('CardData:', carddata); // Add debug log
+	console.log('countryflag:', countryflag); // Add debug log
+	var countryflag1 = 'fi fi-' + carddata.channelcountry; // Add debug log
 	// Add debug log
 
 	// Optimize hover state with a single reactive statement
@@ -46,21 +47,19 @@
 
 	// Optimize poster URL generation with memoization
 	const posterUrlStore = writable<string | null>(null);
-	//console.log(carddata);
-	$: {
-		if (carddata) {
-			let posterUrl: string | null = null;
-			if (carddata.poster) {
-				posterUrl = `https://mediathekc.b-cdn.net/t/p/w300${carddata.poster}`;
-			} else if (carddata.posterup?.filename) {
-				posterUrl = `https://mediathekc.b-cdn.net/${carddata.posterup.filename}?width=300`;
-			} else if (carddata.backdropup?.filename) {
-				posterUrl = `https://mediathekc.b-cdn.net/${carddata.backdropup.filename}?width=300`;
-			}
-			posterUrlStore.set(posterUrl);
-		} else {
-			posterUrlStore.set(null);
+
+	if (carddata) {
+		let posterUrl: string | null = null;
+		if (carddata.poster) {
+			posterUrl = `https://mediathekc.b-cdn.net/t/p/w300${carddata.poster}`;
+		} else if (carddata.posterup?.filename) {
+			posterUrl = `https://mediathekc.b-cdn.net/${carddata.posterup.filename}?width=300`;
+		} else if (carddata.backdropup?.filename) {
+			posterUrl = `https://mediathekc.b-cdn.net/${carddata.backdropup.filename}?width=300`;
 		}
+		posterUrlStore.set(posterUrl);
+	} else {
+		posterUrlStore.set(null);
 	}
 
 	// Optimize image props generation
@@ -84,7 +83,7 @@
 		on:mouseleave={() => (isHovered = false)}
 	>
 		<div class="card-image">
-			{#if carddata}
+			{#if carddata.icon}
 				{#if $posterUrlStore}
 					<Image {...imageProps(carddata, $posterUrlStore)} />
 				{:else}
@@ -113,7 +112,7 @@
 					</div>
 				{/if}
 				{#if countryflag}
-					<span class="fi fi-{carddata.channel.country}"></span>
+ 					<span class={countryflag1}></span>
 				{/if}
 				<!-- -->
 			</div>
