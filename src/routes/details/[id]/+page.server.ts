@@ -1,8 +1,4 @@
-import { error } from '@sveltejs/kit';
-import getDirectusInstance from '$lib/directus';
-import { readItem } from '@directus/sdk';
 import type { MetaTagsProps } from 'svelte-meta-tags';
-export const ssr = false;
 
 // Konstante für URLs
 const BASE_MEDIA_URL = 'https://mediathekc.b-cdn.net/t/p/original/';
