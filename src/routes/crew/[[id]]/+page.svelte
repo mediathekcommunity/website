@@ -4,15 +4,9 @@
 
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
 
-	import Autoplay from 'embla-carousel-autoplay';
-	import Fade from 'embla-carousel-fade';
-
-	let currentSlide = 0;
 	let options2 = { slidesToScroll: 2, loop: true };
 	let emblaApi;
-	// Data is loaded from the page server and contains:
-	// - person: the cast member's bio info (e.g., name, bio, hero image URL, etc.)
-	// - mediaSorted: an object where each key is a country and value is an array of media items in which the person appears
+
 	let { data } = $props();
 	let data1 = $state(data.data);
 
@@ -34,16 +28,6 @@
 	function onInit(event: CustomEvent) {
 		emblaApi = event.detail;
 	}
-	let options = { align: 'start', slidesToScroll: 1, loop: true };
-	let plugins = [
-		Autoplay({
-			delay: 8000,
-			stopOnMouseEnter: false,
-			stopOnFocusIn: false,
-			stopOnInteraction: false
-		}),
-		Fade()
-	];
 </script>
 
 {#if !data.error}

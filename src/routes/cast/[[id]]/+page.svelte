@@ -90,20 +90,9 @@
 
 	<!-- Media list sorted by channel country -->
 	<div class="media-list">
-		As Cast
 		<div class="embla" use:emblaCarouselSvelte={{ options: options2, plugins: [] }}>
 			<div class="embla__container flex">
 				{#each filteredMedia2 as item}
-					<div class="embla__slide">
-						<Card carddata={item} countryflag />
-					</div>
-				{/each}
-			</div>
-		</div>
-		As Crew
-		<div class="embla" use:emblaCarouselSvelte={{ options: options2, plugins: [] }}>
-			<div class="embla__container flex">
-				{#each filteredMedia2_crew as item}
 					<div class="embla__slide">
 						<Card carddata={item} countryflag />
 					</div>
