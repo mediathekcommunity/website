@@ -5,7 +5,6 @@
 	import '../videojs/plugins/es/nuevo.js';
 	import '../videojs/plugins/es/playlist.js';
 	import '../videojs/plugins/es/videojs.hotkeys';
-	import '../videojs/plugins/es/videojs.skipintro';
 	import { modalvideo, playlist, subs, seriestype, playlistindex } from '$lib/store';
 
 	let player: any = null;

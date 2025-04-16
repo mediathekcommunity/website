@@ -36,7 +36,6 @@
 		}
 	}
 	import videojs from 'video.js';
-	console.log(data);
 	let myPlaylist = [];
 	let myPlaylistomu = [];
 	let group = $state('details');
@@ -52,6 +51,8 @@
 	$effect(() => {
 		data1 = data.page;
 	});
+	//console.log(data);
+
 	let tabSet = 0;
 	function sortseasons(a) {
 		if (a.season < b.season) {
@@ -249,11 +250,11 @@
 									{#if data1.type != 'movie'}
 										<tr>
 											<th>Seasons (total)</th>
-											<td>{data1.season}</td>
+											<td>{data1.seasons}</td>
 										</tr>
 										<tr>
 											<th>Episodes (total)</th>
-											<td>{data1.episode}</td>
+											<td>{data1.episodes}</td>
 										</tr>
 									{/if}
 									<tr>
@@ -396,14 +397,14 @@
 					</div>
 				{/if}
 				{#if data1.episodes}
-					{#each { length: data1.season }, season}
+					{#each { length: data1.seasons }, season}
 						{#if data.groupseasons.grouped[season + 1]}
 							<input
 								type="radio"
 								name="my_tabs_3"
 								role="tab"
 								class="tab"
-								aria-label={data1.season > 1 ? 'Season ' + (season + 1) : 'Episodes'}
+								aria-label={data1.seasons > 1 ? 'Season ' + (season + 1) : 'Episodes'}
 							/>
 							<div class="tab-content bg-base-100 border-base-300 p-6">
 								<div class="join join-vertical bg-base-100">

@@ -1,5 +1,4 @@
 import type { MetaTagsProps } from 'svelte-meta-tags';
-
 // Konstante für URLs
 const BASE_MEDIA_URL = 'https://mediathekc.b-cdn.net/t/p/original/';
 const BASE_ASSET_URL = 'https://api.mediathek.community/assets/';
@@ -92,6 +91,7 @@ function groupEpisodesBySeason(
 	const groupedov: Record<string, { season: string; episode: string; [key: string]: any }[]> = {};
 
 	episodes.forEach((episode) => {
+		console.log(episode);
 		if (episode.ov == true) {
 			const { season } = episode;
 			if (!groupedov[season]) {
@@ -155,6 +155,7 @@ function createPlaylist(
 ): { regular: PlaylistItem[]; ov: PlaylistItem[] } {
 	const regular: PlaylistItem[] = [];
 	const ov: PlaylistItem[] = [];
+	//console.log(mediaLinks);
 	if (mediaLinks.length === 0) {
 		return { regular, ov };
 	}
@@ -208,7 +209,7 @@ function createVideoSource(
 	}
 	if (links.length > 1) {
 		const firstLink = links[0];
-		console.log(links);
+		//console.log(links);
 
 		return {
 			src: firstLink.streamlink,
@@ -233,9 +234,9 @@ export async function load({ params, request, setHeaders, locals }) {
 	// Versuch, die Media-Einträge zu laden
 	try {
 		mediaEntry = await locals.pb.collection('mediathek').getOne(params.id, {
-			expand: 'channel,links'
+			expand: 'channel,links,slinks'
 		});
-
+		mediaEntry.slinks = mediaEntry.expand.slinks || []; // Sicherstellen, dass slinks immer ein Array ist
 		//mediaEntry = await fetchMediaEntry(params.id);
 	} catch (err) {
 		console.log(err);
@@ -285,11 +286,11 @@ export async function load({ params, request, setHeaders, locals }) {
 	return {
 		//error,
 		page: mediaEntry || null,
-		groupseasons: mediaEntry?.links.length > 0 ? groupEpisodesBySeason(mediaEntry.episodes) : {},
+		groupseasons: mediaEntry?.slinks.length > 0 ? groupEpisodesBySeason(mediaEntry.slinks) : {},
 		episodes: mediaEntry?.episode || [],
 		sublangs: subtitleLanguages,
 		geo: countryCode,
-		seasons: mediaEntry?.season || [],
+		seasons: mediaEntry?.seasons || [],
 		playlist,
 		cast: mediaEntry?.cast && mediaEntry?.cast.length > 0 ? mediaEntry?.cast.slice(0, 5) : [],
 		crew: mediaEntry?.crew && mediaEntry?.crew.length > 0 ? mediaEntry?.crew.slice(0, 5) : [],
