@@ -92,7 +92,7 @@ const getExpiringItems = (
 ): (MediathekItem & { remainingDays: number | null })[] => {
 	const now = new Date();
 	const thresholdDate = addDays(now, daysThreshold);
-	console.log(new Date(items[0].onlineuntil));
+	//console.log(new Date(items[0].onlineuntil));
 	return items
 		.filter((item) => item.onlineuntil && isBefore(new Date(item.onlineuntil), thresholdDate))
 		.map((item) => ({

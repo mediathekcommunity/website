@@ -11,7 +11,6 @@
 	import { addDays, differenceInDays, isBefore } from 'date-fns';
 	import { derived } from 'svelte/store';
 	let { data } = $props();
-	console.log(data);
 	let showcountry = true;
 	let heroItems = $derived(data?.page && data.page.length > 0 ? data.page.slice(0, 5) : []);
 	let options = { align: 'start', slidesToScroll: 1, loop: true };

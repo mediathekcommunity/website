@@ -22,7 +22,7 @@
 	// --- Props ---
 	export let carddata: CardData;
 	export let countryflag: boolean;
-	carddata.channel =carddata.expand.channel
+	carddata.channel = carddata.expand.channel;
 	// --- Reactive Variables ---
 	$: title = carddata?.title || 'Unknown Title';
 	$: orgtitle = carddata?.orgtitle || null;
@@ -46,7 +46,7 @@
 
 	// Optimize poster URL generation with memoization
 	const posterUrlStore = writable<string | null>(null);
-		console.log(carddata);
+	//console.log(carddata);
 	$: {
 		if (carddata) {
 			let posterUrl: string | null = null;
@@ -113,8 +113,9 @@
 					</div>
 				{/if}
 				{#if countryflag}
- 					<span class="fi fi-{carddata.channel.country}"></span>
-				{/if} <!-- -->
+					<span class="fi fi-{carddata.channel.country}"></span>
+				{/if}
+				<!-- -->
 			</div>
 
 			{#if isHovered}
