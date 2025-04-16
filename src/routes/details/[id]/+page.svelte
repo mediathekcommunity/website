@@ -36,7 +36,7 @@
 		}
 	}
 	import videojs from 'video.js';
-
+	console.log(data);
 	let myPlaylist = [];
 	let myPlaylistomu = [];
 	let group = $state('details');
@@ -196,13 +196,13 @@
 										</tr>
 									{/if}
 									{#if data1.type == 'movie'}
-										{#if data1.links.length > 0}
+										{#if data1.expand.links}
 											<tr>
 												<th>Audio Language</th>
 												<td>
 													<!-- svelte-ignore svelte_component_deprecated -->
-													{#each data1.links[0].audiolang as lang, i}
-														<span class="fi fi-{lang.toLowerCase()}"></span>
+													{#each data1.expand.links.audiolang as lang, i}
+														<span class="fi fi-{lang}"></span>
 													{/each}
 												</td>
 											</tr>
@@ -231,7 +231,7 @@
 													</td>
 												</tr>
 											{/if}
-											{#if data1.links[0].fsubtitle}
+											{#if data1.expand.links[0]?.fsubtitle || data1.expand.links.fsubtitle}
 												<tr>
 													<th>Forced Subtitle language </th>
 													<td>
@@ -260,8 +260,8 @@
 										<th>Channel / Country</th>
 										<td>
 											<div class="flex flex-row space-x-2">
-												<Icon icon={data1.channel.icon} height="28px" width="36px" />
-												<span class="fi fi-{data1.channel.country.toLowerCase()}"></span>
+												<Icon icon={data1.expand.channel.icon} height="28px" width="36px" />
+												<span class="fi fi-{data1.expand.channel.country}"></span>
 											</div></td
 										>
 									</tr>
@@ -341,8 +341,8 @@
 									<div class="episode-content">
 										<p class="episode-overview">{data1.description}</p>
 
-										{#if data.geo == data.page.channel.country}
-											{#if data.page.fskcheck == true && data.serverhour < 22}
+										{#if data.geo == data1.expand.channel.country}
+											{#if data1.fskcheck == true && data.serverhour < 22}
 												<button type="button" class="btn btn-accent">
 													<span class="flex items-center gap-1">
 														FSK ! - Only after 22:00
@@ -353,7 +353,7 @@
 													type="button"
 													class="btn btn-accent"
 													onclick={() =>
-														data.geo == data.page.channel.country ? playvideo(data1) : ''}
+														data.geo == data1.expand.channel.country ? playvideo(data1) : ''}
 												>
 													<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
 													<span> Play</span>
@@ -362,7 +362,7 @@
 										{:else}
 											<button type="button" class="btn btn-accent">
 												<span class="flex items-center gap-1">
-													<span class="fi fi-{data1.channel.country.toLowerCase()}"></span>
+													<span class="fi fi-{data1.expand.channel.country}"></span>
 													IP required
 												</span></button
 											>
@@ -395,7 +395,7 @@
 						</div>
 					</div>
 				{/if}
-				{#if data1.episodes.length > 0}
+				{#if data1.episodes}
 					{#each { length: data1.season }, season}
 						{#if data.groupseasons.grouped[season + 1]}
 							<input
@@ -476,7 +476,7 @@
 															<span> Play Episode</span>
 														{:else}
 															<span class="flex items-center gap-1">
-																<span class="fi fi-{data1.channel.country.toLowerCase()}"></span>
+																<span class="fi fi-{data1.channel.country}"></span>
 																IP required
 															</span>
 														{/if}

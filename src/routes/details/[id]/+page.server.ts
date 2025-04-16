@@ -198,44 +198,32 @@ function createVideoSource(
 	links: MediaLink[],
 	backdrop: string,
 	localFile: { filename_disk: string }
-): VideoSource {
-	if (links.length === 0) return {};
-	const firstLink = links[0];
-	return {
-		src: firstLink.streamlink,
-		type: determineFormat(firstLink.streamformat),
-		tracks: formatSubtitles(firstLink.subtitles),
-		poster: generateImageUrl(backdrop, localFile, {}),
-		skip: 0
-	};
-}
+): VideoSource | undefined {
+	if (!links[1]) {
+		return {
+			src: links.streamlink,
+			type: determineFormat(links.streamformat),
+			tracks: formatSubtitles(links.subtitles),
+			poster: generateImageUrl(backdrop, localFile, {}),
+			skip: 0
+		};
+	}
+	if (links.length > 1) {
+		const firstLink = links[0];
+		console.log(links);
 
-// Capitalize-Funktion
-function capitalizeFirst(str: string): string {
-	return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-}
-
-// Daten von Directus abrufen
-async function fetchMediaEntry(id: string) {
-	const directus = getDirectusInstance();
-	return directus.request(
-		readItem('mediathek', id, {
-			fields: ['*.*.*'],
-			limit: 10,
-			deep: {
-				channel: { limit: 5 },
-				episodelist: {
-					limit: 5,
-					subtitles: { limit: 5 }
-				},
-				subtitles: { limit: 5 }
-			}
-		})
-	);
+		return {
+			src: firstLink.streamlink,
+			type: determineFormat(firstLink.streamformat),
+			tracks: formatSubtitles(firstLink.subtitles),
+			poster: generateImageUrl(backdrop, localFile, {}),
+			skip: 0
+		};
+	}
 }
 
 // Load-Funktion
-export async function load({ params, request, setHeaders }) {
+export async function load({ params, request, setHeaders, locals }) {
 	let error: string | null = null;
 	// Validierung der params.id
 	if (!params.id) {
@@ -246,8 +234,14 @@ export async function load({ params, request, setHeaders }) {
 
 	// Versuch, die Media-Einträge zu laden
 	try {
-		mediaEntry = await fetchMediaEntry(params.id);
+		mediaEntry = await locals.pb.collection('mediathek').getOne(params.id, {
+			expand: 'channel,links'
+		});
+
+		//mediaEntry = await fetchMediaEntry(params.id);
 	} catch (err) {
+		console.log(err);
+
 		return { error: 'Failed to fetch media entry' };
 	}
 
@@ -261,12 +255,12 @@ export async function load({ params, request, setHeaders }) {
 		error = 'Media entry links are missing  or type is series';
 	}
 
-	const countryCode = request.headers.get('CDN-RequestCountryCode') ?? 'DE';
+	const countryCode = request.headers.get('CDN-RequestCountryCode') ?? 'de';
 
 	// Playlist und Videoquelle erstellen
 	const playlist = createPlaylist(mediaEntry?.episodes || [], mediaEntry) || [];
 	const videoSource = createVideoSource(
-		mediaEntry?.links || [],
+		mediaEntry?.expand.links || [],
 		mediaEntry?.backdrop || '',
 		mediaEntry?.backdropup || { filename_disk: '' }
 	);
@@ -291,12 +285,12 @@ export async function load({ params, request, setHeaders }) {
 		'cache-control': 'max-age=3600'
 	});
 	return {
-		error,
+		//error,
 		page: mediaEntry || null,
 		groupseasons: mediaEntry?.episodes ? groupEpisodesBySeason(mediaEntry.episodes) : {},
 		episodes: mediaEntry?.episode || [],
 		sublangs: subtitleLanguages,
-		geo: capitalizeFirst(countryCode),
+		geo: countryCode,
 		seasons: mediaEntry?.season || [],
 		playlist,
 		cast: mediaEntry?.cast && mediaEntry?.cast.length > 0 ? mediaEntry?.cast.slice(0, 5) : [],
@@ -304,6 +298,7 @@ export async function load({ params, request, setHeaders }) {
 		videosource: videoSource || {},
 		dyna: mediaEntry.dyna,
 		pageMetaTags,
-		serverhour: 23
+		serverhour: 23,
+		mediaEntry
 	};
 }
