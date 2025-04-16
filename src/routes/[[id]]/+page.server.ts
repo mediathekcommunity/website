@@ -36,51 +36,6 @@ const capitalizeFirstLetter = (str: string): string =>
 	str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : ''; // Added check for empty string
 
 /**
- * Queries the Directus API for mediathek items based on an optional filter type.
- * @param filterType - Optional filter type (e.g., 'movie', 'series').
- * @returns A promise resolving to a list of mediathek items, sorted by creation date descending.
- */
-const fetchMediathekItems = async (filterType?: string): Promise<MediathekItem[]> => {
-	const filterMap: Record<string, object> = {
-		youth: { _or: [{ type: 'y-movie' }, { type: 'y-series' }] },
-		movie: { type: 'movie' },
-		series: { type: 'series' },
-		music: { type: 'music' },
-		culture: { type: 'culture' }
-	};
-
-	let queryOptions = {
-		fields: ['*.*', 'channel.country', 'channel.name', 'channel.id'],
-		deep: { channel: { _limit: 1 } }, // Assuming only one channel per item is needed
-		sort: ['-date_created'] // Sorting directly in the query
-	};
-
-	if (filterType) {
-		const filterMap: Record<string, object> = {
-			youth: { _or: [{ type: 'y-movie' }, { type: 'y-series' }] },
-			movie: { type: 'movie' },
-			series: { type: 'series' },
-			music: { type: 'music' },
-			culture: { type: 'culture' }
-		};
-
-		queryOptions = {
-			...queryOptions,
-			filter: filterMap[filterType]
-		};
-	}
-	try {
-		const data = await directus.request(readItems('mediathek', queryOptions));
-		// Ensure data is always an array
-		return Array.isArray(data) ? (data as MediathekItem[]) : [];
-	} catch (err) {
-		console.error('Error fetching Mediathek items:', err);
-		// Throw SvelteKit error for API issues
-		throw error(500, 'Failed to fetch data from CMS');
-	}
-};
-
-/**
  * Filters and prepares items expiring within a specified number of days.
  * @param items - The list of mediathek items.
  * @param daysThreshold - The number of days within which items are considered expiring.
@@ -92,7 +47,6 @@ const getExpiringItems = (
 ): (MediathekItem & { remainingDays: number | null })[] => {
 	const now = new Date();
 	const thresholdDate = addDays(now, daysThreshold);
-	//console.log(new Date(items[0].onlineuntil));
 	return items
 		.filter((item) => item.onlineuntil && isBefore(new Date(item.onlineuntil), thresholdDate))
 		.map((item) => ({
@@ -102,7 +56,13 @@ const getExpiringItems = (
 		}))
 		.sort((a, b) => (a.remainingDays ?? Infinity) - (b.remainingDays ?? Infinity)); // Sort by remaining days ascending
 };
-
+const filterMap: Record<string, string> = {
+	youth: "type='ymovie'||type='yseries'",
+	movie: "type='movie'",
+	series: "type='series'",
+	music: "type='music'",
+	culture: "type='culture'"
+};
 /**
  * Generates meta tags for the page.
  * @param filterId - The current filter ID (e.g., 'movie', 'series') or undefined for the home page.
@@ -128,31 +88,36 @@ export const load: PageServerLoad = async ({ params, request, setHeaders, locals
 	const countryCode = request.headers.get(CDN_COUNTRY_HEADER) || DEFAULT_COUNTRY_CODE;
 	// Now using the locally defined function
 	const geo = capitalizeFirstLetter(countryCode);
-
+	let allItems2;
 	try {
-		const allItems = await locals.pb.collection('mediathek').getFullList({ expand: 'channel' });
-		const allItems2 = await locals.pb.collection('movies').getFullList();
-
-		//const allItems = await fetchMediathekItems(filterId);
+		if (filterId) {
+			let f = filterMap[filterId];
+			allItems2 = await locals.pb.collection('movies').getFullList({
+				filter: f,
+				sort: '-created' // Sort by created date descending
+			});
+		} else {
+			allItems2 = await locals.pb.collection('movies').getFullList({ sort: '-created' });
+		}
 
 		// Assuming groupByChannelCountry is correctly imported from utils
 		const groupedData = groupByChannelCountry(allItems2);
-		const expiringItems = getExpiringItems(allItems, EXPIRATION_THRESHOLD_DAYS);
+		const expiringItems = getExpiringItems(allItems2, EXPIRATION_THRESHOLD_DAYS);
 		const pageMetaTags = createPageMetaTags(filterId);
 		setHeaders({
 			'cache-control': `public, max-age=${CACHE_MAX_AGE_SECONDS}`
 		});
 
 		return {
-			page: allItems, // Consider renaming if `allItems` is more descriptive
-			count: allItems.length,
+			page: allItems2, // Consider renaming if `allItems` is more descriptive
+			count: allItems2.length,
 			geo,
 			filter: filterId,
 			groupbycountry: groupedData,
 			countries: Object.keys(groupedData).sort(), // Sort countries for consistent order
 			expiringItems,
 			pageMetaTags,
-			test:allItems2
+			test: allItems2
 			// No need to explicitly return `error: false` on success
 		};
 	} catch (err: any) {

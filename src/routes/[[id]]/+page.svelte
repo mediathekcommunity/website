@@ -1,5 +1,7 @@
-<script>
+<script lang="ts">
 	// @ts-nocheck
+	import type { PageProps } from './$types';
+
 	import HeroSlider from '$lib/components/HeroSlider.svelte';
 	import { visible } from '$lib/store';
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
@@ -10,9 +12,14 @@
 	import Fade from 'embla-carousel-fade';
 	import { addDays, differenceInDays, isBefore } from 'date-fns';
 	import { derived } from 'svelte/store';
-	let { data } = $props();
+	let { data }: PageProps = $props();
+	
+	$effect(() => {
+		console.log('data:', data.test);
+		data1 = data; // Uncommenting to use data1
+	});
 	let showcountry = true;
-	let heroItems = $derived(data?.page && data.page.length > 0 ? data.page.slice(0, 5) : []);
+	let heroItems = $derived(data?.test && data.test.length > 0 ? data.test.slice(0, 5) : []);
 	let options = { align: 'start', slidesToScroll: 1, loop: true };
 	let plugins = [
 		Autoplay({

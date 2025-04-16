@@ -15,6 +15,11 @@
 
 	let { langlist, langdata, geo } = $props();
 	// Cache for region names
+	/*
+	console.log('langlist:', langlist); // Debug log
+	console.log('langdata:', langdata); // Debug log
+	console.log('geo:', geo); // Debug log
+	*/
 	const regionNamesCache = new Map<string, string>();
 	const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
 

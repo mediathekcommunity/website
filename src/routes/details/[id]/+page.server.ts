@@ -159,7 +159,9 @@ function createPlaylist(
 ): { regular: PlaylistItem[]; ov: PlaylistItem[] } {
 	const regular: PlaylistItem[] = [];
 	const ov: PlaylistItem[] = [];
-
+	if (mediaLinks.length === 0) {
+		return { regular, ov };
+	}
 	mediaLinks?.forEach((link) => {
 		const playlistItem: PlaylistItem = {
 			title: link.title,
@@ -258,7 +260,7 @@ export async function load({ params, request, setHeaders, locals }) {
 	const countryCode = request.headers.get('CDN-RequestCountryCode') ?? 'de';
 
 	// Playlist und Videoquelle erstellen
-	const playlist = createPlaylist(mediaEntry?.episodes || [], mediaEntry) || [];
+	const playlist = mediaEntry.links ? createPlaylist(mediaEntry?.links || [], mediaEntry) : [];
 	const videoSource = createVideoSource(
 		mediaEntry?.expand.links || [],
 		mediaEntry?.backdrop || '',
@@ -287,7 +289,7 @@ export async function load({ params, request, setHeaders, locals }) {
 	return {
 		//error,
 		page: mediaEntry || null,
-		groupseasons: mediaEntry?.episodes ? groupEpisodesBySeason(mediaEntry.episodes) : {},
+		groupseasons: mediaEntry?.links.length > 0 ? groupEpisodesBySeason(mediaEntry.episodes) : {},
 		episodes: mediaEntry?.episode || [],
 		sublangs: subtitleLanguages,
 		geo: countryCode,

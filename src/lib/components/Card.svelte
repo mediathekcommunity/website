@@ -20,14 +20,14 @@
 	}
 
 	// --- Props ---
-	let { carddata, countryflag,ico1 } = $props();
+	let { carddata, countryflag, ico1 } = $props();
 	// --- Reactive Variables ---
 	var title = carddata?.title || 'Unknown Title';
 	carddata.icon = 'fi fi-' + carddata.channelcountry || 'mdi:movie';
 	var orgtitle = carddata?.orgtitle || null;
 	var metascore = carddata?.metascore || 'Unknown';
-	console.log('CardData:', carddata); // Add debug log
-	console.log('countryflag:', countryflag); // Add debug log
+	//console.log('CardData:', carddata); // Add debug log
+	//console.log('countryflag:', countryflag); // Add debug log
 	var countryflag1 = 'fi fi-' + carddata.channelcountry; // Add debug log
 	// Add debug log
 
@@ -47,9 +47,8 @@
 
 	// Optimize poster URL generation with memoization
 	const posterUrlStore = writable<string | null>(null);
-
-	if (carddata) {
 		let posterUrl: string | null = null;
+	if (carddata) {
 		if (carddata.poster) {
 			posterUrl = `https://mediathekc.b-cdn.net/t/p/w300${carddata.poster}`;
 		} else if (carddata.posterup?.filename) {
@@ -69,8 +68,7 @@
 		class: 'card-poster',
 		layout: 'fullWidth',
 		objectFit: 'fill',
-		loading: 'lazy',
-		priority: false
+		priority: true
 	});
 </script>
 
@@ -83,12 +81,9 @@
 		on:mouseleave={() => (isHovered = false)}
 	>
 		<div class="card-image">
-			{#if carddata.icon}
-				{#if $posterUrlStore}
-					<Image {...imageProps(carddata, $posterUrlStore)} />
-				{:else}
-					<div class="card-poster-placeholder" aria-label={title}>{title[0]}</div>
-				{/if}
+			{#if carddata?.icon}
+			<Image  {...imageProps(carddata,posterUrl)} />
+
 			{:else}
 				<div class="card-poster-placeholder" aria-label="Loading">?</div>
 			{/if}
@@ -112,7 +107,7 @@
 					</div>
 				{/if}
 				{#if countryflag}
- 					<span class={countryflag1}></span>
+					<span class={countryflag1}></span>
 				{/if}
 				<!-- -->
 			</div>

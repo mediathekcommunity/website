@@ -38,7 +38,7 @@
 
 	// Change from $state to let for mutability
 	let emblaApi: any;
-
+	//console.log('HeroItems:', heroItems); // Debug log
 	const getqualityicon = (quality: string) => {
 		switch (quality) {
 			case '4K':
@@ -180,10 +180,8 @@
 						>
 							<div class="mb-1 flex flex-wrap items-center gap-1 sm:mb-4">
 								<span class="badge-ghost inline-flex items-center px-1 py-1 text-white sm:text-sm">
-									{#if showcountry}
-										<span class="fi fi-{slide.channel.country.toLowerCase()} text-2xl"></span>
-									{/if}
-									<Icon icon={slide.channel.icon} height="28px" width="36px" />
+									<span class={slide.icon}></span>
+									<Icon icon={slide.channelicon} height="28px" width="36px" />
 								</span>
 
 								<span

@@ -71,8 +71,12 @@
 				<div class="hidden flex-none lg:block">
 					<ul class="menu menu-horizontal">
 						<!-- Navbar menu content here -->
-						<li><a href="/">Home</a></li><!--
+						<li><a href="/">Home</a></li>
 						<li><a href="/movie">Movies</a></li>
+						<li><a href="/series">TV Shows</a></li>
+						<li><a href="/youth">Youth</a></li>
+
+						<!--
 						<li><a href="/series">TV Shows</a></li>
 						<li><a href="/music">Music</a></li>
 						<li><a href="/culture">Culture</a></li>
