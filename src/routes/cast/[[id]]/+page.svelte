@@ -17,16 +17,39 @@
 	let data1 = $state(data.data);
 
 	let filteredMedia = $state([]);
+	let filteredMedia2 = $state([]);
+	let filteredMedia_crew = $state([]);
+	let filteredMedia2_crew = $state([]);
+
 	$effect(() => {
 		data1 = data.data;
 	});
-	if (data && data.data) {
+	console.log(data.data.mediaSorted);
+	if (data && data.data.mediaSorted) {
 		filteredMedia = data.data.mediaSorted.filter((item) => {
 			return item?.cast?.some(
 				(castMember: { id: number }) => castMember.id === Number(data1?.paramid)
 			);
 		});
+		filteredMedia2 = data.data.mediaSorted2.filter((item) => {
+			return item?.cast?.some(
+				(castMember: { id: number }) => castMember.id === Number(data1?.paramid)
+			);
+		});
 	}
+	if (data && data.data.mediaSorted) {
+		filteredMedia_crew = data.data.mediaSorted.filter((item) => {
+			return item?.crew?.some(
+				(castMember: { id: number }) => castMember.id === Number(data1?.paramid)
+			);
+		});
+		filteredMedia2_crew = data.data.mediaSorted2.filter((item) => {
+			return item?.crew?.some(
+				(castMember: { id: number }) => castMember.id === Number(data1?.paramid)
+			);
+		});
+	}
+	console.log(filteredMedia);
 	function onInit(event: CustomEvent) {
 		emblaApi = event.detail;
 	}
@@ -67,9 +90,20 @@
 
 	<!-- Media list sorted by channel country -->
 	<div class="media-list">
+		As Cast
 		<div class="embla" use:emblaCarouselSvelte={{ options: options2, plugins: [] }}>
 			<div class="embla__container flex">
-				{#each filteredMedia as item}
+				{#each filteredMedia2 as item}
+					<div class="embla__slide">
+						<Card carddata={item} countryflag />
+					</div>
+				{/each}
+			</div>
+		</div>
+		As Crew
+		<div class="embla" use:emblaCarouselSvelte={{ options: options2, plugins: [] }}>
+			<div class="embla__container flex">
+				{#each filteredMedia2_crew as item}
 					<div class="embla__slide">
 						<Card carddata={item} countryflag />
 					</div>

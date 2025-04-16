@@ -22,7 +22,7 @@
 	// --- Props ---
 	export let carddata: CardData;
 	export let countryflag: boolean;
-	carddata.channel = carddata.expand.channel;
+	carddata.channel = carddata.expand.channel || carddata.channel;
 	// --- Reactive Variables ---
 	$: title = carddata?.title || 'Unknown Title';
 	$: orgtitle = carddata?.orgtitle || null;

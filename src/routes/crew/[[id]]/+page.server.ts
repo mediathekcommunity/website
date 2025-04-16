@@ -19,7 +19,7 @@ type GroupedByCountry = {
 	[country: string]: MediathekItem[];
 };
 
-export async function load({ params, fetch, setHeaders }) {
+export async function load({ params, fetch, setHeaders, locals  }) {
 	const { id } = params;
 	const res = await fetch(`https://tmdbomdbv1-gaoyk.bunny.run/person/${id}`);
 
@@ -39,11 +39,13 @@ export async function load({ params, fetch, setHeaders }) {
 		}
 	};
 	let id2 = params.id;
+	const allItems = await locals.pb.collection('mediathek').getFullList({ expand: 'channel' });
+
 	const mediathekData = await directus.request<MediathekItem[]>(
 		readItems('mediathek', baseOptions)
 	);
-	const filteredData = mediathekData.filter((item) => item.id === id2);
-	const data = groupByChannelCountry(filteredData);
+	//const filteredData = mediathekData.filter((item) => item.id === id2);
+	const data = groupByChannelCountry(allItems);
 
 	const person = {
 		raw: json,
@@ -65,7 +67,7 @@ export async function load({ params, fetch, setHeaders }) {
 		data: {
 			person,
 			raw: json,
-			mediaSorted: mediathekData,
+			mediaSorted: allItems,
 			paramid: id2
 		}
 	};
