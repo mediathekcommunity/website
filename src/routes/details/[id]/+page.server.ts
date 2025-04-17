@@ -66,7 +66,8 @@ function createPlaylistByOvAndSeason(
 			poster: getPoster(link, params, 'PlaylistByOvAndSeason'),
 			episode: link.episode !== undefined && link.episode !== null ? String(link.episode) : '',
 			season: seasonKey,
-			ov: link.ov
+			ov: link.ov,
+			description: link.description || ''
 		};
 		if (link.ov) {
 			if (!result.ov[seasonKey]) result.ov[seasonKey] = [];

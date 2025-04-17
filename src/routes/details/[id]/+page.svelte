@@ -180,14 +180,7 @@
 
 		<div class="content-wrapper top602">
 			<div role="tablist" class="tabs tabs-lift">
-				<input
-					type="radio"
-					name="my_tabs_3"
-					role="tab"
-					class="tab"
-					aria-label="Details"
-					checked="checked"
-				/>
+				<input type="radio" name="my_tabs_3" role="tab" class="tab" aria-label="Details" />
 				<div class="tab-content bg-base-100 border-base-300 p-6">
 					<div class="grid grid-cols-1 md:grid-cols-2">
 						<div>
@@ -401,7 +394,7 @@
 					</div>
 				{/if}
 				{#if data.info.episodes > 0}
- 					{#each { length: data.info.seasons }, season}
+					{#each { length: data.info.seasons }, season}
 						{#if data.playlist.ov[season + 1]}
 							<input
 								type="radio"
@@ -457,20 +450,24 @@
 								name="my_tabs_3"
 								role="tab"
 								class="tab"
-								aria-label={data.season > 1 ? 'Season ' + (season + 1) + ' OV' : 'Episodes'}
+								checked="checked"
+								aria-label={data.season > 1 ? 'Season ' + (season + 1) : 'Episodes'}
 							/>
 							<div class="tab-content bg-base-100 border-base-300 p-6">
-								<div class="join join-vertical bg-base-100">
+								<div class="join join-vertical bg-base-100 w-full">
+
 									{#each data.playlist.regular[season + 1] as link, index2 (link.episode)}
-										<div class="collapse-arrow join-item border-base-300 collapse border">
+
+										<div class="collapse-arrow join-item border-base-300 collapse border w-full">
 											<input type="radio" name="my-accordion-ov-s{season}" checked={index2 == 0} />
 											<div class="collapse-title font-semibold">
 												<span class="episode-number">S{link.season}-E{link.episode}:</span>
 												<span>{link.title}</span>
 											</div>
-											<div class="collapse-content text-sm">
-												<div class="episode-content">
-													<p class="episode-overview">
+											<div class="collapse-content text-sm w-full">
+												<div class="grid place-content-between grid-cols-4 gap-4">
+
+ 													<p class="episode-overview col-span-3">
 														{link.description ? link.description : 'no description'}
 													</p>
 													<button
@@ -491,7 +488,7 @@
 															</span>
 														{/if}
 													</button>
-												</div>
+ 												</div>
 											</div>
 										</div>
 									{/each}
