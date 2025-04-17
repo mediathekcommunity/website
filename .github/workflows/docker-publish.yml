@@ -77,11 +77,17 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
+      - name: update container image on Magic Containers
+        uses: BunnyWay/actions/container-update-image@main
+        with:
+         app_id: ${{ vars.APP_ID }}
+         api_key: ${{ secrets.BUNNYNET_API_KEY }}
+         container: app
+         image_tag: "${{ github.sha }}"
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
       # repository is public to avoid leaking data.  If you would like to publish
