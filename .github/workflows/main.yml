@@ -1,6 +1,7 @@
 name: Delete old images
-
-on: workflow_dispatch  
+on:
+  push:
+    branches: [ "main-skeleton" ]
 #  schedule:
  #   - cron: "0 0 * * *"  # run every day at midnight, utc
 jobs:
