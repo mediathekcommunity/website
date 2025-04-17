@@ -13,13 +13,12 @@
 	import { addDays, differenceInDays, isBefore } from 'date-fns';
 	import { derived } from 'svelte/store';
 	let { data }: PageProps = $props();
-	
-	$effect(() => {
-		console.log('data:', data.test);
-		data1 = data; // Uncommenting to use data1
+ 	$effect(() => {
+		let data1 = data; // Uncommenting to use data
+		console.log('data:', data.filter);
 	});
 	let showcountry = true;
-	let heroItems = $derived(data?.test && data.test.length > 0 ? data.test.slice(0, 5) : []);
+	let heroItems = $derived(data.test && data.test.length > 0 ? data.test.slice(0, 5) : []);
 	let options = { align: 'start', slidesToScroll: 1, loop: true };
 	let plugins = [
 		Autoplay({
@@ -33,7 +32,6 @@
 	let currentSlide = 0;
 	let options2 = { align: 'start', slidesToScroll: 2, loop: true };
 	let emblaApi;
-	//	console.log(data)
 	function getimgurl(img) {
 		if (img.backdrop) {
 			return 'https://img.mediathek.community/t/p/original' + img.backdrop;
@@ -104,7 +102,7 @@
 			<Slider1 langlist={data.countries} langdata={data.groupbycountry} geo={data.geo} />
 		</div>
 	{:else}
-		<ErrorSection filter={data?.filter} />
+		<ErrorSection filter={data.filter} />
 	{/if}
 </div>
 

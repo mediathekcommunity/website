@@ -6,6 +6,10 @@
 	import '../videojs/plugins/es/playlist.js';
 	import '../videojs/plugins/es/videojs.hotkeys';
 	import { modalvideo, playlist, subs, seriestype, playlistindex } from '$lib/store';
+console.log('playlistindex', $playlistindex);
+console.log('playlist', $playlist);
+console.log('seriestype', $seriestype);
+console.log('modalvideo', $modalvideo);
 
 	let player: any = null;
 	let videoSource: {

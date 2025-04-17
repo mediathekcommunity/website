@@ -2,7 +2,6 @@
 	import { slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 	import Icon from '@iconify/svelte';
-	import { Image, type ImageProps } from '@unpic/svelte';
 	import { writable } from 'svelte/store';
 
 	// --- Types ---
@@ -47,7 +46,7 @@
 
 	// Optimize poster URL generation with memoization
 	const posterUrlStore = writable<string | null>(null);
-		let posterUrl: string | null = null;
+	let posterUrl: string | null = null;
 	if (carddata) {
 		if (carddata.poster) {
 			posterUrl = `https://mediathekc.b-cdn.net/t/p/w300${carddata.poster}`;
@@ -72,60 +71,57 @@
 	});
 </script>
 
-<a href={`/details/${carddata.id}`} class="card">
-	<div
-		class="card-content"
-		role="button"
-		tabindex="0"
-		on:mouseenter={() => (isHovered = true)}
-		on:mouseleave={() => (isHovered = false)}
-	>
-		<div class="card-image">
-			{#if carddata?.icon}
-			<Image  {...imageProps(carddata,posterUrl)} />
+{#key carddata}
+	<a href={`/details/${carddata.id}`} class="card">
+		<div
+			class="card-content"
+			role="button"
+			tabindex="0"
+			onmouseenter={() => (isHovered = true)}
+			onmouseleave={() => (isHovered = false)}
+		>
+			<div class="card-image">
+				<img src={posterUrl} alt={title} />
 
-			{:else}
-				<div class="card-poster-placeholder" aria-label="Loading">?</div>
-			{/if}
-
-			<div class="badges">
-				<div class="quality-icon">
-					<Icon icon={getTypeIcon(carddata.type)} />
+				<div class="badges">
+					<div class="quality-icon">
+						<Icon icon={getTypeIcon(carddata.type)} />
+					</div>
+					{#if carddata.remainingDays !== undefined}
+						<div
+							class="remaining-days-badge {carddata.remainingDays === 0
+								? 'red-warning'
+								: 'yellow-warning'}"
+						>
+							<div class="md:hidden"><Icon icon="mdi:alert" /></div>
+							<span class="remaining-days-text hidden sm:block">
+								{carddata.remainingDays === 0
+									? 'Expires today'
+									: `~ ${carddata.remainingDays}d remains`}
+							</span>
+						</div>
+					{/if}
+					{#if countryflag}
+						<span class={countryflag1}></span>
+					{/if}
+					<!-- -->
 				</div>
-				{#if carddata.remainingDays !== undefined}
-					<div
-						class="remaining-days-badge {carddata.remainingDays === 0
-							? 'red-warning'
-							: 'yellow-warning'}"
-					>
-						<div class="md:hidden"><Icon icon="mdi:alert" /></div>
-						<span class="remaining-days-text hidden sm:block">
-							{carddata.remainingDays === 0
-								? 'Expires today'
-								: `~ ${carddata.remainingDays}d remains`}
-						</span>
+
+				{#if isHovered}
+					<div class="card-overlay" transition:slide={{ duration: 200, easing: quintOut }}>
+						<h3 class="card-title">{title}</h3>
+						{#if orgtitle && orgtitle !== title}
+							<p class="card-subtitle">{orgtitle}</p>
+						{/if}
+						{#if metascore !== 'Unknown'}
+							<p class="metascore">Score: {metascore}</p>
+						{/if}
 					</div>
 				{/if}
-				{#if countryflag}
-					<span class={countryflag1}></span>
-				{/if}
-				<!-- -->
 			</div>
-
-			{#if isHovered}
-				<div class="card-overlay" transition:slide={{ duration: 200, easing: quintOut }}>
-					<h3 class="card-title">{title}</h3>
-					{#if orgtitle && orgtitle !== title}
-						<p class="card-subtitle">{orgtitle}</p>
-					{/if}
-					{#if metascore !== 'Unknown'}
-						<p class="metascore">Score: {metascore}</p>
-					{/if}
-				</div>
-			{/if}
 		</div>
-	</div>
-</a>
+	</a>
+{/key}
 
 <style>
 	:root {

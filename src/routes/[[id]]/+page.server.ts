@@ -90,13 +90,17 @@ export const load: PageServerLoad = async ({ params, request, setHeaders, locals
 	const geo = capitalizeFirstLetter(countryCode);
 	let allItems2;
 	try {
-		if (filterId) {
+		console.log('Fetching items from Pocketbase...');
+		console.log(`Filter ID: ${filterId}`);
+		if (filterId != undefined) {
 			let f = filterMap[filterId];
 			allItems2 = await locals.pb.collection('movies').getFullList({
 				filter: f,
 				sort: '-created' // Sort by created date descending
 			});
 		} else {
+					console.log(`Filter ID: ${filterId}`);
+
 			allItems2 = await locals.pb.collection('movies').getFullList({ sort: '-created' });
 		}
 
