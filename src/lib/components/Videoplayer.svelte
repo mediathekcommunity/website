@@ -6,10 +6,10 @@
 	import '../videojs/plugins/es/playlist.js';
 	import '../videojs/plugins/es/videojs.hotkeys';
 	import { modalvideo, playlist, subs, seriestype, playlistindex } from '$lib/store';
-console.log('playlistindex', $playlistindex);
-console.log('playlist', $playlist);
-console.log('seriestype', $seriestype);
-console.log('modalvideo', $modalvideo);
+	console.log('playlistindex', $playlistindex);
+	console.log('playlist', $playlist);
+	console.log('seriestype', $seriestype);
+	console.log('modalvideo', $modalvideo);
 
 	let player: any = null;
 	let videoSource: {
@@ -55,10 +55,14 @@ console.log('modalvideo', $modalvideo);
 		player.hotkeys({ seekStep: 10 });
 
 		if ($seriestype === 'playlist') {
+			updatePlayerSource($seriestype);
+
 			player.playlist.currentItem($playlistindex);
+			player.pause();
+		} else {
+			player.pause();
+			updatePlayerSource($seriestype);
 		}
-		player.pause();
-		updatePlayerSource($seriestype)
 	}
 
 	function updatePlayerSource(type: 'playlist' | 'single' | 'default') {
@@ -83,7 +87,7 @@ console.log('modalvideo', $modalvideo);
 					player.poster(playlistItem.thumb);
 					player.pause();
 				}
-				player.playlist.currentItem($playlistindex+1);
+				player.playlist.currentItem($playlistindex + 1);
 				//console.log('playlist', $playlistindex);
 				break;
 			case 'single':
@@ -105,7 +109,7 @@ console.log('modalvideo', $modalvideo);
 		const index = $playlistindex;
 		const currentModalVideo = $modalvideo;
 		const currentPlaylist = $playlist;
-		player.playlist($playlist)
+		player.playlist($playlist);
 		if (currentModalVideo?.tracks) {
 			player?.loadTracks(currentModalVideo.tracks);
 		} else if (currentPlaylist && currentPlaylist[index]?.tracks) {
@@ -113,17 +117,16 @@ console.log('modalvideo', $modalvideo);
 		}
 		player?.pause();
 		if ($seriestype === 'playlist') {
-			player.playlist.currentItem($playlistindex+1);
+			player.playlist.currentItem($playlistindex);
 		}
 		player?.off('loadeddata', handleLoadedData);
-		console.log('loadeddata', $playlistindex, currentModalVideo, currentPlaylist,player);
-
+		console.log('loadeddata', $playlistindex, currentModalVideo, currentPlaylist, player);
 	}
 
 	$: if (player && ($modalvideo || $seriestype || $playlistindex || $playlist)) {
 		updatePlayerSource($seriestype);
 		if ($seriestype === 'playlist') {
-			player.playlist.currentItem($playlistindex+1);
+			player.playlist.currentItem($playlistindex + 1);
 		}
 	}
 

@@ -180,7 +180,14 @@
 
 		<div class="content-wrapper top602">
 			<div role="tablist" class="tabs tabs-lift">
-				<input type="radio" name="my_tabs_3" role="tab" class="tab" aria-label="Details" />
+				<input
+					type="radio"
+					name="my_tabs_3"
+					role="tab"
+					class="tab"
+					aria-label="Details"
+					checked="checked"
+				/>
 				<div class="tab-content bg-base-100 border-base-300 p-6">
 					<div class="grid grid-cols-1 md:grid-cols-2">
 						<div>
@@ -406,15 +413,15 @@
 							<div class="tab-content bg-base-100 border-base-300 p-6">
 								<div class="join join-vertical bg-base-100">
 									{#each data.playlist.ov[season + 1] as link, index1 (link.episode)}
-										<div class="collapse-arrow join-item border-base-300 collapse border">
+										<div class="collapse-arrow join-item border-base-300 collapse w-full border">
 											<input type="radio" name="my-accordion-s{season}" checked={index1 == 0} />
 											<div class="collapse-title font-semibold">
 												<span class="episode-number">S{link.season}-E{link.episode}:</span>
 												<span>{link.title}</span>
 											</div>
 											<div class="collapse-content text-sm">
-												<div class="episode-content">
-													<p class="episode-overview">
+												<div class="grid grid-cols-4 place-content-between gap-4">
+													<p class="episode-overview col-span-3">
 														{link.description ? link.description : 'no description'}
 													</p>
 													<button
@@ -450,24 +457,20 @@
 								name="my_tabs_3"
 								role="tab"
 								class="tab"
-								checked="checked"
 								aria-label={data.season > 1 ? 'Season ' + (season + 1) : 'Episodes'}
 							/>
 							<div class="tab-content bg-base-100 border-base-300 p-6">
 								<div class="join join-vertical bg-base-100 w-full">
-
 									{#each data.playlist.regular[season + 1] as link, index2 (link.episode)}
-
-										<div class="collapse-arrow join-item border-base-300 collapse border w-full">
+										<div class="collapse-arrow join-item border-base-300 collapse w-full border">
 											<input type="radio" name="my-accordion-ov-s{season}" checked={index2 == 0} />
 											<div class="collapse-title font-semibold">
 												<span class="episode-number">S{link.season}-E{link.episode}:</span>
 												<span>{link.title}</span>
 											</div>
-											<div class="collapse-content text-sm w-full">
-												<div class="grid place-content-between grid-cols-4 gap-4">
-
- 													<p class="episode-overview col-span-3">
+											<div class="collapse-content w-full text-sm">
+												<div class="grid grid-cols-4 place-content-between gap-4">
+													<p class="episode-overview col-span-3">
 														{link.description ? link.description : 'no description'}
 													</p>
 													<button
@@ -488,7 +491,7 @@
 															</span>
 														{/if}
 													</button>
- 												</div>
+												</div>
 											</div>
 										</div>
 									{/each}
