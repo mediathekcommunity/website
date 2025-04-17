@@ -259,13 +259,13 @@
 											<td>
 												<div class="flex flex-row space-x-2 pl-2">
 													<!-- svelte-ignore svelte_component_deprecated -->
-													{#if data.playlist?.ov != undefined}
+													{#if data.playlist?.ov[1] != undefined}
 														<span class="fi fi-{data.playlist.ov[1][0].audiolang}"></span>OV
 														{#if data.playlist?.ov != undefined && data.playlist?.regular != undefined}
 															& &nbsp;
 														{/if}
 													{/if}
-													{#if data.playlist?.regular != undefined}
+													{#if data.playlist?.regular[1] != undefined}
 														<span class="fi fi-{data.playlist.regular[1][0].audiolang}"></span>
 													{/if}
 												</div>
