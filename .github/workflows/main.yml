@@ -1,0 +1,20 @@
+name: Delete old images
+on:
+  push:
+    branches: [ "main-skeleton" ]
+#  schedule:
+ #   - cron: "0 0 * * *"  # run every day at midnight, utc
+jobs:
+  delete-package-versions:
+    name: Delete package versions older than 4 weeks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: snok/container-retention-policy@v3.0.0
+        with:
+          account: mediathekcommunity
+          token: ${{ secrets.PAT }}
+          image-names: "website"  # select package versions from these three packages
+          tag-selection: both  # select both tagged and untagged package versions
+          keep-n-most-recent: 5
+          cut-off: 5min
+          dry-run: false  # consider toggling this to true on your first run
