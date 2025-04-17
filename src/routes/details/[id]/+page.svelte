@@ -89,7 +89,7 @@
 	let getqualityicon = (quality) => {
 		if (quality === '4K') {
 			return 'mdi:uhd';
-		} else if (quality === 'fhd') {
+		} else if (quality === '1080p' || quality === 'fhd') {
 			return 'material-symbols:full-hd';
 		} else if (quality === 'hd') {
 			return 'mdi:video';
@@ -194,25 +194,27 @@
 							<h3 class="section-title">Information</h3>
 							<table class="info-table">
 								<tbody>
-									{#if data.duration}
+									{#if data.info.duration}
 										<tr>
 											<th>Duration</th>
-											<td>{toHoursAndMinutes(data.duration)}</td>
+											<td>{toHoursAndMinutes(data.info.duration)}</td>
 										</tr>
 									{/if}
-									{#if data.type == 'movie'}
-										{#if data.expand.links}
+									{#if data.info.type == 'movie'}
+										{#if data.videosource}
 											<tr>
 												<th>Audio Language</th>
 												<td>
-													<!-- svelte-ignore svelte_component_deprecated -->
-													{#each data.expand.links.audiolang as lang, i}
-														<span class="fi fi-{lang}"></span>
-													{/each}
+													<div class="flex flex-row space-x-2 pl-2">
+														<!-- svelte-ignore svelte_component_deprecated -->
+														{#each data.videosource.audiolang as lang, i}
+															<span class="fi fi-{lang}"></span>
+														{/each}
+													</div>
 												</td>
 											</tr>
 
-											{#if data.sublangs.length > 0}
+											{#if data.sublangs?.length > 0}
 												<tr>
 													<th>Subtitle Language</th>
 													<td>
@@ -236,7 +238,7 @@
 													</td>
 												</tr>
 											{/if}
-											{#if data.expand.links[0]?.fsubtitle || data.expand.links.fsubtitle}
+											{#if data.links?.fsubtitle}
 												<tr>
 													<th>Forced Subtitle language </th>
 													<td>
@@ -251,7 +253,7 @@
 											{/if}
 										{/if}
 									{/if}
-									{#if data.type != 'movie'}
+									{#if data.info.type != 'movie'}
 										<tr>
 											<th>Seasons (total)</th>
 											<td>{data.info.seasons}</td>
@@ -287,6 +289,7 @@
 									<tr>
 										<th>Quality</th>
 										<td>
+											{data.info.quality}
 											<Icon icon={getqualityicon(data.info.quality)} height="28px" width="36px" />
 										</td>
 									</tr>
@@ -344,9 +347,9 @@
 								</div>
 								<div class="collapse-content text-sm">
 									<div class="episode-content">
-										<p class="episode-overview">{data.description}</p>
+										<p class="episode-overview">{data.info.description}</p>
 
-										{#if data.geo == data.expand.channel.country}
+										{#if data.geo == data.info.channel.country}
 											{#if data.fskcheck == true && data.serverhour < 22}
 												<button type="button" class="btn btn-accent">
 													<span class="flex items-center gap-1">
@@ -358,7 +361,7 @@
 													type="button"
 													class="btn btn-accent"
 													onclick={() =>
-														data.geo == data.expand.channel.country ? playvideo(data) : ''}
+														data.geo == data.info.channel.country ? playvideo(data) : ''}
 												>
 													<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
 													<span> Play</span>
@@ -367,7 +370,7 @@
 										{:else}
 											<button type="button" class="btn btn-accent">
 												<span class="flex items-center gap-1">
-													<span class="fi fi-{data.expand.channel.country}"></span>
+													<span class="fi fi-{data.info.channel.country}"></span>
 													IP required
 												</span></button
 											>

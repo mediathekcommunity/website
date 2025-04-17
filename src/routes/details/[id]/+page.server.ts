@@ -1,3 +1,4 @@
+import { duplexPair } from 'stream';
 import type { MetaTagsProps } from 'svelte-meta-tags';
 
 const BASE_MEDIA_URL = 'https://mediathekc.b-cdn.net/t/p/original';
@@ -10,7 +11,7 @@ function getPoster(mediaEntry, params, type): string {
 	const backdropFile = mediaEntry.backdrop;
 	const localFile = mediaEntry.backdropup || { filename_disk: '' };
 	const data = mediaEntry;
-	if (type != "PlaylistByOvAndSeason") {
+	if (type != 'PlaylistByOvAndSeason') {
 		if (backdropFile !== undefined && backdropFile.trim() !== '') {
 			return `${BASE_MEDIA_URL}${backdropFile}`;
 		} else if (localFile.filename_disk && localFile.filename_disk.trim() !== '') {
@@ -21,7 +22,7 @@ function getPoster(mediaEntry, params, type): string {
 			return `${BASE_MEDIA_URL}${data.backdrop}`;
 		}
 	} else {
-		console.log('getPoster2', type, mediaEntry.poster);
+		//console.log('getPoster2', type, mediaEntry.poster);
 		return `${BASE_MEDIA_URL}${mediaEntry.poster}`;
 	}
 }
@@ -38,12 +39,13 @@ function determineFormat(typeId: string): string {
 
 // Helper: create videosource for single link
 function createVideoSource(link: any, mediaEntry: any): any {
-	if (!link) return null;
+	console.log('createVideoSource123', mediaEntry.links);
 	return {
-		src: link.streamlink,
-		type: determineFormat(link.streamformat),
-		poster: getPoster(mediaEntry, ''),
-		title: link.title || mediaEntry.title || ''
+		src: mediaEntry.links.streamlink,
+		type: determineFormat(mediaEntry.links.streamformat),
+		poster: getPoster(mediaEntry, '', ''),
+		title: mediaEntry.links.title || mediaEntry.title || '',
+		audiolang: mediaEntry.links.audiolang || []
 	};
 }
 
@@ -67,7 +69,9 @@ function createPlaylistByOvAndSeason(
 			episode: link.episode !== undefined && link.episode !== null ? String(link.episode) : '',
 			season: seasonKey,
 			ov: link.ov,
-			description: link.description || ''
+			thumb: getPoster(link, params, 'PlaylistByOvAndSeason'),
+			description: link.description || '',
+			audiolang: link.audiolang || []
 		};
 		if (link.ov) {
 			if (!result.ov[seasonKey]) result.ov[seasonKey] = [];
@@ -94,13 +98,14 @@ export async function load({ params, request, setHeaders, locals }) {
 	if (!id1 || typeof id1 === 'object') {
 		return { status: 400, body: { error: 'Missing media ID' } };
 	}
-	//console.log('load', JSON.stringify(id1));
+	console.log('load', JSON.stringify(id1));
 	let mediaEntry;
 	try {
 		mediaEntry = await locals.pb.collection('mediathek').getOne(id1, {
 			expand: 'channel,links,slinks'
 		});
 		mediaEntry.slinks = mediaEntry.expand?.slinks || [];
+		mediaEntry.links = mediaEntry.expand?.links || [];
 	} catch (err) {
 		console.log(err);
 		return { status: 500, body: { error: 'Failed to fetch media entry' } };
@@ -118,10 +123,11 @@ export async function load({ params, request, setHeaders, locals }) {
 		seasons: mediaEntry.seasons,
 		cast: mediaEntry.cast,
 		crew: mediaEntry.crew,
+		duration: mediaEntry.duration,
 		channel: mediaEntry.expand?.channel || mediaEntry.channel || '',
 		country: mediaEntry.expand?.channel?.country || '',
 		quality: mediaEntry.quality,
-		poster: getPoster(mediaEntry, ''),
+		poster: getPoster(mediaEntry, '', ''),
 		backdrop: mediaEntry.backdrop,
 		imdbrating: mediaEntry.imdbrating,
 		metascore: mediaEntry.metascore,
@@ -131,8 +137,12 @@ export async function load({ params, request, setHeaders, locals }) {
 
 	// 2. videosource (only if one link entry)
 	let videosource = null;
-	if (Array.isArray(links) && links.length === 1) {
-		videosource = createVideoSource(links[0], mediaEntry);
+	if (Array.isArray(links) && links.length === 0) {
+		console.log('createVideoSource', 'links[0]');
+		videosource = createVideoSource(links, mediaEntry);
+		console.log('createVideoSource', 'videosource', 'mediaEntry');
+	} else {
+		console.log('createVideoSource', 'links.length', links.length);
 	}
 
 	// 3. playlist (ov/nonov arrays from slinks, grouped by season)

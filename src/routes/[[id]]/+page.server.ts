@@ -90,8 +90,6 @@ export const load: PageServerLoad = async ({ params, request, setHeaders, locals
 	const geo = capitalizeFirstLetter(countryCode);
 	let allItems2;
 	try {
-		console.log('Fetching items from Pocketbase...');
-		console.log(`Filter ID: ${filterId}`);
 		if (filterId != undefined) {
 			let f = filterMap[filterId];
 			allItems2 = await locals.pb.collection('movies').getFullList({
@@ -99,9 +97,10 @@ export const load: PageServerLoad = async ({ params, request, setHeaders, locals
 				sort: '-created' // Sort by created date descending
 			});
 		} else {
-					console.log(`Filter ID: ${filterId}`);
+			//console.log(`Filter ID: ${filterId}`);
 
 			allItems2 = await locals.pb.collection('movies').getFullList({ sort: '-created' });
+			//console.log('allItems2', allItems2);
 		}
 
 		// Assuming groupByChannelCountry is correctly imported from utils

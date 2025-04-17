@@ -83,12 +83,13 @@
 			case 'playlist':
 				player.playlist($playlist);
 				const playlistItem = $playlist[$playlistindex];
+			
 				if (playlistItem) {
 					player.poster(playlistItem.thumb);
 					player.pause();
 				}
 				player.playlist.currentItem($playlistindex + 1);
-				//console.log('playlist', $playlistindex);
+				console.log('playlist123', $playlist[$playlistindex]);
 				break;
 			case 'single':
 			case 'default':

@@ -64,7 +64,7 @@
 					<h1 class="site-title">
 						<span class="text-primary">Mediathek</span>
 						<span class="text-white">Community</span>
-						<span class="badge badge-primary text-white">v0.9.5</span>
+						<span class="badge badge-primary text-white">v0.9.10</span>
 						<span class="badge badge-primary text-white">Switching to Pocketbase Backend, links will be broken for a few days</span>
 					</h1>
 				</div>

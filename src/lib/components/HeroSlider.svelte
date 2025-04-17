@@ -45,6 +45,8 @@
 				return 'mdi:uhd';
 			case 'fhd':
 				return 'material-symbols:full-hd';
+			case '1080p':
+				return 'material-symbols:full-hd';
 			case 'hd':
 				return 'mdi:video';
 			default:
@@ -151,6 +153,7 @@
 	function onInit(event: CustomEvent<any>) {
 		emblaApi = event.detail;
 	}
+	//console.log(heroItems)
 </script>
 
 <div class="hero-container relative w-full">
