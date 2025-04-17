@@ -120,7 +120,6 @@
 			//console.log('Current episode season:', episode.season);
 		}
 	}
-	console.log('data:', data);
 </script>
 
 {#if data1}

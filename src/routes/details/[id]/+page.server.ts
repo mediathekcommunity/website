@@ -39,7 +39,7 @@ function determineFormat(typeId: string): string {
 
 // Helper: create videosource for single link
 function createVideoSource(link: any, mediaEntry: any): any {
-	console.log('createVideoSource123', mediaEntry.links);
+	//console.log('createVideoSource123', mediaEntry.links);
 	return {
 		src: mediaEntry.links.streamlink,
 		type: determineFormat(mediaEntry.links.streamformat),
@@ -138,11 +138,11 @@ export async function load({ params, request, setHeaders, locals }) {
 	// 2. videosource (only if one link entry)
 	let videosource = null;
 	if (Array.isArray(links) && links.length === 0) {
-		console.log('createVideoSource', 'links[0]');
+		//console.log('createVideoSource', 'links[0]');
 		videosource = createVideoSource(links, mediaEntry);
-		console.log('createVideoSource', 'videosource', 'mediaEntry');
+		//console.log('createVideoSource', 'videosource', 'mediaEntry');
 	} else {
-		console.log('createVideoSource', 'links.length', links.length);
+		//console.log('createVideoSource', 'links.length', links.length);
 	}
 
 	// 3. playlist (ov/nonov arrays from slinks, grouped by season)
