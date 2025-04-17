@@ -120,6 +120,7 @@
 			//console.log('Current episode season:', episode.season);
 		}
 	}
+	console.log('data:', data);
 </script>
 
 {#if data1}
@@ -336,7 +337,7 @@
 						</div>
 					</div>
 				</div>
-				{#if data.videosource}
+				{#if data.info.type == 'movie'}
 					<input type="radio" name="my_tabs_3" role="tab" class="tab" aria-label="Links" />
 					<div class="tab-content bg-base-100 border-base-300 p-6">
 						<div class="join join-vertical bg-base-100">
