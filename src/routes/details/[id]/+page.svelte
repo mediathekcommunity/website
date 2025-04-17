@@ -29,11 +29,7 @@
 	}
 
 	function getImageUrl(slide) {
-		if (slide.backdrop) {
-			return 'https://mediathekc.b-cdn.net/t/p/original' + slide.backdrop;
-		} else {
-			return 'https://api.mediathek.community/assets/' + slide.backdropup.filename_disk;
-		}
+		return slide;
 	}
 	import videojs from 'video.js';
 	let myPlaylist = [];
@@ -49,7 +45,7 @@
 	let showvideo = $state(false);
 	let showdynawarn = $state(false);
 	$effect(() => {
-		data1 = data.page;
+		data1 = data;
 	});
 	//console.log(data);
 
@@ -102,7 +98,10 @@
 		}
 	};
 	function playepisode(episode, index, type) {
-		type ? type : 'nonov';
+		//console.log('playepisode1', episode, index, type, data);
+
+		type = type ? type : 'nonov'; // Fixed assignment
+		//console.log('playepisode', episode, index, type, data);
 		document.body.scrollIntoView();
 
 		showvideo = true; // Always show video for episodes
@@ -111,21 +110,26 @@
 		playlistindex.set(index);
 		playlist.set('');
 		if (type == 'ov') {
-			playlist.set(data.playlist.ov);
+			playlist.set(data.playlist.ov[episode.season]);
+			//console.log('playlist', data.playlist.ov[episode.season]);
+			//console.log('Current episode season:', episode.season);
 		} else {
-			playlist.set(data.playlist.regular);
+			playlist.set(data.playlist.regular[episode.season]);
+			//console.log('playlist', data.playlist?.regular[episode.season]);
+			// Additional logging for debugging
+			//console.log('Current episode season:', episode.season);
 		}
 	}
 </script>
 
 {#if data1}
 	<div class="contents">
-		{#if data1.channel.info}
+		{#if data.info?.channel.info}
 			<aside class="gradient-text">
 				<div class="gradient-text-light b21">
 					<h3>INFO</h3>
 					<p>
-						{data1.channel.info}
+						{data.info.channel.name}
 					</p>
 				</div>
 			</aside>
@@ -141,19 +145,19 @@
 			<div class="hero-container2 top60 relative w-full">
 				<div class="video-player-container h-full">
 					<Videolink
-						videotitle={data1.title}
-						posterUrl="https://mediathekc.b-cdn.net/t/p/original{data1.backdrop}"
-						channel={data1.channel}
-						videoUrl={data1.dynalink}
+						videotitle={data.title}
+						posterUrl="https://mediathekc.b-cdn.net/t/p/original{data.info.backdrop}"
+						channel={data.channel}
+						videoUrl={data.dynalink}
 					/>
 					<button class="close-video-btn" onclick={toggleDynaWarn}>Close Info</button>
 				</div>
 			</div>
 		{:else}
 			<div class="hero-container relative w-full">
-				<Image
-					src={getImageUrl(data1)}
-					alt={data1.title}
+				<img
+					src="https://mediathekc.b-cdn.net/t/p/original{data.info.backdrop}"
+					alt={data.title}
 					class="hero-image absolute inset-0 h-full w-full"
 				/>
 				<div class="gradient-overlay absolute inset-x-0" style="bottom: -1px"></div>
@@ -163,11 +167,11 @@
 					<h1
 						class="mb-2 text-2xl leading-tight font-bold tracking-tight sm:text-3xl md:text-4xl lg:text-5xl"
 					>
-						{data1.title}
+						{data.title}
 					</h1>
-					{#if data1.orgtitle}
+					{#if data.orgtitle}
 						<p class="mb-4 text-sm text-gray-300 italic sm:text-base">
-							Original Title: {data1.orgtitle}
+							Original Title: {data.orgtitle}
 						</p>
 					{/if}
 				</div>
@@ -190,19 +194,19 @@
 							<h3 class="section-title">Information</h3>
 							<table class="info-table">
 								<tbody>
-									{#if data1.duration}
+									{#if data.duration}
 										<tr>
 											<th>Duration</th>
-											<td>{toHoursAndMinutes(data1.duration)}</td>
+											<td>{toHoursAndMinutes(data.duration)}</td>
 										</tr>
 									{/if}
-									{#if data1.type == 'movie'}
-										{#if data1.expand.links}
+									{#if data.type == 'movie'}
+										{#if data.expand.links}
 											<tr>
 												<th>Audio Language</th>
 												<td>
 													<!-- svelte-ignore svelte_component_deprecated -->
-													{#each data1.expand.links.audiolang as lang, i}
+													{#each data.expand.links.audiolang as lang, i}
 														<span class="fi fi-{lang}"></span>
 													{/each}
 												</td>
@@ -232,13 +236,13 @@
 													</td>
 												</tr>
 											{/if}
-											{#if data1.expand.links[0]?.fsubtitle || data1.expand.links.fsubtitle}
+											{#if data.expand.links[0]?.fsubtitle || data.expand.links.fsubtitle}
 												<tr>
 													<th>Forced Subtitle language </th>
 													<td>
 														<!-- svelte-ignore svelte_component_deprecated -->
 														<div class="flex flex-row space-x-2">
-															{#each data1.links[0].fsubtitle_lang as lang, i}
+															{#each data.links[0].fsubtitle_lang as lang, i}
 																<span class="fi fi-{lang.toLowerCase()}"></span>
 															{/each}
 														</div>
@@ -247,26 +251,26 @@
 											{/if}
 										{/if}
 									{/if}
-									{#if data1.type != 'movie'}
+									{#if data.type != 'movie'}
 										<tr>
 											<th>Seasons (total)</th>
-											<td>{data1.seasons}</td>
+											<td>{data.info.seasons}</td>
 										</tr>
 										<tr>
 											<th>Episodes (total)</th>
-											<td>{data1.episodes}</td>
+											<td>{data.info.episodes}</td>
 										</tr>
 									{/if}
 									<tr>
 										<th>Channel / Country</th>
 										<td>
 											<div class="flex flex-row space-x-2">
-												<Icon icon={data1.expand.channel.icon} height="28px" width="36px" />
-												<span class="fi fi-{data1.expand.channel.country}"></span>
+												<Icon icon={data.info.channel.icon} height="28px" width="36px" />
+												<span class="fi fi-{data.info.channel.country}"></span>
 											</div></td
 										>
 									</tr>
-									{#if data1.backdropup?.filename_disk}
+									{#if data.backdropup?.filename_disk}
 										<tr>
 											<th
 												><p class="icon123 flex align-middle">
@@ -275,7 +279,7 @@
 											>
 											<td>
 												<div class="flex flex-wrap gap-2">
-													<Icon icon={data1.channel.icon} height="28px" width="36px" />
+													<Icon icon={data.info.channel.icon} height="28px" width="36px" />
 												</div>
 											</td>
 										</tr>
@@ -283,21 +287,21 @@
 									<tr>
 										<th>Quality</th>
 										<td>
-											<Icon icon={getqualityicon(data1.quality)} height="28px" width="36px" />
+											<Icon icon={getqualityicon(data.info.quality)} height="28px" width="36px" />
 										</td>
 									</tr>
 									<tr>
 										<th>Online until</th>
 										<td>
-											<Time timestamp={data1.onlineuntil} format="DD.MM.YYYY" />
+											<Time timestamp={data.info.onlineuntil} format="DD.MM.YYYY" />
 										</td>
 									</tr>
-									{#if data.cast.length > 0}
+									{#if data.info.cast.length > 0}
 										<tr>
 											<th>Cast</th>
 											<td>
 												<div class="flex flex-wrap gap-2">
-													{#each data.cast as member}
+													{#each data.info.cast as member}
 														<a href={`/cast/${member.id}`} class="badge badge-primary"
 															>{member.name}</a
 														>
@@ -306,12 +310,12 @@
 											</td>
 										</tr>
 									{/if}
-									{#if data.crew.length > 0}
+									{#if data.info.crew.length > 0}
 										<tr>
 											<th>Crew</th>
 											<td>
 												<div class="flex flex-wrap gap-2">
-													{#each data.crew as member}
+													{#each data.info.crew as member}
 														<a href={`/crew/${member.id}`} class="badge badge-secondary"
 															>{member.name}</a
 														>
@@ -325,25 +329,25 @@
 						</div>
 						<div class="description-section">
 							<h3 class="section-title">Description</h3>
-							<p>{data1.description}</p>
+							<p>{data.info.description}</p>
 						</div>
 					</div>
 				</div>
-				{#if data1.links.length > 0}
+				{#if data.videosource}
 					<input type="radio" name="my_tabs_3" role="tab" class="tab" aria-label="Links" />
 					<div class="tab-content bg-base-100 border-base-300 p-6">
 						<div class="join join-vertical bg-base-100">
 							<div class="collapse-arrow join-item border-base-300 collapse border">
 								<input type="radio" name="my-accordion-episode" checked="true" />
 								<div class="collapse-title font-semibold">
-									<span>{data1.title}</span>
+									<span>{data.title}</span>
 								</div>
 								<div class="collapse-content text-sm">
 									<div class="episode-content">
-										<p class="episode-overview">{data1.description}</p>
+										<p class="episode-overview">{data.description}</p>
 
-										{#if data.geo == data1.expand.channel.country}
-											{#if data1.fskcheck == true && data.serverhour < 22}
+										{#if data.geo == data.expand.channel.country}
+											{#if data.fskcheck == true && data.serverhour < 22}
 												<button type="button" class="btn btn-accent">
 													<span class="flex items-center gap-1">
 														FSK ! - Only after 22:00
@@ -354,7 +358,7 @@
 													type="button"
 													class="btn btn-accent"
 													onclick={() =>
-														data.geo == data1.expand.channel.country ? playvideo(data1) : ''}
+														data.geo == data.expand.channel.country ? playvideo(data) : ''}
 												>
 													<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
 													<span> Play</span>
@@ -363,7 +367,7 @@
 										{:else}
 											<button type="button" class="btn btn-accent">
 												<span class="flex items-center gap-1">
-													<span class="fi fi-{data1.expand.channel.country}"></span>
+													<span class="fi fi-{data.expand.channel.country}"></span>
 													IP required
 												</span></button
 											>
@@ -381,11 +385,11 @@
 							<div class="collapse-arrow join-item border-base-300 collapse border">
 								<input type="radio" name="my-accordion-episode" checked="true" />
 								<div class="collapse-title font-semibold">
-									<span>{data1.title}</span>?
+									<span>{data.title}</span>?
 								</div>
 								<div class="collapse-content text-sm">
 									<div class="episode-content">
-										<p class="episode-overview">{data1.description}</p>
+										<p class="episode-overview">{data.description}</p>
 										<button type="button" class="btn btn-accent" onclick={() => toggleDynaWarn()}>
 											<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
 											<span> Play</span>
@@ -396,19 +400,19 @@
 						</div>
 					</div>
 				{/if}
-				{#if data1.episodes}
-					{#each { length: data1.seasons }, season}
-						{#if data.groupseasons.grouped[season + 1]}
+				{#if data.info.episodes > 0}
+ 					{#each { length: data.info.seasons }, season}
+						{#if data.playlist.ov[season + 1]}
 							<input
 								type="radio"
 								name="my_tabs_3"
 								role="tab"
 								class="tab"
-								aria-label={data1.seasons > 1 ? 'Season ' + (season + 1) : 'Episodes'}
+								aria-label={data.seasons > 1 ? 'Season ' + (season + 1) : 'Episodes ov'}
 							/>
 							<div class="tab-content bg-base-100 border-base-300 p-6">
 								<div class="join join-vertical bg-base-100">
-									{#each data.groupseasons.grouped[season + 1] as link, index1 (link.episode)}
+									{#each data.playlist.ov[season + 1] as link, index1 (link.episode)}
 										<div class="collapse-arrow join-item border-base-300 collapse border">
 											<input type="radio" name="my-accordion-s{season}" checked={index1 == 0} />
 											<div class="collapse-title font-semibold">
@@ -424,14 +428,17 @@
 														type="button"
 														class="btn btn-accent"
 														onclick={() =>
-															data.geo != data1.channel.geo ? playepisode(link, index1) : ''}
+															data.info.geo != data.info.channel.country
+																? playepisode(link, index1, 'ov')
+																: ''}
 													>
-														{#if data.geo != data1.channel.geo}
+														{#if data.info.geo != data.info.channel.country}
 															<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
 															<span> Play Episode</span>
 														{:else}
 															<span class="flex items-center gap-1">
-																<span class="fi fi-{data1.channel.country.toLowerCase()}"></span>
+																<span class="fi fi-{data.info.channel.country.toLowerCase()}"
+																></span>
 																IP required
 															</span>
 														{/if}
@@ -444,17 +451,17 @@
 							</div>
 						{/if}
 
-						{#if data.groupseasons.groupedov[season + 1]}
+						{#if data.playlist.regular[season + 1]}
 							<input
 								type="radio"
 								name="my_tabs_3"
 								role="tab"
 								class="tab"
-								aria-label={data1.season > 1 ? 'Season ' + (season + 1) + ' OV' : 'Episodes'}
+								aria-label={data.season > 1 ? 'Season ' + (season + 1) + ' OV' : 'Episodes'}
 							/>
 							<div class="tab-content bg-base-100 border-base-300 p-6">
 								<div class="join join-vertical bg-base-100">
-									{#each data.groupseasons.groupedov[season + 1] as link, index2 (link.episode)}
+									{#each data.playlist.regular[season + 1] as link, index2 (link.episode)}
 										<div class="collapse-arrow join-item border-base-300 collapse border">
 											<input type="radio" name="my-accordion-ov-s{season}" checked={index2 == 0} />
 											<div class="collapse-title font-semibold">
@@ -470,14 +477,16 @@
 														type="button"
 														class="btn btn-accent"
 														onclick={() =>
-															data.geo != data1.channel.geo ? playepisode(link, index2, 'ov') : ''}
+															data.info.geo != data.info.channel.country
+																? playepisode(link, index2, 'nonov')
+																: ''}
 													>
-														{#if data.geo != data1.channel.geo}
+														{#if data.info.geo != data.info.channel.country}
 															<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
 															<span> Play Episode</span>
 														{:else}
 															<span class="flex items-center gap-1">
-																<span class="fi fi-{data1.channel.country}"></span>
+																<span class="fi fi-{data.info.channel.country}"></span>
 																IP required
 															</span>
 														{/if}

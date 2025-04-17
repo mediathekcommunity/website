@@ -1,303 +1,153 @@
 import type { MetaTagsProps } from 'svelte-meta-tags';
-// Konstante für URLs
-const BASE_MEDIA_URL = 'https://mediathekc.b-cdn.net/t/p/original/';
-const BASE_ASSET_URL = 'https://api.mediathek.community/assets/';
 
-// Konstante für Standard-Format
+const BASE_MEDIA_URL = 'https://mediathekc.b-cdn.net/t/p/original';
+const BASE_ASSET_URL = 'https://api.mediathek.community/assets/';
 const DEFAULT_FORMAT_TYPE = 'application/dash+xml';
 
-// Typen
-interface MediaLink {
-	title: string;
-	streamlink: string;
-	backdrop: string;
-	backdropup: { filename_disk: string };
-	streamformat: string;
-	description: string;
-	subtitles: Subtitle[];
-	episode: string;
-	season: string;
-	dyna: boolean;
-	ov: boolean;
-}
-
-interface Subtitle {
-	kind: string;
-	src: string;
-	srclang: string;
-	label: string;
-	default: boolean;
-	spokenlang: boolean;
-}
-
-interface SubtitleLanguage {
-	srclang: string;
-	label: string;
-	spokenlang: boolean;
-}
-
-interface PlaylistItem {
-	title: string;
-	src: string;
-	thumb: string;
-	type: string;
-	description: string;
-	infoTitle: string;
-	infoDescription: string;
-	tracks: Subtitle[];
-	episode: string;
-	season: string;
-	ov: boolean;
-}
-
-interface VideoSource {
-	src?: string;
-	type?: string;
-	tracks?: Subtitle[];
-	poster?: string;
-	skip?: number;
-}
-
-// Hilfsfunktion zur Erstellung der Bild-URL
-function generateImageUrl(
-	backdropFile: string,
-	localFile: { filename_disk: string },
-	data: any
-): string {
-	if (backdropFile && backdropFile.trim() !== '') {
-		return `${BASE_MEDIA_URL}${backdropFile}`;
-	} else if (localFile.filename_disk && localFile.filename_disk.trim() !== '') {
-		return `${BASE_ASSET_URL}${localFile.filename_disk}`;
+// Helper: get image url for poster (use original generateImageUrl logic)
+function getPoster(mediaEntry, params, type): string {
+	//console.log('getPoster1', params);
+	const backdropFile = mediaEntry.backdrop;
+	const localFile = mediaEntry.backdropup || { filename_disk: '' };
+	const data = mediaEntry;
+	if (type != "PlaylistByOvAndSeason") {
+		if (backdropFile !== undefined && backdropFile.trim() !== '') {
+			return `${BASE_MEDIA_URL}${backdropFile}`;
+		} else if (localFile.filename_disk && localFile.filename_disk.trim() !== '') {
+			return `${BASE_ASSET_URL}${localFile.filename_disk}`;
+		} else if (mediaEntry.poster && mediaEntry.poster.trim() !== '') {
+			return `${BASE_MEDIA_URL}${mediaEntry.poster}`;
+		} else {
+			return `${BASE_MEDIA_URL}${data.backdrop}`;
+		}
 	} else {
-		return `${BASE_MEDIA_URL}${data.backdrop}`;
+		console.log('getPoster2', type, mediaEntry.poster);
+		return `${BASE_MEDIA_URL}${mediaEntry.poster}`;
 	}
 }
-// Hilfsfunktion für das Format
+// Helper: get video format
 function determineFormat(typeId: string): string {
 	const formatTypes: Record<string, string> = {
 		mpd: 'application/dash+xml',
-		m3u8: 'application/x-mpegURL'
+		m3u8: 'application/x-mpegURL',
+		mp4: 'video/mp4',
+		webm: 'video/webm'
 	};
 	return formatTypes[typeId] || DEFAULT_FORMAT_TYPE;
 }
-const sorted: Record<string, { season: string; episode: string }[]> = {};
-function groupEpisodesBySeason(
-	episodes: { season: string; episode: string; [key: string]: any }[]
-): {
-	grouped: Record<string, { season: string; episode: string; [key: string]: any }[]>;
-	groupedov: Record<string, { season: string; episode: string; [key: string]: any }[]>;
-} {
-	const grouped: Record<string, { season: string; episode: string; [key: string]: any }[]> = {};
-	const groupedov: Record<string, { season: string; episode: string; [key: string]: any }[]> = {};
 
-	episodes.forEach((episode) => {
-		console.log(episode);
-		if (episode.ov == true) {
-			const { season } = episode;
-			if (!groupedov[season]) {
-				groupedov[season] = [];
-			}
-			groupedov[season].push(episode);
-		} else {
-			const { season } = episode;
-			if (!grouped[season]) {
-				grouped[season] = [];
-			}
-			grouped[season].push(episode);
-		}
-	});
-
-	// Sort grouped and groupedov by episode
-	for (const season in grouped) {
-		grouped[season].sort((a, b) => parseInt(a.episode) - parseInt(b.episode));
-	}
-	for (const season in groupedov) {
-		groupedov[season].sort((a, b) => parseInt(a.episode) - parseInt(b.episode));
-	}
-
-	return { grouped, groupedov };
+// Helper: create videosource for single link
+function createVideoSource(link: any, mediaEntry: any): any {
+	if (!link) return null;
+	return {
+		src: link.streamlink,
+		type: determineFormat(link.streamformat),
+		poster: getPoster(mediaEntry, ''),
+		title: link.title || mediaEntry.title || ''
+	};
 }
 
-// Titel für Untertitel generieren
-function generateSubtitleLabel(lang: string, spoken: boolean): string {
-	return `${lang} ${spoken ? '(Spoken)' : ''}`;
-}
-
-// Hilfsfunktion: Formatiere Untertitel
-function formatSubtitles(subtitles: any[]): Subtitle[] {
-	return (
-		subtitles?.map((sub) => ({
-			kind: 'captions',
-			src: sub.sublink,
-			srclang: sub.sublang,
-			label: generateSubtitleLabel(sub.sublang, sub.spokenlang),
-			spokenlang: sub.spokenlang,
-			default: false
-		})) || []
-	);
-}
-
-// Untertitel-Sprachen extrahieren
-function extractSubtitleLanguages(subtitles: any[]): SubtitleLanguage[] {
-	return (
-		subtitles?.map((sub) => ({
-			srclang: sub.sublang,
-			label: generateSubtitleLabel(sub.sublang, sub.spokenlang),
-			spokenlang: sub.spokenlang
-		})) || []
-	);
-}
-
-// Playlist erstellen
-function createPlaylist(
-	mediaLinks: MediaLink[],
-	data: any
-): { regular: PlaylistItem[]; ov: PlaylistItem[] } {
-	const regular: PlaylistItem[] = [];
-	const ov: PlaylistItem[] = [];
-	//console.log(mediaLinks);
-	if (mediaLinks.length === 0) {
-		return { regular, ov };
-	}
-	mediaLinks?.forEach((link) => {
-		const playlistItem: PlaylistItem = {
-			title: link.title,
+// Helper: create playlist arrays (ov/nonov), grouped by season, using result.ov.seasonKey and result.regular.seasonKey
+function createPlaylistByOvAndSeason(
+	mediaLinks: any[] | undefined,
+	params: any
+): { regular: Record<string, any[]>; ov: Record<string, any[]> } {
+	const result = { regular: {}, ov: {} } as {
+		regular: Record<string, any[]>;
+		ov: Record<string, any[]>;
+	};
+	if (!mediaLinks || mediaLinks.length === 0) return result;
+	for (const link of mediaLinks) {
+		const seasonKey = link.season !== undefined && link.season !== null ? String(link.season) : '1';
+		const item = {
+			title: link.title || '',
 			src: link.streamlink,
-			thumb: generateImageUrl(
-				link.backdrop != undefined ? link.backdrop : '',
-				link.backdropup != null ? link.backdropup : { filename_disk: '' },
-				data
-			),
 			type: determineFormat(link.streamformat),
-			description: link.description,
-			infoTitle: link.title,
-			infoDescription: link.description,
-			tracks: formatSubtitles(link.subtitles),
-			episode: link.episode,
-			season: link.season,
+			poster: getPoster(link, params, 'PlaylistByOvAndSeason'),
+			episode: link.episode !== undefined && link.episode !== null ? String(link.episode) : '',
+			season: seasonKey,
 			ov: link.ov
 		};
-
-		if (link.ov == true) {
-			ov.push(playlistItem);
+		if (link.ov) {
+			if (!result.ov[seasonKey]) result.ov[seasonKey] = [];
+			result.ov[seasonKey].push(item);
 		} else {
-			regular.push(playlistItem);
+			if (!result.regular[seasonKey]) result.regular[seasonKey] = [];
+			result.regular[seasonKey].push(item);
 		}
-	});
-
-	// Sort regular and ov by episodes field
-	regular.sort((a, b) => parseInt(a.episode) - parseInt(b.episode));
-	ov.sort((a, b) => parseInt(a.episode) - parseInt(b.episode));
-
-	return { regular, ov };
+	}
+	// Sort episodes in each season
+	for (const season in result.regular) {
+		result.regular[season].sort((a, b) => parseInt(a.episode) - parseInt(b.episode));
+	}
+	for (const season in result.ov) {
+		result.ov[season].sort((a, b) => parseInt(a.episode) - parseInt(b.episode));
+	}
+	return result;
 }
 
-// Videoquelle generieren
-function createVideoSource(
-	links: MediaLink[],
-	backdrop: string,
-	localFile: { filename_disk: string }
-): VideoSource | undefined {
-	if (!links[1]) {
-		return {
-			src: links.streamlink,
-			type: determineFormat(links.streamformat),
-			tracks: formatSubtitles(links.subtitles),
-			poster: generateImageUrl(backdrop, localFile, {}),
-			skip: 0
-		};
-	}
-	if (links.length > 1) {
-		const firstLink = links[0];
-		//console.log(links);
-
-		return {
-			src: firstLink.streamlink,
-			type: determineFormat(firstLink.streamformat),
-			tracks: formatSubtitles(firstLink.subtitles),
-			poster: generateImageUrl(backdrop, localFile, {}),
-			skip: 0
-		};
-	}
-}
-
-// Load-Funktion
+// SvelteKit server load function
 export async function load({ params, request, setHeaders, locals }) {
-	let error: string | null = null;
-	// Validierung der params.id
-	if (!params.id) {
-		return { error: 'Missing media ID' };
+	const id1 = params.id;
+
+	if (!id1 || typeof id1 === 'object') {
+		return { status: 400, body: { error: 'Missing media ID' } };
 	}
-
+	//console.log('load', JSON.stringify(id1));
 	let mediaEntry;
-
-	// Versuch, die Media-Einträge zu laden
 	try {
-		mediaEntry = await locals.pb.collection('mediathek').getOne(params.id, {
+		mediaEntry = await locals.pb.collection('mediathek').getOne(id1, {
 			expand: 'channel,links,slinks'
 		});
-		mediaEntry.slinks = mediaEntry.expand.slinks || []; // Sicherstellen, dass slinks immer ein Array ist
-		//mediaEntry = await fetchMediaEntry(params.id);
+		mediaEntry.slinks = mediaEntry.expand?.slinks || [];
 	} catch (err) {
 		console.log(err);
+		return { status: 500, body: { error: 'Failed to fetch media entry' } };
+	}
+	const slinks = Array.isArray(mediaEntry.slinks) ? mediaEntry.slinks : [];
+	const links = Array.isArray(mediaEntry.links) ? mediaEntry.links : [];
 
-		return { error: 'Failed to fetch media entry' };
+	// 1. info
+	const info = {
+		id: mediaEntry.id,
+		title: mediaEntry.title,
+		orgtitle: mediaEntry.orgtitle,
+		description: mediaEntry.description,
+		episodes: mediaEntry.episodes,
+		seasons: mediaEntry.seasons,
+		cast: mediaEntry.cast,
+		crew: mediaEntry.crew,
+		channel: mediaEntry.expand?.channel || mediaEntry.channel || '',
+		country: mediaEntry.expand?.channel?.country || '',
+		quality: mediaEntry.quality,
+		poster: getPoster(mediaEntry, ''),
+		backdrop: mediaEntry.backdrop,
+		imdbrating: mediaEntry.imdbrating,
+		metascore: mediaEntry.metascore,
+		onlineuntil: mediaEntry.onlineuntil,
+		type: mediaEntry.type
+	};
+
+	// 2. videosource (only if one link entry)
+	let videosource = null;
+	if (Array.isArray(links) && links.length === 1) {
+		videosource = createVideoSource(links[0], mediaEntry);
 	}
 
-	// Prüfen, ob mediaEntry erfolgreich geladen wurde
-	if (!mediaEntry) {
-		error = 'Media entry is undefined';
-	}
+	// 3. playlist (ov/nonov arrays from slinks, grouped by season)
+	const playlist = createPlaylistByOvAndSeason(slinks, id1);
 
-	// Prüfen, ob links vorhanden sind
-	if (!Array.isArray(mediaEntry?.links) || mediaEntry.links.length === 0) {
-		error = 'Media entry links are missing  or type is series';
-	}
-
-	const countryCode = request.headers.get('CDN-RequestCountryCode') ?? 'de';
-
-	// Playlist und Videoquelle erstellen
-	const playlist = mediaEntry.links ? createPlaylist(mediaEntry?.links || [], mediaEntry) : [];
-	const videoSource = createVideoSource(
-		mediaEntry?.expand.links || [],
-		mediaEntry?.backdrop || '',
-		mediaEntry?.backdropup || { filename_disk: '' }
-	);
-
-	// Untertitel-Sprachen extrahieren
-	const firstSubtitles = mediaEntry?.links?.[0]?.subtitles || [];
-	const subtitleLanguages = extractSubtitleLanguages(firstSubtitles);
-	let t = params.id ? mediaEntry.title + ' on ' + mediaEntry.channel.name : 'Home';
-	let d1 = params.id
-		? 'Watch ' + mediaEntry.title + ' on ' + mediaEntry.channel.name
-		: 'Watch the latest movies, series, music and more.';
-	const pageMetaTags = Object.freeze({
-		title: t,
-		description: d1,
-		openGraph: {
-			title: 'Open Graph Title TOP',
-			description: 'Open Graph Description TOP'
-		}
-	}) satisfies MetaTagsProps;
+	// 4. debug: print mediaEntry
+	const debug = mediaEntry;
 
 	setHeaders({
 		'cache-control': 'max-age=3600'
 	});
+	//console.log(playlist);
 	return {
-		//error,
-		page: mediaEntry || null,
-		groupseasons: mediaEntry?.slinks.length > 0 ? groupEpisodesBySeason(mediaEntry.slinks) : {},
-		episodes: mediaEntry?.episode || [],
-		sublangs: subtitleLanguages,
-		geo: countryCode,
-		seasons: mediaEntry?.seasons || [],
+		info,
+		videosource,
 		playlist,
-		cast: mediaEntry?.cast && mediaEntry?.cast.length > 0 ? mediaEntry?.cast.slice(0, 5) : [],
-		crew: mediaEntry?.crew && mediaEntry?.crew.length > 0 ? mediaEntry?.crew.slice(0, 5) : [],
-		videosource: videoSource || {},
-		dyna: mediaEntry.dyna,
-		pageMetaTags,
-		serverhour: 23,
-		mediaEntry
+		debug
 	};
 }
