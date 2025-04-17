@@ -255,6 +255,24 @@
 									{/if}
 									{#if data.info.type != 'movie'}
 										<tr>
+											<th>Audio Language</th>
+											<td>
+												<div class="flex flex-row space-x-2 pl-2">
+													<!-- svelte-ignore svelte_component_deprecated -->
+													{#if data.playlist?.ov != undefined}
+														<span class="fi fi-{data.playlist.ov[1][0].audiolang}"></span>OV
+														{#if data.playlist?.ov != undefined && data.playlist?.regular != undefined}
+															& &nbsp;
+														{/if}
+													{/if}
+													{#if data.playlist?.regular != undefined}
+														<span class="fi fi-{data.playlist.regular[1][0].audiolang}"></span>
+													{/if}
+												</div>
+											</td>
+										</tr>
+
+										<tr>
 											<th>Seasons (total)</th>
 											<td>{data.info.seasons}</td>
 										</tr>
@@ -289,7 +307,6 @@
 									<tr>
 										<th>Quality</th>
 										<td>
-											{data.info.quality}
 											<Icon icon={getqualityicon(data.info.quality)} height="28px" width="36px" />
 										</td>
 									</tr>
