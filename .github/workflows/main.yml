@@ -1,3 +1,5 @@
+name: Delete old images
+
 on: workflow_dispatch  
 #  schedule:
  #   - cron: "0 0 * * *"  # run every day at midnight, utc
@@ -14,4 +16,4 @@ jobs:
           tag-selection: both  # select both tagged and untagged package versions
           keep-n-most-recent: 5
           cut-off: 1d  # package versions should be older than 4 weeks, to be considered
-          dry-run: true  # consider toggling this to true on your first run
+          dry-run: false  # consider toggling this to true on your first run
