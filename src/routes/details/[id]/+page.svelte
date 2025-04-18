@@ -135,7 +135,7 @@
 			</aside>
 		{/if}
 		{#if showvideo}
-			<div class="hero-container2 top60 relative w-full" bind:this={compRef}>
+			<div class="hero-container2 top60 relative w-full">
 				<div class="video-player-container h-full">
 					<Videoplayer />
 					<button class="close-video-btn" onclick={stopvideo}>Close Video</button>
@@ -316,7 +316,7 @@
 											<Time timestamp={data.info.onlineuntil} format="DD.MM.YYYY" />
 										</td>
 									</tr>
-									{#if data.info.cast.length > 0}
+									{#if  data.info.cast &&  data.info.cast.length > 0}
 										<tr>
 											<th>Cast</th>
 											<td>
@@ -330,7 +330,7 @@
 											</td>
 										</tr>
 									{/if}
-									{#if data.info.crew.length > 0}
+									{#if data.info.crew && data.info.crew.length > 0}
 										<tr>
 											<th>Crew</th>
 											<td>

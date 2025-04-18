@@ -1,4 +1,3 @@
-import { duplexPair } from 'stream';
 import type { MetaTagsProps } from 'svelte-meta-tags';
 
 const BASE_MEDIA_URL = 'https://mediathekc.b-cdn.net/t/p/original';
@@ -144,7 +143,8 @@ export async function load({ params, request, setHeaders, locals }) {
 	} else {
 		//console.log('createVideoSource', 'links.length', links.length);
 	}
-
+	
+	var geo = request.headers.get('CDN-RequestCountryCode')?.toLowerCase()|| 'de'
 	// 3. playlist (ov/nonov arrays from slinks, grouped by season)
 	const playlist = createPlaylistByOvAndSeason(slinks, id1);
 
@@ -156,6 +156,7 @@ export async function load({ params, request, setHeaders, locals }) {
 	});
 	//console.log(playlist);
 	return {
+		geo,
 		info,
 		videosource,
 		playlist,

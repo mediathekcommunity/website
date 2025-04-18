@@ -61,7 +61,8 @@ const filterMap: Record<string, string> = {
 	movie: "type='movie'",
 	series: "type='series'",
 	music: "type='music'",
-	culture: "type='culture'"
+	culture: "type='culture'",
+	"4k": "quality='4k'"
 };
 /**
  * Generates meta tags for the page.
