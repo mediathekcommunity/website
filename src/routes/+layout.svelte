@@ -75,6 +75,7 @@
 						<li><a href="/movie">Movies</a></li>
 						<li><a href="/series">TV Shows</a></li>
 						<li><a href="/youth">Youth</a></li>
+						<li><a href="/4k">UHD</a></li>
 
 						<!--
 						<li><a href="/series">TV Shows</a></li>

@@ -1,28 +1,31 @@
 import type { MetaTagsProps } from 'svelte-meta-tags';
 
 const BASE_MEDIA_URL = 'https://mediathekc.b-cdn.net/t/p/original';
-const BASE_ASSET_URL = 'https://api.mediathek.community/assets/';
+const BASE_ASSET_URL = 'https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/';
 const DEFAULT_FORMAT_TYPE = 'application/dash+xml';
 
 // Helper: get image url for poster (use original generateImageUrl logic)
-function getPoster(mediaEntry, params, type): string {
+function getPoster(mediaEntry, params, type,basedata): string {
 	//console.log('getPoster1', params);
 	const backdropFile = mediaEntry.backdrop;
-	const localFile = mediaEntry.backdropup || { filename_disk: '' };
+	const localFile = mediaEntry.backdropup;
 	const data = mediaEntry;
 	if (type != 'PlaylistByOvAndSeason') {
 		if (backdropFile !== undefined && backdropFile.trim() !== '') {
 			return `${BASE_MEDIA_URL}${backdropFile}`;
-		} else if (localFile.filename_disk && localFile.filename_disk.trim() !== '') {
-			return `${BASE_ASSET_URL}${localFile.filename_disk}`;
+		} else if (localFile && localFile.trim() !== '') {
+			return `${BASE_ASSET_URL}${localFile}`;
 		} else if (mediaEntry.poster && mediaEntry.poster.trim() !== '') {
 			return `${BASE_MEDIA_URL}${mediaEntry.poster}`;
 		} else {
-			return `${BASE_MEDIA_URL}${data.backdrop}`;
+			return `${BASE_MEDIA_URL}${mediaEntry.backdrop}`;
 		}
 	} else {
-		//console.log('getPoster2', type, mediaEntry.poster);
+		console.log('getPoster2',basedata.coverimageup);
+		if (mediaEntry.poster && mediaEntry.poster.trim() !== '') {
 		return `${BASE_MEDIA_URL}${mediaEntry.poster}`;
+		} else
+		return `${BASE_ASSET_URL}${basedata.backdropup}`;
 	}
 }
 // Helper: get video format
@@ -51,7 +54,8 @@ function createVideoSource(link: any, mediaEntry: any): any {
 // Helper: create playlist arrays (ov/nonov), grouped by season, using result.ov.seasonKey and result.regular.seasonKey
 function createPlaylistByOvAndSeason(
 	mediaLinks: any[] | undefined,
-	params: any
+	params: any,
+	basedata: any
 ): { regular: Record<string, any[]>; ov: Record<string, any[]> } {
 	const result = { regular: {}, ov: {} } as {
 		regular: Record<string, any[]>;
@@ -64,11 +68,11 @@ function createPlaylistByOvAndSeason(
 			title: link.title || '',
 			src: link.streamlink,
 			type: determineFormat(link.streamformat),
-			poster: getPoster(link, params, 'PlaylistByOvAndSeason'),
+			poster: getPoster(link, params, 'PlaylistByOvAndSeason',mediaLinks),
 			episode: link.episode !== undefined && link.episode !== null ? String(link.episode) : '',
 			season: seasonKey,
 			ov: link.ov,
-			thumb: getPoster(link, params, 'PlaylistByOvAndSeason'),
+			thumb: getPoster(link, params, 'PlaylistByOvAndSeason',basedata),
 			description: link.description || '',
 			audiolang: link.audiolang || []
 		};
@@ -126,7 +130,7 @@ export async function load({ params, request, setHeaders, locals }) {
 		channel: mediaEntry.expand?.channel || mediaEntry.channel || '',
 		country: mediaEntry.expand?.channel?.country || '',
 		quality: mediaEntry.quality,
-		poster: getPoster(mediaEntry, '', ''),
+		poster: getPoster(mediaEntry, '', '',''),
 		backdrop: mediaEntry.backdrop,
 		imdbrating: mediaEntry.imdbrating,
 		metascore: mediaEntry.metascore,
@@ -146,7 +150,7 @@ export async function load({ params, request, setHeaders, locals }) {
 	
 	var geo = request.headers.get('CDN-RequestCountryCode')?.toLowerCase()|| 'de'
 	// 3. playlist (ov/nonov arrays from slinks, grouped by season)
-	const playlist = createPlaylistByOvAndSeason(slinks, id1);
+	const playlist = createPlaylistByOvAndSeason(slinks, id1,mediaEntry);
 
 	// 4. debug: print mediaEntry
 	const debug = mediaEntry;

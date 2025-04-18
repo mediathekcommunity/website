@@ -3,13 +3,9 @@ import type { PageServerLoad } from './$types';
 import { addDays, differenceInDays, isBefore } from 'date-fns';
 import type { MetaTagsProps } from 'svelte-meta-tags';
 
-import getDirectusInstance from '$lib/directus';
-import { readItems } from '@directus/sdk';
 // Only import groupByChannelCountry, assuming it's correctly defined in utils
 import { groupByChannelCountry } from '$lib/utils';
 import type { MediathekItem } from '$lib/types/mediathek';
-
-const directus = getDirectusInstance();
 
 // Constants
 const DEFAULT_COUNTRY_CODE = 'De';
@@ -23,7 +19,7 @@ const EXPIRATION_THRESHOLD_DAYS = 7;
  * @returns Boolean indicating if the parameter is valid.
  */
 const isValidFilterParam = (param: string | undefined): boolean => {
-	const allowedParams = ['movie', 'series', 'debug', 'music', 'youth', 'specials', 'culture'];
+	const allowedParams = ['movie', 'series', 'debug', 'music', 'youth', 'specials', 'culture', '4k'];
 	return !param || allowedParams.includes(param);
 };
 
@@ -62,7 +58,7 @@ const filterMap: Record<string, string> = {
 	series: "type='series'",
 	music: "type='music'",
 	culture: "type='culture'",
-	"4k": "quality='4k'"
+	'4k': "quality='4k'"
 };
 /**
  * Generates meta tags for the page.

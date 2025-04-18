@@ -50,25 +50,17 @@
 	if (carddata) {
 		if (carddata.poster) {
 			posterUrl = `https://mediathekc.b-cdn.net/t/p/w300${carddata.poster}`;
-		} else if (carddata.posterup?.filename) {
-			posterUrl = `https://mediathekc.b-cdn.net/${carddata.posterup.filename}?width=300`;
-		} else if (carddata.backdropup?.filename) {
-			posterUrl = `https://mediathekc.b-cdn.net/${carddata.backdropup.filename}?width=300`;
+		} else if (carddata.posterup) {
+			posterUrl = `https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/${carddata.posterup}`;
+		} else if (carddata.coverimageup) {
+			posterUrl = `https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/${carddata.coverimageup}`;
 		}
 		posterUrlStore.set(posterUrl);
 	} else {
 		posterUrlStore.set(null);
 	}
 
-	// Optimize image props generation
-	const imageProps = (carddata: CardData, posterUrl: string | null): ImageProps => ({
-		src: posterUrl || '',
-		alt: `${title} ${carddata?.poster ? 'poster' : 'backdrop'}`,
-		class: 'card-poster',
-		layout: 'fullWidth',
-		objectFit: 'fill',
-		priority: true
-	});
+	console.log(carddata);
 </script>
 
 {#key carddata}

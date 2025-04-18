@@ -41,7 +41,7 @@
 	//console.log('HeroItems:', heroItems); // Debug log
 	const getqualityicon = (quality: string) => {
 		switch (quality) {
-			case '4K':
+			case '4k':
 				return 'mdi:uhd';
 			case 'fhd':
 				return 'material-symbols:full-hd';
@@ -55,21 +55,15 @@
 	};
 
 	const getImageUrl = (slide: HeroItem) => {
-		if (!slide.backdrop && !slide.backdropup?.filename_disk) {
+		if (!slide.backdrop && !slide.backdropup) {
 			console.warn('No backdrop found for slide', slide);
 			return 'https://api.mediathek.community/assets/default-backdrop.jpg';
 		}
 		return slide.backdrop
 			? 'https://mediathekc.b-cdn.net/t/p/original' + slide.backdrop
-			: 'https://api.mediathek.community/assets/' + slide.backdropup?.filename_disk;
+			: 'https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/' +
+					slide.backdropup;
 	};
-
-	const getposterUrl = (slide: HeroItem) =>
-		slide.poster
-			? 'https://mediathekc.b-cdn.net/t/p/original' + slide.poster
-			: slide.posterup?.filename_disk
-				? 'https://api.mediathek.community/assets/' + slide.posterup.filename_disk
-				: '';
 
 	const getTypeIcon = (type: string) => {
 		switch (type) {
@@ -83,55 +77,7 @@
 				return 'mdi:movie';
 		}
 	};
-
-	const getLanguageIcon = (slide: HeroItem) => {
-		let lang;
-
-		// Check links[0].audiolang[0] first
-		if (slide.links?.[0]?.audiolang?.[0]) {
-			//console.log('slide.links[0].audiolang[0]', slide.links[0].audiolang[0]);
-			lang = slide.links[0].audiolang[0];
-		}
-		// Then check episode[0].lang
-		else if (slide.episode?.lang) {
-			lang = slide.episode.lang;
-		}
-		// Finally fallback to channel country
-		else {
-			lang = 'english';
-		}
-
-		if (!lang) return 'mdi:web';
-
-		switch (lang.toLowerCase()) {
-			case 'de':
-			case 'ger':
-			case 'german':
-				return 'emojione:flag-for-germany';
-			case 'en':
-			case 'eng':
-			case 'gb':
-			case 'english':
-				return 'emojione:flag-for-united-kingdom';
-			case 'fr':
-			case 'fra':
-			case 'french':
-				return 'emojione:flag-for-france';
-			case 'es':
-			case 'spa':
-			case 'spanish':
-				return 'emojione:flag-for-spain';
-			case 'it':
-				return 'emojione:flag-for-italy';
-			case 'sw':
-			case 'swe':
-			case 'swedish':
-				return 'emojione:flag-for-sweden';
-			default:
-				return 'mdi:web';
-		}
-	};
-
+ 
 	const plugins = [
 		Autoplay({
 			delay: 8000,
@@ -198,19 +144,13 @@
 									<Icon icon={getTypeIcon(slide.type)} height="28px" />
 								</span>
 
-								<span
-									class="badge-ghost inline-flex items-center gap-1 px-1 py-1 text-white sm:text-sm"
-								>
-									<Icon icon="mdi:translate" height="28px" />
-									<Icon icon={getLanguageIcon(slide)} height="28px" width="36px" />
-								</span>
 							</div>
 							<h1
 								class="mb-2 text-2xl leading-tight font-bold tracking-tight sm:text-3xl md:text-4xl lg:text-5xl"
 							>
 								{slide.title}
 							</h1>
-							{#if slide.title != slide.orgtitle}
+							{#if slide.title != slide.orgtitle && slide.orgtitle != ''}
 								<p class="mb-4 text-sm text-gray-300 italic sm:text-base">
 									Original Title: {slide.orgtitle}
 								</p>

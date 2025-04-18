@@ -28,9 +28,33 @@
 		}
 	}
 
-	function getImageUrl(slide) {
-		return slide;
-	}
+	const getImageUrl = (slide) => {
+				console.log('slide:', slide);
+
+		let imageUrl = '';
+		switch (true) {
+			case !!slide.backdrop:
+				imageUrl = slide.backdrop;
+				break;
+			case !!slide.backdropup:
+				imageUrl =
+					'https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/' +
+					slide.backdropup;
+				break;
+			case !!slide.poster:
+				imageUrl = slide.poster;
+				break;
+			case !!slide.posterup:
+				imageUrl =
+					'https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/' + slide.posterup;
+				break;
+			default:
+				console.warn('No backdrop found for slide', slide);
+				imageUrl = 'https://api.mediathek.community/assets/default-backdrop.jpg';
+		}
+		console.log('imageUrl:', imageUrl);
+		return imageUrl;
+	};
 	import videojs from 'video.js';
 	let myPlaylist = [];
 	let myPlaylistomu = [];
@@ -87,7 +111,7 @@
 		}
 	}
 	let getqualityicon = (quality) => {
-		if (quality === '4K') {
+		if (quality === '4k') {
 			return 'mdi:uhd';
 		} else if (quality === '1080p' || quality === 'fhd') {
 			return 'material-symbols:full-hd';
@@ -120,6 +144,8 @@
 			//console.log('Current episode season:', episode.season);
 		}
 	}
+
+
 </script>
 
 {#if data1}
@@ -146,7 +172,7 @@
 				<div class="video-player-container h-full">
 					<Videolink
 						videotitle={data.title}
-						posterUrl="https://mediathekc.b-cdn.net/t/p/original{data.info.backdrop}"
+						posterUrl={getImageUrl(data)}
 						channel={data.channel}
 						videoUrl={data.dynalink}
 					/>
@@ -156,7 +182,7 @@
 		{:else}
 			<div class="hero-container relative w-full">
 				<img
-					src="https://mediathekc.b-cdn.net/t/p/original{data.info.backdrop}"
+					src={getImageUrl(data.info)}
 					alt={data.title}
 					class="hero-image absolute inset-0 h-full w-full"
 				/>
@@ -349,7 +375,7 @@
 						</div>
 						<div class="description-section">
 							<h3 class="section-title">Description</h3>
-							<p>{data.info.description}</p>
+							{@html data.info.description}
 						</div>
 					</div>
 				</div>
@@ -364,7 +390,7 @@
 								</div>
 								<div class="collapse-content text-sm">
 									<div class="episode-content">
-										<p class="episode-overview">{data.info.description}</p>
+											{@html data.info.description}
 
 										{#if data.geo == data.info.channel.country}
 											{#if data.fskcheck == true && data.serverhour < 22}
@@ -409,7 +435,7 @@
 								</div>
 								<div class="collapse-content text-sm">
 									<div class="episode-content">
-										<p class="episode-overview">{data.description}</p>
+											{@html data.description}
 										<button type="button" class="btn btn-accent" onclick={() => toggleDynaWarn()}>
 											<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
 											<span> Play</span>

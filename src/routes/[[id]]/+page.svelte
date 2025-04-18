@@ -33,6 +33,7 @@
 	let options2 = { align: 'start', slidesToScroll: 2, loop: true };
 	let emblaApi;
 	function getimgurl(img) {
+		console.log('img:', img);
 		if (img.backdrop) {
 			return 'https://img.mediathek.community/t/p/original' + img.backdrop;
 		} else {
