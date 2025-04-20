@@ -6,10 +6,10 @@ name: Docker
 # documentation.
 
 on:
-#  schedule:
-#    - cron: '34 17 * * *'
+  #  schedule:
+  #    - cron: '34 17 * * *'
   push:
-    branches: [ "astro" ]
+    branches: ["astro"]
 #  pull_request:
 #    branches: [ "main-skeleton" ]
 
@@ -19,10 +19,8 @@ env:
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
 
-
 jobs:
   build:
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -41,7 +39,7 @@ jobs:
         if: github.event_name != 'pull_request'
         uses: sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20 #v3.5.0
         with:
-          cosign-release: 'v2.2.4'
+          cosign-release: "v2.2.4"
 
       # Set up BuildKit Docker container builder to be able to build
       # multi-platform images and export cache
@@ -85,10 +83,10 @@ jobs:
       - name: update container image on Magic Containers
         uses: BunnyWay/actions/container-update-image@main
         with:
-         app_id: ${{ vars.APP_ID }}
-         api_key: ${{ secrets.BUNNYNET_API_KEY }}
-         container: app
-         image_tag: "${{ github.sha }}"
+          app_id: ${{ vars.APP_ID }}
+          api_key: ${{ secrets.BUNNYNET_API_KEY }}
+          container: app
+          image_tag: "${{ github.sha }}"
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
       # repository is public to avoid leaking data.  If you would like to publish
@@ -100,6 +98,6 @@ jobs:
       #    # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
       #    TAGS: ${{ steps.meta.outputs.tags }}
       #    DIGEST: ${{ steps.build-and-push.outputs.digest }}
-        # This step uses the identity token to provision an ephemeral certificate
-        # against the sigstore community Fulcio instance.
+      # This step uses the identity token to provision an ephemeral certificate
+      # against the sigstore community Fulcio instance.
       #  run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
