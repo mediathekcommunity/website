@@ -5,15 +5,13 @@ import Layout from "../../layouts/Layout.astro";
 import PocketBase from "pocketbase";
 const { slug } = Astro.params;
 if (!slug) return Astro.redirect("/404");
-import { Source } from "@unpic/astro";
 import { Icon } from "astro-icon/components";
-import { date } from "astro:schema";
-import { getqualityicon, getImageUrl, getformat } from "../../lib/detailsutil";
+import { getqualityicon, getImageUrl } from "../../lib/detailsutil";
 import { datahelper } from "../../lib/handledata";
 const pb = new PocketBase("https://api2.mediathek.community/");
 const CDN_COUNTRY_HEADER = "CDN-RequestCountryCode";
 const dateFormatter = new Intl.DateTimeFormat("de-DE", { dateStyle: "medium" });
-function getCurrentDate(date:any) {
+function getCurrentDate(date: any) {
     date = new Date(date);
     return dateFormatter.format(date);
 }
@@ -372,41 +370,43 @@ console.log(`Fetching data for slug: ${slug}`);
                                 </div>
                             </div>
                         </div>
-                                            {data.info.type=="movie" && (
+                        {data.info.type === "movie" && (
+                            <>
+                                <input
+                                    id="tab-links"
+                                    type="radio"
+                                    name="tabs"
+                                    role="tab"
+                                    class="tab"
+                                    aria-label="Links"
+                                />
+                                <div class="tab-content bg-base-100 border-base-300 p-6">
+                                    <p> Movie content goes here</p>
+                                </div>
+                            </>
+                        )}
+                        {data.info.type === "series" && (
+                            <>
+                                <input
+                                    id="tab-episodes"
+                                    type="radio"
+                                    name="tabs"
+                                    role="tab"
+                                    class="tab"
+                                    aria-label="Episodes"
+                                />
 
-                         <input
-                            id="tab-links"
-                            type="radio"
-                            name="tabs"
-                            role="tab"
-                            class="tab"
-                            aria-label="Links"
-                        />
-                        <div class="tab-content bg-base-100 border-base-300 p-6">
- test                      
-   </div>
-                     )}
-                    {data.info.type == "series" && (
-                        <input
-                            id="tab-episodes"
-                            type="radio"
-                            name="tabs"
-                            role="tab"
-                            class="tab"
-                            aria-label="Episodes"
-                        />
-
-                        <div class="tab-content bg-base-100 border-base-300 p-6">
-                             Episodes content goes here 
-                        </div>
-                    )}
+                                <div class="tab-content bg-base-100 border-base-300 p-6">
+                                    <p> Episodes content goes here</p>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
         )
     }
     <h1>Debug data for: {slug}</h1>
-    <p>Details content goes here.</p>
 </Layout>
 <style>
     .icon123 {
