@@ -1,12 +1,693 @@
 ---
 // Removed invalid import as Astro.redirect will be used instead
 export const prerender = false;
-import Layout from '../../layouts/Layout.astro';
+import Layout from "../../layouts/Layout.astro";
+import PocketBase from "pocketbase";
 const { slug } = Astro.params;
 if (!slug) return Astro.redirect("/404");
+import { Source } from "@unpic/astro";
+import { Icon } from "astro-icon/components";
+import { date } from "astro:schema";
+import { getqualityicon, getImageUrl, getformat } from "../../lib/detailsutil";
+import { datahelper } from "../../lib/handledata";
+const pb = new PocketBase("https://api2.mediathek.community/");
+const CDN_COUNTRY_HEADER = "CDN-RequestCountryCode";
+const dateFormatter = new Intl.DateTimeFormat("de-DE", { dateStyle: "medium" });
+function getCurrentDate(date:any) {
+    date = new Date(date);
+    return dateFormatter.format(date);
+}
 
+let geo = Astro.request.headers.get(CDN_COUNTRY_HEADER) || "de";
+
+let data;
+let showvideo = false;
+let showdynawarn = false;
+data = await pb.collection("mediathek").getOne(slug, {
+    expand: "channel,links,slinks",
+});
+data = datahelper(data, geo);
+// Helper functions
+function toHoursAndMinutes(totalMinutes: any) {
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    return `${hours}h${minutes > 0 ? ` ${minutes}m` : ""}`;
+}
+
+console.log(`Fetching data for slug: ${slug}`);
 ---
 
 <Layout>
-    <h1>Details for: {slug}</h1>
+    {
+        data && (
+            <div class="contents">
+                {data.info.channel.info && (
+                    <aside class="gradient-text">
+                        <div class="gradient-text-light b21">
+                            <h3>INFO</h3>
+                            <p>{data.info.channel.name}</p>
+                        </div>
+                    </aside>
+                )}
+                {showvideo && (
+                    <div class="hero-container2 top60 relative w-full">
+                        <div class="video-player-container h-full">
+                            Videoplayer
+                        </div>
+                    </div>
+                )}
+                {!showvideo && showdynawarn && (
+                    <div class="hero-container2 top60 relative w-full">
+                        <div class="video-player-container h-full">
+                            Videolink
+                            <button class="close-info-btn">Close Info</button>
+                        </div>
+                    </div>
+                )}
+                {!showvideo && !showdynawarn && (
+                    <div class="hero-container relative w-full">
+                        <img
+                            src={getImageUrl(data.info)}
+                            alt={data.info.title}
+                            class="hero-image absolute inset-0 h-full w-full"
+                        />
+                        <div
+                            class="gradient-overlay absolute inset-x-0"
+                            style="bottom: -1px"
+                        />
+                        <div class="absolute bottom-4 left-4 max-w-[calc(100%-2rem)] text-white sm:bottom-8 sm:left-8 sm:max-w-[calc(100%-4rem)] md:bottom-12 md:left-16 md:max-w-2xl lg:bottom-16 lg:left-32 lg:max-w-3xl">
+                            <h1 class="mb-2 text-2xl leading-tight font-bold tracking-tight sm:text-3xl md:text-4xl lg:text-5xl">
+                                {data.info.title}
+                            </h1>
+                            {data.info.orgtitle && (
+                                <p class="mb-4 text-sm text-gray-300 italic sm:text-base">
+                                    Original Title: {data.info.orgtitle}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                )}
+                <div class="content-wrapper top602">
+                    <div role="tablist" class="tabs tabs-lift">
+                        <input
+                            id="tab-details"
+                            type="radio"
+                            name="tabs"
+                            role="tab"
+                            class="tab"
+                            aria-label="Details"
+                            checked
+                        />
+                        <div class="tab-content bg-base-100 border-base-300 p-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2">
+                                <div>
+                                    <h3 class="section-title">Information</h3>
+
+                                    <table class="info-table">
+                                        <tbody>
+                                            {data.info.duration && (
+                                                <tr>
+                                                    <th>Duration</th>
+                                                    <td>
+                                                        {toHoursAndMinutes(
+                                                            data.info.duration,
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            )}
+                                            {data.info.type === "movie" &&
+                                                data.videosource && (
+                                                    <>
+                                                        <tr>
+                                                            <th>
+                                                                Audio Language
+                                                            </th>
+                                                            <td>
+                                                                <div class="flex flex-row space-x-2 pl-2">
+                                                                    {data.videosource.audiolang.map(
+                                                                        (
+                                                                            lang: any,
+                                                                        ) => (
+                                                                            <span
+                                                                                class={`fi fi-${lang}`}
+                                                                            />
+                                                                        ),
+                                                                    )}
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        {data.videosource
+                                                            .sublangs?.length >
+                                                            0 && (
+                                                            <tr>
+                                                                <th>
+                                                                    Subtitle
+                                                                    Language
+                                                                </th>
+                                                                <td>
+                                                                    <div class="flex flex-row space-x-2">
+                                                                        {data.videosource.sublangs.map(
+                                                                            (
+                                                                                lang: any,
+                                                                            ) => (
+                                                                                <div
+                                                                                    class={
+                                                                                        lang.spokenlang
+                                                                                            ? "tooltip"
+                                                                                            : ""
+                                                                                    }
+                                                                                    data-tip="Spoken lang"
+                                                                                >
+                                                                                    <div class="badge badge-neutral">
+                                                                                        <span
+                                                                                            class={`fi fi-${lang.srclang.toLowerCase()}`}
+                                                                                        />
+                                                                                        {lang.spokenlang && (
+                                                                                            <Icon
+                                                                                                name="mdi:speakerphone"
+                                                                                                height="28px"
+                                                                                                width="36px"
+                                                                                            />
+                                                                                        )}
+                                                                                    </div>
+                                                                                </div>
+                                                                            ),
+                                                                        )}
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        )}
+                                                        {data.videosource
+                                                            ?.fsubtitle && (
+                                                            <tr>
+                                                                <th>
+                                                                    Forced
+                                                                    Subtitle
+                                                                    Language
+                                                                </th>
+                                                                <td>
+                                                                    <div class="flex flex-row space-x-2">
+                                                                        {data.videosource[0].fsubtitle_lang.map(
+                                                                            (
+                                                                                lang: any,
+                                                                            ) => (
+                                                                                <span
+                                                                                    class={`fi fi-${lang.toLowerCase()}`}
+                                                                                />
+                                                                            ),
+                                                                        )}
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        )}
+                                                    </>
+                                                )}
+                                            {data.info.type !== "movie" && (
+                                                <>
+                                                    <tr>
+                                                        <th>Audio Language</th>
+                                                        <td>
+                                                            <div class="flex flex-row space-x-2 pl-2">
+                                                                {data.playlist
+                                                                    ?.ov[1] && (
+                                                                    <>
+                                                                        <span
+                                                                            class={`fi fi-${data.playlist.ov[1][0].audiolang}`}
+                                                                        />
+                                                                        OV
+                                                                        {data
+                                                                            .playlist
+                                                                            ?.ov &&
+                                                                            data
+                                                                                .playlist
+                                                                                ?.regular &&
+                                                                            " & "}
+                                                                    </>
+                                                                )}
+                                                                {data.playlist
+                                                                    ?.regular[1] && (
+                                                                    <span
+                                                                        class={`fi fi-${data.playlist.regular[1][0].audiolang}`}
+                                                                    />
+                                                                )}
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Seasons (total)</th>
+                                                        <td>
+                                                            {data.info.seasons}
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>
+                                                            Episodes (total)
+                                                        </th>
+                                                        <td>
+                                                            {data.info.episodes}
+                                                        </td>
+                                                    </tr>
+                                                </>
+                                            )}
+                                            <tr>
+                                                <th>
+                                                    Channel / Country
+                                                    {data.info.channel.name}
+                                                </th>
+                                                <td>
+                                                    <div class="flex flex-row space-x-2">
+                                                        <Icon
+                                                            name={
+                                                                data.info
+                                                                    .channel
+                                                                    ?.icon
+                                                            }
+                                                            height="28px"
+                                                            width="36px"
+                                                        />
+                                                        <span
+                                                            class={`fi fi-${data.info.channel.country}`}
+                                                        />
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {data.info.backdrop && (
+                                                <tr>
+                                                    <th>
+                                                        <p class="icon123 flex align-middle">
+                                                            Images{" "}
+                                                            <Icon
+                                                                name="mdi:copyright"
+                                                                class="icon123"
+                                                            />
+                                                        </p>
+                                                    </th>
+                                                    <td>
+                                                        <div class="flex flex-wrap gap-2">
+                                                            <Icon
+                                                                name={
+                                                                    data.info
+                                                                        .channel
+                                                                        .icon
+                                                                }
+                                                                height="28px"
+                                                                width="36px"
+                                                            />
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            )}
+                                            <tr>
+                                                <th>Quality</th>
+                                                <td>
+                                                    <Icon
+                                                        name={getqualityicon(
+                                                            data.info.quality,
+                                                        )}
+                                                        height="28px"
+                                                        width="36px"
+                                                    />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Online until</th>
+                                                <td>
+                                                    {getCurrentDate(
+                                                        data.info.onlineuntil,
+                                                    )}
+                                                </td>
+                                            </tr>
+                                            {data.info.cast?.length > 0 && (
+                                                <tr>
+                                                    <th>Cast</th>
+                                                    <td>
+                                                        <div class="flex flex-wrap gap-2">
+                                                            {data.info.cast.map(
+                                                                (
+                                                                    member: any,
+                                                                ) => (
+                                                                    <a
+                                                                        href={`/cast/${member.id}`}
+                                                                        class="badge badge-primary"
+                                                                    >
+                                                                        {
+                                                                            member.name
+                                                                        }
+                                                                    </a>
+                                                                ),
+                                                            )}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            )}
+                                            {data.info.crew?.length > 0 && (
+                                                <tr>
+                                                    <th>Crew</th>
+                                                    <td>
+                                                        <div class="flex flex-wrap gap-2">
+                                                            {data.info.crew.map(
+                                                                (
+                                                                    member: any,
+                                                                ) => (
+                                                                    <a
+                                                                        href={`/crew/${member.id}`}
+                                                                        class="badge badge-secondary"
+                                                                    >
+                                                                        {
+                                                                            member.name
+                                                                        }
+                                                                    </a>
+                                                                ),
+                                                            )}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="description-section">
+                                    <h3 class="section-title">Description</h3>
+                                    <div>{data.info.description}</div>
+                                </div>
+                            </div>
+                        </div>
+                                            {data.info.type=="movie" && (
+
+                         <input
+                            id="tab-links"
+                            type="radio"
+                            name="tabs"
+                            role="tab"
+                            class="tab"
+                            aria-label="Links"
+                        />
+                        <div class="tab-content bg-base-100 border-base-300 p-6">
+ test                      
+   </div>
+                     )}
+                    {data.info.type == "series" && (
+                        <input
+                            id="tab-episodes"
+                            type="radio"
+                            name="tabs"
+                            role="tab"
+                            class="tab"
+                            aria-label="Episodes"
+                        />
+
+                        <div class="tab-content bg-base-100 border-base-300 p-6">
+                             Episodes content goes here 
+                        </div>
+                    )}
+                    </div>
+                </div>
+            </div>
+        )
+    }
+    <h1>Debug data for: {slug}</h1>
+    <p>Details content goes here.</p>
 </Layout>
+<style>
+    .icon123 {
+        vertical-align: -0.125em !important;
+    }
+    .hero-container {
+        position: relative;
+        width: 100%;
+        height: 85vh;
+        max-height: 95vh;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        overflow: hidden;
+    }
+    .hero-container2 {
+        position: relative;
+        width: 100%;
+        height: 52vh;
+        top: auto;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        overflow: hidden;
+    }
+
+    .gradient-text {
+        background: radial-gradient(
+            circle,
+            var(--tertiary-500),
+            var(--primary-500)
+        );
+        background-clip: text;
+        /*color: transparent;*/
+    }
+
+    .gradient-text-light {
+        background: radial-gradient(circle, var(--tertiary-100), red);
+        background-clip: text;
+        /*color: transparent;*/
+    }
+
+    .gradient-overlay {
+        height: 75%;
+        background: linear-gradient(
+            to top,
+            rgb(17, 17, 17) 0%,
+            rgba(17, 17, 17, 0.987) 7.8%,
+            rgba(17, 17, 17, 0.951) 15.2%,
+            rgba(17, 17, 17, 0.896) 22.1%,
+            rgba(17, 17, 17, 0.825) 28.7%,
+            rgba(17, 17, 17, 0.741) 35.1%,
+            rgba(17, 17, 17, 0.648) 41.2%,
+            rgba(17, 17, 17, 0.55) 47.1%,
+            rgba(17, 17, 17, 0.45) 52.9%,
+            rgba(17, 17, 17, 0.352) 58.8%,
+            rgba(17, 17, 17, 0.259) 64.9%,
+            rgba(17, 17, 17, 0.175) 71.3%,
+            rgba(17, 17, 17, 0.104) 77.9%,
+            rgba(17, 17, 17, 0.049) 84.8%,
+            rgba(17, 17, 17, 0.013) 92.2%,
+            rgba(17, 17, 17, 0) 100%
+        );
+    }
+
+    .b21 {
+        padding: 1% 4% 0 4%;
+    }
+    .video-player-container {
+        position: relative;
+        /* top: 60px !important; */
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto 2rem;
+        aspect-ratio: 16 / 9;
+        background-color: black;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .close-video-btn {
+        position: absolute;
+        top: 20px;
+        left: 10px;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 5px 10px;
+        cursor: pointer;
+        z-index: 10;
+        opacity: 0; /* Initially hidden */
+        display: none; /* Initially hidden */
+    }
+
+    .close-video-btn:hover {
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+    .video-player-container:hover .close-video-btn {
+        display: block; /* Show on hover */
+        opacity: 1;
+    }
+
+    .close-video-btn:hover {
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+    .hero-container {
+        position: relative;
+        width: 100%;
+        height: 50vh;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        overflow: hidden;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+            to top,
+            rgba(0, 0, 0, 0.8) 0%,
+            rgba(0, 0, 0, 0.2) 100%
+        );
+    }
+
+    .hero-content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 2rem;
+        color: white;
+        z-index: 1;
+    }
+
+    .title {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .subtitle {
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .meta-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .content-wrapper {
+        width: 100%;
+        margin: 0rem 1rem 1rem 0rem;
+        padding: 0rem 1rem 2rem 1rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: semibold;
+        margin-bottom: 0.5rem;
+    }
+
+    .info-table {
+        width: 100%;
+    }
+
+    .info-table th {
+        text-align: left;
+        padding: 0.5rem 0;
+        font-weight: 600;
+        color: var(--color-primary-500);
+    }
+
+    .info-table td {
+        padding: 0.5rem 0;
+    }
+
+    .episode-number {
+        font-weight: bold;
+        margin-right: 0.5rem;
+    }
+
+    .episode-content {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+    }
+
+    .episode-overview {
+        margin-bottom: 0.5rem;
+    }
+
+    .top60 {
+        top: 60px;
+    }
+    .top602 {
+        margin-top: 70px;
+    }
+
+    @media (max-width: 480px) {
+        .hero-container {
+            height: 40vh;
+            min-height: 250px;
+            max-height: 50vh;
+        }
+        .hero-container2 {
+            height: 40vh;
+            min-height: 250px;
+            max-height: 50vh;
+        }
+
+        .hero-overlay {
+            height: 85%;
+        }
+    }
+
+    @media (min-width: 481px) and (max-width: 640px) {
+        .hero-container {
+            height: 50vh;
+            min-height: 300px;
+            max-height: 60vh;
+        }
+        .hero-container2 {
+            height: 50vh;
+            min-height: 300px;
+            max-height: 60vh;
+        }
+
+        .gradient-overlay {
+            height: 80%;
+        }
+    }
+
+    @media (min-width: 641px) and (max-width: 768px) {
+        .hero-container {
+            height: 60vh;
+            max-height: 75vh;
+        }
+        .hero-container2 {
+            height: 60vh;
+            max-height: 75vh;
+        }
+        .gradient-overlay {
+            height: 75%;
+        }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .hero-container {
+            height: 70vh;
+            max-height: 85vh;
+        }
+        .hero-container2 {
+            height: 70vh;
+            max-height: 85vh;
+        }
+        .gradient-overlay {
+            height: 75%;
+        }
+    }
+
+    @media (min-width: 1025px) {
+        .hero-container {
+            height: 85vh;
+            max-height: 95vh;
+        }
+        .hero-container2 {
+            height: 85vh;
+            max-height: 95vh;
+        }
+
+        .gradient-overlay {
+            height: 75%;
+        }
+    }
+</style>

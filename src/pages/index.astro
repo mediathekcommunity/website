@@ -32,11 +32,11 @@ const getExpiringItems = (items: any, daysThreshold: number) => {
     const thresholdDate = addDays(now, daysThreshold);
     return items
         .filter(
-            (item) =>
+            (item:any) =>
                 item.onlineuntil &&
                 isBefore(new Date(item.onlineuntil), thresholdDate),
         )
-        .map((item) => ({
+        .map((item:any) => ({
             ...item,
             // Ensure onlineuntil exists before calculating difference
             remainingDays: item.onlineuntil
@@ -44,7 +44,7 @@ const getExpiringItems = (items: any, daysThreshold: number) => {
                 : null,
         }))
         .sort(
-            (a, b) =>
+            (a:any, b:any) =>
                 (a.remainingDays ?? Infinity) - (b.remainingDays ?? Infinity),
         ); // Sort by remaining days ascending
 };
@@ -98,7 +98,7 @@ console.log("Countries:", countries);
                         </h1>
                         <div class="embla">
                             <div class="embla__container flex">
-                                {expiringItems.map((item) => (
+                                {expiringItems.map((item:any) => (
                                     <div class="embla__slide">
                                         <Card
                                             carddata={item}
@@ -116,7 +116,7 @@ console.log("Countries:", countries);
                 <Slider1
                     langlist={countries}
                     langdata={groupedData}
-                    geo={data.geo}
+                    geo={data?.geo}
                 />
             </div>
         )

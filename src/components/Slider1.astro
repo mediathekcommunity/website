@@ -39,7 +39,7 @@ const sortedLanglist =
 
                     <div class="embla1">
                         <div class="embla__container">
-                            {langdata[country].map((item) => (
+                            {langdata[country].map((item:any) => (
                                 <div class="embla__slide" key={item.id}>
                                     <Card carddata={item} countryflag={false} />
                                 </div>

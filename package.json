@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@astrojs/node": "^9.2.0",
+    "@iconify-json/cbi": "^1.2.11",
+    "@iconify-json/material-symbols": "^1.2.20",
     "@iconify-json/mdi": "^1.2.3",
     "@tailwindcss/vite": "^4.1.4",
     "@unpic/astro": "^1.0.0",

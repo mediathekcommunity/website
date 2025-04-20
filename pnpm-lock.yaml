@@ -11,6 +11,12 @@ importers:
       '@astrojs/node':
         specifier: ^9.2.0
         version: 9.2.0(astro@5.7.4(@types/node@22.14.1)(jiti@2.4.2)(lightningcss@1.29.2)(rollup@4.40.0)(typescript@5.8.3))
+      '@iconify-json/cbi':
+        specifier: ^1.2.11
+        version: 1.2.11
+      '@iconify-json/material-symbols':
+        specifier: ^1.2.20
+        version: 1.2.20
       '@iconify-json/mdi':
         specifier: ^1.2.3
         version: 1.2.3
@@ -250,6 +256,12 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@iconify-json/cbi@1.2.11':
+    resolution: {integrity: sha512-EoG2GzYQiU8Zjteg94q9tLBZ9PMHdXzWHZ+oD+2lP8f68wVUir04557n+6N+T3cgwiGGdsvlpjtlYLVR0V58kw==}
+
+  '@iconify-json/material-symbols@1.2.20':
+    resolution: {integrity: sha512-+KqOT+3fD+LC2FbWiV8gd4+JLMiVUtmqrjzpKN1ji7rfMQTwvYJ94RT0WQlmL+vfDNJ5MTRe3rBzzJyvIH/aSg==}
 
   '@iconify-json/mdi@1.2.3':
     resolution: {integrity: sha512-O3cLwbDOK7NNDf2ihaQOH5F9JglnulNDFV7WprU2dSoZu3h3cWH//h74uQAB87brHmvFVxIOkuBX2sZSzYhScg==}
@@ -2263,6 +2275,14 @@ snapshots:
 
   '@esbuild/win32-x64@0.25.2':
     optional: true
+
+  '@iconify-json/cbi@1.2.11':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/material-symbols@1.2.20':
+    dependencies:
+      '@iconify/types': 2.0.0
 
   '@iconify-json/mdi@1.2.3':
     dependencies:
