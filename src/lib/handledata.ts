@@ -172,4 +172,12 @@ function datahelper(data: any, geo: string): {
 		dyna: false
 	}
 }
-export { datahelper };
+function groupByChannelCountry(items: any) {
+	return items.reduce((acc: any, item: any) => {
+		const country = item?.channelcountry || "Unknown";
+		acc[country] = acc[country] || [];
+		acc[country].push(item);
+		return acc;
+	}, {});
+};
+export { datahelper, groupByChannelCountry };

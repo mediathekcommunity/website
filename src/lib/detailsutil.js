@@ -1,3 +1,5 @@
+import { addDays, differenceInDays, isBefore } from "date-fns";
+
 function getqualityicon(quality) {
     if (quality === '4k') {
         return 'mdi:uhd';
@@ -10,6 +12,27 @@ function getqualityicon(quality) {
     }
 };
 
+function getExpiringItems(items, daysThreshold) {
+    const now = new Date();
+    const thresholdDate = addDays(now, daysThreshold);
+    return items
+        .filter(
+            (item) =>
+                item.onlineuntil &&
+                isBefore(new Date(item.onlineuntil), thresholdDate),
+        )
+        .map((item) => ({
+            ...item,
+            // Ensure onlineuntil exists before calculating difference
+            remainingDays: item.onlineuntil
+                ? differenceInDays(new Date(item.onlineuntil), now)
+                : null,
+        }))
+        .sort(
+            (a, b) =>
+                (a.remainingDays ?? Infinity) - (b.remainingDays ?? Infinity),
+        ); // Sort by remaining days ascending
+};
 function getImageUrl(slide) {
     console.log('slide:', slide);
 
@@ -67,5 +90,5 @@ function getTypeIcon(type) {
             return 'mdi:movie';
     }
 };
-export { getqualityicon, getImageUrl, getformat, getTypeIcon };
+export { getqualityicon, getImageUrl, getformat, getTypeIcon, getExpiringItems };
 // This file contains utility functions for handling details in a media application.

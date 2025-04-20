@@ -4,7 +4,7 @@ import emblaCarousel from "embla-carousel";
 import Autoplay from "embla-carousel-autoplay";
 import Fade from "embla-carousel-fade";
 import { Icon } from "astro-icon/components";
-import { getqualityicon, getTypeIcon } from "../lib/detailsutil";
+import { getqualityicon, getTypeIcon, getImageUrl } from "../lib/detailsutil";
 interface HeroItem {
     backdrop?: string;
     backdropup?: { filename_disk: string };
@@ -29,16 +29,7 @@ interface HeroItem {
     }>;
 }
 const { data, showcountry = false, special = false } = Astro.props;
-const getImageUrl = (slide: HeroItem) => {
-    if (!slide.backdrop && !slide.backdropup) {
-        console.warn("No backdrop found for slide", slide);
-        return "https://api.mediathek.community/assets/default-backdrop.jpg";
-    }
-    return slide.backdrop
-        ? "https://mediathekc.b-cdn.net/t/p/original" + slide.backdrop
-        : "https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/" +
-              slide.backdropup;
-};
+
 export interface Props {
     data: HeroItem[];
     showcountry?: boolean;

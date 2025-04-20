@@ -4,7 +4,8 @@ import HeroSlider from "../components/HeroSlider.astro";
 import Layout from "../layouts/Layout.astro";
 import Slider1 from "../components/Slider1.astro";
 import PocketBase from "pocketbase";
-import { addDays, differenceInDays, isBefore } from "date-fns";
+import { getExpiringItems } from "../lib/detailsutil";
+import { groupByChannelCountry } from "../lib/handledata";
 // Constants
 const DEFAULT_COUNTRY_CODE = "De";
 const CDN_COUNTRY_HEADER = "CDN-RequestCountryCode";
@@ -18,46 +19,11 @@ let data = [];
 data = await pb.collection("movies").getFullList({
     sort: "-created",
 });
-export const groupByChannelCountry = (items: any) => {
-    return items.reduce((acc: any, item: any) => {
-        const country = item?.channelcountry || "Unknown";
-        acc[country] = acc[country] || [];
-        acc[country].push(item);
-        return acc;
-    }, {});
-};
 
-const getExpiringItems = (items: any, daysThreshold: number) => {
-    const now = new Date();
-    const thresholdDate = addDays(now, daysThreshold);
-    return items
-        .filter(
-            (item:any) =>
-                item.onlineuntil &&
-                isBefore(new Date(item.onlineuntil), thresholdDate),
-        )
-        .map((item:any) => ({
-            ...item,
-            // Ensure onlineuntil exists before calculating difference
-            remainingDays: item.onlineuntil
-                ? differenceInDays(new Date(item.onlineuntil), now)
-                : null,
-        }))
-        .sort(
-            (a:any, b:any) =>
-                (a.remainingDays ?? Infinity) - (b.remainingDays ?? Infinity),
-        ); // Sort by remaining days ascending
-};
 const expiringItems = getExpiringItems(data, EXPIRATION_THRESHOLD_DAYS);
 console.log("Expiring Items:", expiringItems);
 let groupedData = groupByChannelCountry(data);
-interface Data {
-    test: Array<any>;
-    geo: string;
-    expiringItems: Array<any>;
-    countries: Array<any>;
-    groupbycountry: Array<any>;
-}
+
 let countries = Object.keys(groupedData).sort();
 let geo = Astro.request.headers.get(CDN_COUNTRY_HEADER) || "de";
 console.log("Geo:", geo);
@@ -98,7 +64,7 @@ console.log("Countries:", countries);
                         </h1>
                         <div class="embla">
                             <div class="embla__container flex">
-                                {expiringItems.map((item:any) => (
+                                {expiringItems.map((item: any) => (
                                     <div class="embla__slide">
                                         <Card
                                             carddata={item}
