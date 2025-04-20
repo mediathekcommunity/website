@@ -29,12 +29,12 @@
 	}
 
 	const getImageUrl = (slide) => {
-				console.log('slide:', slide);
+		console.log('slide:', slide);
 
 		let imageUrl = '';
 		switch (true) {
 			case !!slide.backdrop:
-				imageUrl = slide.backdrop;
+				imageUrl = 'https://mediathekc.b-cdn.net/t/p/original' + slide.backdrop;
 				break;
 			case !!slide.backdropup:
 				imageUrl =
@@ -42,11 +42,12 @@
 					slide.backdropup;
 				break;
 			case !!slide.poster:
-				imageUrl = slide.poster;
+				imageUrl = 'https://mediathekc.b-cdn.net/t/p/original' + slide.poster;
 				break;
 			case !!slide.posterup:
 				imageUrl =
-					'https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/' + slide.posterup;
+					'https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/' +
+					slide.posterup;
 				break;
 			default:
 				console.warn('No backdrop found for slide', slide);
@@ -144,8 +145,6 @@
 			//console.log('Current episode season:', episode.season);
 		}
 	}
-
-
 </script>
 
 {#if data1}
@@ -342,7 +341,7 @@
 											<Time timestamp={data.info.onlineuntil} format="DD.MM.YYYY" />
 										</td>
 									</tr>
-									{#if  data.info.cast &&  data.info.cast.length > 0}
+									{#if data.info.cast && data.info.cast.length > 0}
 										<tr>
 											<th>Cast</th>
 											<td>
@@ -390,7 +389,7 @@
 								</div>
 								<div class="collapse-content text-sm">
 									<div class="episode-content">
-											{@html data.info.description}
+										{@html data.info.description}
 
 										{#if data.geo == data.info.channel.country}
 											{#if data.fskcheck == true && data.serverhour < 22}
@@ -435,7 +434,7 @@
 								</div>
 								<div class="collapse-content text-sm">
 									<div class="episode-content">
-											{@html data.description}
+										{@html data.description}
 										<button type="button" class="btn btn-accent" onclick={() => toggleDynaWarn()}>
 											<Icon icon="mdi:play-circle-outline" height="28px" width="28px" />
 											<span> Play</span>
