@@ -120,6 +120,7 @@ function datahelper(data: any, geo: string): {
 		ov: Record<string, any[]>;
 	};
 	debug: any;
+	dyna: boolean
 } {
 	let mediaEntry = data;
 	mediaEntry.slinks = mediaEntry.expand?.slinks || [];
@@ -167,7 +168,8 @@ function datahelper(data: any, geo: string): {
 		info,
 		videosource,
 		playlist,
-		debug
+		debug,
+		dyna: false
 	}
 }
 export { datahelper };

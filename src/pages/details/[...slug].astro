@@ -381,23 +381,290 @@ console.log(`Fetching data for slug: ${slug}`);
                                     aria-label="Links"
                                 />
                                 <div class="tab-content bg-base-100 border-base-300 p-6">
-                                    <p> Movie content goes here</p>
+                                    <div class="join join-vertical bg-base-100">
+                                        <div class="collapse-arrow join-item border-base-300 collapse border">
+                                            <input
+                                                type="radio"
+                                                name="my-accordion-episode"
+                                                checked="true"
+                                            />
+                                            <div class="collapse-title font-semibold">
+                                                <span>{data.info.title}</span>
+                                            </div>
+                                            <div class="collapse-content text-sm">
+                                                <div class="episode-content">
+                                                    {data.info.description}
+
+                                                    {data.geo ===
+                                                    data.info.channel
+                                                        .country ? (
+                                                        <button
+                                                            type="button"
+                                                            class="btn btn-accent btn-disabled"
+                                                        >
+                                                            <Icon
+                                                                name="mdi:play-circle-outline"
+                                                                height="28px"
+                                                                width="28px"
+                                                            />
+                                                            <span> Play</span>
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            type="button"
+                                                            class="btn btn-accent btn-disabled"
+                                                        >
+                                                            <span class="flex items-center gap-1">
+                                                                <span
+                                                                    class={`fi fi-${data.info.channel.country}`}
+                                                                />
+                                                                IP required
+                                                            </span>
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </>
                         )}
-                        {data.info.type === "series" && (
+                        {data.info.episodes > 0 &&
+                            Array.from({ length: data.info.seasons }).map(
+                                (_, season) => (
+                                    <>
+                                        {data.playlist.ov[season + 1] && (
+                                            <>
+                                                <input
+                                                    type="radio"
+                                                    name="tabs"
+                                                    role="tab"
+                                                    class="tab"
+                                                    aria-label={
+                                                        data.info.seasons > 1
+                                                            ? `Season ${season + 1}`
+                                                            : "Episodes ov"
+                                                    }
+                                                />
+                                                <div class="tab-content bg-base-100 border-base-300 p-6">
+                                                    <div class="join join-vertical bg-base-100">
+                                                        {data.playlist.ov[
+                                                            season + 1
+                                                        ].map(
+                                                            (link, index1) => (
+                                                                <div class="collapse-arrow join-item border-base-300 collapse w-full border">
+                                                                    <input
+                                                                        type="radio"
+                                                                        name={`my-accordion-s${season}`}
+                                                                        checked={
+                                                                            index1 ===
+                                                                            0
+                                                                        }
+                                                                    />
+                                                                    <div class="collapse-title font-semibold">
+                                                                        <span class="episode-number">
+                                                                            S
+                                                                            {
+                                                                                link.season
+                                                                            }
+                                                                            -E
+                                                                            {
+                                                                                link.episode
+                                                                            }
+                                                                            :
+                                                                        </span>
+                                                                        <span>
+                                                                            {
+                                                                                link.title
+                                                                            }
+                                                                        </span>
+                                                                    </div>
+                                                                    <div class="collapse-content text-sm">
+                                                                        <div class="grid grid-cols-4 place-content-between gap-4">
+                                                                            <p class="episode-overview col-span-3">
+                                                                                {link.description
+                                                                                    ? link.description
+                                                                                    : "no description"}
+                                                                            </p>
+                                                                            <button
+                                                                                type="button"
+                                                                                class="btn btn-accent btn-disabled"
+                                                                            >
+                                                                                {data.geo !==
+                                                                                data
+                                                                                    .info
+                                                                                    .channel
+                                                                                    .country ? (
+                                                                                    <>
+                                                                                        <Icon
+                                                                                            name="mdi:play-circle-outline"
+                                                                                            height="28px"
+                                                                                            width="28px"
+                                                                                        />
+                                                                                        <span>
+                                                                                            {" "}
+                                                                                            Play
+                                                                                            Episode
+                                                                                        </span>
+                                                                                    </>
+                                                                                ) : (
+                                                                                    <span class="flex items-center gap-1">
+                                                                                        <span
+                                                                                            class={`fi fi-${data.info.channel.country.toLowerCase()}`}
+                                                                                        />
+                                                                                        IP
+                                                                                        required
+                                                                                    </span>
+                                                                                )}
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            ),
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </>
+                                        )}
+
+                                        {data.playlist.regular[season + 1] && (
+                                            <>
+                                                <input
+                                                    type="radio"
+                                                    name="tabs"
+                                                    role="tab"
+                                                    class="tab"
+                                                    aria-label={
+                                                        data.info.seasons > 1
+                                                            ? `Season ${season + 1}`
+                                                            : "Episodes"
+                                                    }
+                                                />
+                                                <div class="tab-content bg-base-100 border-base-300 p-6">
+                                                    <div class="join join-vertical bg-base-100 w-full">
+                                                        {data.playlist.regular[
+                                                            season + 1
+                                                        ].map(
+                                                            (link, index2) => (
+                                                                <div class="collapse-arrow join-item border-base-300 collapse w-full border">
+                                                                    <input
+                                                                        type="radio"
+                                                                        name={`my-accordion-ov-s${season}`}
+                                                                        checked={
+                                                                            index2 ===
+                                                                            0
+                                                                        }
+                                                                    />
+                                                                    <div class="collapse-title font-semibold">
+                                                                        <span class="episode-number">
+                                                                            S
+                                                                            {
+                                                                                link.season
+                                                                            }
+                                                                            -E
+                                                                            {
+                                                                                link.episode
+                                                                            }
+                                                                            :
+                                                                        </span>
+                                                                        <span>
+                                                                            {
+                                                                                link.title
+                                                                            }
+                                                                        </span>
+                                                                    </div>
+                                                                    <div class="collapse-content w-full text-sm">
+                                                                        <div class="grid grid-cols-4 place-content-between gap-4">
+                                                                            <p class="episode-overview col-span-3">
+                                                                                {link.description
+                                                                                    ? link.description
+                                                                                    : "no description"}
+                                                                            </p>
+                                                                            <button
+                                                                                type="button"
+                                                                                class="btn btn-accent
+                                                                                btn-disabled"
+                                                                            >
+                                                                                {data.geo !==
+                                                                                data
+                                                                                    .info
+                                                                                    .channel
+                                                                                    .country ? (
+                                                                                    <>
+                                                                                        <Icon
+                                                                                            name="mdi:play-circle-outline"
+                                                                                            height="28px"
+                                                                                            width="28px"
+                                                                                        />
+                                                                                        <span>
+                                                                                            {" "}
+                                                                                            Play
+                                                                                            Episode
+                                                                                        </span>
+                                                                                    </>
+                                                                                ) : (
+                                                                                    <span class="flex items-center gap-1">
+                                                                                        <span
+                                                                                            class={`fi fi-${data.info.channel.country}`}
+                                                                                        />
+                                                                                        IP
+                                                                                        required
+                                                                                    </span>
+                                                                                )}
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            ),
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </>
+                                        )}
+                                    </>
+                                ),
+                            )}
+                        {data.dyna && (
                             <>
                                 <input
-                                    id="tab-episodes"
+                                    id="tab-dyna"
                                     type="radio"
                                     name="tabs"
                                     role="tab"
                                     class="tab"
-                                    aria-label="Episodes"
+                                    aria-label="Links"
                                 />
-
                                 <div class="tab-content bg-base-100 border-base-300 p-6">
-                                    <p> Episodes content goes here</p>
+                                    <div class="join join-vertical bg-base-100">
+                                        <div class="collapse-arrow join-item border-base-300 collapse border">
+                                            <input
+                                                type="radio"
+                                                name="my-accordion-episode"
+                                                checked
+                                            />
+                                            <div class="collapse-title font-semibold">
+                                                <span>{data.info.title}</span>
+                                            </div>
+                                            <div class="collapse-content text-sm">
+                                                <div class="episode-content">
+                                                    <div>
+                                                        {data.info.description}
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-accent btn-disabled"
+                                                    >
+                                                        <Icon
+                                                            name="mdi:play-circle-outline"
+                                                            height="28px"
+                                                            width="28px"
+                                                        />
+                                                        <span> Play</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </>
                         )}
