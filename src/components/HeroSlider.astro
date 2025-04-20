@@ -3,7 +3,8 @@ import { Image } from "@unpic/astro";
 import emblaCarousel from "embla-carousel";
 import Autoplay from "embla-carousel-autoplay";
 import Fade from "embla-carousel-fade";
-
+import { Icon } from "astro-icon/components";
+import { getqualityicon, getTypeIcon } from "../lib/detailsutil";
 interface HeroItem {
     backdrop?: string;
     backdropup?: { filename_disk: string };
@@ -12,10 +13,8 @@ interface HeroItem {
     title: string;
     orgtitle: string;
     id: string;
-    channel: {
-        country: string;
-        icon: string;
-    };
+    channelicon: string;
+    channelcountry: string;
     quality: "4K" | "fhd" | "hd" | string;
     type: "movie" | "series" | "music" | string;
     special?: { name: string };
@@ -45,8 +44,6 @@ export interface Props {
     showcountry?: boolean;
     special?: boolean;
 }
-
-// Astro does not support DOM manipulation in the frontmatter, so JavaScript setup is done in a script tag
 ---
 
 <div class="hero-container relative w-full">
@@ -54,7 +51,7 @@ export interface Props {
         <div class="embla__container">
             {
                 data.map((slide) => (
-                    <div class="embla__slide" key={slide.id}>
+                    <div class="embla__slide">
                         <div class="relative h-full w-full">
                             <Image
                                 src={getImageUrl(slide)}
@@ -64,9 +61,31 @@ export interface Props {
                             <div class="gradient-overlay absolute inset-x-0 bottom-0" />
                             <div class="text-overlay absolute bottom-4 left-4 text-white sm:bottom-8 sm:left-8 md:bottom-12 md:left-16 lg:bottom-16 lg:left-32">
                                 <div class="mb-1 flex flex-wrap items-center gap-1 sm:mb-4">
-                                    <span class="badge-ghost inline-flex items-center px-1 py-1 text-white sm:text-sm" />
-                                    <span class="badge-ghost inline-flex items-center gap-1 px-1 py-1 text-white sm:text-sm" />
-                                    <span class="badge-ghost inline-flex items-center gap-1 px-1 py-1 text-white sm:text-sm" />
+                                    <span
+                                        class={`badge-ghost inline-flex items-center px-1 py-1 text-white sm:text-sm fi fi-${slide.channelcountry}`}
+                                        style="width: 36px;height:28px;"
+                                    />
+                                    <span class="badge-ghost inline-flex items-center px-1 py-1 text-white sm:text-sm">
+                                        <Icon
+                                            name={slide.channelicon}
+                                            height="28px"
+                                            width="36px"
+                                        />
+                                    </span>
+                                    <span class="badge-ghost inline-flex items-center gap-1 px-1 py-1 text-white sm:text-sm">
+                                        <Icon
+                                            name={getqualityicon(slide.quality)}
+                                            height="28px"
+                                            width="36px"
+                                        />
+                                    </span>
+                                    <span class="badge-ghost inline-flex items-center gap-1 px-1 py-1 text-white sm:text-sm">
+                                        <Icon
+                                            name={getTypeIcon(slide.type)}
+                                            height="28px"
+                                            width="36px"
+                                        />
+                                    </span>
                                 </div>
                                 <h1 class="mb-2 text-2xl leading-tight font-bold tracking-tight sm:text-3xl md:text-4xl lg:text-5xl">
                                     {slide.title}
@@ -84,7 +103,7 @@ export interface Props {
                                 )}
                                 <a href={`/details/${slide.id}`}>
                                     <button class="btn btn-primary">
-                                        Details
+                                        Details{slide.channelcountry}
                                     </button>
                                 </a>
                             </div>

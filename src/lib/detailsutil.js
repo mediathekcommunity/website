@@ -55,5 +55,17 @@ function getformat(id) {
             return 'application/dash+xml';
     }
 }
-export { getqualityicon, getImageUrl, getformat };
+function getTypeIcon(type) {
+    switch (type) {
+        case 'movie':
+            return 'mdi:movie';
+        case 'series':
+            return 'mdi:tv';
+        case 'music':
+            return 'mdi:music';
+        default:
+            return 'mdi:movie';
+    }
+};
+export { getqualityicon, getImageUrl, getformat, getTypeIcon };
 // This file contains utility functions for handling details in a media application.
