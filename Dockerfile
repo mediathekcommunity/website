@@ -37,7 +37,7 @@ RUN pnpm run build
 FROM base AS runtime
 
 # Copy built application
-COPY --from=build /app/build /app/build
+COPY --from=build /app/dist ./dist # Copy the build output
 COPY --from=build /app/node_modules /app/node_modules
 COPY --from=build /app/package.json /app
 
