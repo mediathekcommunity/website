@@ -68,6 +68,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=latest
+            type=raw,value=astro-latest
             type=raw,pattern={{version}},value=sha
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
@@ -87,7 +88,7 @@ jobs:
          app_id: ${{ vars.APP_ID }}
          api_key: ${{ secrets.BUNNYNET_API_KEY }}
          container: app
-         image_tag: "astro-${{ github.sha }}"
+         image_tag: "${{ github.sha }}"
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
       # repository is public to avoid leaking data.  If you would like to publish
