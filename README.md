@@ -19,5 +19,5 @@ Frontend Tech:
 
 ## Planed Feature
 
-- [ ] Add a Extra püage for Audiobooks
+- [ ] Add a Extra Page for Audiobooks
   
