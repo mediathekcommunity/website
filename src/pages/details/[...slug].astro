@@ -1,0 +1,12 @@
+---
+// Removed invalid import as Astro.redirect will be used instead
+export const prerender = false;
+import Layout from '../../layouts/Layout.astro';
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect("/404");
+
+---
+
+<Layout>
+    <h1>Details for: {slug}</h1>
+</Layout>
