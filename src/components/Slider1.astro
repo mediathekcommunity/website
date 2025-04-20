@@ -1,0 +1,124 @@
+---
+import Card from "./Card.astro";
+
+const { langlist, langdata, geo } = Astro.props;
+const regionNamesCache = new Map<string, string>();
+const regionNames = new Intl.DisplayNames(["en"], { type: "region" });
+
+// Optimize region name lookup with memoization
+const getRegionName = (lang: string): string => {
+    const cached = regionNamesCache.get(lang);
+    if (cached) return cached;
+
+    const name = regionNames.of(lang.toUpperCase()) || "Unknown Region";
+    regionNamesCache.set(lang, name);
+    return name;
+};
+
+// Optimized sorting with memoization for region names
+const sortedLanglist =
+    langlist?.sort((a: string, b: string) => {
+        if (a === geo) return -1;
+        if (b === geo) return 1;
+        return getRegionName(a).localeCompare(getRegionName(b));
+    }) ?? [];
+---
+
+{
+    sortedLanglist.map(
+        (country: any) =>
+            langdata[country]?.length > 0 && (
+                <section class="country-section">
+                    <h2 class="country-title">
+                        <span
+                            class={`fi fi-${country.toLowerCase()}`}
+                            aria-hidden="true"
+                        />
+                        <span>{getRegionName(country)}</span>
+                    </h2>
+
+                    <div class="embla1">
+                        <div class="embla__container">
+                            {langdata[country].map((item) => (
+                                <div class="embla__slide" key={item.id}>
+                                    <Card carddata={item} countryflag={false} />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            ),
+    )
+}
+<script>
+    import emblaCarousel from "embla-carousel";
+
+    // JavaScript to initialize the Embla carousel
+    const initializeCarousel = () => {
+        const emblaNode = document.querySelector(".embla1");
+        if (emblaNode) {
+            emblaCarousel(emblaNode, {
+                align: "start",
+                slidesToScroll: 2,
+                dragFree: true,
+                containScroll: "trimSnaps",
+                watchDrag: true,
+            });
+        }
+    };
+
+    // Ensure the carousel is initialized after the page loads
+    document.addEventListener("DOMContentLoaded", initializeCarousel);
+</script>
+<style>
+    .country-section {
+        margin: 2rem 0;
+        contain: content;
+    }
+    .country-section:last-of-type {
+        margin-bottom: 0;
+        padding-bottom: 2rem;
+    }
+    .country-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: clamp(1.25rem, 2vw, 1.5rem);
+        margin-bottom: 1rem;
+        padding: 0 1rem;
+    }
+
+    .embla1 {
+        overflow: hidden;
+        padding: 0 1rem;
+        contain: paint layout;
+    }
+
+    .embla__container {
+        display: flex;
+        gap: 1rem;
+        touch-action: pan-y;
+        transform: translateZ(0);
+        will-change: transform;
+    }
+
+    .embla__slide {
+        flex: 0 0 auto;
+        min-width: 0;
+        position: relative;
+    }
+
+    @media (max-width: 640px) {
+        .country-section {
+            margin: 1rem 0;
+        }
+
+        .embla {
+            padding: 0 0.5rem;
+        }
+
+        .embla__container {
+            gap: 0.5rem;
+        }
+    }
+</style>

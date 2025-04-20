@@ -1,0 +1,242 @@
+---
+import { Image } from "@unpic/astro";
+import emblaCarousel from "embla-carousel";
+import Autoplay from "embla-carousel-autoplay";
+import Fade from "embla-carousel-fade";
+
+interface HeroItem {
+    backdrop?: string;
+    backdropup?: { filename_disk: string };
+    poster?: string;
+    posterup?: { filename_disk: string };
+    title: string;
+    orgtitle: string;
+    id: string;
+    channel: {
+        country: string;
+        icon: string;
+    };
+    quality: "4K" | "fhd" | "hd" | string;
+    type: "movie" | "series" | "music" | string;
+    special?: { name: string };
+    language?: string;
+    episode?: {
+        season: number;
+        episode: number;
+        lang?: string;
+    };
+    links?: Array<{
+        audiolang: string[];
+    }>;
+}
+const { data, showcountry = false, special = false } = Astro.props;
+const getImageUrl = (slide: HeroItem) => {
+    if (!slide.backdrop && !slide.backdropup) {
+        console.warn("No backdrop found for slide", slide);
+        return "https://api.mediathek.community/assets/default-backdrop.jpg";
+    }
+    return slide.backdrop
+        ? "https://mediathekc.b-cdn.net/t/p/original" + slide.backdrop
+        : "https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/" +
+              slide.backdropup;
+};
+export interface Props {
+    data: HeroItem[];
+    showcountry?: boolean;
+    special?: boolean;
+}
+
+// Astro does not support DOM manipulation in the frontmatter, so JavaScript setup is done in a script tag
+---
+
+<div class="hero-container relative w-full">
+    <div class="embla absolute inset-0">
+        <div class="embla__container">
+            {
+                data.map((slide) => (
+                    <div class="embla__slide" key={slide.id}>
+                        <div class="relative h-full w-full">
+                            <Image
+                                src={getImageUrl(slide)}
+                                alt={slide.title}
+                                class="hero-image absolute inset-0 h-full w-full"
+                            />
+                            <div class="gradient-overlay absolute inset-x-0 bottom-0" />
+                            <div class="text-overlay absolute bottom-4 left-4 text-white sm:bottom-8 sm:left-8 md:bottom-12 md:left-16 lg:bottom-16 lg:left-32">
+                                <div class="mb-1 flex flex-wrap items-center gap-1 sm:mb-4">
+                                    <span class="badge-ghost inline-flex items-center px-1 py-1 text-white sm:text-sm" />
+                                    <span class="badge-ghost inline-flex items-center gap-1 px-1 py-1 text-white sm:text-sm" />
+                                    <span class="badge-ghost inline-flex items-center gap-1 px-1 py-1 text-white sm:text-sm" />
+                                </div>
+                                <h1 class="mb-2 text-2xl leading-tight font-bold tracking-tight sm:text-3xl md:text-4xl lg:text-5xl">
+                                    {slide.title}
+                                </h1>
+                                {slide.title !== slide.orgtitle &&
+                                    slide.orgtitle && (
+                                        <p class="mb-4 text-sm text-gray-300 italic sm:text-base">
+                                            Original Title: {slide.orgtitle}
+                                        </p>
+                                    )}
+                                {special && slide.special && (
+                                    <p class="mb-4 text-sm text-gray-300 italic sm:text-base">
+                                        Special: {slide.special.name}
+                                    </p>
+                                )}
+                                <a href={`/details/${slide.id}`}>
+                                    <button class="btn btn-primary">
+                                        Details
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                ))
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    import emblaCarousel from "embla-carousel";
+    import Autoplay from "embla-carousel-autoplay";
+    import Fade from "embla-carousel-fade";
+
+    // JavaScript to initialize the Embla carousel
+    const initializeCarousel = () => {
+        const emblaNode = document.querySelector(".embla");
+        if (emblaNode) {
+            emblaCarousel(
+                emblaNode,
+                {
+                    align: "start" as const,
+                    slidesToScroll: 1,
+                    loop: true,
+                    containScroll: "keepSnaps" as const, // Type assertion to fix type error
+                    dragFree: false,
+                    skipSnaps: false,
+                    startIndex: 0,
+                },
+                [Autoplay({ delay: 8000, stopOnInteraction: false }), Fade()],
+            );
+        }
+    };
+
+    // Ensure the carousel is initialized after the page loads
+    document.addEventListener("DOMContentLoaded", initializeCarousel);
+</script>
+
+<style>
+    .hero-container {
+        height: 85vh;
+        max-height: 95vh;
+        transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .embla {
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+    }
+
+    .embla__container {
+        display: flex;
+        height: 100%;
+        margin: 0;
+        backface-visibility: hidden;
+    }
+
+    .embla__slide {
+        flex: 0 0 100%;
+        min-width: 100%;
+        position: relative;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        transform: translateX(0);
+        overflow: hidden;
+    }
+
+    .gradient-overlay {
+        height: 75%;
+        background: linear-gradient(
+            to top,
+            rgb(17, 17, 17) 0%,
+            rgba(17, 17, 17, 0.987) 7.8%,
+            rgba(17, 17, 17, 0.951) 15.2%,
+            rgba(17, 17, 17, 0.896) 22.1%,
+            rgba(17, 17, 17, 0.825) 28.7%,
+            rgba(17, 17, 17, 0.741) 35.1%,
+            rgba(17, 17, 17, 0.648) 41.2%,
+            rgba(17, 17, 17, 0.55) 47.1%,
+            rgba(17, 17, 17, 0.45) 52.9%,
+            rgba(17, 17, 17, 0.352) 58.8%,
+            rgba(17, 17, 17, 0.259) 64.9%,
+            rgba(17, 17, 17, 0.175) 71.3%,
+            rgba(17, 17, 17, 0.104) 77.9%,
+            rgba(17, 17, 17, 0.049) 84.8%,
+            rgba(17, 17, 17, 0.013) 92.2%,
+            rgba(17, 17, 17, 0) 100%
+        );
+    }
+
+    .text-overlay {
+        text-align: left;
+        width: calc(100% - 2rem);
+        max-width: 100%;
+    }
+
+    @media (max-width: 480px) {
+        .hero-container {
+            height: 40vh;
+            min-height: 250px;
+            max-height: 50vh;
+        }
+        .gradient-overlay {
+            height: 85%;
+        }
+    }
+
+    @media (min-width: 481px) and (max-width: 640px) {
+        .hero-container {
+            height: 50vh;
+            min-height: 300px;
+            max-height: 60vh;
+        }
+        .gradient-overlay {
+            height: 80%;
+        }
+    }
+
+    @media (min-width: 641px) and (max-width: 768px) {
+        .hero-container {
+            height: 60vh;
+            max-height: 75vh;
+        }
+
+        .gradient-overlay {
+            height: 75%;
+        }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .hero-container {
+            height: 70vh;
+            max-height: 85vh;
+        }
+
+        .gradient-overlay {
+            height: 75%;
+        }
+    }
+
+    @media (min-width: 1025px) {
+        .hero-container {
+            height: 85vh;
+            max-height: 95vh;
+        }
+
+        .gradient-overlay {
+            height: 75%;
+        }
+    }
+</style>
