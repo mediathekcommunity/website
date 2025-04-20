@@ -1,0 +1,230 @@
+---
+export const prerender = false;
+import HeroSlider from "../components/HeroSlider.astro";
+import Layout from "../layouts/Layout.astro";
+import Slider1 from "../components/Slider1.astro";
+import PocketBase from "pocketbase";
+import { addDays, differenceInDays, isBefore } from "date-fns";
+const { slug } = Astro.params;
+
+const isValidFilterParam = (param: string | undefined): boolean => {
+    const allowedParams = [
+        "movie",
+        "series",
+        "debug",
+        "music",
+        "youth",
+        "specials",
+        "culture",
+        "4k",
+    ];
+    return !param || allowedParams.includes(param);
+};
+const filterMap: Record<string, string> = {
+    youth: "type='ymovie'||type='yseries'",
+    movie: "type='movie'",
+    series: "type='series'",
+    music: "type='music'",
+    culture: "type='culture'",
+    "4k": "quality='4k'",
+};
+if (!isValidFilterParam(slug)) {
+    return Astro.redirect("/404");
+}
+// Constants
+const DEFAULT_COUNTRY_CODE = "De";
+const CDN_COUNTRY_HEADER = "CDN-RequestCountryCode";
+const CACHE_MAX_AGE_SECONDS = 5;
+const EXPIRATION_THRESHOLD_DAYS = 7;
+const pb = new PocketBase("https://api2.mediathek.community/");
+import Card from "../components/Card.astro";
+// Fetch default data during server-side rendering
+console.log(`Fetching data for slug: default`);
+let data = [];
+data = await pb
+    .collection("movies")
+    .getFullList({
+        filter: slug && filterMap[slug] ? filterMap[slug] : "",
+        sort: "-created",
+    });
+export const groupByChannelCountry = (items: any) => {
+    return items.reduce((acc: any, item: any) => {
+        const country = item?.channelcountry || "Unknown";
+        acc[country] = acc[country] || [];
+        acc[country].push(item);
+        return acc;
+    }, {});
+};
+
+const getExpiringItems = (items: any, daysThreshold: number) => {
+    const now = new Date();
+    const thresholdDate = addDays(now, daysThreshold);
+    return items
+        .filter(
+            (item: any) =>
+                item.onlineuntil &&
+                isBefore(new Date(item.onlineuntil), thresholdDate),
+        )
+        .map((item: any) => ({
+            ...item,
+            // Ensure onlineuntil exists before calculating difference
+            remainingDays: item.onlineuntil
+                ? differenceInDays(new Date(item.onlineuntil), now)
+                : null,
+        }))
+        .sort(
+            (a: any, b: any) =>
+                (a.remainingDays ?? Infinity) - (b.remainingDays ?? Infinity),
+        ); // Sort by remaining days ascending
+};
+const expiringItems = getExpiringItems(data, EXPIRATION_THRESHOLD_DAYS);
+console.log("Expiring Items:", expiringItems);
+let groupedData = groupByChannelCountry(data);
+interface Data {
+    test: Array<any>;
+    geo: string;
+    expiringItems: Array<any>;
+    countries: Array<any>;
+    groupbycountry: Array<any>;
+}
+let countries = Object.keys(groupedData).sort();
+let geo = Astro.request.headers.get(CDN_COUNTRY_HEADER) || "de";
+console.log("Geo:", geo);
+console.log("Countries:", countries);
+---
+
+<Layout>
+    <HeroSlider data={data} showcountry={true} special={false} />
+    {
+        data && (
+            <div class="content-section px-4 sm:px-6 lg:px-8">
+                <div class="maincontent">
+                    <h1 class="section-title">
+                        <span class="bg-linear-to-br from-blue-500 to-cyan-300 box-decoration-clone bg-clip-text text-transparent">
+                            Recently Added
+                        </span>
+                    </h1>
+                    <div class="embla">
+                        <div class="embla__container flex">
+                            {data.map((item) => (
+                                <div class="embla__slide">
+                                    <Card
+                                        carddata={item}
+                                        countryflag
+                                        geo={geo}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+                {expiringItems?.length > 0 && (
+                    <div class="maincontent">
+                        <h1 class="section-title">
+                            <span class="bg-linear-to-br from-red-500 to-yellow-300 box-decoration-clone bg-clip-text text-transparent">
+                                Expiring Soon
+                            </span>
+                        </h1>
+                        <div class="embla">
+                            <div class="embla__container flex">
+                                {expiringItems.map((item: any) => (
+                                    <div class="embla__slide">
+                                        <Card
+                                            carddata={item}
+                                            countryflag
+                                            geo={geo}
+                                            remainingDays={item.remainingDays}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                <Slider1
+                    langlist={countries}
+                    langdata={groupedData}
+                    geo={data?.geo}
+                />
+            </div>
+        )
+    }
+</Layout>
+
+<style>
+    .content-section {
+        margin-top: -2rem;
+        position: relative;
+        z-index: 10;
+        background: linear-gradient(
+            to bottom,
+            transparent,
+            rgb(17, 17, 17) 15%
+        );
+        padding-top: 3rem;
+        min-height: 40dvh;
+    }
+
+    .maincontent {
+        margin-bottom: 0rem;
+    }
+
+    .section-title {
+        font-size: clamp(1.25rem, 2vw, 1.5rem);
+        font-weight: bold;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    .embla {
+        overflow: hidden;
+        margin: 0;
+        padding: 0 1rem;
+    }
+
+    .embla__container {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .embla__slide {
+        flex: 0 0 auto;
+        min-width: 0;
+        padding: 0;
+    }
+
+    @media (max-width: 640px) {
+        .content-section {
+            margin-top: -1.5rem;
+            padding-top: 2rem;
+        }
+
+        .section-title {
+            padding: 1.25rem 1.25rem 0.625rem 1.25rem;
+        }
+    }
+
+    @media (min-width: 641px) and (max-width: 1024px) {
+        .content-section {
+            margin-top: -2rem;
+            padding-top: 2.5rem;
+            padding-left: 0rem !important;
+        }
+
+        .section-title {
+            padding: 1.25rem 1.25rem 0.625rem 1.25rem;
+        }
+    }
+
+    @media (min-width: 1025px) {
+        .content-section {
+            margin-top: -2rem;
+            padding-top: 3rem;
+        }
+
+        .section-title {
+            padding: 1.25rem 1.25rem 0.625rem 1.25rem;
+        }
+    }
+</style>

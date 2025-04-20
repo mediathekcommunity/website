@@ -59,8 +59,8 @@ import Footer from "../components/Footer.astro";
 							</div>
 							<span
 								class="justify-center badge badge-primary text-white lg:block text-center col-span-3 lg:col-span-1 hidden lg:block"
-								>Still Switching to Pocketbase Backend & Astro
-								Frontend, Links will be broken for a few days</span
+								>Still Switching to Astro Frontend, Links &
+								Parts of the Site will be broken for a few days</span
 							>
 							<div
 								class="flex-none hidden col-span-1 lg:justify-self-end lg:block"
@@ -68,12 +68,18 @@ import Footer from "../components/Footer.astro";
 								<ul class="menu menu-horizontal justify-end">
 									<!-- Navbar menu content here -->
 									<li><a href="/">Home</a></li>
-									<!--<li><a href="/movie">Movies</a></li>
+									<li><a href="/movie">Movies</a></li>
 									<li><a href="/series">TV Shows</a></li>
 									<li><a href="/youth">Youth</a></li>
+									<li>
+										<a
+											href="/audiobooks"
+											style="pointer-events: none; color: grey;"
+											>Audiobooks</a
+										>
+									</li>
+									<!--
 									<li><a href="/4k">UHD</a></li>
-									 <li><a href="/movie">Movies</a></li>
-									<li><a href="/audiobooks" style="pointer-events: none; color: grey;">Audiobooks</a></li>
 									<li><a href="/specials">Specials</a></li>
 									<li><a href="/channels">Channels</a></li>-->
 								</ul>
@@ -91,17 +97,21 @@ import Footer from "../components/Footer.astro";
 						class="drawer-overlay"></label>
 					<ul class="menu bg-base-200 min-h-full w-80 p-4 pt-12">
 						<!-- Sidebar content here -->
+						<li><a href="/">Home</a></li>
+						<li><a href="/movie">Movies</a></li>
+						<li><a href="/series">TV Shows</a></li>
+						<li><a href="/youth">Youth</a></li>
 						<li>
-							<a href="/">Home</a>
+							<a
+								href="/audiobooks"
+								style="pointer-events: none; color: grey;"
+								>Audiobooks</a
+							>
 						</li>
-						<!--<li><a href="/movie">Movies</a></li>
-								<li><a href="/series">TV Shows</a></li>
-								<li><a href="/youth">Youth</a></li>
-								<li><a href="/4k">UHD</a></li>
-								 <li><a href="/movie">Movies</a></li>
-								<li><a href="/audiobooks" style="pointer-events: none; color: grey;">Audiobooks</a></li>
-								<li><a href="/specials">Specials</a></li>
-								<li><a href="/channels">Channels</a></li>-->
+						<!--
+									<li><a href="/4k">UHD</a></li>
+									<li><a href="/specials">Specials</a></li>
+									<li><a href="/channels">Channels</a></li>-->
 					</ul>
 				</div>
 			</div>
