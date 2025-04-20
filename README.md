@@ -17,7 +17,7 @@ Frontend Tech:
 - [ ] Optimize for Mobile View
 - [ ] Add functions to handle external Videolinks better
 
-## Planed Feature
+## Planed Features
 
-- [ ] Add a Extra püage for Audiobooks
+- [ ] Add a Extra Page for Audiobooks
   
