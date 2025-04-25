@@ -21,13 +21,13 @@ data = await pb.collection("movies").getFullList({
 });
 
 const expiringItems = getExpiringItems(data, EXPIRATION_THRESHOLD_DAYS);
-console.log("Expiring Items:", expiringItems);
+//console.log("Expiring Items:", expiringItems);
 let groupedData = groupByChannelCountry(data);
 
 let countries = Object.keys(groupedData).sort();
 let geo = Astro.request.headers.get(CDN_COUNTRY_HEADER) || "de";
-console.log("Geo:", geo);
-console.log("Countries:", countries);
+//console.log("Geo:", geo);
+//console.log("Countries:", countries);
 ---
 
 <Layout>

@@ -41,12 +41,10 @@ import Card from "../components/Card.astro";
 // Fetch default data during server-side rendering
 console.log(`Fetching data for slug: default`);
 let data = [];
-data = await pb
-    .collection("movies")
-    .getFullList({
-        filter: slug && filterMap[slug] ? filterMap[slug] : "",
-        sort: "-created",
-    });
+data = await pb.collection("movies").getFullList({
+    filter: slug && filterMap[slug] ? filterMap[slug] : "",
+    sort: "-created",
+});
 export const groupByChannelCountry = (items: any) => {
     return items.reduce((acc: any, item: any) => {
         const country = item?.channelcountry || "Unknown";
@@ -78,7 +76,7 @@ const getExpiringItems = (items: any, daysThreshold: number) => {
         ); // Sort by remaining days ascending
 };
 const expiringItems = getExpiringItems(data, EXPIRATION_THRESHOLD_DAYS);
-console.log("Expiring Items:", expiringItems);
+//console.log("Expiring Items:", expiringItems);
 let groupedData = groupByChannelCountry(data);
 interface Data {
     test: Array<any>;
@@ -89,8 +87,8 @@ interface Data {
 }
 let countries = Object.keys(groupedData).sort();
 let geo = Astro.request.headers.get(CDN_COUNTRY_HEADER) || "de";
-console.log("Geo:", geo);
-console.log("Countries:", countries);
+//console.log("Geo:", geo);
+//console.log("Countries:", countries);
 ---
 
 <Layout>
