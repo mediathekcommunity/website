@@ -34,7 +34,7 @@ function getExpiringItems(items, daysThreshold) {
         ); // Sort by remaining days ascending
 };
 function getImageUrl(slide) {
-    console.log('slide:', slide);
+    //console.log('slide:', slide);
 
     let imageUrl = '';
     switch (true) {
@@ -58,7 +58,7 @@ function getImageUrl(slide) {
             console.warn('No backdrop found for slide', slide);
             imageUrl = 'https://api.mediathek.community/assets/default-backdrop.jpg';
     }
-    console.log('imageUrl:', imageUrl);
+    //console.log('imageUrl:', imageUrl);
     return imageUrl;
 };
 
