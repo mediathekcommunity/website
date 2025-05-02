@@ -9,20 +9,20 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/node": "^9.2.0",
+    "@astrojs/node": "^9.2.1",
     "@iconify-json/cbi": "^1.2.11",
     "@iconify-json/material-symbols": "^1.2.20",
     "@iconify-json/mdi": "^1.2.3",
-    "@tailwindcss/vite": "^4.1.4",
+    "@tailwindcss/vite": "^4.1.5",
     "@unpic/astro": "^1.0.0",
-    "astro": "^5.7.4",
+    "astro": "^5.7.10",
     "astro-icon": "^1.1.5",
-    "daisyui": "^5.0.27",
+    "daisyui": "^5.0.35",
     "date-fns": "^4.1.0",
     "embla-carousel": "^8.6.0",
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-fade": "^8.6.0",
     "pocketbase": "^0.26.0",
-    "tailwindcss": "^4.1.4"
+    "tailwindcss": "^4.1.5"
   }
 }
