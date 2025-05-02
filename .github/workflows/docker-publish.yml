@@ -21,7 +21,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     permissions:
       contents: read
       packages: write
@@ -80,10 +80,4 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: Webhook
-        uses: joelwmale/webhook-action@master
-        with:
-          url: ${{ secrets.WEBHURL }}
-          headers: '{"Authorization": "${{ secrets.SECRET }}"}'
-          github_event_payload: false
+          platforms: linux/arm64
