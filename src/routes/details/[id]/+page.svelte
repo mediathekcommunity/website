@@ -2,6 +2,7 @@
 	// @ts-nocheck
 	import { mount, unmount } from 'svelte';
 	import { Image } from '@unpic/svelte';
+	import { get } from 'svelte/store';
 
 	import Time from 'svelte-time';
 	import Icon from '@iconify/svelte';
@@ -96,17 +97,20 @@
 			title: ''
 		});
 		const player = videojs.getPlayers()['my-video'];
-		player.dispose();
+		if (player) player.dispose();
+		seriestype.set('default');
+		playlist.set([]);
+		playlistindex.set(0);
 	}
 	function playvideo() {
 		if (!showvideo) {
-			var d = data.videosource;
+			const d = data.videosource;
 			document.body.scrollIntoView();
-
-			showvideo = true; // Always show video for episodes
-
+			showvideo = true;
 			modalvideo.set(d);
 			seriestype.set('single');
+			playlist.set([]);
+			playlistindex.set(0);
 		} else {
 			stopvideo();
 		}
@@ -123,27 +127,17 @@
 		}
 	};
 	function playepisode(episode, index, type) {
-		//console.log('playepisode1', episode, index, type, data);
-
-		type = type ? type : 'nonov'; // Fixed assignment
-		//console.log('playepisode', episode, index, type, data);
+		type = type ? type : 'nonov';
 		document.body.scrollIntoView();
-
-		showvideo = true; // Always show video for episodes
-		myPlaylist = [];
+		showvideo = true;
 		seriestype.set('playlist');
 		playlistindex.set(index);
-		playlist.set('');
-		if (type == 'ov') {
-			playlist.set(data.playlist.ov[episode.season]);
-			//console.log('playlist', data.playlist.ov[episode.season]);
-			//console.log('Current episode season:', episode.season);
+		if (type === 'ov') {
+			playlist.set(data.playlist.ov[episode.season] || []);
 		} else {
-			playlist.set(data.playlist.regular[episode.season]);
-			//console.log('playlist', data.playlist?.regular[episode.season]);
-			// Additional logging for debugging
-			//console.log('Current episode season:', episode.season);
+			playlist.set(data.playlist.regular[episode.season] || []);
 		}
+		modalvideo.set({}); // Optionally clear modalvideo for playlist mode
 	}
 </script>
 
@@ -425,9 +419,9 @@
 				{/if}
 				{#if data.dyna == true}
 					<input type="radio" name="my_tabs_3" role="tab" class="tab" aria-label="Links" />
-					<div class="tab-content bg-base-100 border-base-300 p-6">
-						<div class="join join-vertical bg-base-100">
-							<div class="collapse-arrow join-item border-base-300 collapse border">
+					<div class="tab-content bg-base-100 border-base-300 w-full p-6">
+						<div class="join join-vertical bg-base-100 w-full">
+							<div class="collapse-arrow join-item border-base-300 collapse w-full border">
 								<input type="radio" name="my-accordion-episode" checked="true" />
 								<div class="collapse-title font-semibold">
 									<span>{data.title}</span>?
@@ -455,8 +449,8 @@
 								class="tab"
 								aria-label={data.seasons > 1 ? 'Season ' + (season + 1) : 'Episodes ov'}
 							/>
-							<div class="tab-content bg-base-100 border-base-300 p-6">
-								<div class="join join-vertical bg-base-100">
+							<div class="tab-content bg-base-100 border-base-300 w-full p-6">
+								<div class="join join-vertical bg-base-100 w-full">
 									{#each data.playlist.ov[season + 1] as link, index1 (link.episode)}
 										<div class="collapse-arrow join-item border-base-300 collapse w-full border">
 											<input type="radio" name="my-accordion-s{season}" checked={index1 == 0} />
@@ -504,7 +498,7 @@
 								class="tab"
 								aria-label={data.season > 1 ? 'Season ' + (season + 1) : 'Episodes'}
 							/>
-							<div class="tab-content bg-base-100 border-base-300 p-6">
+							<div class="tab-content bg-base-100 border-base-300 w-full p-6">
 								<div class="join join-vertical bg-base-100 w-full">
 									{#each data.playlist.regular[season + 1] as link, index2 (link.episode)}
 										<div class="collapse-arrow join-item border-base-300 collapse w-full border">
@@ -513,7 +507,7 @@
 												<span class="episode-number">S{link.season}-E{link.episode}:</span>
 												<span>{link.title}</span>
 											</div>
-											<div class="collapse-content w-full text-sm">
+											<div class="collapse-content text-sm">
 												<div class="grid grid-cols-4 place-content-between gap-4">
 													<p class="episode-overview col-span-3">
 														{link.description ? link.description : 'no description'}
@@ -523,7 +517,7 @@
 														class="btn btn-accent"
 														onclick={() =>
 															data.info.geo != data.info.channel.country
-																? playepisode(link, index2, 'nonov')
+																? playepisode(link, link?.episode, 'nonov')
 																: ''}
 													>
 														{#if data.info.geo != data.info.channel.country}
@@ -619,7 +613,7 @@
 		position: relative;
 		/* top: 60px !important; */
 		width: 100%;
-		max-width: 1200px;
+		/*max-width: 1200px;*/
 		margin: 0 auto 2rem;
 		aspect-ratio: 16 / 9;
 		background-color: black;
@@ -747,7 +741,7 @@
 		top: 60px;
 	}
 	.top602 {
-		margin-top: 70px;
+		margin-top: 60px;
 	}
 
 	@media (max-width: 480px) {

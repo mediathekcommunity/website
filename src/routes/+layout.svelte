@@ -42,7 +42,10 @@
 		<input id="my-drawer-3" type="checkbox" class="drawer-toggle" />
 		<div class="drawer-content flex flex-col">
 			<!-- Navbar -->
-			<div class="navbar bg-base-300 header w-full" class:navbar-glass={isScrolled || $isMobileMenuOpen}>
+			<div
+				class="navbar bg-base-300 header w-full"
+				class:navbar-glass={isScrolled || $isMobileMenuOpen}
+			>
 				<div class="flex-none lg:hidden">
 					<label for="my-drawer-3" aria-label="open sidebar" class="btn btn-square btn-ghost">
 						<svg
@@ -64,10 +67,10 @@
 					<h1 class="site-title">
 						<span class="text-primary">Mediathek</span>
 						<span class="text-white">Community</span>
-						<span class="badge badge-primary text-white">v0.9.10</span>
-						<span class="badge badge-primary text-white">Switching to Pocketbase Backend, links will be broken for a few days</span>
+						<span class="badge badge-primary text-white">v0.10</span>
 					</h1>
 				</div>
+
 				<div class="hidden flex-none lg:block">
 					<ul class="menu menu-horizontal">
 						<!-- Navbar menu content here -->
@@ -97,7 +100,12 @@
 			<label for="my-drawer-3" aria-label="close sidebar" class="drawer-overlay"></label>
 			<ul class="menu bg-base-200 min-h-full w-80 p-4 pt-12">
 				<!-- Sidebar content here -->
-				<li><a href="/">Home</a></li><!--
+				<li><a href="/">Home</a></li>
+				<li><a href="/movie">Movies</a></li>
+				<li><a href="/series">TV Shows</a></li>
+				<li><a href="/youth">Youth</a></li>
+				<li><a href="/4k">UHD</a></li>
+				<!--
 					<li><a href="/movie">Movies</a></li>
 					<li><a href="/series">TV Shows</a></li>
 					<li><a href="/music">Music</a></li>
@@ -114,6 +122,27 @@
 </div>
 
 <style>
+	.update-banner {
+		display: none;
+		position: fixed;
+		top: 56px;
+		left: 0;
+		right: 0;
+		z-index: 1;
+		width: 100vw;
+		text-align: center;
+		border-radius: 0;
+		padding: 0.75rem 1rem;
+		font-size: 1rem;
+	}
+	@media (max-width: 1024px) {
+		.update-banner {
+			display: block;
+		}
+		.update-banner2 {
+			display: none;
+		}
+	}
 	/* Global styles für bessere Übersicht */
 	:global(body) {
 		margin: 0;

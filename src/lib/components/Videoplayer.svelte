@@ -6,10 +6,6 @@
 	import '../videojs/plugins/es/playlist.js';
 	import '../videojs/plugins/es/videojs.hotkeys';
 	import { modalvideo, playlist, subs, seriestype, playlistindex } from '$lib/store';
-	console.log('playlistindex', $playlistindex);
-	console.log('playlist', $playlist);
-	console.log('seriestype', $seriestype);
-	console.log('modalvideo', $modalvideo);
 
 	let player: any = null;
 	let videoSource: {
@@ -83,13 +79,12 @@
 			case 'playlist':
 				player.playlist($playlist);
 				const playlistItem = $playlist[$playlistindex];
-			
+
 				if (playlistItem) {
 					player.poster(playlistItem.thumb);
 					player.pause();
 				}
-				player.playlist.currentItem($playlistindex + 1);
-				console.log('playlist123', $playlist[$playlistindex]);
+				player.playlist.currentItem($playlistindex);
 				break;
 			case 'single':
 			case 'default':
@@ -121,14 +116,33 @@
 			player.playlist.currentItem($playlistindex);
 		}
 		player?.off('loadeddata', handleLoadedData);
-		console.log('loadeddata', $playlistindex, currentModalVideo, currentPlaylist, player);
+		console.log(
+			'loadeddata',
+			$seriestype,
+			$playlistindex,
+			currentModalVideo,
+			currentPlaylist,
+			player
+		);
 	}
 
-	$: if (player && ($modalvideo || $seriestype || $playlistindex || $playlist)) {
+	// React to seriestype or modalvideo changes (single/default)
+	$: if (player && ($seriestype === 'single' || $seriestype === 'default') && $modalvideo) {
 		updatePlayerSource($seriestype);
-		if ($seriestype === 'playlist') {
-			player.playlist.currentItem($playlistindex + 1);
-		}
+	}
+
+	// React to playlist or playlistindex changes (playlist mode)
+	$: if (
+		player &&
+		$seriestype === 'playlist' &&
+		$playlist &&
+		typeof $playlistindex !== 'undefined'
+	) {
+		updatePlayerSource('playlist');
+		player.playlist($playlist);
+		player.playlist.autoadvance(0);
+		console.log('playlist', $playlist, $playlistindex);
+		player.playlist.currentItem($playlistindex);
 	}
 
 	onMount(() => {
