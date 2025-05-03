@@ -4,176 +4,162 @@ import Footer from "../components/Footer.astro";
 ---
 
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link
-			rel="stylesheet"
-			href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/css/flag-icons.min.css"
-		/>
-		<meta name="generator" content={Astro.generator} />
-		<title>Mediathek Community</title>
-	</head>
-	<body>
-		<div class="app">
-			<div class="drawer">
-				<input id="my-drawer-3" type="checkbox" class="drawer-toggle" />
-				<div class="drawer-content flex flex-col">
-					<!-- Navbar -->
-					<div
-						class="navbar bg-base-300 header w-full"
-						id="main-header"
-					>
-						<div class="flex-none lg:hidden">
-							<label
-								for="my-drawer-3"
-								aria-label="open sidebar"
-								class="btn btn-square btn-ghost"
-							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									class="inline-block h-6 w-6 stroke-current"
-								>
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M4 6h16M4 12h16M4 18h16"></path>
-								</svg>
-							</label>
-						</div>
-						<div class="grid grid-cols-3 items-center w-full">
-							<div
-								class="mx-2 flex-1 px-2 col-span-3 lg:col-span-1"
-							>
-								<h1 class="site-title">
-									<span class="text-primary">Mediathek</span>
-									<span class="text-white">Community</span>
-									<span class="badge badge-primary text-white"
-										>v0.9.20</span
-									>
-								</h1>
-							</div>
-							<span
-								class="justify-center badge badge-primary text-white lg:block text-center col-span-3 lg:col-span-1 hidden lg:block"
-								>Still Switching to Astro Frontend, Links &
-								Parts of the Site will be broken for a few days</span
-							>
-							<div
-								class="flex-none hidden col-span-1 lg:justify-self-end lg:block"
-							>
-								<ul class="menu menu-horizontal justify-end">
-									<!-- Navbar menu content here -->
-									<li><a href="/">Home</a></li>
-									<li><a href="/movie">Movies</a></li>
-									<li><a href="/series">TV Shows</a></li>
-									<li><a href="/youth">Youth</a></li>
-									<li>
-										<a
-											href="/audiobooks"
-											style="pointer-events: none; color: grey;"
-											>Audiobooks</a
-										>
-									</li>
-									<!--
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/css/flag-icons.min.css"
+    />
+    <meta name="generator" content={Astro.generator} />
+    <title>Mediathek Community</title>
+  </head>
+  <body>
+    <div class="app">
+      <div class="drawer">
+        <input id="my-drawer-3" type="checkbox" class="drawer-toggle" />
+        <div class="drawer-content flex flex-col">
+          <!-- Navbar -->
+          <div class="navbar bg-base-300 header w-full" id="main-header">
+            <div class="flex-none lg:hidden">
+              <label
+                for="my-drawer-3"
+                aria-label="open sidebar"
+                class="btn btn-square btn-ghost"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  class="inline-block h-6 w-6 stroke-current"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+              </label>
+            </div>
+            <div class="grid grid-cols-3 items-center w-full">
+              <div class="mx-2 flex-1 px-2 col-span-3 lg:col-span-1">
+                <h1 class="site-title">
+                  <span class="text-primary">Mediathek</span>
+                  <span class="text-white">Community</span>
+                  <span class="badge badge-primary text-white">v0.9.20</span>
+                </h1>
+              </div>
+
+              <div
+                class="flex-none hidden col-span-1 lg:justify-self-end lg:block"
+              >
+                <ul class="menu menu-horizontal justify-end">
+                  <!-- Navbar menu content here -->
+                  <li><a href="/">Home</a></li>
+                  <li><a href="/movie">Movies</a></li>
+                  <li><a href="/series">TV Shows</a></li>
+                  <li><a href="/youth">Youth</a></li>
+                  <li>
+                    <a
+                      href="/audiobooks"
+                      style="pointer-events: none; color: grey;">Audiobooks</a
+                    >
+                  </li>
+                  <!--
 									<li><a href="/4k">UHD</a></li>
 									<li><a href="/specials">Specials</a></li>
 									<li><a href="/channels">Channels</a></li>-->
-								</ul>
-							</div>
-						</div>
-					</div>
-					<main>
-						<slot />
-					</main>
-				</div>
-				<div class="drawer-side z-50">
-					<label
-						for="my-drawer-3"
-						aria-label="close sidebar"
-						class="drawer-overlay"></label>
-					<ul class="menu bg-base-200 min-h-full w-80 p-4 pt-12">
-						<!-- Sidebar content here -->
-						<li><a href="/">Home</a></li>
-						<li><a href="/movie">Movies</a></li>
-						<li><a href="/series">TV Shows</a></li>
-						<li><a href="/youth">Youth</a></li>
-						<li>
-							<a
-								href="/audiobooks"
-								style="pointer-events: none; color: grey;"
-								>Audiobooks</a
-							>
-						</li>
-						<!--
+                </ul>
+              </div>
+            </div>
+          </div>
+          <main>
+            <slot />
+          </main>
+        </div>
+        <div class="drawer-side z-50">
+          <label
+            for="my-drawer-3"
+            aria-label="close sidebar"
+            class="drawer-overlay"></label>
+          <ul class="menu bg-base-200 min-h-full w-80 p-4 pt-12">
+            <!-- Sidebar content here -->
+            <li><a href="/">Home</a></li>
+            <li><a href="/movie">Movies</a></li>
+            <li><a href="/series">TV Shows</a></li>
+            <li><a href="/youth">Youth</a></li>
+            <li>
+              <a href="/audiobooks" style="pointer-events: none; color: grey;"
+                >Audiobooks</a
+              >
+            </li>
+            <!--
 									<li><a href="/4k">UHD</a></li>
 									<li><a href="/specials">Specials</a></li>
 									<li><a href="/channels">Channels</a></li>-->
-					</ul>
-				</div>
-			</div>
-		</div>
-		<Footer />
-	</body>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <Footer />
+  </body>
 </html>
 
 <style>
-	/* Global styles für bessere Übersicht */
-	:global(body) {
-		margin: 0;
-		padding: 0;
-		box-sizing: border-box;
-		background-color: #141414;
-		color: #fff;
-		font-family: Arial, sans-serif;
-	}
-	.header {
-		position: fixed;
-		top: 0;
-		left: 0;
-		right: 0;
-		z-index: 1000;
-		transition: all 0.3s ease;
-		background-color: transparent;
-		-webkit-backdrop-filter: none;
-		backdrop-filter: none;
-	}
-	/* Layout-Styling */
-	.app {
-		display: flex;
-		flex-direction: column;
-		min-height: 100lvh;
-	}
-	.navbar-glass {
-		background-color: rgba(20, 20, 20, 0.9);
-	}
-	main {
-		flex: 1;
-		width: 100%;
-		max-width: 100%;
-		min-height: 100dvh;
-	}
+  /* Global styles für bessere Übersicht */
+  :global(body) {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #141414;
+    color: #fff;
+    font-family: Arial, sans-serif;
+  }
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    background-color: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  /* Layout-Styling */
+  .app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100lvh;
+  }
+  .navbar-glass {
+    background-color: rgba(20, 20, 20, 0.9);
+  }
+  main {
+    flex: 1;
+    width: 100%;
+    max-width: 100%;
+    min-height: 100dvh;
+  }
 
-	@media (max-width: 768px) {
-		main {
-			padding: 0;
-		}
-	}
+  @media (max-width: 768px) {
+    main {
+      padding: 0;
+    }
+  }
 </style>
 <script>
-	const header = document.getElementById("main-header");
-	if (header) {
-		window.addEventListener("scroll", function () {
-			if (window.scrollY > 50) {
-				header.classList.add("navbar-glass");
-				//console.log("scrolled");
-			} else {
-				header.classList.remove("navbar-glass");
-				//console.log("not scrolled");
-			}
-		});
-	}
+  const header = document.getElementById("main-header");
+  if (header) {
+    window.addEventListener("scroll", function () {
+      if (window.scrollY > 50) {
+        header.classList.add("navbar-glass");
+        //console.log("scrolled");
+      } else {
+        header.classList.remove("navbar-glass");
+        //console.log("not scrolled");
+      }
+    });
+  }
 </script>
