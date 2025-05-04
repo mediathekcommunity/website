@@ -11,7 +11,14 @@
 	import Tv from 'lucide-svelte/icons/tv';
 	import Videoplayer from '$lib/components/Videoplayer.svelte';
 	import Videolink from '$lib/components/Videolink.svelte';
-	import { modalvideo, playlist, seriestype, playlistindex } from '$lib/store';
+	import {
+		modalvideo,
+		playlist,
+		seriestype,
+		playlistindex,
+		detailsid,
+		playlistov
+	} from '$lib/store';
 	function toHoursAndMinutes(totalMinutes) {
 		const hours = Math.floor(totalMinutes / 60);
 		const minutes = totalMinutes % 60;
@@ -101,6 +108,8 @@
 		seriestype.set('default');
 		playlist.set([]);
 		playlistindex.set(0);
+		detailsid.set(null);
+		playlistov.set(false);
 	}
 	function playvideo() {
 		if (!showvideo) {
@@ -111,6 +120,8 @@
 			seriestype.set('single');
 			playlist.set([]);
 			playlistindex.set(0);
+			playlistov.set(false);
+			detailsid.set(data.id);
 		} else {
 			stopvideo();
 		}
@@ -126,7 +137,7 @@
 			return 'mdi:video-outline';
 		}
 	};
-	function playepisode(episode, index, type) {
+	function playepisode(dataid, episode, index, type) {
 		type = type ? type : 'nonov';
 		document.body.scrollIntoView();
 		showvideo = true;
@@ -134,8 +145,12 @@
 		playlistindex.set(index);
 		if (type === 'ov') {
 			playlist.set(data.playlist.ov[episode.season] || []);
+			playlistov.set(true);
+			detailsid.set(dataid);
 		} else {
 			playlist.set(data.playlist.regular[episode.season] || []);
+			playlistov.set(false);
+			detailsid.set(dataid);
 		}
 		modalvideo.set({}); // Optionally clear modalvideo for playlist mode
 	}
@@ -468,7 +483,7 @@
 														class="btn btn-accent"
 														onclick={() =>
 															data.info.geo != data.info.channel.country
-																? playepisode(link, index1, 'ov')
+																? playepisode(data.id, link, index1, 'ov')
 																: ''}
 													>
 														{#if data.info.geo != data.info.channel.country}
@@ -517,7 +532,7 @@
 														class="btn btn-accent"
 														onclick={() =>
 															data.info.geo != data.info.channel.country
-																? playepisode(link, link?.episode, 'nonov')
+																? playepisode(data.id, link, link?.episode, 'nonov')
 																: ''}
 													>
 														{#if data.info.geo != data.info.channel.country}

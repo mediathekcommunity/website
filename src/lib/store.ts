@@ -49,3 +49,5 @@ export const playlistindex: Writable<number> = writable(0);
 export const subtitle: Writable<SubtitleData> = writable({});
 export const seriestype: Writable<'playlist' | 'single' | 'default'> = writable('default');
 export const subs: Writable<SubtitleData[]> = writable([]);
+export const detailsid: Writable<string | null> = writable(null);
+export const playlistov: Writable<boolean> = writable(false);

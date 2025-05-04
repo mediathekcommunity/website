@@ -1,18 +1,14 @@
-<script lang="ts">
+<script>
 	import { onDestroy, onMount } from 'svelte';
-	import '../videojs/skins/gold1/videojs.min.css'; // Then override with custom skin
+	import '../videojs/skins/gold1/videojs.min.css';
 	import videojs from 'video.js';
 	import '../videojs/plugins/es/nuevo.js';
 	import '../videojs/plugins/es/playlist.js';
 	import '../videojs/plugins/es/videojs.hotkeys';
 	import { modalvideo, playlist, subs, seriestype, playlistindex } from '$lib/store';
 
-	let player: any = null;
-	let videoSource: {
-		sources: { src: string; type: string }[];
-		poster: string;
-		title: string;
-	} | null = null;
+	let player = null;
+	let videoSource = null;
 
 	const videojsOptions = {
 		license: '0902555a051359560f49525c090a445d0d1348',
@@ -27,8 +23,8 @@
 				enableWorker: true,
 				lowLatencyMode: false,
 				backBufferLength: 90,
-				maxBufferSize: 30 * 1000 * 1000, // 30MB max buffer size
-				maxBufferLength: 30 // 30 seconds max buffer length
+				maxBufferSize: 30 * 1000 * 1000,
+				maxBufferLength: 30
 			}
 		}
 	};
@@ -45,27 +41,11 @@
 		rewindforward: 30
 	};
 
-	function initializePlayer(videoElement: HTMLVideoElement) {
-		player = videojs(videoElement, videojsOptions);
-		player.nuevo(nuevoOptions);
-		player.hotkeys({ seekStep: 10 });
-
-		if ($seriestype === 'playlist') {
-			updatePlayerSource($seriestype);
-
-			player.playlist.currentItem($playlistindex);
-			player.pause();
-		} else {
-			player.pause();
-			updatePlayerSource($seriestype);
-		}
-	}
-
-	function updatePlayerSource(type: 'playlist' | 'single' | 'default') {
+	function setSource(type) {
 		if (!player) return;
 		player.currentTime(0);
 
-		const setCommonSource = (src: string, poster: string, videoType: string) => {
+		const setCommonSource = (src, poster, videoType) => {
 			videoSource = {
 				sources: [{ src, type: videoType }],
 				poster,
@@ -77,14 +57,25 @@
 
 		switch (type) {
 			case 'playlist':
+				// Defensive: only call currentItem if it is a function and player.changeSource exists
 				player.playlist($playlist);
 				const playlistItem = $playlist[$playlistindex];
-
 				if (playlistItem) {
 					player.poster(playlistItem.thumb);
-					player.pause();
+					if (
+						player.playlist &&
+						typeof player.playlist.currentItem === 'function' &&
+						typeof player.changeSource === 'function'
+					) {
+						player.playlist.currentItem($playlistindex);
+					} else if (player.playlist && typeof player.playlist.currentItem === 'function') {
+						// Fallback: just set the src if changeSource is missing
+						const item = $playlist[$playlistindex];
+						if (item && item.sources) {
+							player.src(item.sources);
+						}
+					}
 				}
-				player.playlist.currentItem($playlistindex);
 				break;
 			case 'single':
 			case 'default':
@@ -97,60 +88,65 @@
 				}
 				break;
 		}
-
-		player.on('loadeddata', handleLoadedData);
+		player.one('loadeddata', handleLoadedData);
 	}
 
 	function handleLoadedData() {
+		if (!player) return;
 		const index = $playlistindex;
 		const currentModalVideo = $modalvideo;
 		const currentPlaylist = $playlist;
-		player.playlist($playlist);
 		if (currentModalVideo?.tracks) {
-			player?.loadTracks(currentModalVideo.tracks);
+			player.loadTracks?.(currentModalVideo.tracks);
 		} else if (currentPlaylist && currentPlaylist[index]?.tracks) {
-			player?.loadTracks(currentPlaylist[index].tracks);
+			player.loadTracks?.(currentPlaylist[index].tracks);
 		}
-		player?.pause();
+		player.pause();
 		if ($seriestype === 'playlist') {
 			player.playlist.currentItem($playlistindex);
 		}
-		player?.off('loadeddata', handleLoadedData);
-		console.log(
+		/**console.log(
 			'loadeddata',
 			$seriestype,
 			$playlistindex,
 			currentModalVideo,
 			currentPlaylist,
 			player
-		);
+		);**/
 	}
 
-	// React to seriestype or modalvideo changes (single/default)
+	onMount(() => {
+		const videoElement = document.getElementById('my-video');
+		if (videoElement) {
+			player = videojs(videoElement, videojsOptions);
+			player.ready(() => {
+				player.nuevo?.(nuevoOptions);
+				player.hotkeys?.({ seekStep: 10 });
+				if ($seriestype === 'playlist') {
+					setSource('playlist');
+					player.pause();
+				} else {
+					player.pause();
+					setSource($seriestype);
+				}
+			});
+		}
+	});
+
 	$: if (player && ($seriestype === 'single' || $seriestype === 'default') && $modalvideo) {
-		updatePlayerSource($seriestype);
+		setSource($seriestype);
 	}
 
-	// React to playlist or playlistindex changes (playlist mode)
 	$: if (
 		player &&
 		$seriestype === 'playlist' &&
 		$playlist &&
 		typeof $playlistindex !== 'undefined'
 	) {
-		updatePlayerSource('playlist');
-		player.playlist($playlist);
-		player.playlist.autoadvance(0);
-		console.log('playlist', $playlist, $playlistindex);
-		player.playlist.currentItem($playlistindex);
+		setSource('playlist');
+		player.playlist?.autoadvance?.(0);
+		//console.log('playlist', $playlist, $playlistindex);
 	}
-
-	onMount(() => {
-		const videoElement = document.getElementById('my-video') as HTMLVideoElement;
-		if (videoElement) {
-			initializePlayer(videoElement);
-		}
-	});
 
 	onDestroy(() => {
 		if (player) {

@@ -1,5 +1,5 @@
 version: "3.8"
 services:
   web:
-    image: ghcr.io/mediathekcommunity/website:svelte-latest
+    image: ghcr.io/mediathekcommunity/website:latest
     restart: unless-stopped
