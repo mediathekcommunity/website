@@ -13,7 +13,7 @@
     "@iconify-json/cbi": "^1.2.11",
     "@iconify-json/material-symbols": "^1.2.20",
     "@iconify-json/mdi": "^1.2.3",
-    "@tailwindcss/vite": "^4.1.5",
+    "@tailwindcss/vite": "^4.1.6",
     "@unpic/astro": "^1.0.0",
     "astro": "^5.7.10",
     "astro-icon": "^1.1.5",
