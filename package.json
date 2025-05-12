@@ -23,6 +23,6 @@
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-fade": "^8.6.0",
     "pocketbase": "^0.26.0",
-    "tailwindcss": "^4.1.5"
+    "tailwindcss": "^4.1.6"
   }
 }
