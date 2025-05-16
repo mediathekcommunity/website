@@ -60,7 +60,7 @@
 		posterUrlStore.set(null);
 	}
 
-	console.log(carddata);
+	//console.log(carddata);
 </script>
 
 {#key carddata}

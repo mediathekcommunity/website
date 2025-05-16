@@ -13,9 +13,9 @@
 	import { addDays, differenceInDays, isBefore } from 'date-fns';
 	import { derived } from 'svelte/store';
 	let { data }: PageProps = $props();
- 	$effect(() => {
-		let data1 = data; // Uncommenting to use data
-		console.log('data:', data.filter);
+	$effect(() => {
+		let data1 = data;
+		//console.log('data:', data.filter);
 	});
 	let showcountry = true;
 	let heroItems = $derived(data.test && data.test.length > 0 ? data.test.slice(0, 5) : []);
@@ -33,7 +33,7 @@
 	let options2 = { align: 'start', slidesToScroll: 2, loop: true };
 	let emblaApi;
 	function getimgurl(img) {
-		console.log('img:', img);
+		//console.log('img:', img);
 		if (img.backdrop) {
 			return 'https://img.mediathek.community/t/p/original' + img.backdrop;
 		} else {
