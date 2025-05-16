@@ -21,7 +21,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
@@ -80,4 +80,19 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          platforms: linux/arm64
+          platforms: linux/arm64, linux/amd64
+
+  update-mc:
+    name: Update server image on mc
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:          
+
+    - name: Invoke deployment hook
+      uses: BunnyWay/actions/container-update-image@main
+      with:
+       app_id: ${{ vars.APP_ID }}
+       api_key: ${{ secrets.BUNNYNET_API_KEY }}
+       container: app
+       image_tag: "${{ github.sha }}"
