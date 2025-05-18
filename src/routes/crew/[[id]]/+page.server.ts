@@ -1,9 +1,6 @@
 import { error } from '@sveltejs/kit';
-import getDirectusInstance from '$lib/directus';
-import { readItems } from '@directus/sdk';
 import { groupByChannelCountry } from '$lib/utils';
 
-const directus = getDirectusInstance();
 
 type MediathekItem = {
 	id: string;
@@ -19,7 +16,7 @@ type GroupedByCountry = {
 	[country: string]: MediathekItem[];
 };
 
-export async function load({ params, fetch, setHeaders, locals  }) {
+export async function load({ params, fetch, setHeaders, locals }) {
 	const { id } = params;
 	const res = await fetch(`https://tmdbomdbv1-gaoyk.bunny.run/person/${id}`);
 
@@ -41,9 +38,6 @@ export async function load({ params, fetch, setHeaders, locals  }) {
 	let id2 = params.id;
 	const allItems = await locals.pb.collection('mediathek').getFullList({ expand: 'channel' });
 
-	const mediathekData = await directus.request<MediathekItem[]>(
-		readItems('mediathek', baseOptions)
-	);
 	//const filteredData = mediathekData.filter((item) => item.id === id2);
 	const data = groupByChannelCountry(allItems);
 
