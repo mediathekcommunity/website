@@ -35,7 +35,34 @@
 				return 'application/dash+xml';
 		}
 	}
+	/**
+	 * Splits a string in the format "lang-format" into an array.
+	 *
+	 * @param {string} inputString The string to split, expected in "lang-format" (e.g., "en-US").
+	 * @returns {string[]} An array containing the language and format parts (e.g., ["en", "US"]).
+	 * Returns an array with the original string if the delimiter is not found.
+	 */
+	function splitLangFormat(inputString) {
+		// Check if the input is a string
+		if (typeof inputString !== 'string') {
+			console.error('Invalid input: Expected a string.');
+			return []; // Or throw an error
+		}
 
+		const indexOfFirstHyphen = inputString.indexOf('-');
+
+		// If no hyphen is found, return the original string in an array
+		if (indexOfFirstHyphen === -1) {
+			return [inputString];
+		}
+
+		// Split the string into two parts at the first hyphen
+		const part1 = inputString.substring(0, indexOfFirstHyphen);
+		const part2 = inputString.substring(indexOfFirstHyphen + 1);
+		console.log('part1:', part1);
+		console.log('part2:', part2);
+		return [part1, part2];
+	}
 	const getImageUrl = (slide) => {
 		console.log('slide:', slide);
 
@@ -300,7 +327,18 @@
 														{/if}
 													{/if}
 													{#if data.playlist?.regular[1] != undefined}
-														<span class="fi fi-{data.playlist.regular[1][0].audiolang}"></span>
+														<span
+															class="fi fi-{splitLangFormat(
+																data.playlist.regular[1][0].audiolang[0]
+															)[0]}"
+														></span>
+														<Icon
+															icon="mdi:{splitLangFormat(
+																data.playlist.regular[1][0].audiolang[0]
+															)[1]}"
+															height="28px"
+															width="36px"
+														/>
 													{/if}
 												</div>
 											</td>
