@@ -79,15 +79,6 @@
 						<li><a href="/series">TV Shows</a></li>
 						<li><a href="/youth">Youth</a></li>
 						<li><a href="/4k">UHD</a></li>
-
-						<!--
-						<li><a href="/series">TV Shows</a></li>
-						<li><a href="/music">Music</a></li>
-						<li><a href="/culture">Culture</a></li>
-						<li><a href="/youth">Youth</a></li>
-						<li><a href="/audiobooks" style="pointer-events: none; color: grey;">Audiobooks</a></li>
-						<li><a href="/specials">Specials</a></li>
-						<li><a href="/channels">Channels</a></li>-->
 					</ul>
 				</div>
 			</div>
@@ -105,15 +96,6 @@
 				<li><a href="/series">TV Shows</a></li>
 				<li><a href="/youth">Youth</a></li>
 				<li><a href="/4k">UHD</a></li>
-				<!--
-					<li><a href="/movie">Movies</a></li>
-					<li><a href="/series">TV Shows</a></li>
-					<li><a href="/music">Music</a></li>
-					<li><a href="/culture">Culture</a></li>
-					<li><a href="/youth">Youth</a></li>
-					<li><a href="/audiobooks" style="pointer-events: none; color: grey;">Audiobooks</a></li>
-					<li><a href="/specials">Specials</a></li>
-					<li><a href="/channels">Channels</a></li>-->
 			</ul>
 		</div>
 	</div>
