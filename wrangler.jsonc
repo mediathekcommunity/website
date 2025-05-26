@@ -1,9 +1,16 @@
 {
-	"name": "mediathekcommunity",
+	"name": "mediathek-oeffi",
 	"main": ".svelte-kit/cloudflare/_worker.js",
 	"compatibility_date": "2025-01-01",
 	"assets": {
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare"
-	}
+	},
+	"routes": [
+		{
+			"pattern": "mediathek.community",
+			"custom_domain": true
+		}
+	],
+	"workers_dev": true
 }
