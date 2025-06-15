@@ -25,7 +25,7 @@
 		}
 	}
 
-	const imageUrl = $derived(poster ? `https://img.mediathek.rocks/t/p/w300${poster}` : null);
+	const imageUrl = $derived(poster ? `https://img.mediathek.community/t/p/w300${poster}` : null);
 </script>
 
 <div

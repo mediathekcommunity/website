@@ -49,7 +49,7 @@
 	let posterUrl: string | null = null;
 	if (carddata) {
 		if (carddata.poster) {
-			posterUrl = `https://mediathekc.b-cdn.net/t/p/w300${carddata.poster}`;
+			posterUrl = `https://img.mediathek.community/t/p/w300${carddata.poster}`;
 		} else if (carddata.posterup) {
 			posterUrl = `https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/${carddata.posterup}`;
 		} else if (carddata.coverimageup) {
