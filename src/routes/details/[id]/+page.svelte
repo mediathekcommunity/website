@@ -69,7 +69,7 @@
 		let imageUrl = '';
 		switch (true) {
 			case !!slide.backdrop:
-				imageUrl = 'https://mediathekc.b-cdn.net/t/p/original' + slide.backdrop;
+				imageUrl = 'https://img.mediathek.community/t/p/original' + slide.backdrop;
 				break;
 			case !!slide.backdropup:
 				imageUrl =
@@ -77,7 +77,7 @@
 					slide.backdropup;
 				break;
 			case !!slide.poster:
-				imageUrl = 'https://mediathekc.b-cdn.net/t/p/original' + slide.poster;
+				imageUrl = 'https://img.mediathek.community/t/p/original' + slide.poster;
 				break;
 			case !!slide.posterup:
 				imageUrl =
