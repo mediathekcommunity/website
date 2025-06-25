@@ -128,10 +128,10 @@ const getTypeIcon = (type: string) => {
                   class="hero-image w-full"
                   loading="eager"
                 />
+                <div class="gradient-overlay absolute inset-0" />
               </div>
-              <div class="gradient-overlay absolute inset-x-0 bottom-0" />
-              <div class="text-overlay absolute bottom-4 left-4 text-base-content sm:bottom-8 sm:left-8 md:bottom-12 md:left-16 lg:bottom-16 lg:left-32">
-                <div class="mb-1 flex flex-wrap items-center gap-1 sm:mb-4">
+              <div class="text-overlay absolute text-base-content sm:bottom-12 sm:left-8 md:bottom-16 md:left-16 lg:bottom-20 lg:left-32">
+                <div class="mb-0.5 flex flex-wrap items-center gap-0.5 sm:gap-1 sm:mb-4">
                   <span class="badge-icon badge-ghost inline-flex items-center gap-1 px-1 py-1">
                     <span class={slide.icon} />
                     <Icon name={slide.channelicon} height="28px" width="36px" />
@@ -154,18 +154,18 @@ const getTypeIcon = (type: string) => {
                   </span>
                 </div>
 
-                <h1 class="mb-2 text-2xl font-bold tracking-tight leading-tight sm:text-3xl md:text-4xl lg:text-5xl text-base-content">
+                <h1 class="mb-2 text-2xl font-bold tracking-tight leading-tight sm:text-3xl md:text-4xl lg:text-5xl text-white/80">
                   {slide.title}
                 </h1>
 
                 {slide.title !== slide.orgtitle && slide.orgtitle && (
-                  <p class="mb-4 text-sm text-base-content/80 italic sm:text-base">
+                  <p class="mb-4 text-sm text-white/80 italic sm:text-base">
                     Original Title: {slide.orgtitle}
                   </p>
                 )}
 
                 {special && slide.special && (
-                  <p class="mb-4 text-sm text-base-content/80 italic sm:text-base">
+                  <p class="mb-4 text-sm text-white/80 italic sm:text-base">
                     Special: {slide.special.name}
                   </p>
                 )}
@@ -198,13 +198,16 @@ const getTypeIcon = (type: string) => {
   }
 
   .image-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
     display: flex;
     align-items: flex-start; /* Align to top */
-    overflow: hidden;
   }
 
   .hero-image {
-    min-width: 100%;
+    width: 100%;
     object-fit: cover;
     object-position: top; /* Always show the top of the image */
   }
@@ -240,56 +243,117 @@ const getTypeIcon = (type: string) => {
     align-items: center;
     justify-content: center;
   }
-
   .gradient-overlay {
-    height: 75%;
-    width: 100%; /* Match viewport width */
-    max-width: 100%; /* Remove any fixed max-width */
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     background: linear-gradient(
       to top,
-      hsl(var(--b1)) 0%,
-      hsl(var(--b1) / 0.987) 7.8%,
-      hsl(var(--b1) / 0.951) 15.2%,
-      hsl(var(--b1) / 0.896) 22.1%,
-      hsl(var(--b1) / 0.825) 28.7%,
-      hsl(var(--b1) / 0.741) 35.1%,
-      hsl(var(--b1) / 0.648) 41.2%,
-      hsl(var(--b1) / 0.55) 47.1%,
-      hsl(var(--b1) / 0.45) 52.9%,
-      hsl(var(--b1) / 0.352) 58.8%,
-      hsl(var(--b1) / 0.259) 64.9%,
-      hsl(var(--b1) / 0.175) 71.3%,
-      hsl(var(--b1) / 0.104) 77.9%,
-      hsl(var(--b1) / 0.049) 84.8%,
-      hsl(var(--b1) / 0.013) 92.2%,
-      hsl(var(--b1) / 0) 100%
+      #111,
+      #111111fc 7.8%,
+      #111111f3 15.2%,
+      #111111e4 22.1%,
+      #111111d2 28.7%,
+      #111111bd 35.1%,
+      #111111a5 41.2%,
+      #1111118c 47.1%,
+      #11111173 52.9%,
+      #1111115a 58.8%,
+      #11111142 64.9%,
+      #1111112d 71.3%,
+      #1111111b 77.9%,
+      #1111110c 84.8%,
+      #11111103 92.2%,
+      #1110
     );
+    pointer-events: none; /* Prevent interaction */
   }
 
   .text-overlay {
+    position: absolute;
+    bottom: 4%; /* Reduced from 8% */
+    left: 4%;
+    width: calc(100% - 8%); /* Consistent padding on both sides */
+    max-width: 100%;
     text-align: left;
-    width: calc(100% - 2rem);
-    max-width: 100%; /* Remove any fixed max-width */
-  }
-
-  .badge .icon {
-    width: 40px; /* Set uniform width */
-    height: 40px; /* Set uniform height */
-  }
-
-  .type-icon {
-    width: 40px; /* Force consistent width */
-    height: 40px; /* Force consistent height */
+    z-index: 1;
+    overflow: hidden;
   }
 
   @media (max-width: 480px) {
     .hero-container {
-      height: 40vh;
+      height: 50vh; /* Increased slightly */
       min-height: 250px;
-      max-height: 50vh;
+      max-height: 60vh;
     }
+
+    .hero-image {
+      height: 100%;
+      max-height: 60vh;
+    }
+
+    .text-overlay {
+      bottom: 0.75rem;
+      left: 4%; /* Keep consistent with larger screens */
+      width: calc(
+        100% - 8%
+      ); /* Maintain the same x-axis padding as larger screens */
+    }
+
+    /* Smaller text for tiny screens */
+    .text-overlay h1 {
+      font-size: 1.5rem;
+      line-height: 1.2;
+      margin-bottom: 0.25rem;
+    }
+
+    .text-overlay p {
+      font-size: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Consistent button styling */
+    .text-overlay .btn {
+      padding-left: 1rem;
+      padding-right: 1rem;
+      font-size: 0.875rem;
+      height: auto;
+      min-height: 2rem;
+    }
+
+    /* Adjust badges for small screens */
+    .badge-icon {
+      padding: 0.25rem !important;
+    }
+
+    .badge-icon .icon,
+    .badge-icon svg {
+      width: 24px !important;
+      height: 24px !important;
+    }
+
     .gradient-overlay {
-      height: 85%;
+      /* Make gradient stronger on small screens for better text readability */
+      background: linear-gradient(
+        to top,
+        #111,
+        #111111fc 5%,
+        #111111f3 10%,
+        #111111e4 15%,
+        #111111d2 20%,
+        #111111bd 25%,
+        #111111a5 30%,
+        #1111118c 40%,
+        #11111173 50%,
+        #1111115a 60%,
+        #11111142 70%,
+        #1111112d 80%,
+        #1111111b 90%,
+        #1111110c 95%,
+        #11111103 97%,
+        #1110
+      );
     }
   }
 
@@ -299,8 +363,9 @@ const getTypeIcon = (type: string) => {
       min-height: 300px;
       max-height: 50vh;
     }
-    .gradient-overlay {
-      height: 80%;
+    .hero-image {
+      height: 100%;
+      max-height: 50vh;
     }
   }
 
@@ -310,8 +375,9 @@ const getTypeIcon = (type: string) => {
       max-height: 50vh;
     }
 
-    .gradient-overlay {
-      height: 75%;
+    .hero-image {
+      height: 100%;
+      max-height: 50vh;
     }
   }
 
@@ -321,8 +387,9 @@ const getTypeIcon = (type: string) => {
       max-height: 50vh;
     }
 
-    .gradient-overlay {
-      height: 75%;
+    .hero-image {
+      height: 100%;
+      max-height: 50vh;
     }
   }
 
@@ -332,8 +399,9 @@ const getTypeIcon = (type: string) => {
       max-height: 70vh;
     }
 
-    .gradient-overlay {
-      height: 75%;
+    .hero-image {
+      height: 100%;
+      max-height: 70vh;
     }
   }
 </style>

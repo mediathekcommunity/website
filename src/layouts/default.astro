@@ -21,16 +21,16 @@ const currentPath = Astro.url.pathname;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width">
-    <meta name="color-scheme" content="dark light">
+    <meta name="color-scheme" content="dark corporate">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css" />
     <style>
       /* Prefer dark mode by default */
-      @media (prefers-color-scheme: light) {
+      @media (prefers-color-scheme: corporate) {
         :root {
-          color-scheme: light;
+          color-scheme: corporate;
         }
         html:not([data-theme]) {
-          color-scheme: light;
+          color-scheme: corporate;
         }
       }
       @media (prefers-color-scheme: dark) {
@@ -121,7 +121,7 @@ const currentPath = Astro.url.pathname;
     class="fixed top-0 left-0 right-0 px-8 py-4 flex items-center justify-between z-50 transition-all duration-300"
   >
     <div class="flex items-center space-x-3">
-      <a href="/" class="text-primary font-bold">
+      <a href="/" class="text-gradient font-bold text-lg">
         {siteTitle}
       </a>
       <span class="bg-base-300 text-base-content px-2 py-1 rounded-full text-xs font-medium border border-base-300">
@@ -205,5 +205,25 @@ const currentPath = Astro.url.pathname;
   
   .backdrop-blur-md {
     backdrop-filter: blur(12px);
+  }
+
+  /* Gradient text effect for the site title */
+  .text-gradient {
+    background: linear-gradient(to right, #38bdf8, #818cf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Adjust gradient for corporate theme */
+  html[data-theme="corporate"] .text-gradient {
+    background: linear-gradient(to right, #0284c7, #4f46e5);
+    -webkit-background-clip: text;
+    background-clip: text;
+    text-shadow: none;
   }
 </style>

@@ -87,8 +87,8 @@ const entriesByCountry = allDetails.reduce((acc: Record<string, any[]>, entry: a
     <HeroSlider heroItems={heroItems} special={true} showcountry={true} />
 
     <!-- Recently Added Section -->
-    <div class="px-8">
-      <h2 class="text-base-content text-2xl font-bold my-8">Recently Added</h2>
+    <div class="px-4 sm:px-6 md:px-8">
+      <h2 class="text-base-content text-xl sm:text-2xl font-bold my-4 sm:my-6 md:my-8">Recently Added</h2>
 
       <!-- Card Carousel -->
       <div class="card-carousel embla">
@@ -106,7 +106,8 @@ const entriesByCountry = allDetails.reduce((acc: Record<string, any[]>, entry: a
 
     <!-- Country Sections -->
     {
-      Object.keys(entriesByCountry).map((country) => {
+      Object.keys(entriesByCountry).map((country, index, array) => {
+        const isLast = index === array.length - 1;
         const countryEntries = entriesByCountry[country];
         const countryCardData = countryEntries.map((entry: any) => ({
           id: entry.data.id,
@@ -120,14 +121,14 @@ const entriesByCountry = allDetails.reduce((acc: Record<string, any[]>, entry: a
         }));
 
         return (
-          <div class="px-8">
-            <h2 class="text-base-content text-2xl font-bold my-8 flex items-center gap-2">
+          <div class="px-4 sm:px-6 md:px-8">
+            <h2 class="text-base-content text-xl sm:text-2xl font-bold my-4 sm:my-6 md:my-8 flex items-center gap-1 sm:gap-2">
               <span class={`fi fi-${country.toLowerCase()} fis`}></span>
               {country.toUpperCase()} Content
             </h2>
 
             <!-- Card Carousel -->
-            <div class="card-carousel embla">
+            <div class={`card-carousel embla ${isLast ? "last-carousel" : ""}`}>
               <div class="embla__container">
                 {
                   countryCardData.map((card) => (
@@ -173,7 +174,7 @@ const entriesByCountry = allDetails.reduce((acc: Record<string, any[]>, entry: a
     overflow: hidden;
     position: relative;
     width: 100%;
-    margin-bottom: 2rem;
+    margin-bottom: 0rem;
   }
 
   .embla__container {
@@ -197,6 +198,15 @@ const entriesByCountry = allDetails.reduce((acc: Record<string, any[]>, entry: a
     .embla__slide {
       width: 70%;
     }
+
+    .px-8 {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    .card-carousel {
+      margin-bottom: 0rem;
+    }
   }
   @media (min-width: 641px) and (max-width: 768px) {
     .embla__slide {
@@ -216,6 +226,17 @@ const entriesByCountry = allDetails.reduce((acc: Record<string, any[]>, entry: a
   @media (min-width: 1280px) {
     .embla__slide {
       width: 20%;
+    }
+  }
+
+  /* Special margin for the last country carousel */
+  .last-carousel {
+    margin-bottom: 4rem !important; /* Add extra bottom margin to the last carousel */
+  }
+  
+  @media (max-width: 640px) {
+    .last-carousel {
+      margin-bottom: 3rem !important; /* Slightly smaller margin on mobile */
     }
   }
 </style>

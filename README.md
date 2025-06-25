@@ -1,68 +1,101 @@
-# Astro Starter Kit: Blog
+# Mediathek Community Website
 
-```sh
-pnpm create astro@latest -- --template blog
-```
+A modern, responsive website built with Astro for the Mediathek Community platform. This site provides an elegant browsing experience for media content with features specifically designed for movies, TV shows, and other media collections.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/blog)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/blog)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/blog/devcontainer.json)
+> **Development Note:** Currently, the primary development focus is on optimizing the dark theme experience.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## ✨ Features
 
-![blog](https://github.com/withastro/astro/assets/2244813/ff10799f-a816-4703-b967-c78997e8323d)
+- ✅ Modern, responsive design with mobile-first approach
+- ✅ Dynamic content loading from JSON collections
+- ✅ Hero slider carousel with animated transitions
+- ✅ Country-specific content filtering
+- ✅ Dark mode optimization with light mode support
+- ✅ Interactive UI components with responsive behaviors
+- ✅ Expiration date calculation for media content
 
-Features:
+## 📁 Project Structure
 
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and OpenGraph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
+The project follows a clean Astro architecture with specialized components:
 
 ```text
 ├── public/
+│   ├── favicon.svg
+│   └── fonts/
 ├── src/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
+│   ├── assets/           # CSS and image assets
+│   ├── components/       # Reusable UI components
+│   │   ├── Card.astro    # Content card components
+│   │   ├── HeroSlider.astro # Featured content slider
+│   │   └── Time.astro    # Time formatting utilities
+│   ├── content/
+│   │   └── details/      # JSON content collection for media items
+│   ├── layouts/
+│   │   └── default.astro # Main site layout with navigation
+│   ├── lib/             # Utility components
+│   └── pages/           # Page routes and templates
+│       ├── details/     # Dynamic detail pages for content details
+│       ├── movies.astro
+│       ├── series.astro
+│       ├── youth.astro
+│       └── uhd.astro
 ├── astro.config.mjs
-├── README.md
 ├── package.json
 └── tsconfig.json
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+The `src/content/details/` directory contains JSON files for each media item in the collection. These are processed through Astro's content collections system for efficient management and retrieval.
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+The site uses a component-based architecture where UI elements like the `HeroSlider` and `Card` components are designed to be highly reusable and responsive across different contexts.
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
+## 🚀 Development Commands
 
 All commands are run from the root of the project, from a terminal:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
+| Command            | Action                                           |
+| :----------------- | :----------------------------------------------- |
+| `pnpm install`     | Installs dependencies                            |
+| `pnpm dev`         | Starts local dev server at `localhost:4321`      |
+| `pnpm build`       | Build your production site to `./dist/`          |
+| `pnpm preview`     | Preview your build locally, before deploying     |
+| `pnpm astro ...`   | Run CLI commands like `astro add`, `astro check` |
 
-## 👀 Want to learn more?
+## 🎨 Theme Development
 
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+The website includes a theme switcher that allows users to toggle between dark and light modes. As noted above, the current development focus is on optimizing the dark theme experience. When contributing to the project, please ensure that your changes look good in dark mode first, then verify compatibility with light mode.
 
-## Credit
+## 🔄 Content Management
 
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+Media content is managed through JSON files in the `src/content/details/` directory. Each file represents a media item with its metadata, including:
+
+- Title and original title
+- Quality information (4K, HD, etc.)
+- Content type (movie, series, etc.)
+- Channel information
+- Online availability dates
+- Background and poster images
+
+## 🛠️ Tech Stack
+
+This project leverages modern web technologies for optimal performance and developer experience:
+
+- **[Astro](https://astro.build/)**: Core framework providing excellent performance through partial hydration
+- **[DaisyUI](https://daisyui.com/)**: Component library built on top of Tailwind CSS
+- **[Embla Carousel](https://www.embla-carousel.com/)**: Lightweight carousel for the hero slider
+- **[Astro Icon](https://github.com/natemoo-re/astro-icon)**: Icon management for consistent UI elements
+- **Content Collections**: Astro's built-in content management system for structured data
+
+The architecture follows a static-first approach with minimal client-side JavaScript, focusing on performance and SEO while still providing a rich, interactive user experience.
+
+## 🤝 Contributing
+
+Contributions to the Mediathek Community Website are welcome! When contributing:
+
+1. Ensure your changes maintain responsive behavior across all device sizes
+2. Test your changes in dark mode first, then in light mode
+3. Maintain the established code organization pattern
+4. Keep performance in mind, especially for components that load on the homepage
+
+## 📝 License
+
+This project is licensed under the [MIT License](LICENSE).
