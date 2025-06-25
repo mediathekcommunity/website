@@ -1,0 +1,52 @@
+{
+  "id": "movie-123",
+  "title": "The Great Adventure",
+  "orgtitle": "Sample Data",
+  "geo": "US",
+  "fskcheck": false,
+  "serverhour": 20,
+  "dyna": false,
+  "info": {
+    "type": "movie",
+    "duration": 142,
+    "seasons": 0,
+    "episodes": 0,
+    "onlineuntil": "2025-12-31T23:59:59Z",
+    "quality": "4k",
+    "description": "<p>An epic adventure story about friendship, and discovery. Follow the journey of unlikely heroes as they navigate through challenging landscapes and face their deepest fears.</p>",
+    "channel": {
+      "name": "Premium Movies",
+      "country": "US",
+      "icon": "mdi:television-classic",
+      "info": true
+    },
+    "cast": [
+      { "id": "actor-1", "name": "John Smith" },
+      { "id": "actor-2", "name": "Jane Doe" },
+      { "id": "actor-3", "name": "Mike Johnson" }
+    ],
+    "crew": [
+      { "id": "director-1", "name": "Steven Director" },
+      { "id": "producer-1", "name": "Mary Producer" }
+    ],
+    "backdrop": "https://img.mediathek.community/t/p/original/8zLyVhEsH6SM9diX7CUUWcaRlk0.jpg",
+    "poster": "https://img.mediathek.community/t/p/w300/mzkstyDSsTRswCMRvoBD5ULPnIt.jpg"
+  },
+  "videosource": {
+    "src": "https://example.com/movie.mpd",
+    "type": "application/dash+xml",
+    "poster": "/poster-movie.jpg",
+    "title": "The Great Adventure",
+    "audiolang": ["de", "en"]
+  },
+  "sublangs": [
+    { "srclang": "de", "spokenlang": false },
+    { "srclang": "en", "spokenlang": false },
+    { "srclang": "fr", "spokenlang": true }
+  ],
+  "links": [
+    {
+      "fsubtitle_lang": ["de", "en"]
+    }
+  ]
+}

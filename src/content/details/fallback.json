@@ -1,0 +1,37 @@
+{
+  "id": "fallback",
+  "title": "Not Found",
+  "orgtitle": "Sample Data",
+  "geo": "DE",
+  "fskcheck": false,
+  "serverhour": 0,
+  "dyna": false,
+  "info": {
+    "type": "movie",
+    "duration": 0,
+    "seasons": 0,
+    "episodes": 0,
+    "onlineuntil": "2025-12-31T23:59:59Z",
+    "quality": ".",
+    "description": "<p>No movie/series found with the provided id</p>",
+    "channel": {
+      "name": ".",
+      "country": "DE",
+      "icon": ".",
+      "info": false
+    },
+    "cast": [],
+    "crew": [],
+    "backdrop": "https://img.mediathek.community/t/p/original/8zLyVhEsH6SM9diX7CUUWcaRlk0.jpg",
+    "poster": "https://img.mediathek.community/t/p/w300/mzkstyDSsTRswCMRvoBD5ULPnIt.jpg"
+  },
+  "videosource": {
+    "src": ".",
+    "type": ".",
+    "poster": ".",
+    "title": ".",
+    "audiolang": []
+  },
+  "sublangs": [],
+  "links": []
+}

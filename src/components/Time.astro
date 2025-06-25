@@ -1,0 +1,26 @@
+---
+interface Props {
+  timestamp: string;
+  format?: string;
+}
+
+const { timestamp, format = "YYYY-MM-DD" } = Astro.props;
+
+// Simple date formatter based on format string
+function formatDate(date: Date, formatStr: string): string {
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear();
+  
+  // Replace format patterns
+  return formatStr
+    .replace('DD', day)
+    .replace('MM', month)
+    .replace('YYYY', year.toString());
+}
+
+const date = new Date(timestamp);
+const formattedDate = formatDate(date, format);
+---
+
+<span>{formattedDate}</span>

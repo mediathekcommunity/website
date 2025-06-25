@@ -1,0 +1,339 @@
+---
+// Import required components and types
+import { Icon } from "astro-icon/components";
+import { Image } from "astro:assets";
+
+// Define the HeroItem interface
+interface HeroItem {
+  backdrop?: string;
+  backdropup?: { filename_disk: string };
+  poster?: string;
+  posterup?: { filename_disk: string };
+  title: string;
+  orgtitle: string;
+  id: string;
+  channel: {
+    country: string;
+    icon: string;
+  };
+  quality: "4K" | "fhd" | "hd" | string;
+  type: "movie" | "series" | "music" | string;
+  special?: { name: string };
+  language?: string;
+  episode?: {
+    season: number;
+    episode: number;
+    lang?: string;
+  };
+  links?: Array<{
+    audiolang: string[];
+  }>;
+}
+
+// Component props
+interface Props {
+  heroItems: HeroItem[];
+  showcountry?: boolean;
+  special?: boolean;
+}
+
+const { heroItems, showcountry = false, special = false } = Astro.props;
+
+// Helper functions
+const getQualityIcon = (quality: string) => {
+  switch (quality.toLowerCase()) {
+    case "4k":
+      return "mdi:uhd";
+    case "fhd":
+    case "1080p":
+      return "material-symbols:full-hd";
+    case "hd":
+      return "mdi:video";
+    default:
+      return "mdi:video-outline";
+  }
+};
+
+const getImageUrl = (slide: HeroItem) => {
+  if (!slide.backdrop && !slide.backdropup) {
+    console.warn("No backdrop found for slide", slide);
+    return "https://api.mediathek.community/assets/default-backdrop.jpg";
+  }
+  return slide.backdrop
+    ? `https://img.mediathek.community/t/p/original${slide.backdrop}`
+    : `https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/${slide.backdropup?.filename_disk}`;
+};
+
+const getTypeIcon = (type: string) => {
+  switch (type.toLowerCase()) {
+    case "movie":
+      return "mdi:movie";
+    case "series":
+      return "mdi:tv";
+    case "music":
+      return "mdi:music";
+    default:
+      return "mdi:movie";
+  }
+};
+---
+
+<!-- Embla Carousel initialization script -->
+<script>
+  import EmblaCarousel from "embla-carousel";
+  import Autoplay from "embla-carousel-autoplay";
+  import Fade from "embla-carousel-fade";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const emblaNode = document.querySelector(".embla");
+    if (emblaNode) {
+      const options = {
+        align: "start",
+        slidesToScroll: 1,
+        loop: true,
+        containScroll: "keepSnaps",
+        dragFree: false,
+        skipSnaps: false,
+        startIndex: 0,
+      };
+
+      const plugins = [
+        Autoplay({
+          delay: 8000,
+          stopOnInteraction: false,
+        }),
+        Fade(),
+      ];
+
+      const emblaApi = EmblaCarousel(emblaNode, options, plugins);
+    }
+  });
+</script>
+
+<div class="hero-container relative w-full">
+  <div class="embla absolute inset-0">
+    <div class="embla__container">
+      {
+        heroItems.map((slide) => (
+          <div class="embla__slide">
+            <div class="relative h-full w-full">
+              <div class="image-container absolute inset-0">
+                <Image
+                  src={getImageUrl(slide)}
+                  alt={slide.title}
+                  width={1920}
+                  height={1080}
+                  quality={90}
+                  format="webp"
+                  class="hero-image w-full"
+                  loading="eager"
+                />
+              </div>
+              <div class="gradient-overlay absolute inset-x-0 bottom-0" />
+              <div class="text-overlay absolute bottom-4 left-4 text-base-content sm:bottom-8 sm:left-8 md:bottom-12 md:left-16 lg:bottom-16 lg:left-32">
+                <div class="mb-1 flex flex-wrap items-center gap-1 sm:mb-4">
+                  <span class="badge-icon badge-ghost inline-flex items-center gap-1 px-1 py-1">
+                    <span class={slide.icon} />
+                    <Icon name={slide.channelicon} height="28px" width="36px" />
+                  </span>
+
+                  <span class="badge-icon badge-ghost inline-flex items-center gap-1 px-1 py-1">
+                    <Icon
+                      name={getQualityIcon(slide.quality)}
+                      height="28px"
+                      width="36px"
+                    />
+                  </span>
+
+                  <span class="badge-icon badge-ghost inline-flex items-center gap-1 px-1 py-1">
+                    <Icon
+                      name={getTypeIcon(slide.type)}
+                      height="28px"
+                      width="36px"
+                    />
+                  </span>
+                </div>
+
+                <h1 class="mb-2 text-2xl font-bold tracking-tight leading-tight sm:text-3xl md:text-4xl lg:text-5xl text-base-content">
+                  {slide.title}
+                </h1>
+
+                {slide.title !== slide.orgtitle && slide.orgtitle && (
+                  <p class="mb-4 text-sm text-base-content/80 italic sm:text-base">
+                    Original Title: {slide.orgtitle}
+                  </p>
+                )}
+
+                {special && slide.special && (
+                  <p class="mb-4 text-sm text-base-content/80 italic sm:text-base">
+                    Special: {slide.special.name}
+                  </p>
+                )}
+
+                <a href={`/details/${slide.id}`} class="btn btn-primary">
+                  Details
+                </a>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>
+<style>
+  body {
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+  }
+
+  .hero-container {
+    height: 50vh;
+    max-height: 60vh;
+    min-height: 400px;
+    transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    background: hsl(var(--b1));
+  }
+
+  .image-container {
+    display: flex;
+    align-items: flex-start; /* Align to top */
+    overflow: hidden;
+  }
+
+  .hero-image {
+    min-width: 100%;
+    object-fit: cover;
+    object-position: top; /* Always show the top of the image */
+  }
+
+  .embla {
+    overflow: hidden;
+    width: 100%; /* Match viewport width */
+    max-width: 100%; /* Remove any fixed max-width */
+    overflow-x: hidden; /* Prevent horizontal overflow */
+  }
+
+  .embla__container {
+    display: flex;
+    height: 100%;
+    margin: 0;
+    backface-visibility: hidden;
+    width: 100%; /* Match viewport width */
+    max-width: 100%; /* Remove any fixed max-width */
+  }
+
+  .embla__slide {
+    flex: 0 0 100%;
+    min-width: 100%;
+    position: relative;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    transform: translateX(0);
+    overflow: hidden;
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .gradient-overlay {
+    height: 75%;
+    width: 100%; /* Match viewport width */
+    max-width: 100%; /* Remove any fixed max-width */
+    background: linear-gradient(
+      to top,
+      hsl(var(--b1)) 0%,
+      hsl(var(--b1) / 0.987) 7.8%,
+      hsl(var(--b1) / 0.951) 15.2%,
+      hsl(var(--b1) / 0.896) 22.1%,
+      hsl(var(--b1) / 0.825) 28.7%,
+      hsl(var(--b1) / 0.741) 35.1%,
+      hsl(var(--b1) / 0.648) 41.2%,
+      hsl(var(--b1) / 0.55) 47.1%,
+      hsl(var(--b1) / 0.45) 52.9%,
+      hsl(var(--b1) / 0.352) 58.8%,
+      hsl(var(--b1) / 0.259) 64.9%,
+      hsl(var(--b1) / 0.175) 71.3%,
+      hsl(var(--b1) / 0.104) 77.9%,
+      hsl(var(--b1) / 0.049) 84.8%,
+      hsl(var(--b1) / 0.013) 92.2%,
+      hsl(var(--b1) / 0) 100%
+    );
+  }
+
+  .text-overlay {
+    text-align: left;
+    width: calc(100% - 2rem);
+    max-width: 100%; /* Remove any fixed max-width */
+  }
+
+  .badge .icon {
+    width: 40px; /* Set uniform width */
+    height: 40px; /* Set uniform height */
+  }
+
+  .type-icon {
+    width: 40px; /* Force consistent width */
+    height: 40px; /* Force consistent height */
+  }
+
+  @media (max-width: 480px) {
+    .hero-container {
+      height: 40vh;
+      min-height: 250px;
+      max-height: 50vh;
+    }
+    .gradient-overlay {
+      height: 85%;
+    }
+  }
+
+  @media (min-width: 481px) and (max-width: 640px) {
+    .hero-container {
+      height: 50vh;
+      min-height: 300px;
+      max-height: 50vh;
+    }
+    .gradient-overlay {
+      height: 80%;
+    }
+  }
+
+  @media (min-width: 641px) and (max-width: 768px) {
+    .hero-container {
+      height: 50vh;
+      max-height: 50vh;
+    }
+
+    .gradient-overlay {
+      height: 75%;
+    }
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .hero-container {
+      height: 50vh;
+      max-height: 50vh;
+    }
+
+    .gradient-overlay {
+      height: 75%;
+    }
+  }
+
+  @media (min-width: 1025px) {
+    .hero-container {
+      height: 70vh;
+      max-height: 70vh;
+    }
+
+    .gradient-overlay {
+      height: 75%;
+    }
+  }
+</style>

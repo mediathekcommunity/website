@@ -1,0 +1,232 @@
+---
+import Layout from "../layouts/default.astro";
+import HeroSlider from "../components/HeroSlider.astro";
+import Card from "../components/Card.astro";
+import { Icon } from "astro-icon/components";
+import { getCollection } from "astro:content";
+
+// Get all details from content collection and filter for movies only (excluding fallback)
+const allDetailsRaw = await getCollection("details");
+const movieDetails = allDetailsRaw.filter(
+  (entry: any) => entry.data.id !== "fallback" && entry.data.info.type === "movie"
+);
+
+// Function to calculate remaining days from onlineuntil date in visitor's local time
+function calculateRemainingDays(onlineuntil: string): number {
+  const currentDate = new Date();
+
+  // Handle both date formats: "2025-06-24" and "2025-06-24T23:59:59Z"
+  let expiryDate: Date;
+  if (onlineuntil.includes("T")) {
+    // Full ISO format with time
+    expiryDate = new Date(onlineuntil);
+  } else {
+    // Date-only format, treat as end of day in local timezone
+    expiryDate = new Date(onlineuntil + "T23:59:59");
+  }
+
+  // Convert to local dates (removing time component) for accurate day calculation
+  const currentLocalDate = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    currentDate.getDate()
+  );
+  const expiryLocalDate = new Date(
+    expiryDate.getFullYear(),
+    expiryDate.getMonth(),
+    expiryDate.getDate()
+  );
+
+  const diffTime = expiryLocalDate.getTime() - currentLocalDate.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return Math.max(0, diffDays); // Return 0 if expired
+}
+
+// Convert movie details to hero items and card data
+const heroItems = movieDetails.slice(0, 3).map((entry: any) => ({
+  backdrop: entry.data.info.backdrop || "/8zLyVhEsH6SM9diX7CUUWcaRlk0.jpg",
+  title: entry.data.title,
+  orgtitle: entry.data.orgtitle,
+  id: entry.data.id,
+  channel: {
+    country: entry.data.info.channel.country,
+    icon: entry.data.info.channel.name?.toLowerCase() || "unknown",
+  },
+  quality: entry.data.info.quality || "HD",
+  type: entry.data.info.type,
+  channelicon: "simple-icons:warnerbros",
+}));
+
+// Convert movie details to card data with calculated remaining days
+const cardData = movieDetails.map((entry: any) => ({
+  id: entry.data.id,
+  title: entry.data.title,
+  orgtitle: entry.data.orgtitle,
+  metascore: entry.data.info.metascore || "N/A",
+  type: entry.data.info.type,
+  poster: entry.data.info.poster || "/mzkstyDSsTRswCMRvoBD5ULPnIt.jpg",
+  channel: { country: entry.data.info.channel.country },
+  remainingDays: calculateRemainingDays(entry.data.info.onlineuntil),
+}));
+
+// Filter movie entries by country
+const entriesByCountry = movieDetails.reduce((acc: Record<string, any[]>, entry: any) => {
+  const country = entry.data.info.channel.country;
+  if (!acc[country]) {
+    acc[country] = [];
+  }
+  acc[country].push(entry);
+  return acc;
+}, {});
+---
+
+<Layout>
+  <div class="flex flex-col min-h-screen">
+    {heroItems.length > 0 && (
+      <HeroSlider heroItems={heroItems} special={true} showcountry={true} />
+    )}
+
+    <!-- Movies Section -->
+    <div class="px-8">
+      <h1 class="text-base-content text-3xl font-bold my-8 flex items-center gap-2">
+        <Icon name="mdi:movie" size={24} />
+        Movies ({movieDetails.length})
+      </h1>
+
+      {cardData.length > 0 ? (
+        <!-- Card Carousel -->
+        <div class="card-carousel embla">
+          <div class="embla__container">
+            {
+              cardData.map((card) => (
+                <div class="embla__slide">
+                  <Card carddata={card} countryflag="true"/>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      ) : (
+        <div class="text-base-content text-center py-12">
+          <p class="text-xl opacity-75">No movies available at the moment.</p>
+        </div>
+      )}
+    </div>
+
+    <!-- Country Sections for Movies -->
+    {
+      Object.keys(entriesByCountry).map((country) => {
+        const countryEntries = entriesByCountry[country];
+        const countryCardData = countryEntries.map((entry: any) => ({
+          id: entry.data.id,
+          title: entry.data.title,
+          orgtitle: entry.data.orgtitle,
+          metascore: entry.data.info.metascore || "N/A",
+          type: entry.data.info.type,
+          poster: entry.data.info.poster || "/mzkstyDSsTRswCMRvoBD5ULPnIt.jpg",
+          channel: { country: entry.data.info.channel.country },
+          remainingDays: calculateRemainingDays(entry.data.info.onlineuntil),
+        }));
+
+        return (
+          <div class="px-8">
+            <h2 class="text-base-content text-2xl font-bold my-8 flex items-center gap-2">
+              <span class={`fi fi-${country.toLowerCase()} fis`}></span>
+              {country.toUpperCase()} Movies ({countryEntries.length})
+            </h2>
+
+            <!-- Card Carousel -->
+            <div class="card-carousel embla">
+              <div class="embla__container">
+                {
+                  countryCardData.map((card) => (
+                    <div class="embla__slide">
+                      <Card carddata={card} />
+                    </div>
+                  ))
+                }
+              </div>
+            </div>
+          </div>
+        );
+      })
+    }
+  </div>
+</Layout>
+
+<script>
+  //ts-ignore
+  import EmblaCarousel from "embla-carousel";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const emblaNodes = document.querySelectorAll(".card-carousel");
+    emblaNodes.forEach((emblaNode) => {
+      if (emblaNode) {
+        const options = {
+          align: "start",
+          containScroll: "trimSnaps",
+          dragFree: true,
+          slidesToScroll: 1,
+        };
+
+        const emblaApi = EmblaCarousel(emblaNode, options);
+      }
+    });
+  });
+</script>
+
+<style>
+  :root {
+    color-scheme: dark;
+  }
+
+  .card-carousel {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+
+  .embla__container {
+    display: flex;
+    gap: 1.5rem;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -khtml-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    margin-left: -1.5rem;
+  }
+
+  .embla__slide {
+    flex: 0 0 auto;
+    min-width: 0;
+    padding-left: 1.5rem;
+  }
+
+  /* Responsive slide sizes */
+  @media (max-width: 640px) {
+    .embla__slide {
+      width: 70%;
+    }
+  }
+  @media (min-width: 641px) and (max-width: 768px) {
+    .embla__slide {
+      width: 50%;
+    }
+  }
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .embla__slide {
+      width: 33.333%;
+    }
+  }
+  @media (min-width: 1025px) and (max-width: 1279px) {
+    .embla__slide {
+      width: 25%;
+    }
+  }
+  @media (min-width: 1280px) {
+    .embla__slide {
+      width: 20%;
+    }
+  }
+</style>

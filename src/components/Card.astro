@@ -1,0 +1,259 @@
+---
+import { Icon } from "astro-icon/components";
+import { Image } from 'astro:assets';
+
+// Define the CardData interface
+interface CardData {
+  id: string;
+  title?: string;
+  orgtitle?: string;
+  metascore?: string;
+  type: 'movie' | 'series' | 'y-movie' | 'y-series';
+  poster?: string;
+  backdropup?: { filename_disk: string };
+  posterup?: { filename_disk: string };
+  channel: { country: string };
+  remainingDays?: number;
+}
+
+// Props for the Card component
+interface Props {
+  carddata: CardData;
+  countryflag?: string;
+  ico1?: string;
+}
+
+const { carddata, countryflag, ico1 } = Astro.props;
+
+const title = carddata?.title || 'Unknown Title';
+const orgtitle = carddata?.orgtitle || null;
+const metascore = carddata?.metascore || 'Unknown';
+const countryflag1 = `fi fi-${carddata.channel.country.toLowerCase()}`;
+
+// Type icon mapping
+const typeIconMap = {
+  movie: 'mdi:movie',
+  series: 'mdi:tv',
+  'y-movie': 'mdi:movie',
+  'y-series': 'mdi:tv'
+} as const;
+
+const getTypeIcon = (type: CardData['type']) => typeIconMap[type] || 'mdi:movie';
+
+// Generate poster URL
+const getPosterUrl = () => {
+  if (carddata.poster) {
+    return carddata.poster.startsWith('http') ? carddata.poster : `https://img.mediathek.community/t/p/w300${carddata.poster}`;
+  } else if (carddata.posterup?.filename_disk) {
+    return `https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/${carddata.posterup.filename_disk}`;
+  } else if (carddata.backdropup?.filename_disk) {
+    return `https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/${carddata.backdropup.filename_disk}`;
+  }
+  return 'https://api.mediathek.community/assets/default-poster.jpg';
+};
+
+const posterUrl = getPosterUrl();
+---
+
+<a href={`/details/${carddata.id}`} class="card" data-astro-transition>
+  <div class="card-content" role="button" tabindex="0">
+    <div class="card-image">
+      <Image 
+        src={posterUrl} 
+        alt={title}
+        width={300}
+        height={450}
+        class="card-poster"
+      />
+
+      <div class="badges">
+        <div class="quality-icon">
+          <Icon name={getTypeIcon(carddata.type)} />
+        </div>
+        {carddata.remainingDays !== undefined && carddata.remainingDays < 2 && (
+          <div
+            class:list={[
+              "remaining-days-badge",
+              carddata.remainingDays === 0 ? "red-warning" : "yellow-warning"
+            ]}
+          >
+            <div class="md:hidden">
+              <Icon name="mdi:alert" />
+            </div>
+            <span class="remaining-days-text hidden sm:block">
+              {carddata.remainingDays === 0
+                ? 'Expires today'
+                : `~ ${carddata.remainingDays}d remains`}
+            </span>
+          </div>
+        )}
+        {countryflag && <div class="country-flag"><span class={countryflag1} /></div>}
+      </div>
+
+      <div class="card-overlay">
+        <h3 class="card-title">{title}</h3>
+        {orgtitle && orgtitle !== title && (
+          <p class="card-subtitle">{orgtitle}</p>
+        )}
+        {metascore !== 'Unknown' && (
+          <p class="metascore">Score: {metascore}</p>
+        )}
+      </div>
+    </div>
+  </div>
+</a>
+
+<style>
+  :root {
+    --card-bg-color: #1a1a1a;
+    --card-placeholder-bg-color: #2a2a2a;
+    --card-overlay-bg-color: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.95) 0%,
+      rgba(0, 0, 0, 0.7) 100%
+    );
+    --badge-bg-color: rgba(0, 0, 0, 0.7);
+    --badge-text-color: white;
+    --red-warning-color: red;
+    --yellow-warning-color: yellow;
+  }
+
+  .card {
+    width: 220px;
+    height: 330px;
+    margin: 0;
+    position: relative;
+    transform: translateZ(0);
+    will-change: transform;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 8px;
+    background: var(--card-bg-color);
+  }
+
+  .card:hover {
+    transform: scale(1.05) translateZ(0);
+  }
+
+  .card-content {
+    width: 100%;
+    height: 100%;
+  }
+
+  .card-image {
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+
+  .card-poster {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .badges {
+    display: flex;
+    gap: 8px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1;
+  }
+
+  .quality-icon,
+  .country-flag {
+    background: var(--badge-bg-color);
+    padding: 4px;
+    border-radius: 4px;
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--badge-text-color);
+    width: 32px;
+    height: 32px;
+  }
+
+  .remaining-days-badge {
+    background: var(--badge-bg-color);
+    padding: 4px 8px;
+    border-radius: 4px;
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--badge-text-color);
+  }
+
+  .remaining-days-badge.red-warning {
+    color: var(--red-warning-color);
+  }
+
+  .remaining-days-badge.yellow-warning {
+    color: var(--yellow-warning-color);
+  }
+
+  .card-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--card-overlay-bg-color);
+    color: white;
+    padding: 15px;
+    max-height: 70%;
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card:hover .card-overlay {
+    transform: translateY(0);
+  }
+
+  .card-title {
+    font-size: clamp(0.875rem, 2vw, 1rem);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+  }
+
+  .card-subtitle {
+    font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+    opacity: 0.9;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+  }
+
+  .metascore {
+    font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+    color: #00ff00;
+  }
+
+  @media (max-width: 640px) {
+    .card {
+      width: 160px;
+      height: 240px;
+    }
+
+    .card-title {
+      font-size: 0.875rem;
+    }
+
+    .card-subtitle {
+      font-size: 0.75rem;
+    }
+  }
+
+  :global(.card .fi) {
+    width: 20px;
+    height: 20px;
+  }
+
+  .quality-icon [data-icon] {
+    width: 20px;
+    height: 20px;
+  }
+</style>

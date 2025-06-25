@@ -1,0 +1,258 @@
+---
+import Layout from "../layouts/default.astro";
+import HeroSlider from "../components/HeroSlider.astro";
+import Card from "../components/Card.astro";
+import { Icon } from "astro-icon/components";
+import { getCollection } from "astro:content";
+
+// Get all details from content collection and filter for 4K/UHD quality only (excluding fallback)
+const allDetailsRaw = await getCollection("details");
+const hdDetails = allDetailsRaw.filter(
+  (entry: any) => entry.data.id !== "fallback" && 
+  (entry.data.info.quality?.toLowerCase() === "4k" || entry.data.info.quality?.toLowerCase() === "uhd")
+);
+
+// Function to calculate remaining days from onlineuntil date in visitor's local time
+function calculateRemainingDays(onlineuntil: string): number {
+  const currentDate = new Date();
+
+  // Handle both date formats: "2025-06-24" and "2025-06-24T23:59:59Z"
+  let expiryDate: Date;
+  if (onlineuntil.includes("T")) {
+    // Full ISO format with time
+    expiryDate = new Date(onlineuntil);
+  } else {
+    // Date-only format, treat as end of day in local timezone
+    expiryDate = new Date(onlineuntil + "T23:59:59");
+  }
+
+  // Convert to local dates (removing time component) for accurate day calculation
+  const currentLocalDate = new Date(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+    currentDate.getDate()
+  );
+  const expiryLocalDate = new Date(
+    expiryDate.getFullYear(),
+    expiryDate.getMonth(),
+    expiryDate.getDate()
+  );
+
+  const diffTime = expiryLocalDate.getTime() - currentLocalDate.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return Math.max(0, diffDays); // Return 0 if expired
+}
+
+// Convert HD details to hero items and card data
+const heroItems = hdDetails.slice(0, 3).map((entry: any) => ({
+  backdrop: entry.data.info.backdrop || "/8zLyVhEsH6SM9diX7CUUWcaRlk0.jpg",
+  title: entry.data.title,
+  orgtitle: entry.data.orgtitle,
+  id: entry.data.id,
+  channel: {
+    country: entry.data.info.channel.country,
+    icon: entry.data.info.channel.name?.toLowerCase() || "unknown",
+  },
+  quality: entry.data.info.quality || "4K",
+  type: entry.data.info.type,
+  channelicon: entry.data.info.type === "movie" ? "simple-icons:warnerbros" : "simple-icons:netflix",
+}));
+
+// Convert HD details to card data with calculated remaining days
+const cardData = hdDetails.map((entry: any) => ({
+  id: entry.data.id,
+  title: entry.data.title,
+  orgtitle: entry.data.orgtitle,
+  metascore: entry.data.info.metascore || "N/A",
+  type: entry.data.info.type,
+  poster: entry.data.info.poster || "/mzkstyDSsTRswCMRvoBD5ULPnIt.jpg",
+  channel: { country: entry.data.info.channel.country },
+  remainingDays: calculateRemainingDays(entry.data.info.onlineuntil),
+}));
+
+// Split HD content by type
+const hdMovies = hdDetails.filter((entry: any) => entry.data.info.type === "movie" || entry.data.info.type === "y-movie");
+const hdSeries = hdDetails.filter((entry: any) => entry.data.info.type === "series" || entry.data.info.type === "y-series");
+---
+
+<Layout>
+  <div class="flex flex-col min-h-screen">
+    {heroItems.length > 0 && (
+      <HeroSlider heroItems={heroItems} special={true} showcountry={true} />
+    )}
+
+    <!-- 4K/UHD Section -->
+    <div class="px-8">
+      <h1 class="text-base-content text-3xl font-bold my-8 flex items-center gap-2">
+        <svg class="w-6 h-6 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M19,3H5C3.9,3 3,3.9 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V5C21,3.9 20.1,3 19,3M19,19H5V5H19V19M7.5,13H9.5V10.5H12V13H14V7H12V9H9.5V7H7.5V13M18,10.5V9A1,1 0 0,0 17,8H15A1,1 0 0,0 14,9V15A1,1 0 0,0 15,16H17A1,1 0 0,0 18,15V13.5H17V15H15V9H17V10.5H18Z"/>
+        </svg>
+        4K & UHD Content ({hdDetails.length})
+      </h1>
+
+      {cardData.length > 0 ? (
+        <!-- Card Carousel -->
+        <div class="card-carousel embla">
+          <div class="embla__container">
+            {
+              cardData.map((card) => (
+                <div class="embla__slide">
+                  <Card carddata={card} countryflag="true"/>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      ) : (
+        <div class="text-base-content text-center py-12">
+          <p class="text-xl opacity-75">No 4K or UHD content available at the moment.</p>
+        </div>
+      )}
+    </div>
+
+    <!-- 4K Movies Section -->
+    {hdMovies.length > 0 && (
+      <div class="px-8">
+        <h2 class="text-base-content text-2xl font-bold my-8 flex items-center gap-2">
+          <Icon name="mdi:movie" size={20} />
+          4K Movies ({hdMovies.length})
+        </h2>
+
+        <div class="card-carousel embla">
+          <div class="embla__container">
+            {
+              hdMovies.map((entry: any) => {
+                const card = {
+                  id: entry.data.id,
+                  title: entry.data.title,
+                  orgtitle: entry.data.orgtitle,
+                  metascore: entry.data.info.metascore || "N/A",
+                  type: entry.data.info.type,
+                  poster: entry.data.info.poster || "/mzkstyDSsTRswCMRvoBD5ULPnIt.jpg",
+                  channel: { country: entry.data.info.channel.country },
+                  remainingDays: calculateRemainingDays(entry.data.info.onlineuntil),
+                };
+                return (
+                  <div class="embla__slide">
+                    <Card carddata={card} countryflag="true"/>
+                  </div>
+                );
+              })
+            }
+          </div>
+        </div>
+      </div>
+    )}
+
+    <!-- 4K Series Section -->
+    {hdSeries.length > 0 && (
+      <div class="px-8">
+        <h2 class="text-base-content text-2xl font-bold my-8 flex items-center gap-2">
+          <Icon name="mdi:tv" size={20} />
+          4K Series ({hdSeries.length})
+        </h2>
+
+        <div class="card-carousel embla">
+          <div class="embla__container">
+            {
+              hdSeries.map((entry: any) => {
+                const card = {
+                  id: entry.data.id,
+                  title: entry.data.title,
+                  orgtitle: entry.data.orgtitle,
+                  metascore: entry.data.info.metascore || "N/A",
+                  type: entry.data.info.type,
+                  poster: entry.data.info.poster || "/mzkstyDSsTRswCMRvoBD5ULPnIt.jpg",
+                  channel: { country: entry.data.info.channel.country },
+                  remainingDays: calculateRemainingDays(entry.data.info.onlineuntil),
+                };
+                return (
+                  <div class="embla__slide">
+                    <Card carddata={card} countryflag="true"/>
+                  </div>
+                );
+              })
+            }
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+</Layout>
+
+<script>
+  //ts-ignore
+  import EmblaCarousel from "embla-carousel";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const emblaNodes = document.querySelectorAll(".card-carousel");
+    emblaNodes.forEach((emblaNode) => {
+      if (emblaNode) {
+        const options = {
+          align: "start",
+          containScroll: "trimSnaps",
+          dragFree: true,
+          slidesToScroll: 1,
+        };
+
+        const emblaApi = EmblaCarousel(emblaNode, options);
+      }
+    });
+  });
+</script>
+
+<style>
+  :root {
+    color-scheme: dark;
+  }
+
+  .card-carousel {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+
+  .embla__container {
+    display: flex;
+    gap: 1.5rem;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -khtml-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    margin-left: -1.5rem;
+  }
+
+  .embla__slide {
+    flex: 0 0 auto;
+    min-width: 0;
+    padding-left: 1.5rem;
+  }
+
+  /* Responsive slide sizes */
+  @media (max-width: 640px) {
+    .embla__slide {
+      width: 70%;
+    }
+  }
+  @media (min-width: 641px) and (max-width: 768px) {
+    .embla__slide {
+      width: 50%;
+    }
+  }
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .embla__slide {
+      width: 33.333%;
+    }
+  }
+  @media (min-width: 1025px) and (max-width: 1279px) {
+    .embla__slide {
+      width: 25%;
+    }
+  }
+  @media (min-width: 1280px) {
+    .embla__slide {
+      width: 20%;
+    }
+  }
+</style>
