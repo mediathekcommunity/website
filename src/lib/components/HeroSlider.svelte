@@ -60,7 +60,7 @@
 			return 'https://api.mediathek.community/assets/default-backdrop.jpg';
 		}
 		return slide.backdrop
-			? 'https://mediathekc.b-cdn.net/t/p/original' + slide.backdrop
+			? 'https://img.mediathek.community/t/p/original' + slide.backdrop
 			: 'https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/' +
 					slide.backdropup;
 	};

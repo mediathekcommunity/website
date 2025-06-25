@@ -5,5 +5,12 @@
 	"assets": {
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare"
-	}
+	},
+	"routes": [
+		{
+			"pattern": "mediathek.community",
+			"custom_domain": true
+		}
+	],
+	"workers_dev": true
 }
