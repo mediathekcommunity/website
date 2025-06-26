@@ -42,10 +42,12 @@ const details = defineCollection({
     id: z.string(),
     title: z.string(),
     orgtitle: z.string().optional(),
-    geo: europeanCountryCodes,
+    geo: europeanCountryCodes.optional(),
     fskcheck: z.boolean().optional(),
     serverhour: z.number().optional(),
     dyna: z.boolean().optional(),
+    created: z.string().optional(), // ISO 8601 timestamp for when the content was first created
+    lastupdated: z.string().optional(), // ISO 8601 timestamp for when the content was last updated
     info: z.object({
       type: z.enum(["movie", "series", "y-movie", "y-series"]),
       duration: z.number(), // Duration per episode for series, total for movies

@@ -21,15 +21,36 @@
       "info": true
     },
     "cast": [
-      { "id": "actor-7", "name": "Emma Clarke" },
-      { "id": "actor-8", "name": "David Martinez" },
-      { "id": "actor-9", "name": "Sofia Chen" },
-      { "id": "actor-10", "name": "Marcus Johnson" }
+      {
+        "id": "actor-7",
+        "name": "Emma Clarke"
+      },
+      {
+        "id": "actor-8",
+        "name": "David Martinez"
+      },
+      {
+        "id": "actor-9",
+        "name": "Sofia Chen"
+      },
+      {
+        "id": "actor-10",
+        "name": "Marcus Johnson"
+      }
     ],
     "crew": [
-      { "id": "director-3", "name": "Jennifer Wallace" },
-      { "id": "writer-2", "name": "Thomas Anderson" },
-      { "id": "producer-2", "name": "Lisa Roberts" }
+      {
+        "id": "director-3",
+        "name": "Jennifer Wallace"
+      },
+      {
+        "id": "writer-2",
+        "name": "Thomas Anderson"
+      },
+      {
+        "id": "producer-2",
+        "name": "Lisa Roberts"
+      }
     ],
     "backdrop": "https://img.mediathek.community/t/p/original/8zLyVhEsH6SM9diX7CUUWcaRlk0.jpg",
     "poster": "https://img.mediathek.community/t/p/w300/mzkstyDSsTRswCMRvoBD5ULPnIt.jpg"
@@ -42,7 +63,10 @@
           "episode": 1,
           "title": "The Beginning",
           "description": "In a world where technology has advanced beyond imagination, our heroes discover a conspiracy that threatens the very fabric of reality.",
-          "audiolang": ["de-dub", "en-dub"],
+          "audiolang": [
+            "de-dub",
+            "en-dub"
+          ],
           "sources": [
             {
               "src": "https://tvdlzdf-a.akamaihd.net/dach/zdf/24/09/240908_2015_sendung_agg/1/240908_2015_sendung_agg_a3a4_6660k_p37v17.mp4",
@@ -55,14 +79,20 @@
           "episode": 2,
           "title": "Fractured Time",
           "description": "Time itself begins to fracture as the team investigates strange anomalies appearing across the globe.",
-          "audiolang": ["de-dub", "en-dub"]
+          "audiolang": [
+            "de-dub",
+            "en-dub"
+          ]
         },
         {
           "season": 1,
           "episode": 3,
           "title": "Digital Echoes",
           "description": "The team discovers that their digital footprints are creating echoes in parallel dimensions.",
-          "audiolang": ["de-dub", "en-dub"]
+          "audiolang": [
+            "de-dub",
+            "en-dub"
+          ]
         }
       ],
       "2": [
@@ -71,14 +101,20 @@
           "episode": 1,
           "title": "New Horizons",
           "description": "Season 2 opens with our heroes facing the consequences of their previous actions as reality continues to shift.",
-          "audiolang": ["de-dub", "en-dub"]
+          "audiolang": [
+            "de-dub",
+            "en-dub"
+          ]
         },
         {
           "season": 2,
           "episode": 2,
           "title": "The Convergence",
           "description": "Multiple timelines begin to converge, creating unprecedented challenges for the team.",
-          "audiolang": ["de-dub", "en-dub"]
+          "audiolang": [
+            "de-dub",
+            "en-dub"
+          ]
         }
       ]
     },
@@ -129,5 +165,7 @@
         }
       ]
     }
-  }
+  },
+  "created": "2025-06-26T20:42:40.208Z",
+  "lastupdated": "2025-06-26T20:42:40.208Z"
 }

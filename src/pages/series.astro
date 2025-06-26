@@ -72,7 +72,14 @@ const heroItems = seriesDetails.length > 0
     }];
 
 // Convert series details to card data with calculated remaining days
-const cardData = seriesDetails.map((entry: any) => ({
+// Sort by created timestamp in descending order (newest first)
+const sortedSeriesDetails = seriesDetails.sort((a: any, b: any) => {
+  const dateA = a.data.created ? new Date(a.data.created).getTime() : 0;
+  const dateB = b.data.created ? new Date(b.data.created).getTime() : 0;
+  return dateB - dateA; // Descending order (newest first)
+});
+
+const cardData = sortedSeriesDetails.map((entry: any) => ({
   id: entry.data.id,
   title: entry.data.title,
   orgtitle: entry.data.orgtitle,

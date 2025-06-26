@@ -29,7 +29,37 @@ function getMimeType(type: any) {
       class="flex flex-col md:flex-row gap-8 w-full justify-center items-stretch"
     >
       <div class="flex flex-row gap-8 w-full justify-center items-stretch">
-        <!-- 4-column layout: 1. TMDB debug, 2. Form, 3. Normal debug, 4. Episode JSON debug -->
+        <!-- 5-column layout: 1. File list, 2. TMDB debug, 3. Form, 4. Normal debug, 5. Episode JSON debug -->
+
+        <!-- File List Column -->
+        <div class="flex flex-col w-full max-w-xs" style="max-width: 18rem;">
+          <div
+            id="file-list-card"
+            class="bg-base-200 p-4 rounded-lg shadow-lg flex flex-col gap-2 border-2 border-info h-full"
+            style="height:100%;"
+          >
+            <label class="label">
+              <span class="label-text text-info font-bold">Content Files</span>
+            </label>
+            <div
+              id="file-list-container"
+              class="flex flex-col gap-1 h-full overflow-y-auto"
+            >
+              <button
+                id="new-file-btn"
+                class="btn btn-success btn-sm w-full text-left justify-start"
+                type="button"
+              >
+                (New File)
+              </button>
+              <div id="file-list" class="flex flex-col gap-1">
+                <!-- Files will be loaded here -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TMDB Debug Column -->
         <div class="flex flex-col w-full max-w-xs" style="max-width: 22rem;">
           <div
             id="tmdb-debug-card"
@@ -161,18 +191,85 @@ function getMimeType(type: any) {
               <option value="mc">Monaco</option>
             </select>
           </div>
-          <div class="form-control">
+          <!-- Channel object -->
+          <div class="form-control border border-base-300 rounded-lg p-4 mb-2">
             <label class="label">
-              <span class="label-text">Channel</span>
+              <span class="label-text font-bold">Channel Info</span>
             </label>
             <input
-              id="channel"
-              name="channel"
+              id="channel_name"
+              name="channel_name"
               type="text"
               placeholder="Channel Name"
-              class="input input-bordered"
-              required
+              class="input input-bordered mb-2"
             />
+            <select
+              id="channel_country"
+              name="channel_country"
+              class="select select-bordered mb-2"
+            >
+              <option value="">Select country</option>
+              <option value="gb">United Kingdom</option>
+              <option value="de">Germany</option>
+              <option value="fr">France</option>
+              <option value="es">Spain</option>
+              <option value="it">Italy</option>
+              <option value="pt">Portugal</option>
+              <option value="nl">Netherlands</option>
+              <option value="se">Sweden</option>
+              <option value="dk">Denmark</option>
+              <option value="no">Norway</option>
+              <option value="fi">Finland</option>
+              <option value="is">Iceland</option>
+              <option value="fo">Faroe Islands</option>
+              <option value="pl">Poland</option>
+              <option value="ru">Russia</option>
+              <option value="cz">Czech Republic</option>
+              <option value="hu">Hungary</option>
+              <option value="ro">Romania</option>
+              <option value="bg">Bulgaria</option>
+              <option value="hr">Croatia</option>
+              <option value="sk">Slovakia</option>
+              <option value="si">Slovenia</option>
+              <option value="ee">Estonia</option>
+              <option value="lv">Latvia</option>
+              <option value="lt">Lithuania</option>
+              <option value="ua">Ukraine</option>
+              <option value="by">Belarus</option>
+              <option value="gr">Greece</option>
+              <option value="mt">Malta</option>
+              <option value="al">Albania</option>
+              <option value="mk">North Macedonia</option>
+              <option value="rs">Serbia</option>
+              <option value="ba">Bosnia and Herzegovina</option>
+              <option value="me">Montenegro</option>
+              <option value="ie">Ireland</option>
+              <option value="lu">Luxembourg</option>
+              <option value="at">Austria</option>
+              <option value="ch">Switzerland</option>
+              <option value="be">Belgium</option>
+              <option value="li">Liechtenstein</option>
+              <option value="sm">San Marino</option>
+              <option value="va">Vatican City</option>
+              <option value="ad">Andorra</option>
+              <option value="mc">Monaco</option>
+            </select>
+            <input
+              id="channel_icon"
+              name="channel_icon"
+              type="text"
+              placeholder="Channel Icon (optional)"
+              class="input input-bordered mb-2"
+            />
+            <label class="label cursor-pointer">
+              <span class="label-text">Channel Info (bool)</span>
+              <input
+                id="channel_info"
+                name="channel_info"
+                type="checkbox"
+                class="checkbox ml-2"
+              />
+            </label>
           </div>
           <div class="form-control">
             <label class="label">
@@ -302,87 +399,29 @@ function getMimeType(type: any) {
               class="textarea textarea-bordered"
               required></textarea>
           </div>
-          <!-- Channel object -->
-          <div class="form-control border border-base-300 rounded-lg p-4 mb-2">
+          <div class="form-control">
             <label class="label">
-              <span class="label-text font-bold">Channel Info</span>
+              <span class="label-text">Backdrop URL</span>
             </label>
             <input
-              id="channel_name"
-              name="channel_name"
+              id="backdrop"
+              name="backdrop"
               type="text"
-              placeholder="Channel Name"
-              class="input input-bordered mb-2"
-              required
+              placeholder="Backdrop image URL"
+              class="input input-bordered"
             />
-            <select
-              id="channel_country"
-              name="channel_country"
-              class="select select-bordered mb-2"
-              required
-            >
-              <option value="">Select country</option>
-              <option value="gb">United Kingdom</option>
-              <option value="de">Germany</option>
-              <option value="fr">France</option>
-              <option value="es">Spain</option>
-              <option value="it">Italy</option>
-              <option value="pt">Portugal</option>
-              <option value="nl">Netherlands</option>
-              <option value="se">Sweden</option>
-              <option value="dk">Denmark</option>
-              <option value="no">Norway</option>
-              <option value="fi">Finland</option>
-              <option value="is">Iceland</option>
-              <option value="fo">Faroe Islands</option>
-              <option value="pl">Poland</option>
-              <option value="ru">Russia</option>
-              <option value="cz">Czech Republic</option>
-              <option value="hu">Hungary</option>
-              <option value="ro">Romania</option>
-              <option value="bg">Bulgaria</option>
-              <option value="hr">Croatia</option>
-              <option value="sk">Slovakia</option>
-              <option value="si">Slovenia</option>
-              <option value="ee">Estonia</option>
-              <option value="lv">Latvia</option>
-              <option value="lt">Lithuania</option>
-              <option value="ua">Ukraine</option>
-              <option value="by">Belarus</option>
-              <option value="gr">Greece</option>
-              <option value="mt">Malta</option>
-              <option value="al">Albania</option>
-              <option value="mk">North Macedonia</option>
-              <option value="rs">Serbia</option>
-              <option value="ba">Bosnia and Herzegovina</option>
-              <option value="me">Montenegro</option>
-              <option value="ie">Ireland</option>
-              <option value="lu">Luxembourg</option>
-              <option value="at">Austria</option>
-              <option value="ch">Switzerland</option>
-              <option value="be">Belgium</option>
-              <option value="li">Liechtenstein</option>
-              <option value="sm">San Marino</option>
-              <option value="va">Vatican City</option>
-              <option value="ad">Andorra</option>
-              <option value="mc">Monaco</option>
-            </select>
-            <input
-              id="channel_icon"
-              name="channel_icon"
-              type="text"
-              placeholder="Channel Icon (optional)"
-              class="input input-bordered mb-2"
-            />
-            <label class="label cursor-pointer">
-              <span class="label-text">Channel Info (bool)</span>
-              <input
-                id="channel_info"
-                name="channel_info"
-                type="checkbox"
-                class="checkbox ml-2"
-              />
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Poster URL</span>
             </label>
+            <input
+              id="poster"
+              name="poster"
+              type="text"
+              placeholder="Poster image URL"
+              class="input input-bordered"
+            />
           </div>
           <!-- Movie/Series Source Fields -->
           <div id="movie-source-fields" class="form-control">
@@ -517,7 +556,8 @@ function getMimeType(type: any) {
                 type="button"
                 class="btn btn-xs btn-success"
                 disabled
-                title="Save JSON to content collection folder">Save</button>
+                title="Save JSON to content collection folder">Save</button
+              >
             </label>
             <textarea
               id="debug-json"
@@ -648,23 +688,19 @@ function getMimeType(type: any) {
               }
               if (orgtitleInput && "value" in orgtitleInput)
                 orgtitleInput.value = orgtitleValue;
-              // Country/geo
-              if (
-                data.production_countries &&
-                data.production_countries.length > 0
-              ) {
-                setField(
-                  "geo",
-                  (data.production_countries[0].iso_3166_1 || "").toLowerCase()
-                );
-                setField(
-                  "channel_country",
-                  (data.production_countries[0].iso_3166_1 || "").toLowerCase()
-                );
-              }
-              // Channel fields are user input only; do not map from TMDB
+              // Country/geo and Channel fields are user input only; do not map from TMDB
               // Description
               setField("description", data.description || data.overview || "");
+              // Backdrop and Poster - different fields based on type
+              if (typeVal === "series" || typeVal === "y-series") {
+                // For series: use backdrop_path and poster_path
+                setField("backdrop", data.backdrop_path || "");
+                setField("poster", data.poster_path || "");
+              } else {
+                // For movies: use backdrop and poster
+                setField("backdrop", data.backdrop || "");
+                setField("poster", data.poster || "");
+              }
               // Duration
               setField("duration", data.runtime || "");
               // Seasons/Episodes
@@ -708,14 +744,14 @@ function getMimeType(type: any) {
               // Cast
               if (Array.isArray(data.credits?.cast)) {
                 window.castArr = data.credits.cast.map((c: any) => ({
-                  id: c.id,
+                  id: String(c.id),
                   name: c.name,
                 }));
               }
               // Crew
               if (Array.isArray(data.credits?.crew)) {
                 window.crewArr = data.credits.crew.map((c: any) => ({
-                  id: c.id,
+                  id: String(c.id),
                   name: c.name,
                 }));
               }
@@ -737,7 +773,10 @@ function getMimeType(type: any) {
                   const tmdbid = data.id || "";
                   // Use number_of_seasons for dropdown and label
                   let numberOfSeasons = 1;
-                  if (typeof data.number_of_seasons === "number" && data.number_of_seasons > 0) {
+                  if (
+                    typeof data.number_of_seasons === "number" &&
+                    data.number_of_seasons > 0
+                  ) {
                     numberOfSeasons = data.number_of_seasons;
                   }
                   // Show season count in label
@@ -752,7 +791,8 @@ function getMimeType(type: any) {
                   episodeDebugList.appendChild(seasonSelectLabel);
                   const seasonSelect = document.createElement("select");
                   seasonSelect.className = "select select-bordered mb-4";
-                  seasonSelect.innerHTML = '<option value="">-- Select --</option>';
+                  seasonSelect.innerHTML =
+                    '<option value="">-- Select --</option>';
                   for (let i = 1; i <= numberOfSeasons; i++) {
                     const option = document.createElement("option");
                     option.value = String(i);
@@ -811,22 +851,36 @@ function getMimeType(type: any) {
                         epDiv.innerText = "";
                         // 1. Row: season/episode
                         const row1 = document.createElement("div");
-                        row1.className = "font-bold text-sm mb-1 flex items-center gap-2";
+                        row1.className =
+                          "font-bold text-sm mb-1 flex items-center gap-2";
                         row1.innerText = `Season ${season}, Episode ${episode}`;
                         // Add copy button for season/episode number
                         const copySEBtn = document.createElement("button");
                         copySEBtn.type = "button";
-                        copySEBtn.className = "btn btn-xs btn-outline btn-accent ml-2";
+                        copySEBtn.className =
+                          "btn btn-xs btn-outline btn-accent ml-2";
                         copySEBtn.innerText = "Copy S/E";
                         copySEBtn.title = "Copy season/episode to form fields";
                         copySEBtn.addEventListener("click", () => {
                           // Set the season and episode fields in the form
-                          const playlistSeasonInput = document.getElementById("playlist_season");
-                          const playlistEpisodeInput = document.getElementById("playlist_episode");
-                          if (playlistSeasonInput && (playlistSeasonInput instanceof HTMLInputElement || playlistSeasonInput instanceof HTMLTextAreaElement)) {
+                          const playlistSeasonInput =
+                            document.getElementById("playlist_season");
+                          const playlistEpisodeInput =
+                            document.getElementById("playlist_episode");
+                          if (
+                            playlistSeasonInput &&
+                            (playlistSeasonInput instanceof HTMLInputElement ||
+                              playlistSeasonInput instanceof
+                                HTMLTextAreaElement)
+                          ) {
                             playlistSeasonInput.value = String(season);
                           }
-                          if (playlistEpisodeInput && (playlistEpisodeInput instanceof HTMLInputElement || playlistEpisodeInput instanceof HTMLTextAreaElement)) {
+                          if (
+                            playlistEpisodeInput &&
+                            (playlistEpisodeInput instanceof HTMLInputElement ||
+                              playlistEpisodeInput instanceof
+                                HTMLTextAreaElement)
+                          ) {
                             playlistEpisodeInput.value = String(episode);
                           }
                         });
@@ -847,8 +901,13 @@ function getMimeType(type: any) {
                           const title = ep.name || ep.title || "";
                           navigator.clipboard.writeText(title);
                           // Also set the episode title field in the form
-                          const playlistTitleInput = document.getElementById("playlist_title");
-                          if (playlistTitleInput && (playlistTitleInput instanceof HTMLInputElement || playlistTitleInput instanceof HTMLTextAreaElement)) {
+                          const playlistTitleInput =
+                            document.getElementById("playlist_title");
+                          if (
+                            playlistTitleInput &&
+                            (playlistTitleInput instanceof HTMLInputElement ||
+                              playlistTitleInput instanceof HTMLTextAreaElement)
+                          ) {
                             playlistTitleInput.value = title;
                           }
                         });
@@ -872,8 +931,15 @@ function getMimeType(type: any) {
                           const desc = ep.overview || ep.description || "";
                           navigator.clipboard.writeText(desc);
                           // Also set the episode description field in the form
-                          const playlistDescriptionInput = document.getElementById("playlist_description");
-                          if (playlistDescriptionInput && (playlistDescriptionInput instanceof HTMLInputElement || playlistDescriptionInput instanceof HTMLTextAreaElement)) {
+                          const playlistDescriptionInput =
+                            document.getElementById("playlist_description");
+                          if (
+                            playlistDescriptionInput &&
+                            (playlistDescriptionInput instanceof
+                              HTMLInputElement ||
+                              playlistDescriptionInput instanceof
+                                HTMLTextAreaElement)
+                          ) {
                             playlistDescriptionInput.value = desc;
                           }
                         });
@@ -921,13 +987,31 @@ function getMimeType(type: any) {
           }
         }
 
-        // Sync debug, tmdb debug, and episode debug card height to form height
+        // Map MIME type back to short type for form loading
+        function getShortType(mimeType: string): string {
+          switch (mimeType) {
+            case "application/dash+xml":
+              return "mpd";
+            case "application/x-mpegURL":
+              return "m3u8";
+            case "video/mp4":
+              return "mp4";
+            case "video/webm":
+              return "webm";
+            default:
+              return mimeType || "";
+          }
+        }
+
+        // Sync debug, tmdb debug, episode debug, and file list card height to form height
         function syncDebugCardHeight() {
           const formCard = document.getElementById("dev-form");
           const debugCard = document.getElementById("debug-card");
           const tmdbDebugCard = document.getElementById("tmdb-debug-card");
           const episodeDebugCard =
             document.getElementById("episode-debug-card");
+          const fileListCard = document.getElementById("file-list-card");
+
           if (formCard && debugCard) {
             debugCard.style.height = formCard.offsetHeight + "px";
           }
@@ -936,6 +1020,9 @@ function getMimeType(type: any) {
           }
           if (formCard && episodeDebugCard) {
             episodeDebugCard.style.height = formCard.offsetHeight + "px";
+          }
+          if (formCard && fileListCard) {
+            fileListCard.style.height = formCard.offsetHeight + "px";
           }
         }
         window.addEventListener("resize", syncDebugCardHeight);
@@ -949,7 +1036,7 @@ function getMimeType(type: any) {
           formCard.addEventListener("change", syncDebugCardHeight);
         }
         const titleInput = document.getElementById("title");
-        const channelInput = document.getElementById("channel");
+        const channelInput = document.getElementById("channel_name");
         const idInput = document.getElementById("id");
         function updateId() {
           if (!titleInput || !channelInput || !idInput) return;
@@ -982,6 +1069,9 @@ function getMimeType(type: any) {
           const seriesSourceFields = document.getElementById(
             "series-source-fields"
           );
+          const channelNameInput = document.getElementById("channel_name");
+          const channelCountryInput =
+            document.getElementById("channel_country");
           if (
             !typeSelect ||
             !seriesFields ||
@@ -990,14 +1080,26 @@ function getMimeType(type: any) {
           )
             return;
           const val = (typeSelect as HTMLSelectElement).value;
-          if (val === "series" || val === "y-series") {
+          const isSeriesType = val === "series" || val === "y-series";
+
+          if (isSeriesType) {
             seriesFields.style.display = "";
             seriesSourceFields.style.display = "";
             movieSourceFields.style.display = "none";
+            // Make channel fields required for series
+            if (channelNameInput)
+              (channelNameInput as HTMLInputElement).required = true;
+            if (channelCountryInput)
+              (channelCountryInput as HTMLSelectElement).required = true;
           } else {
             seriesFields.style.display = "none";
             seriesSourceFields.style.display = "none";
             movieSourceFields.style.display = "";
+            // Make channel fields optional for movies
+            if (channelNameInput)
+              (channelNameInput as HTMLInputElement).required = false;
+            if (channelCountryInput)
+              (channelCountryInput as HTMLSelectElement).required = false;
           }
         }
         document.addEventListener("DOMContentLoaded", function () {
@@ -1039,22 +1141,37 @@ function getMimeType(type: any) {
           document.getElementById("playlist_srctype");
         const playlistList = document.getElementById("playlist-list");
         function renderPlaylistList() {
-          if (!playlistList) return;
+          console.log('renderPlaylistList called');
+          console.log('Current window.playlist:', window.playlist);
+          console.log('playlistList element:', playlistList);
+          
+          if (!playlistList) {
+            console.warn('playlistList element not found');
+            return;
+          }
+          
           playlistList.innerHTML = "";
           ["regular", "ov"].forEach((type) => {
-            const typeObj = (playlist as any)[type] as { [season: string]: any[] };
+            const typeObj = (window.playlist as any)[type] as {
+              [season: string]: any[];
+            };
+            console.log(`Processing ${type} playlist:`, typeObj);
+            
             const box = document.createElement("div");
-            box.className = "bg-base-200 rounded-lg p-4 mb-4 flex-1 min-w-[260px] max-w-[420px]";
+            box.className =
+              "bg-base-200 rounded-lg p-4 mb-4 flex-1 min-w-[260px] max-w-[420px]";
             const header = document.createElement("div");
             header.className = "font-bold text-lg mb-2";
             header.textContent = type.toUpperCase();
             box.appendChild(header);
             let hasAny = false;
             Object.entries(typeObj).forEach(([season, episodes]) => {
+              console.log(`  Season ${season} has ${episodes.length} episodes:`, episodes);
               (episodes as any[]).forEach((ep: any, idx: number) => {
                 hasAny = true;
                 const row = document.createElement("div");
-                row.className = "flex items-center justify-between border-b border-base-300 py-1 gap-2";
+                row.className =
+                  "flex items-center justify-between border-b border-base-300 py-1 gap-2";
                 const left = document.createElement("span");
                 left.textContent = `Season ${season}, Ep ${ep.episode}`;
                 row.appendChild(left);
@@ -1065,10 +1182,10 @@ function getMimeType(type: any) {
                 removeBtn.title = "Remove this episode from playlist";
                 removeBtn.addEventListener("click", () => {
                   // Remove this episode from playlist object
-                  (playlist as any)[type][season].splice(idx, 1);
+                  (window.playlist as any)[type][season].splice(idx, 1);
                   // If season is empty after removal, delete the season key
-                  if ((playlist as any)[type][season].length === 0) {
-                    delete (playlist as any)[type][season];
+                  if ((window.playlist as any)[type][season].length === 0) {
+                    delete (window.playlist as any)[type][season];
                   }
                   renderPlaylistList();
                   if (typeof updateDebugJson === "function") updateDebugJson();
@@ -1082,9 +1199,14 @@ function getMimeType(type: any) {
               empty.className = "text-base-content/50 italic";
               empty.textContent = "No entries.";
               box.appendChild(empty);
+              console.log(`  ${type} playlist is empty`);
+            } else {
+              console.log(`  ${type} playlist has ${hasAny ? 'entries' : 'no entries'}`);
             }
             playlistList.appendChild(box);
           });
+          
+          console.log('renderPlaylistList completed');
         }
         if (
           addEpisodeBtn &&
@@ -1164,9 +1286,9 @@ function getMimeType(type: any) {
                 audiolang: audiolangVal,
                 sources: sourcesArr,
               };
-              if (!(playlist as any)[type][season])
-                (playlist as any)[type][season] = [];
-              (playlist as any)[type][season].push(epObj);
+              if (!(window.playlist as any)[type][season])
+                (window.playlist as any)[type][season] = [];
+              (window.playlist as any)[type][season].push(epObj);
               renderPlaylistList();
               // Update debug JSON after playlist add
               if (typeof updateDebugJson === "function") updateDebugJson();
@@ -1199,6 +1321,12 @@ function getMimeType(type: any) {
         window.playlist = playlist;
         window.castArr = castArr;
         window.crewArr = crewArr;
+
+        // Global variable to store loaded timestamp data
+        let loadedTimestamps = {
+          created: null,
+          lastupdated: null,
+        };
         // Update cast/crew textareas on load
         // updateCastCrewJson();
 
@@ -1246,23 +1374,35 @@ function getMimeType(type: any) {
             typeof window.playlist === "object" && window.playlist
               ? window.playlist
               : { regular: {}, ov: {} };
+
+          // Generate timestamp info for debug display
+          const now = new Date().toISOString();
+          const id = idInput instanceof HTMLInputElement ? idInput.value : "";
+
+          // Use loaded timestamps if available, otherwise show current time with explanation
+          const createdTimestamp =
+            loadedTimestamps.created ||
+            `${now} (will be preserved if file exists)`;
+          const lastUpdatedTimestamp =
+            loadedTimestamps.lastupdated || `${now} (updated on each save)`;
+
           return {
             id: idInput instanceof HTMLInputElement ? idInput.value : "",
             title:
               titleInput instanceof HTMLInputElement ? titleInput.value : "",
-            tmdbid:
-              tmdbInput instanceof HTMLInputElement ? tmdbInput.value : "",
             orgtitle:
               orgtitleInput instanceof HTMLInputElement
                 ? orgtitleInput.value
                 : "",
             geo: geoInput instanceof HTMLSelectElement ? geoInput.value : "",
-            type: typeVal,
             fskcheck:
               fskInput instanceof HTMLInputElement ? fskInput.checked : false,
             dyna:
               dynaInput instanceof HTMLInputElement ? dynaInput.checked : false,
+            created: createdTimestamp,
+            lastupdated: lastUpdatedTimestamp,
             info: {
+              type: typeVal,
               duration:
                 durationInput instanceof HTMLInputElement
                   ? Number(durationInput.value)
@@ -1276,29 +1416,50 @@ function getMimeType(type: any) {
                   ? Number(episodesInput.value)
                   : 0,
               onlineuntil:
-                onlineuntilInput instanceof HTMLInputElement && onlineuntilInput.value
+                onlineuntilInput instanceof HTMLInputElement &&
+                onlineuntilInput.value
                   ? onlineuntilInput.value + "T23:59:59Z"
                   : "",
               quality:
                 qualityInput instanceof HTMLInputElement
                   ? qualityInput.value
                   : "",
-              audio_lang:
-                audioLangInput instanceof HTMLInputElement
-                  ? audioLangInput.value
-                  : "",
-              subtitle_lang:
-                subtitleLangInput instanceof HTMLInputElement
-                  ? subtitleLangInput.value
-                  : "",
-              forced_subtitle_lang:
-                forcedSubtitleLangInput instanceof HTMLInputElement
-                  ? forcedSubtitleLangInput.value
-                  : "",
               description:
                 descriptionInput instanceof HTMLTextAreaElement
                   ? descriptionInput.value
                   : "",
+              backdrop:
+                document.getElementById("backdrop") instanceof HTMLInputElement
+                  ? (document.getElementById("backdrop") as HTMLInputElement)
+                      .value
+                  : "",
+              poster:
+                document.getElementById("poster") instanceof HTMLInputElement
+                  ? (document.getElementById("poster") as HTMLInputElement)
+                      .value
+                  : "",
+              channel: {
+                name:
+                  channelNameInput instanceof HTMLInputElement
+                    ? channelNameInput.value
+                    : "",
+                country:
+                  channelCountryInput instanceof HTMLSelectElement
+                    ? channelCountryInput.value
+                    : channelCountryInput instanceof HTMLInputElement
+                      ? channelCountryInput.value
+                      : "",
+                icon:
+                  channelIconInput instanceof HTMLInputElement
+                    ? channelIconInput.value
+                    : "",
+                info:
+                  channelInfoInput instanceof HTMLInputElement
+                    ? channelInfoInput.checked
+                    : false,
+              },
+              cast: castArr,
+              crew: crewArr,
               // Optional spoken_languages field (schema-compliant: array of codes)
               spoken_languages:
                 document.getElementById("spoken_languages") instanceof
@@ -1313,26 +1474,6 @@ function getMimeType(type: any) {
                       .filter(Boolean)
                   : undefined,
             },
-            channel: {
-              name:
-                channelNameInput instanceof HTMLInputElement
-                  ? channelNameInput.value
-                  : "",
-              country:
-                channelCountryInput instanceof HTMLSelectElement
-                  ? channelCountryInput.value
-                  : "",
-              icon:
-                channelIconInput instanceof HTMLInputElement
-                  ? channelIconInput.value
-                  : "",
-              info:
-                channelInfoInput instanceof HTMLInputElement
-                  ? channelInfoInput.checked
-                  : false,
-            },
-            cast: castArr,
-            crew: crewArr,
             videosource:
               typeVal === "movie"
                 ? {
@@ -1372,10 +1513,13 @@ function getMimeType(type: any) {
 
         // Save button functionality
         const saveJsonBtn = document.getElementById("save-json-btn");
-        
+
         function updateSaveButtonState() {
           if (saveJsonBtn && idInput) {
-            if (saveJsonBtn instanceof HTMLButtonElement && idInput instanceof HTMLInputElement) {
+            if (
+              saveJsonBtn instanceof HTMLButtonElement &&
+              idInput instanceof HTMLInputElement
+            ) {
               saveJsonBtn.disabled = !idInput.value.trim();
             }
           }
@@ -1385,33 +1529,37 @@ function getMimeType(type: any) {
           if (!idInput || !(idInput instanceof HTMLInputElement)) return;
           const id = idInput.value.trim();
           if (!id) return;
-          
+
           try {
             const jsonData = getFormJson();
-            
+
             // Send to API endpoint to save on server
-            const response = await fetch('/api/save-content', {
-              method: 'POST',
+            const response = await fetch("/api/save-content", {
+              method: "POST",
               headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
               },
               body: JSON.stringify({
                 id: id,
-                data: jsonData
-              })
+                data: jsonData,
+              }),
             });
-            
+
             const result = await response.json();
-            
+
             if (response.ok) {
-              alert(`Success: ${result.message}`);
+              const action = result.isUpdate
+                ? "Updated existing"
+                : "Created new";
+              alert(`Success: ${action} file ${id}.json in content/details/`);
             } else {
-              throw new Error(result.error || 'Failed to save file');
+              throw new Error(result.error || "Failed to save file");
             }
-            
           } catch (error) {
-            console.error('Error saving JSON:', error);
-            alert(`Error saving JSON file: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            console.error("Error saving JSON:", error);
+            alert(
+              `Error saving JSON file: ${error instanceof Error ? error.message : "Unknown error"}`
+            );
           }
         }
 
@@ -1429,6 +1577,32 @@ function getMimeType(type: any) {
           form.addEventListener("input", updateDebugJson);
           form.addEventListener("change", updateDebugJson);
         }
+        // Add explicit listeners for channel fields
+        const channelNameInput = document.getElementById("channel_name");
+        const channelCountryInput = document.getElementById("channel_country");
+        const channelIconInput = document.getElementById("channel_icon");
+        const channelInfoInput = document.getElementById("channel_info");
+        if (channelNameInput) {
+          channelNameInput.addEventListener("input", updateDebugJson);
+        }
+        if (channelCountryInput) {
+          channelCountryInput.addEventListener("change", updateDebugJson);
+        }
+        if (channelIconInput) {
+          channelIconInput.addEventListener("input", updateDebugJson);
+        }
+        if (channelInfoInput) {
+          channelInfoInput.addEventListener("change", updateDebugJson);
+        }
+        // Add listeners for backdrop and poster fields
+        const backdropInput = document.getElementById("backdrop");
+        const posterInput = document.getElementById("poster");
+        if (backdropInput) {
+          backdropInput.addEventListener("input", updateDebugJson);
+        }
+        if (posterInput) {
+          posterInput.addEventListener("input", updateDebugJson);
+        }
         // Also update when series sources, cast, or crew change
         if (addSeriesSourceBtn) {
           addSeriesSourceBtn.addEventListener("click", updateDebugJson);
@@ -1436,6 +1610,397 @@ function getMimeType(type: any) {
         // (Cast/Crew are readonly, no add buttons to listen for)
         // Initial update
         updateDebugJson();
+
+        // File List Functionality
+        const fileListContainer = document.getElementById("file-list");
+        const newFileBtn = document.getElementById("new-file-btn");
+        const fileListCard = document.getElementById("file-list-card");
+
+        // Function to clear the form
+        function clearForm() {
+          if (form && form instanceof HTMLFormElement) {
+            form.reset();
+          }
+
+          // Clear additional fields not handled by form.reset()
+          const fieldsToReset = [
+            "id",
+            "title",
+            "orgtitle",
+            "tmdbid",
+            "description",
+            "backdrop",
+            "poster",
+            "spoken_languages",
+            "audio_lang",
+            "subtitle_lang",
+            "forced_subtitle_lang",
+          ];
+
+          fieldsToReset.forEach((fieldId) => {
+            const field = document.getElementById(fieldId);
+            if (field && "value" in field) {
+              (field as HTMLInputElement).value = "";
+            }
+          });
+
+          // Clear global arrays
+          window.castArr = [];
+          window.crewArr = [];
+          window.playlist = { regular: {}, ov: {} };
+          
+          // Clear playlist display (will be rendered later if needed)
+          if (playlistList) {
+            playlistList.innerHTML = "";
+          }
+
+          // Clear loaded timestamps
+          loadedTimestamps.created = null;
+          loadedTimestamps.lastupdated = null;
+
+          // Clear debug JSON
+          updateDebugJson();
+
+          // Hide TMDB debug card
+          if (tmdbDebugCard) {
+            tmdbDebugCard.classList.add("hidden");
+          }
+
+          // Clear episode debug
+          const episodeDebugList =
+            document.getElementById("episode-debug-list");
+          if (episodeDebugList) {
+            episodeDebugList.innerHTML = "";
+          }
+
+          console.log("Form cleared");
+        }
+
+        // Function to load file list
+        async function loadFileList() {
+          if (!fileListContainer) return;
+
+          try {
+            const response = await fetch("/api/list-content");
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+              fileListContainer.innerHTML = "";
+
+              result.files.forEach((file: any) => {
+                // Create container for file entry with load and delete buttons
+                const fileEntry = document.createElement("div");
+                fileEntry.className = "flex items-center gap-1 w-full";
+
+                // Load button
+                const fileBtn = document.createElement("button");
+                fileBtn.className =
+                  "btn btn-ghost btn-sm flex-1 text-left justify-start text-xs min-w-0";
+                fileBtn.type = "button";
+                fileBtn.innerHTML = `📁 ${file.id}`;
+                fileBtn.title = `Last modified: ${new Date(file.lastModified).toLocaleString()}`;
+                fileBtn.addEventListener("click", () => loadFile(file.id));
+
+                fileEntry.appendChild(fileBtn);
+
+                // Only add delete button if it's not "fallback"
+                if (file.id !== "fallback") {
+                  // Delete button
+                  const deleteBtn = document.createElement("button");
+                  deleteBtn.className =
+                    "btn btn-ghost btn-sm btn-square text-error hover:bg-error hover:text-error-content text-xs";
+                  deleteBtn.type = "button";
+                  deleteBtn.innerHTML = "🗑️";
+                  deleteBtn.title = `Delete ${file.id}`;
+                  deleteBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    deleteFile(file.id);
+                  });
+
+                  fileEntry.appendChild(deleteBtn);
+                }
+
+                fileListContainer.appendChild(fileEntry);
+              });
+            } else {
+              fileListContainer.innerHTML =
+                '<div class="text-error text-xs p-2">Failed to load files</div>';
+            }
+          } catch (error) {
+            console.error("Error loading file list:", error);
+            if (fileListContainer) {
+              fileListContainer.innerHTML =
+                '<div class="text-error text-xs p-2">Error loading files</div>';
+            }
+          }
+        }
+
+        // Function to load a specific file
+        async function loadFile(fileId: string) {
+          try {
+            const response = await fetch(
+              `/api/load-content?id=${encodeURIComponent(fileId)}`
+            );
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+              let data = result.data;
+              let needsResave = false;
+
+              // Check if created field is empty and get file system creation date if needed
+              if (!data.created) {
+                try {
+                  const statsResponse = await fetch(
+                    `/api/get-file-stats?id=${encodeURIComponent(fileId)}`
+                  );
+                  const statsResult = await statsResponse.json();
+
+                  if (statsResponse.ok && statsResult.success) {
+                    data.created = statsResult.stats.created;
+                    needsResave = true;
+                    console.log(
+                      `Set created timestamp from file system: ${data.created}`
+                    );
+                  } else {
+                    console.warn(
+                      `Could not get file stats for ${fileId}: ${statsResult.error}`
+                    );
+                  }
+                } catch (statsError) {
+                  console.warn("Error getting file stats:", statsError);
+                }
+              }
+
+              // If we added a created timestamp, save the file to persist it
+              if (needsResave) {
+                try {
+                  const saveResponse = await fetch("/api/save-content", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      id: fileId,
+                      data: data,
+                    }),
+                  });
+
+                  if (saveResponse.ok) {
+                    console.log(
+                      `Automatically saved ${fileId} with created timestamp`
+                    );
+                    // Refresh file list to reflect any changes
+                    loadFileList();
+                  } else {
+                    console.warn(
+                      "Failed to auto-save file with created timestamp"
+                    );
+                  }
+                } catch (saveError) {
+                  console.warn(
+                    "Error auto-saving file with created timestamp:",
+                    saveError
+                  );
+                }
+              }
+
+              // Clear form first
+              clearForm();
+
+              // Populate form fields with loaded data
+              populateFormFromData(data);
+
+              console.log(`Loaded file: ${fileId}`);
+            } else {
+              alert(`Failed to load file: ${result.error || "Unknown error"}`);
+            }
+          } catch (error) {
+            console.error("Error loading file:", error);
+            alert(
+              `Error loading file: ${error instanceof Error ? error.message : "Unknown error"}`
+            );
+          }
+        }
+
+        // Function to populate form from loaded data
+        function populateFormFromData(data: any) {
+          // Store loaded timestamps globally
+          loadedTimestamps.created = data.created || null;
+          loadedTimestamps.lastupdated = data.lastupdated || null;
+
+          // Helper function to set field value
+          function setField(fieldId: string, value: any) {
+            const field = document.getElementById(fieldId);
+            if (!field) return;
+
+            if (field instanceof HTMLInputElement) {
+              if (field.type === "checkbox") {
+                field.checked = !!value;
+              } else if (field.type === "date" && value) {
+                // Handle date fields - extract date part from ISO string
+                field.value = value.split("T")[0];
+              } else {
+                field.value = value || "";
+              }
+            } else if (field instanceof HTMLSelectElement) {
+              field.value = value || "";
+            } else if (field instanceof HTMLTextAreaElement) {
+              field.value = value || "";
+            }
+          }
+
+          // Set basic fields
+          setField("id", data.id);
+          setField("title", data.title);
+          setField("orgtitle", data.orgtitle);
+          setField("geo", data.geo);
+          setField("fskcheck", data.fskcheck);
+          setField("dyna", data.dyna);
+
+          if (data.info) {
+            // Set info fields
+            setField("type", data.info.type);
+            setField("duration", data.info.duration);
+            setField("seasons", data.info.seasons);
+            setField("episodes", data.info.episodes);
+            setField("onlineuntil", data.info.onlineuntil);
+            setField("quality", data.info.quality);
+            setField("description", data.info.description);
+            setField("backdrop", data.info.backdrop);
+            setField("poster", data.info.poster);
+
+            // Set channel fields
+            if (data.info.channel) {
+              setField("channel_name", data.info.channel.name);
+              setField("channel_country", data.info.channel.country);
+              setField("channel_icon", data.info.channel.icon);
+              setField("channel_info", data.info.channel.info);
+            }
+
+            // Set spoken languages
+            if (
+              data.info.spoken_languages &&
+              Array.isArray(data.info.spoken_languages)
+            ) {
+              setField(
+                "spoken_languages",
+                data.info.spoken_languages.join(",")
+              );
+            }
+
+            // Set cast and crew
+            if (data.info.cast) {
+              window.castArr = data.info.cast;
+            }
+            if (data.info.crew) {
+              window.crewArr = data.info.crew;
+            }
+          }
+
+          // Set movie source (if movie)
+          if (data.videosource) {
+            setField("movie_src", data.videosource.src);
+            setField("movie_type", getShortType(data.videosource.type));
+            setField("movie_title", data.videosource.title);
+          }
+
+          // Set playlist (if series)
+          if (data.playlist && data.info && (data.info.type === 'series' || data.info.type === 'y-series')) {
+            console.log('Original playlist data:', data.playlist);
+            
+            // Normalize playlist structure - ensure season keys match episode.season values
+            const normalizedPlaylist: { regular: { [season: string]: any[] }, ov: { [season: string]: any[] } } = { regular: {}, ov: {} };
+            
+            Object.keys(data.playlist).forEach(playlistType => {
+              if (data.playlist[playlistType] && typeof data.playlist[playlistType] === 'object') {
+                (normalizedPlaylist as any)[playlistType] = {};
+                
+                Object.keys(data.playlist[playlistType]).forEach(seasonKey => {
+                  const episodes = data.playlist[playlistType][seasonKey];
+                  if (Array.isArray(episodes) && episodes.length > 0) {
+                    // Use the actual season number from the first episode, or the seasonKey if it's numeric
+                    const actualSeason = episodes[0].season || (isNaN(Number(seasonKey)) ? seasonKey : Number(seasonKey));
+                    (normalizedPlaylist as any)[playlistType][String(actualSeason)] = episodes;
+                    console.log(`Mapped ${playlistType} season ${seasonKey} -> ${actualSeason} with ${episodes.length} episodes`);
+                  }
+                });
+              }
+            });
+            
+            console.log('Normalized playlist:', normalizedPlaylist);
+            window.playlist = normalizedPlaylist;
+            
+            // Render the playlist to display loaded entries
+            renderPlaylistList();
+            
+            console.log('Playlist assigned to window.playlist and rendered');
+          }
+
+          // Update field visibility based on type
+          updateTypeFields();
+
+          // Update debug JSON
+          updateDebugJson();
+        }
+
+        // Function to delete a specific file
+        async function deleteFile(fileId: string) {
+          // Confirm deletion
+          if (!confirm(`Are you sure you want to delete "${fileId}"? This action cannot be undone.`)) {
+            return;
+          }
+
+          try {
+            const response = await fetch(
+              `/api/delete-content?id=${encodeURIComponent(fileId)}`,
+              { method: 'DELETE' }
+            );
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+              alert(`Successfully deleted file: ${fileId}`);
+              
+              // If the deleted file was currently loaded, clear the form
+              const currentId = idInput instanceof HTMLInputElement ? idInput.value : "";
+              if (currentId === fileId) {
+                clearForm();
+              }
+              
+              // Refresh file list
+              loadFileList();
+            } else {
+              alert(`Failed to delete file: ${result.error || "Unknown error"}`);
+            }
+          } catch (error) {
+            console.error("Error deleting file:", error);
+            alert(
+              `Error deleting file: ${error instanceof Error ? error.message : "Unknown error"}`
+            );
+          }
+        }
+
+        // New file button event listener
+        if (newFileBtn) {
+          newFileBtn.addEventListener("click", clearForm);
+        }
+
+        // Load file list on page load
+        document.addEventListener("DOMContentLoaded", () => {
+          loadFileList();
+        });
+
+        // Override save function to refresh file list
+        const originalSaveJsonToFile = saveJsonToFile;
+        async function enhancedSaveJsonToFile() {
+          await originalSaveJsonToFile();
+          // Refresh file list after successful save
+          loadFileList();
+        }
+
+        if (saveJsonBtn) {
+          saveJsonBtn.removeEventListener("click", saveJsonToFile);
+          saveJsonBtn.addEventListener("click", enhancedSaveJsonToFile);
+        }
       </script>
     </div>
   </div>

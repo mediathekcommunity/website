@@ -21,13 +21,28 @@
       "info": true
     },
     "cast": [
-      { "id": "actor-4", "name": "Sarah Wilson" },
-      { "id": "actor-5", "name": "Tom Brown" },
-      { "id": "actor-6", "name": "Lisa Garcia" }
+      {
+        "id": "actor-4",
+        "name": "Sarah Wilson"
+      },
+      {
+        "id": "actor-5",
+        "name": "Tom Brown"
+      },
+      {
+        "id": "actor-6",
+        "name": "Lisa Garcia"
+      }
     ],
     "crew": [
-      { "id": "director-2", "name": "Alex Director" },
-      { "id": "writer-1", "name": "Emma Writer" }
+      {
+        "id": "director-2",
+        "name": "Alex Director"
+      },
+      {
+        "id": "writer-1",
+        "name": "Emma Writer"
+      }
     ],
     "backdrop": "https://img.mediathek.community/t/p/original/8zLyVhEsH6SM9diX7CUUWcaRlk0.jpg",
     "poster": "https://img.mediathek.community/t/p/w300/mzkstyDSsTRswCMRvoBD5ULPnIt.jpg"
@@ -85,7 +100,9 @@
           "episode": 1,
           "title": "Die Ankunft",
           "description": "Unsere Protagonisten kommen auf der mysteriösen Insel an und entdecken ihren ersten Hinweis.",
-          "audiolang": ["de-dub"],
+          "audiolang": [
+            "de-dub"
+          ],
           "sources": [
             {
               "src": "https://tvdlzdf-a.akamaihd.net/dach/zdf/24/09/240908_2015_sendung_agg/1/240908_2015_sendung_agg_a3a4_6660k_p37v17.mp4",
@@ -98,7 +115,9 @@
           "episode": 2,
           "title": "Verborgene Geheimnisse",
           "description": "Eine versteckte Kammer offenbart uralte Geheimnisse, die alles verändern.",
-          "audiolang": ["de-dub"],
+          "audiolang": [
+            "de-dub"
+          ],
           "sources": [
             {
               "src": "https://tvdlzdf-a.akamaihd.net/dach/zdf/24/09/240908_2015_sendung_agg/1/240908_2015_sendung_agg_a3a4_6660k_p37v17.mp4",
@@ -113,7 +132,9 @@
           "episode": 1,
           "title": "Neue Mysterien",
           "description": "Die zweite Staffel beginnt mit noch rätselhafteren Entdeckungen.",
-          "audiolang": ["de-dub"],
+          "audiolang": [
+            "de-dub"
+          ],
           "sources": [
             {
               "src": "https://tvdlzdf-a.akamaihd.net/dach/zdf/24/09/240908_2015_sendung_agg/1/240908_2015_sendung_agg_a3a4_6660k_p37v17.mp4",
@@ -123,5 +144,7 @@
         }
       ]
     }
-  }
+  },
+  "created": "2025-06-26T20:42:30.473Z",
+  "lastupdated": "2025-06-26T20:42:30.473Z"
 }

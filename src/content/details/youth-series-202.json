@@ -21,13 +21,28 @@
       "info": true
     },
     "cast": [
-      { "id": "actor-t1", "name": "Alex Mystery" },
-      { "id": "actor-t2", "name": "Sam Detective" },
-      { "id": "actor-t3", "name": "Jordan Puzzle" }
+      {
+        "id": "actor-t1",
+        "name": "Alex Mystery"
+      },
+      {
+        "id": "actor-t2",
+        "name": "Sam Detective"
+      },
+      {
+        "id": "actor-t3",
+        "name": "Jordan Puzzle"
+      }
     ],
     "crew": [
-      { "id": "director-t1", "name": "Chris Showrunner" },
-      { "id": "producer-t1", "name": "Alex Producer" }
+      {
+        "id": "director-t1",
+        "name": "Chris Showrunner"
+      },
+      {
+        "id": "producer-t1",
+        "name": "Alex Producer"
+      }
     ],
     "backdrop": "https://img.mediathek.community/t/p/original/8zLyVhEsH6SM9diX7CUUWcaRlk0.jpg",
     "poster": "https://img.mediathek.community/t/p/w300/mzkstyDSsTRswCMRvoBD5ULPnIt.jpg"
@@ -40,16 +55,24 @@
           "episode": 1,
           "title": "The Mystery Begins",
           "description": "A new mystery unfolds in the small town.",
-          "audiolang": ["en", "fr"]
+          "audiolang": [
+            "en",
+            "fr"
+          ]
         },
         {
           "season": 1,
           "episode": 2,
           "title": "Clues and Questions",
           "description": "The young detectives find their first clues.",
-          "audiolang": ["en", "fr"]
+          "audiolang": [
+            "en",
+            "fr"
+          ]
         }
       ]
     }
-  }
+  },
+  "created": "2025-06-26T20:40:43.053Z",
+  "lastupdated": "2025-06-26T20:40:43.053Z"
 }

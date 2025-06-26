@@ -21,13 +21,28 @@
       "info": true
     },
     "cast": [
-      { "id": "actor-y1", "name": "Emma Young" },
-      { "id": "actor-y2", "name": "Max Adventure" },
-      { "id": "actor-y3", "name": "Luna Brave" }
+      {
+        "id": "actor-y1",
+        "name": "Emma Young"
+      },
+      {
+        "id": "actor-y2",
+        "name": "Max Adventure"
+      },
+      {
+        "id": "actor-y3",
+        "name": "Luna Brave"
+      }
     ],
     "crew": [
-      { "id": "director-y1", "name": "Sarah Director" },
-      { "id": "producer-y1", "name": "Tom Producer" }
+      {
+        "id": "director-y1",
+        "name": "Sarah Director"
+      },
+      {
+        "id": "producer-y1",
+        "name": "Tom Producer"
+      }
     ],
     "backdrop": "https://img.mediathek.community/t/p/original/8zLyVhEsH6SM9diX7CUUWcaRlk0.jpg",
     "poster": "https://img.mediathek.community/t/p/w300/mzkstyDSsTRswCMRvoBD5ULPnIt.jpg"
@@ -37,16 +52,33 @@
     "type": "application/dash+xml",
     "poster": "/poster-youth-movie.jpg",
     "title": "Young Heroes Adventure",
-    "audiolang": ["nl", "en"]
+    "audiolang": [
+      "nl",
+      "en"
+    ]
   },
   "sublangs": [
-    { "srclang": "nl", "spokenlang": false },
-    { "srclang": "en", "spokenlang": false },
-    { "srclang": "de", "spokenlang": true }
+    {
+      "srclang": "nl",
+      "spokenlang": false
+    },
+    {
+      "srclang": "en",
+      "spokenlang": false
+    },
+    {
+      "srclang": "de",
+      "spokenlang": true
+    }
   ],
   "links": [
     {
-      "fsubtitle_lang": ["nl", "en"]
+      "fsubtitle_lang": [
+        "nl",
+        "en"
+      ]
     }
-  ]
+  ],
+  "created": "2025-06-26T20:42:24.962Z",
+  "lastupdated": "2025-06-26T20:42:24.962Z"
 }
