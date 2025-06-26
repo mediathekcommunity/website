@@ -47,8 +47,11 @@ const currentPath = Astro.url.pathname;
       // Theme switcher functionality
       document.addEventListener('DOMContentLoaded', function() {
         const themeToggle = document.getElementById('theme-toggle');
+        const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
         const sunIcon = document.getElementById('sun-icon');
         const moonIcon = document.getElementById('moon-icon');
+        const mobileSunIcon = document.getElementById('mobile-sun-icon');
+        const mobileMoonIcon = document.getElementById('mobile-moon-icon');
         const html = document.documentElement;
         
         // Check for saved theme preference or default to dark
@@ -60,9 +63,13 @@ const currentPath = Astro.url.pathname;
           if (theme === 'dark') {
             sunIcon.classList.add('hidden');
             moonIcon.classList.remove('hidden');
+            mobileSunIcon.classList.add('hidden');
+            mobileMoonIcon.classList.remove('hidden');
           } else {
             sunIcon.classList.remove('hidden');
             moonIcon.classList.add('hidden');
+            mobileSunIcon.classList.remove('hidden');
+            mobileMoonIcon.classList.add('hidden');
           }
         }
         
@@ -70,17 +77,81 @@ const currentPath = Astro.url.pathname;
         updateIcons(savedTheme);
         
         // Handle theme toggle
+        function toggleTheme() {
+          const currentTheme = html.getAttribute('data-theme');
+          const newTheme = currentTheme === 'dark' ? 'corporate' : 'dark';
+          
+          html.setAttribute('data-theme', newTheme);
+          localStorage.setItem('theme', newTheme);
+          updateIcons(newTheme);
+          updateNavbarBlur(); // Update navbar blur when theme changes
+        }
+        
         if (themeToggle) {
-          themeToggle.addEventListener('click', function() {
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'corporate' : 'dark';
-            
-            html.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateIcons(newTheme);
-            updateNavbarBlur(); // Update navbar blur when theme changes
+          themeToggle.addEventListener('click', toggleTheme);
+        }
+        
+        if (mobileThemeToggle) {
+          mobileThemeToggle.addEventListener('click', toggleTheme);
+        }
+
+        // Mobile navigation functionality
+        const mobileNavToggle = document.getElementById('mobile-nav-toggle');
+        const mobileNavClose = document.getElementById('mobile-nav-close');
+        const mobileNavMenu = document.getElementById('mobile-nav-menu');
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+        
+        function openMobileNav() {
+          mobileNavMenu.classList.remove('translate-x-full');
+          mobileNavMenu.setAttribute('aria-hidden', 'false');
+          mobileNavToggle.setAttribute('aria-expanded', 'true');
+          document.body.style.overflow = 'hidden'; // Prevent scrolling
+        }
+        
+        function closeMobileNav() {
+          mobileNavMenu.classList.add('translate-x-full');
+          mobileNavMenu.setAttribute('aria-hidden', 'true');
+          mobileNavToggle.setAttribute('aria-expanded', 'false');
+          document.body.style.overflow = ''; // Restore scrolling
+        }
+        
+        // Toggle mobile nav when button is clicked
+        if (mobileNavToggle) {
+          mobileNavToggle.addEventListener('click', function() {
+            const isExpanded = mobileNavToggle.getAttribute('aria-expanded') === 'true';
+            if (isExpanded) {
+              closeMobileNav();
+            } else {
+              openMobileNav();
+            }
           });
         }
+        
+        // Close mobile nav when close button is clicked
+        if (mobileNavClose) {
+          mobileNavClose.addEventListener('click', closeMobileNav);
+        }
+        
+        // Close mobile nav when clicking on the overlay
+        if (mobileNavMenu) {
+          mobileNavMenu.addEventListener('click', function(e) {
+            if (e.target === mobileNavMenu) {
+              closeMobileNav();
+            }
+          });
+        }
+        
+        // Close mobile nav when a nav link is clicked
+        mobileNavLinks.forEach(function(link) {
+          link.addEventListener('click', closeMobileNav);
+        });
+        
+        // Close mobile nav when pressing escape key
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && mobileNavToggle.getAttribute('aria-expanded') === 'true') {
+            closeMobileNav();
+          }
+        });
 
         // Handle navbar blur on scroll
         const navbar = document.getElementById('navbar');
@@ -164,7 +235,13 @@ const currentPath = Astro.url.pathname;
       </button>
     </div>
 
-    <button class="md:hidden text-base-content">
+    <button 
+      id="mobile-nav-toggle"
+      class="md:hidden text-base-content"
+      aria-controls="mobile-nav-menu"
+      aria-expanded="false"
+      aria-label="Toggle mobile navigation"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="h-6 w-6"
@@ -179,6 +256,91 @@ const currentPath = Astro.url.pathname;
           d="M4 6h16M4 12h16m-16 6h16"></path>
       </svg>
     </button>
+
+    <!-- Mobile Navigation Menu -->
+    <div 
+      id="mobile-nav-menu"
+      class="fixed inset-0 z-40 md:hidden transform translate-x-full transition-transform duration-300 ease-in-out"
+      aria-hidden="true"
+    >
+      <!-- Overlay -->
+      <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+      
+      <!-- Menu Panel -->
+      <div class="relative ml-auto h-full w-4/5 max-w-sm bg-base-100 shadow-xl">
+        <div class="flex h-full flex-col">
+          <!-- Header -->
+          <div class="flex items-center justify-between px-6 py-4 border-b border-base-300">
+            <span class="text-lg font-semibold text-base-content">{siteTitle}</span>
+            <button 
+              id="mobile-nav-close"
+              class="text-base-content/70 hover:text-base-content transition-colors p-2"
+              aria-label="Close mobile navigation"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                ></path>
+              </svg>
+            </button>
+          </div>
+          
+          <!-- Navigation Links -->
+          <nav class="flex-1 px-6 py-8">
+            <ul class="space-y-6">
+              {
+                menuItems.map((item) => {
+                  const isActive = currentPath === item.href;
+                  return (
+                    <li>
+                      <a
+                        href={item.href}
+                        class={`block text-lg transition-colors mobile-nav-link ${
+                          isActive 
+                            ? "font-bold text-primary" 
+                            : "text-base-content/80 hover:text-base-content"
+                        }`}
+                      >
+                        {item.label}
+                      </a>
+                    </li>
+                  );
+                })
+              }
+            </ul>
+          </nav>
+          
+          <!-- Footer with theme toggle -->
+          <div class="px-6 py-4 border-t border-base-300">
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-base-content/60">Theme</span>
+              <button 
+                id="mobile-theme-toggle" 
+                class="text-base-content/70 hover:text-base-content transition-colors p-2"
+                aria-label="Toggle theme"
+              >
+                <svg id="mobile-sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden">
+                  <circle cx="12" cy="12" r="5"/>
+                  <path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/>
+                </svg>
+                <svg id="mobile-moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </nav>
   
   <!-- Site-wide Alert Banner -->
