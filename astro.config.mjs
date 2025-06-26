@@ -9,7 +9,7 @@ import cloudflare from "@astrojs/cloudflare";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://example.com",
+  site: "https://preview.mediathek.community",
   output: "server",
   adapter: cloudflare(),
   integrations: [mdx(), sitemap(), icon(), svelte()],

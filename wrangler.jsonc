@@ -1,5 +1,5 @@
 {
-  "name": "mediathek-astro",
+  "name": "mediathek-oeffi",
   "main": "./dist/_worker.js/index.js",
   // Update to today's date
   "compatibility_date": "2025-03-25",
@@ -10,5 +10,11 @@
   },
   "observability": {
     "enabled": true
-  }
+  },
+  	"routes": [
+		{
+			"pattern": "preview.mediathek.community",
+			"custom_domain": true
+		}
+	],
 }
