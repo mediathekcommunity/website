@@ -636,7 +636,6 @@ function getMimeType(type: any) {
               }
               if (!tmdbid) throw new Error("Please enter a TMDB ID.");
               const resp = await fetch(url);
-              console.log("TMDB API Response:", resp);
               if (!resp.ok) throw new Error("HTTP " + resp.status);
               const data = await resp.json();
               (tmdbDebugJson as HTMLTextAreaElement).value = JSON.stringify(
@@ -1003,26 +1002,29 @@ function getMimeType(type: any) {
           }
         }
 
+        // Cache frequently used DOM elements
+        const formCard = document.getElementById("dev-form");
+        const debugCard = document.getElementById("debug-card");
+        const episodeDebugCard = document.getElementById("episode-debug-card");
+        const fileListCard = document.getElementById("file-list-card");
+        
         // Sync debug, tmdb debug, episode debug, and file list card height to form height
         function syncDebugCardHeight() {
-          const formCard = document.getElementById("dev-form");
-          const debugCard = document.getElementById("debug-card");
-          const tmdbDebugCard = document.getElementById("tmdb-debug-card");
-          const episodeDebugCard =
-            document.getElementById("episode-debug-card");
-          const fileListCard = document.getElementById("file-list-card");
-
-          if (formCard && debugCard) {
-            debugCard.style.height = formCard.offsetHeight + "px";
+          if (!formCard) return;
+          
+          const formHeight = formCard.offsetHeight;
+          
+          if (debugCard) {
+            debugCard.style.height = formHeight + "px";
           }
-          if (formCard && tmdbDebugCard) {
-            tmdbDebugCard.style.height = formCard.offsetHeight + "px";
+          if (tmdbDebugCard) {
+            tmdbDebugCard.style.height = formHeight + "px";
           }
-          if (formCard && episodeDebugCard) {
-            episodeDebugCard.style.height = formCard.offsetHeight + "px";
+          if (episodeDebugCard) {
+            episodeDebugCard.style.height = formHeight + "px";
           }
-          if (formCard && fileListCard) {
-            fileListCard.style.height = formCard.offsetHeight + "px";
+          if (fileListCard) {
+            fileListCard.style.height = formHeight + "px";
           }
         }
         window.addEventListener("resize", syncDebugCardHeight);
@@ -1030,7 +1032,6 @@ function getMimeType(type: any) {
         setTimeout(syncDebugCardHeight, 100); // In case of late layout
         // Auto-generate ID from title and channel
         // Also update debug/tmdb card height on form input
-        const formCard = document.getElementById("dev-form");
         if (formCard) {
           formCard.addEventListener("input", syncDebugCardHeight);
           formCard.addEventListener("change", syncDebugCardHeight);
@@ -1141,12 +1142,7 @@ function getMimeType(type: any) {
           document.getElementById("playlist_srctype");
         const playlistList = document.getElementById("playlist-list");
         function renderPlaylistList() {
-          console.log('renderPlaylistList called');
-          console.log('Current window.playlist:', window.playlist);
-          console.log('playlistList element:', playlistList);
-          
           if (!playlistList) {
-            console.warn('playlistList element not found');
             return;
           }
           
@@ -1155,7 +1151,6 @@ function getMimeType(type: any) {
             const typeObj = (window.playlist as any)[type] as {
               [season: string]: any[];
             };
-            console.log(`Processing ${type} playlist:`, typeObj);
             
             const box = document.createElement("div");
             box.className =
@@ -1166,7 +1161,6 @@ function getMimeType(type: any) {
             box.appendChild(header);
             let hasAny = false;
             Object.entries(typeObj).forEach(([season, episodes]) => {
-              console.log(`  Season ${season} has ${episodes.length} episodes:`, episodes);
               (episodes as any[]).forEach((ep: any, idx: number) => {
                 hasAny = true;
                 const row = document.createElement("div");
@@ -1199,14 +1193,9 @@ function getMimeType(type: any) {
               empty.className = "text-base-content/50 italic";
               empty.textContent = "No entries.";
               box.appendChild(empty);
-              console.log(`  ${type} playlist is empty`);
-            } else {
-              console.log(`  ${type} playlist has ${hasAny ? 'entries' : 'no entries'}`);
             }
             playlistList.appendChild(box);
           });
-          
-          console.log('renderPlaylistList completed');
         }
         if (
           addEpisodeBtn &&
@@ -1316,7 +1305,6 @@ function getMimeType(type: any) {
         // Cast and Crew display as readonly JSON
         let castArr: Array<{ id: number | string; name: string }> = [];
         let crewArr: Array<{ id: number | string; name: string }> = [];
-        // (castJson/crewJson fields removed from form, so updateCastCrewJson is not needed)
         // Make arrays global for debug
         window.playlist = playlist;
         window.castArr = castArr;
@@ -1327,11 +1315,8 @@ function getMimeType(type: any) {
           created: null,
           lastupdated: null,
         };
-        // Update cast/crew textareas on load
-        // updateCastCrewJson();
 
         function getFormJson() {
-          // updateCastCrewJson();
           // Main fields
           const tmdbInput = document.getElementById("tmdbid");
           const orgtitleInput = document.getElementById("orgtitle");
@@ -1607,14 +1592,12 @@ function getMimeType(type: any) {
         if (addSeriesSourceBtn) {
           addSeriesSourceBtn.addEventListener("click", updateDebugJson);
         }
-        // (Cast/Crew are readonly, no add buttons to listen for)
         // Initial update
         updateDebugJson();
 
         // File List Functionality
         const fileListContainer = document.getElementById("file-list");
         const newFileBtn = document.getElementById("new-file-btn");
-        const fileListCard = document.getElementById("file-list-card");
 
         // Function to clear the form
         function clearForm() {
@@ -1672,8 +1655,6 @@ function getMimeType(type: any) {
           if (episodeDebugList) {
             episodeDebugList.innerHTML = "";
           }
-
-          console.log("Form cleared");
         }
 
         // Function to load file list
@@ -1758,9 +1739,6 @@ function getMimeType(type: any) {
                   if (statsResponse.ok && statsResult.success) {
                     data.created = statsResult.stats.created;
                     needsResave = true;
-                    console.log(
-                      `Set created timestamp from file system: ${data.created}`
-                    );
                   } else {
                     console.warn(
                       `Could not get file stats for ${fileId}: ${statsResult.error}`
@@ -1786,9 +1764,6 @@ function getMimeType(type: any) {
                   });
 
                   if (saveResponse.ok) {
-                    console.log(
-                      `Automatically saved ${fileId} with created timestamp`
-                    );
                     // Refresh file list to reflect any changes
                     loadFileList();
                   } else {
@@ -1809,8 +1784,6 @@ function getMimeType(type: any) {
 
               // Populate form fields with loaded data
               populateFormFromData(data);
-
-              console.log(`Loaded file: ${fileId}`);
             } else {
               alert(`Failed to load file: ${result.error || "Unknown error"}`);
             }
@@ -1906,8 +1879,6 @@ function getMimeType(type: any) {
 
           // Set playlist (if series)
           if (data.playlist && data.info && (data.info.type === 'series' || data.info.type === 'y-series')) {
-            console.log('Original playlist data:', data.playlist);
-            
             // Normalize playlist structure - ensure season keys match episode.season values
             const normalizedPlaylist: { regular: { [season: string]: any[] }, ov: { [season: string]: any[] } } = { regular: {}, ov: {} };
             
@@ -1921,19 +1892,15 @@ function getMimeType(type: any) {
                     // Use the actual season number from the first episode, or the seasonKey if it's numeric
                     const actualSeason = episodes[0].season || (isNaN(Number(seasonKey)) ? seasonKey : Number(seasonKey));
                     (normalizedPlaylist as any)[playlistType][String(actualSeason)] = episodes;
-                    console.log(`Mapped ${playlistType} season ${seasonKey} -> ${actualSeason} with ${episodes.length} episodes`);
                   }
                 });
               }
             });
             
-            console.log('Normalized playlist:', normalizedPlaylist);
             window.playlist = normalizedPlaylist;
             
             // Render the playlist to display loaded entries
             renderPlaylistList();
-            
-            console.log('Playlist assigned to window.playlist and rendered');
           }
 
           // Update field visibility based on type
