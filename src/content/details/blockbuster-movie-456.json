@@ -2,7 +2,7 @@
   "id": "blockbuster-movie-456",
   "title": "Quantum Horizon",
   "orgtitle": "Sample Data",
-  "geo": "FR",
+  "geo": "fr",
   "fskcheck": false,
   "serverhour": 20,
   "dyna": false,
@@ -16,7 +16,7 @@
     "description": "<p>A mind-bending thriller that takes audiences on a journey through parallel universes. When a brilliant physicist discovers a way to breach the quantum barrier, she must race against time to prevent a catastrophic collision between realities.</p>",
     "channel": {
       "name": "Cinema Premium",
-      "country": "FR",
+      "country": "fr",
       "icon": "mdi:movie-open",
       "info": true
     },

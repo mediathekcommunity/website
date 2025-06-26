@@ -2,7 +2,7 @@
   "id": "youth-series-202",
   "title": "Teen Mysteries",
   "orgtitle": "Sample Data",
-  "geo": "CA",
+  "geo": "de",
   "fskcheck": true,
   "serverhour": 18,
   "dyna": true,
@@ -16,7 +16,7 @@
     "description": "<p>A thrilling mystery series for teenagers. Join a group of young detectives as they solve puzzles and uncover secrets in their hometown.</p>",
     "channel": {
       "name": "Youth Network",
-      "country": "CA",
+      "country": "de",
       "icon": "mdi:school",
       "info": true
     },

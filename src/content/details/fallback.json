@@ -2,7 +2,7 @@
   "id": "fallback",
   "title": "Not Found",
   "orgtitle": "Sample Data",
-  "geo": "DE",
+  "geo": "de",
   "fskcheck": false,
   "serverhour": 0,
   "dyna": false,
@@ -16,7 +16,7 @@
     "description": "<p>No movie/series found with the provided id</p>",
     "channel": {
       "name": ".",
-      "country": "DE",
+      "country": "de",
       "icon": ".",
       "info": false
     },

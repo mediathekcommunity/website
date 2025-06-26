@@ -43,19 +43,33 @@ function calculateRemainingDays(onlineuntil: string): number {
 }
 
 // Convert youth details to hero items and card data
-const heroItems = youthDetails.slice(0, 3).map((entry: any) => ({
-  backdrop: entry.data.info.backdrop || "/8zLyVhEsH6SM9diX7CUUWcaRlk0.jpg",
-  title: entry.data.title,
-  orgtitle: entry.data.orgtitle,
-  id: entry.data.id,
-  channel: {
-    country: entry.data.info.channel.country,
-    icon: entry.data.info.channel.name?.toLowerCase() || "unknown",
-  },
-  quality: entry.data.info.quality || "HD",
-  type: entry.data.info.type,
-  channelicon: "mdi:baby-face",
-}));
+const heroItems = youthDetails.length > 0
+  ? youthDetails.slice(0, 3).map((entry: any) => ({
+      backdrop: entry.data.info.backdrop || "/8zLyVhEsH6SM9diX7CUUWcaRlk0.jpg",
+      title: entry.data.title,
+      orgtitle: entry.data.orgtitle,
+      id: entry.data.id,
+      channel: {
+        country: entry.data.info.channel.country,
+        icon: entry.data.info.channel.name?.toLowerCase() || "unknown",
+      },
+      quality: entry.data.info.quality || "HD",
+      type: entry.data.info.type,
+      channelicon: "mdi:baby-face",
+    }))
+  : [{
+      backdrop: "https://images.unsplash.com/photo-1489599743717-9c7b9b6ea9c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080&q=80",
+      title: "No youth content available at the moment",
+      orgtitle: "",
+      id: "no-youth-placeholder",
+      channel: {
+        country: "de",
+        icon: "unknown",
+      },
+      quality: "HD",
+      type: "y-movie",
+      channelicon: "mdi:baby-face-outline",
+    }];
 
 // Convert youth details to card data with calculated remaining days
 const cardData = youthDetails.map((entry: any) => ({
@@ -86,9 +100,8 @@ const youthSeries = youthDetails.filter((entry: any) => entry.data.info.type ===
 
 <Layout>
   <div class="flex flex-col min-h-screen">
-    {heroItems.length > 0 && (
-      <HeroSlider heroItems={heroItems} special={true} showcountry={true} />
-    )}
+    {/* Always show hero - either with youth content or placeholder */}
+    <HeroSlider heroItems={heroItems} special={true} showcountry={true} />
 
     <!-- Youth Section -->
     <div class="px-8">
@@ -227,7 +240,7 @@ const youthSeries = youthDetails.filter((entry: any) => entry.data.info.type ===
 </Layout>
 
 <script>
-  //ts-ignore
+  // @ts-nocheck
   import EmblaCarousel from "embla-carousel";
 
   document.addEventListener("DOMContentLoaded", () => {

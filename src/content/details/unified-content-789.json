@@ -2,7 +2,7 @@
   "id": "unified-content-789",
   "title": "The Chronicles of Tomorrow",
   "orgtitle": "Sample Data",
-  "geo": "DE",
+  "geo": "de",
   "fskcheck": false,
   "serverhour": 20,
   "dyna": true,
@@ -16,7 +16,7 @@
     "description": "<p>A groundbreaking sci-fi series that explores the future of humanity through the lens of advanced technology and human relationships. Each episode delves deeper into the mysteries of time, space, and consciousness.</p>",
     "channel": {
       "name": "Future Network",
-      "country": "DE",
+      "country": "de",
       "icon": "mdi:television-classic",
       "info": true
     },

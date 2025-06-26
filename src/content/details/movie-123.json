@@ -2,7 +2,7 @@
   "id": "movie-123",
   "title": "The Great Adventure",
   "orgtitle": "Sample Data",
-  "geo": "US",
+  "geo": "de",
   "fskcheck": false,
   "serverhour": 20,
   "dyna": false,
@@ -16,7 +16,7 @@
     "description": "<p>An epic adventure story about friendship, and discovery. Follow the journey of unlikely heroes as they navigate through challenging landscapes and face their deepest fears.</p>",
     "channel": {
       "name": "Premium Movies",
-      "country": "US",
+      "country": "de",
       "icon": "mdi:television-classic",
       "info": true
     },

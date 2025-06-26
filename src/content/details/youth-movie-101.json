@@ -2,7 +2,7 @@
   "id": "youth-movie-101",
   "title": "Young Heroes Adventure",
   "orgtitle": "Sample Data",
-  "geo": "NL",
+  "geo": "nl",
   "fskcheck": true,
   "serverhour": 16,
   "dyna": false,
@@ -16,7 +16,7 @@
     "description": "<p>An exciting adventure film designed for young audiences. Follow brave young heroes as they embark on a magical journey to save their world from darkness.</p>",
     "channel": {
       "name": "Kids Channel",
-      "country": "NL",
+      "country": "nl",
       "icon": "mdi:baby-face",
       "info": true
     },

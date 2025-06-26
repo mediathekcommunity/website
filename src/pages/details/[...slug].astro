@@ -38,10 +38,11 @@ if (Astro.props.data) {
     if (!data) {
       data = {
         id: "fallback",
-        title: "Not Found",
-        orgtitle: ".",
-        geo: "DE",
+        title: "No series available at the moment",
+        orgtitle: "",
+        geo: "de",
         info: {
+          id: "fallback", // Add ID to info object for detection
           type: "movie",
           duration: 0,
           seasons: 0,
@@ -51,7 +52,7 @@ if (Astro.props.data) {
           description: "<p>No movie/series found with the provided id</p>",
           channel: {
             name: ".",
-            country: "DE",
+            country: "de",
           },
         },
       };
@@ -93,7 +94,21 @@ function splitLangFormat(inputString: string): string[] {
   return [part1, part2];
 }
 
+// Simple language to flag mapping for cases where language code differs from country code
+function langToFlag(lang: string): string {
+  const map: Record<string, string> = {
+    'en': 'gb', 'el': 'gr', 'cs': 'cz', 'sl': 'si', 'et': 'ee', 
+    'uk': 'ua', 'be': 'by', 'sv': 'se', 'da': 'dk'
+  };
+  return map[lang] || lang;
+}
+
 function getImageUrl(slide: any): string {
+  // For fallback case, always return placeholder
+  if (slide.id === "fallback") {
+    return "https://images.unsplash.com/photo-1489599743717-9c7b9b6ea9c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080&q=80";
+  }
+
   let imageUrl = "";
   switch (true) {
     case !!slide.backdrop:
@@ -304,9 +319,11 @@ let active = 1; // Global active state for video player
                         <tr>
                           <th class="font-semibold text-primary">Audio Language</th>
                           <td>
-                            <div class="flex flex-row gap-2">
+                            <div class="flex flex-row flex-wrap gap-2">
                               {data.videosource.audiolang?.map((lang: string) => (
-                                <span class={`fi fi-${lang}`} />
+                                <div class="badge badge-neutral">
+                                  <span class={`fi fi-${langToFlag(lang)}`} />
+                                </div>
                               ))}
                             </div>
                           </td>
@@ -319,7 +336,7 @@ let active = 1; // Global active state for video player
                                 {data.sublangs.map((lang: any) => (
                                   <div class={lang.spokenlang ? "tooltip" : ""} data-tip="Spoken lang">
                                     <div class="badge badge-neutral">
-                                      <span class={`fi fi-${lang.srclang.toLowerCase()}`} />
+                                      <span class={`fi fi-${langToFlag(lang.srclang)}`} />
                                       {lang.spokenlang && (
                                         <svg class="w-4 h-4 ml-1" viewBox="0 0 24 24">
                                           <path fill="currentColor" d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z" />
@@ -336,9 +353,11 @@ let active = 1; // Global active state for video player
                           <tr>
                             <th class="font-semibold text-primary">Forced Subtitle Language</th>
                             <td>
-                              <div class="flex flex-row gap-2">
+                              <div class="flex flex-row flex-wrap gap-2">
                                 {data.links[0].fsubtitle_lang.map((lang: string) => (
-                                  <span class={`fi fi-${lang.toLowerCase()}`} />
+                                  <div class="badge badge-neutral">
+                                    <span class={`fi fi-${langToFlag(lang)}`} />
+                                  </div>
                                 ))}
                               </div>
                             </td>
@@ -351,20 +370,24 @@ let active = 1; // Global active state for video player
                         <tr>
                           <th class="font-semibold text-primary">Audio Language</th>
                           <td>
-                            <div class="flex flex-row gap-2 items-center">
+                            <div class="flex flex-row flex-wrap gap-2 items-center">
                               {data.playlist?.ov?.[1] && (
                                 <>
-                                  <span class={`fi fi-${data.playlist.ov[1][0].audiolang}`} />
+                                  <div class="badge badge-neutral">
+                                    <span class={`fi fi-${langToFlag(data.playlist.ov[1][0].audiolang)}`} />
+                                  </div>
                                   <span class="text-sm">OV</span>
                                   {data.playlist?.regular && <span>&nbsp;&</span>}
                                 </>
                               )}
                               {data.playlist?.regular?.[1] && (
                                 <>
-                                  <span class={`fi fi-${splitLangFormat(data.playlist.regular[1][0].audiolang[0])[0]}`} />
-                                  <svg class="w-4 h-4" viewBox="0 0 24 24">
-                                    <path fill="currentColor" d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z" />
-                                  </svg>
+                                  <div class="badge badge-neutral">
+                                    <span class={`fi fi-${langToFlag(splitLangFormat(data.playlist.regular[1][0].audiolang[0])[0])}`} />
+                                    <svg class="w-4 h-4 ml-1" viewBox="0 0 24 24">
+                                      <path fill="currentColor" d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z" />
+                                    </svg>
+                                  </div>
                                 </>
                               )}
                             </div>
@@ -497,7 +520,7 @@ let active = 1; // Global active state for video player
                               </span>
                             </button>
                           ) : data.geo === data.info.channel.country ? (
-                            data.fskcheck && data.serverhour < 22 ? (
+                            data.fskcheck ? (
                               <button
                                 type="button"
                                 class="btn btn-accent"

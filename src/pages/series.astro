@@ -43,19 +43,33 @@ function calculateRemainingDays(onlineuntil: string): number {
 }
 
 // Convert series details to hero items and card data
-const heroItems = seriesDetails.slice(0, 3).map((entry: any) => ({
-  backdrop: entry.data.info.backdrop || "/8zLyVhEsH6SM9diX7CUUWcaRlk0.jpg",
-  title: entry.data.title,
-  orgtitle: entry.data.orgtitle,
-  id: entry.data.id,
-  channel: {
-    country: entry.data.info.channel.country,
-    icon: entry.data.info.channel.name?.toLowerCase() || "unknown",
-  },
-  quality: entry.data.info.quality || "HD",
-  type: entry.data.info.type,
-  channelicon: "simple-icons:netflix",
-}));
+const heroItems = seriesDetails.length > 0 
+  ? seriesDetails.slice(0, 3).map((entry: any) => ({
+      backdrop: entry.data.info.backdrop || "/8zLyVhEsH6SM9diX7CUUWcaRlk0.jpg",
+      title: entry.data.title,
+      orgtitle: entry.data.orgtitle,
+      id: entry.data.id,
+      channel: {
+        country: entry.data.info.channel.country,
+        icon: entry.data.info.channel.name?.toLowerCase() || "unknown",
+      },
+      quality: entry.data.info.quality || "HD",
+      type: entry.data.info.type,
+      channelicon: "simple-icons:netflix",
+    }))
+  : [{
+      backdrop: "/8zLyVhEsH6SM9diX7CUUWcaRlk0.jpg",
+      title: "No series available at the moment",
+      orgtitle: "",
+      id: "no-series-placeholder",
+      channel: {
+        country: "de",
+        icon: "unknown",
+      },
+      quality: "HD",
+      type: "series",
+      channelicon: "mdi:tv-off",
+    }];
 
 // Convert series details to card data with calculated remaining days
 const cardData = seriesDetails.map((entry: any) => ({
@@ -82,9 +96,8 @@ const entriesByCountry = seriesDetails.reduce((acc: Record<string, any[]>, entry
 
 <Layout>
   <div class="flex flex-col min-h-screen">
-    {heroItems.length > 0 && (
-      <HeroSlider heroItems={heroItems} special={true} showcountry={true} />
-    )}
+    {/* Always show hero - either with series or placeholder */}
+    <HeroSlider heroItems={heroItems} special={true} showcountry={true} />
 
     <!-- Series Section -->
     <div class="px-8">
@@ -155,7 +168,7 @@ const entriesByCountry = seriesDetails.reduce((acc: Record<string, any[]>, entry
 </Layout>
 
 <script>
-  //ts-ignore
+  // @ts-nocheck
   import EmblaCarousel from "embla-carousel";
 
   document.addEventListener("DOMContentLoaded", () => {

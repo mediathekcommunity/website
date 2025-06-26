@@ -43,19 +43,33 @@ function calculateRemainingDays(onlineuntil: string): number {
 }
 
 // Convert movie details to hero items and card data
-const heroItems = movieDetails.slice(0, 3).map((entry: any) => ({
-  backdrop: entry.data.info.backdrop || "/8zLyVhEsH6SM9diX7CUUWcaRlk0.jpg",
-  title: entry.data.title,
-  orgtitle: entry.data.orgtitle,
-  id: entry.data.id,
-  channel: {
-    country: entry.data.info.channel.country,
-    icon: entry.data.info.channel.name?.toLowerCase() || "unknown",
-  },
-  quality: entry.data.info.quality || "HD",
-  type: entry.data.info.type,
-  channelicon: "simple-icons:warnerbros",
-}));
+const heroItems = movieDetails.length > 0
+  ? movieDetails.slice(0, 3).map((entry: any) => ({
+      backdrop: entry.data.info.backdrop || "/8zLyVhEsH6SM9diX7CUUWcaRlk0.jpg",
+      title: entry.data.title,
+      orgtitle: entry.data.orgtitle,
+      id: entry.data.id,
+      channel: {
+        country: entry.data.info.channel.country,
+        icon: entry.data.info.channel.name?.toLowerCase() || "unknown",
+      },
+      quality: entry.data.info.quality || "HD",
+      type: entry.data.info.type,
+      channelicon: "simple-icons:warnerbros",
+    }))
+  : [{
+      backdrop: "https://images.unsplash.com/photo-1489599743717-9c7b9b6ea9c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080&q=80",
+      title: "No movies available at the moment",
+      orgtitle: "",
+      id: "no-movies-placeholder",
+      channel: {
+        country: "de",
+        icon: "unknown",
+      },
+      quality: "HD",
+      type: "movie",
+      channelicon: "mdi:movie-off",
+    }];
 
 // Convert movie details to card data with calculated remaining days
 const cardData = movieDetails.map((entry: any) => ({
@@ -82,9 +96,8 @@ const entriesByCountry = movieDetails.reduce((acc: Record<string, any[]>, entry:
 
 <Layout>
   <div class="flex flex-col min-h-screen">
-    {heroItems.length > 0 && (
-      <HeroSlider heroItems={heroItems} special={true} showcountry={true} />
-    )}
+    {/* Always show hero - either with movies or placeholder */}
+    <HeroSlider heroItems={heroItems} special={true} showcountry={true} />
 
     <!-- Movies Section -->
     <div class="px-8">
@@ -155,7 +168,7 @@ const entriesByCountry = movieDetails.reduce((acc: Record<string, any[]>, entry:
 </Layout>
 
 <script>
-  //ts-ignore
+  // @ts-nocheck
   import EmblaCarousel from "embla-carousel";
 
   document.addEventListener("DOMContentLoaded", () => {
