@@ -1,0 +1,1208 @@
+---
+import BlogPost from "../../layouts/default.astro";
+import { getCollection } from "astro:content";
+import VideoplayerAstro from "../../components/VideoplayerAstro.astro";
+export const prerender = false; // Not needed in 'server' mode
+
+// Astro component recreated from Svelte source using DaisyUI
+export interface Props {
+  data?: any;
+}
+
+// Get the slug from URL params
+const { slug } = Astro.params;
+const id = slug; // The ID is extracted from the URL slug
+
+// Get all details from content collection
+const allDetails = await getCollection("details");
+
+// Helper function to find data by ID
+function findDataById(searchId: string) {
+  return allDetails.find((entry) => entry.data.id === searchId)?.data;
+}
+
+// Use provided data or fallback to content collection data based on ID
+let data;
+if (Astro.props.data) {
+  data = Astro.props.data;
+} else {
+  // Try to find exact match only
+  data = findDataById(id || "");
+
+  // If no exact match found, use fallback
+  if (!data) {
+    // Try to get the fallback entry from content collection
+    data = findDataById("fallback");
+
+    // If even the fallback entry doesn't exist, create a minimal one
+    if (!data) {
+      data = {
+        id: "fallback",
+        title: "Not Found",
+        orgtitle: ".",
+        geo: "DE",
+        info: {
+          type: "movie",
+          duration: 0,
+          seasons: 0,
+          episodes: 0,
+          onlineuntil: "2025-12-31T23:59:59Z",
+          quality: ".",
+          description: "<p>No movie/series found with the provided id</p>",
+          channel: {
+            name: ".",
+            country: "DE",
+          },
+        },
+      };
+    }
+  }
+}
+
+// Helper functions
+function toHoursAndMinutes(totalMinutes: number): string {
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  return `${hours}h${minutes > 0 ? ` ${minutes}m` : ""}`;
+}
+
+function getformat(id: string): string {
+  switch (id) {
+    case "mpd":
+      return "application/dash+xml";
+    case "m3u8":
+      return "application/x-mpegURL";
+    default:
+      return "application/dash+xml";
+  }
+}
+
+function splitLangFormat(inputString: string): string[] {
+  if (typeof inputString !== "string") {
+    console.error("Invalid input: Expected a string.");
+    return [];
+  }
+
+  const indexOfFirstHyphen = inputString.indexOf("-");
+  if (indexOfFirstHyphen === -1) {
+    return [inputString];
+  }
+
+  const part1 = inputString.substring(0, indexOfFirstHyphen);
+  const part2 = inputString.substring(indexOfFirstHyphen + 1);
+  return [part1, part2];
+}
+
+function getImageUrl(slide: any): string {
+  let imageUrl = "";
+  switch (true) {
+    case !!slide.backdrop:
+      // Check if it's already a full URL
+      imageUrl = slide.backdrop.startsWith("http")
+        ? slide.backdrop
+        : "https://img.mediathek.community/t/p/original" + slide.backdrop;
+      break;
+    case !!slide.backdropup:
+      imageUrl =
+        "https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/" +
+        slide.backdropup;
+      break;
+    case !!slide.poster:
+      // Check if it's already a full URL
+      imageUrl = slide.poster.startsWith("http")
+        ? slide.poster
+        : "https://img.mediathek.community/t/p/original" + slide.poster;
+      break;
+    case !!slide.posterup:
+      imageUrl =
+        "https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/" +
+        slide.posterup;
+      break;
+    default:
+      console.warn("No backdrop found for slide", slide);
+      // Use a better placeholder image for demo
+      imageUrl =
+        "https://images.unsplash.com/photo-1489599743717-9c7b9b6ea9c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080&q=80";
+  }
+  return imageUrl;
+}
+
+function getqualityicon(quality: string): string {
+  if (quality === "4k") {
+    return "mdi:uhd";
+  } else if (quality === "1080p" || quality === "fhd") {
+    return "material-symbols:full-hd";
+  } else if (quality === "hd") {
+    return "mdi:video";
+  } else {
+    return "mdi:video-outline";
+  }
+}
+
+// Video player state
+let show1 = 1; // Default to show player
+let active = 1; // Global active state for video player
+---
+
+<BlogPost>
+  <div class="contents">
+    <!-- Hero Section -->
+    <div class="hero-container relative w-full">
+      <!-- Hero Image Content -->
+      <div
+        id="hero-image-content"
+        class="hero-image-content relative h-full w-full"
+      >
+        <div class="image-container absolute inset-0">
+          <img
+            src={getImageUrl(data.info)}
+            alt={data.title}
+            class="hero-image w-full"
+            loading="eager"
+          />
+        </div>
+        <div class="gradient-overlay absolute inset-x-0 bottom-0"></div>
+        <div
+          class="text-overlay absolute bottom-4 left-4 text-base-content sm:bottom-8 sm:left-8 md:bottom-12 md:left-16 lg:bottom-16 lg:left-32"
+        >
+          <div class="mb-1 flex flex-wrap items-center gap-1 sm:mb-4">
+            <span
+              class="badge-icon badge-ghost inline-flex items-center gap-1 px-1 py-1"
+            >
+              <svg
+                class={`w-6 h-6 ${data.id === "fallback" ? "text-red-500" : ""}`}
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill="currentColor"
+                  d={data.id === "fallback"
+                    ? "M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"
+                    : "M12,2L13.09,8.26L22,9L13.09,9.74L12,16L10.91,9.74L2,9L10.91,8.26L12,2Z"}
+                  stroke="currentColor"
+                  stroke-width={data.id === "fallback" ? "3" : "0"}></path>
+              </svg>
+              {
+                data.id === "fallback" ? null : (
+                  <span class={`fi fi-${data.info.channel.country}`} />
+                )
+              }
+            </span>
+
+            <span
+              class="badge-icon badge-ghost inline-flex items-center gap-1 px-1 py-1"
+            >
+              <svg
+                class={`w-6 h-6 ${data.id === "fallback" ? "text-red-500" : ""}`}
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill="currentColor"
+                  d={data.id === "fallback"
+                    ? "M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"
+                    : "M4,6H20V16H4M20,18A2,2 0 0,0 22,16V6C22,4.89 21.1,4 20,4H4C2.89,4 2,4.89 2,6V16A2,2 0 0,0 4,18H0V20H24V18H20Z"}
+                  stroke="currentColor"
+                  stroke-width={data.id === "fallback" ? "3" : "0"}></path>
+              </svg>
+            </span>
+
+            <span
+              class="badge-icon badge-ghost inline-flex items-center gap-1 px-1 py-1"
+            >
+              <svg
+                class={`w-6 h-6 ${data.id === "fallback" ? "text-red-500" : ""}`}
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill="currentColor"
+                  d={data.id === "fallback"
+                    ? "M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"
+                    : data.info.type === "movie"
+                      ? "M18,4L20,8H17L15,4H13L15,8H12L10,4H8L10,8H7L5,4H4A2,2 0 0,0 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6A2,2 0 0,0 20,4H18Z"
+                      : "M8.16,3L6.75,4.41L9.34,7H4C2.89,7 2,7.89 2,9V19C2,20.11 2.89,21 4,21H20C21.11,21 22,20.11 22,19V9C22,7.89 21.11,7 20,7H14.66L17.25,4.41L15.84,3L12,6.84L8.16,3M4,9H17V19H4V9Z"}
+                  stroke="currentColor"
+                  stroke-width={data.id === "fallback" ? "3" : "0"}></path>
+              </svg>
+            </span>
+          </div>
+
+          <h1
+            class="mb-2 text-2xl font-bold tracking-tight leading-tight sm:text-3xl md:text-4xl lg:text-5xl"
+          >
+            {data.title}
+          </h1>
+
+          {
+            data.title !== data.orgtitle && data.orgtitle && (
+              <p class="mb-4 text-sm text-gray-300 italic sm:text-base">
+                Original Title: {data.orgtitle}
+              </p>
+            )
+          }
+        </div>
+      </div>
+
+      <!-- Video Player Card (Hidden by default) -->
+      <div
+        id="video-player-card"
+        class="video-player-card absolute inset-0 hidden"
+      >
+        <div class="relative h-full w-full bg-black">
+          <!-- Content area with navbar padding -->
+          <div class="pt-20 h-full w-full relative">
+            <!-- Floating Close Button -->
+            <button
+              id="close-video-btn"
+              type="button"
+              aria-label="Close video player"
+              class="btn btn-circle btn-ghost absolute left-4 top-6 z-[60]"
+            >
+              <svg class="w-7 h-7" viewBox="0 0 24 24">
+                <path
+                  fill="currentColor"
+                  d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"
+                />
+              </svg>
+            </button>
+            <!-- Videoplayer Component - Always rendered and initially active -->
+            {
+              active ? (
+                <VideoplayerAstro
+                  data={data}
+                  playlistType="regular"
+                  episodeIndex={0}
+                  active={1}
+                  class="absolute inset-0 w-full h-full"
+                />
+              ) : null
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Section -->
+    <div class="content-wrapper mt-16 mx-4 mb-8">
+      <div role="tablist" class="tabs tabs-lift">
+        <!-- Details Tab -->
+        <input type="radio" name="content_tabs" role="tab" class="tab" aria-label="Details" checked />
+        <div class="tab-content bg-base-100 border-base-300 p-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Information Section -->
+            <div>
+              <h3 class="text-xl font-semibold mb-4">Information</h3>
+              <div class="overflow-x-auto">
+                <table class="table table-zebra table-md w-full">
+                  <tbody>
+                    {(data.info.duration || data.id === "fallback") && (
+                      <tr>
+                        <th class="font-semibold text-primary">Duration</th>
+                        <td>{data.id === "fallback" ? "0min" : toHoursAndMinutes(data.info.duration)}</td>
+                      </tr>
+                    )}
+                    {data.info.type === "movie" && data.videosource && (
+                      <>
+                        <tr>
+                          <th class="font-semibold text-primary">Audio Language</th>
+                          <td>
+                            <div class="flex flex-row gap-2">
+                              {data.videosource.audiolang?.map((lang: string) => (
+                                <span class={`fi fi-${lang}`} />
+                              ))}
+                            </div>
+                          </td>
+                        </tr>
+                        {data.sublangs?.length > 0 && (
+                          <tr>
+                            <th class="font-semibold text-primary">Subtitle Language</th>
+                            <td>
+                              <div class="flex flex-row flex-wrap gap-2">
+                                {data.sublangs.map((lang: any) => (
+                                  <div class={lang.spokenlang ? "tooltip" : ""} data-tip="Spoken lang">
+                                    <div class="badge badge-neutral">
+                                      <span class={`fi fi-${lang.srclang.toLowerCase()}`} />
+                                      {lang.spokenlang && (
+                                        <svg class="w-4 h-4 ml-1" viewBox="0 0 24 24">
+                                          <path fill="currentColor" d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z" />
+                                        </svg>
+                                      )}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                        {data.links?.[0]?.fsubtitle_lang && (
+                          <tr>
+                            <th class="font-semibold text-primary">Forced Subtitle Language</th>
+                            <td>
+                              <div class="flex flex-row gap-2">
+                                {data.links[0].fsubtitle_lang.map((lang: string) => (
+                                  <span class={`fi fi-${lang.toLowerCase()}`} />
+                                ))}
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </>
+                    )}
+                    {data.info.type !== "movie" && (
+                      <>
+                        <tr>
+                          <th class="font-semibold text-primary">Audio Language</th>
+                          <td>
+                            <div class="flex flex-row gap-2 items-center">
+                              {data.playlist?.ov?.[1] && (
+                                <>
+                                  <span class={`fi fi-${data.playlist.ov[1][0].audiolang}`} />
+                                  <span class="text-sm">OV</span>
+                                  {data.playlist?.regular && <span>&nbsp;&</span>}
+                                </>
+                              )}
+                              {data.playlist?.regular?.[1] && (
+                                <>
+                                  <span class={`fi fi-${splitLangFormat(data.playlist.regular[1][0].audiolang[0])[0]}`} />
+                                  <svg class="w-4 h-4" viewBox="0 0 24 24">
+                                    <path fill="currentColor" d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z" />
+                                  </svg>
+                                </>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th class="font-semibold text-primary">Seasons (total)</th>
+                          <td>{data.info.seasons}</td>
+                        </tr>
+                        <tr>
+                          <th class="font-semibold text-primary">Episodes (total)</th>
+                          <td>{data.info.episodes}</td>
+                        </tr>
+                      </>
+                    )}
+                    <tr>
+                      <th class="font-semibold text-primary">Channel / Country</th>
+                      <td>
+                        <div class="flex flex-row gap-2 items-center">
+                          <svg class="w-6 h-6" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M12,2L13.09,8.26L22,9L13.09,9.74L12,16L10.91,9.74L2,9L10.91,8.26L12,2Z" />
+                          </svg>
+                          <span class={`fi fi-${data.info.channel.country}`}></span>
+                        </div>
+                      </td>
+                    </tr>
+                    {data.backdropup?.filename_disk && (
+                      <tr>
+                        <th class="font-semibold text-primary">
+                          <p class="flex items-center">Images
+                            <svg class="w-4 h-4 ml-1" viewBox="0 0 24 24">
+                              <path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,7H13V9H11V7M11,11H13V17H11V11Z" />
+                            </svg>
+                          </p>
+                        </th>
+                        <td>
+                          <div class="flex flex-wrap gap-2">
+                            <svg class="w-6 h-6" viewBox="0 0 24 24">
+                              <path fill="currentColor" d="M12,2L13.09,8.26L22,9L13.09,9.74L12,16L10.91,9.74L2,9L10.91,8.26L12,2Z" />
+                            </svg>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                    <tr>
+                      <th class="font-semibold text-primary">Quality</th>
+                      <td>
+                        <svg class="w-6 h-6" viewBox="0 0 24 24">
+                          <path fill="currentColor" d="M4,6H20V16H4M20,18A2,2 0 0,0 22,16V6C22,4.89 21.1,4 20,4H4C2.89,4 2,4.89 2,6V16A2,2 0 0,0 4,18H0V20H24V18H20Z" />
+                        </svg>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th class="font-semibold text-primary">Online until</th>
+                      <td>
+                        <span set:html={data.id === "fallback" ? "&infin;" : new Date(data.info.onlineuntil).toLocaleDateString()} />
+                      </td>
+                    </tr>
+                    {data.info.cast?.length > 0 && (
+                      <tr>
+                        <th class="font-semibold text-primary">Cast</th>
+                        <td>
+                          <div class="flex flex-wrap gap-2">
+                            {data.info.cast.map((member: any) => (
+                              <a href={`/cast/${member.id}`} class="badge badge-primary">{member.name}</a>
+                            ))}
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                    {data.info.crew?.length > 0 && (
+                      <tr>
+                        <th class="font-semibold text-primary">Crew</th>
+                        <td>
+                          <div class="flex flex-wrap gap-2">
+                            {data.info.crew.map((member: any) => (
+                              <a href={`/crew/${member.id}`} class="badge badge-secondary">{member.name}</a>
+                            ))}
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!-- Description Section -->
+            <div>
+              <h3 class="text-xl font-semibold mb-4">Description</h3>
+              <div class="prose max-w-none" set:html={data.info.description} />
+            </div>
+          </div>
+        </div>
+
+        <!-- Movie Links Tab -->
+        {
+          data.info.type === "movie" && (
+            <>
+              <input
+                type="radio"
+                name="content_tabs"
+                role="tab"
+                class="tab"
+                aria-label="Links"
+              />
+              <div class="tab-content bg-base-100 border-base-300 p-6">
+                <div class="join join-vertical w-full">
+                  <div class="collapse collapse-arrow join-item border-base-300 border">
+                    <input type="radio" name="movie-accordion" checked />
+                    <div class="collapse-title font-semibold">
+                      <span>{data.title}</span>
+                    </div>
+                    <div class="collapse-content">
+                      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-start">
+                        <div class="md:col-span-3">
+                          <div
+                            class="prose max-w-none text-sm"
+                            set:html={data.info.description}
+                          />
+                        </div>
+                        <div class="flex justify-end">
+                          {data.id === "fallback" ? (
+                            <button
+                              type="button"
+                              class="btn btn-accent"
+                              disabled
+                            >
+                              <span class="flex items-center gap-1">
+                                Content not available
+                              </span>
+                            </button>
+                          ) : data.geo === data.info.channel.country ? (
+                            data.fskcheck && data.serverhour < 22 ? (
+                              <button
+                                type="button"
+                                class="btn btn-accent"
+                                disabled
+                              >
+                                <span class="flex items-center gap-1">
+                                  FSK ! - Only after 22:00
+                                </span>
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                class="btn btn-accent"
+                                data-playlist-type="regular"
+                                data-episode-index="0"
+                              >
+                                <svg class="w-6 h-6" viewBox="0 0 24 24">
+                                  <path
+                                    fill="currentColor"
+                                    d="M8,5.14V19.14L19,12.14L8,5.14Z"
+                                  />
+                                </svg>
+                                <span>Play</span>
+                              </button>
+                            )
+                          ) : (
+                            <button
+                              type="button"
+                              class="btn btn-accent"
+                              disabled
+                            >
+                              <span class="flex items-center gap-1">
+                                <span
+                                  class={`fi fi-${data.info.channel.country}`}
+                                />
+                                IP required
+                              </span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )
+        }
+
+        <!-- Dynamic Links Tab -->
+        {
+          data.dyna && data.info.type === "movie" && (
+            <>
+              <input
+                type="radio"
+                name="content_tabs"
+                role="tab"
+                class="tab"
+                aria-label="Links"
+              />
+              <div class="tab-content bg-base-100 border-base-300 p-6">
+                <div class="join join-vertical w-full">
+                  <div class="collapse collapse-arrow join-item border-base-300 border">
+                    <input type="radio" name="dyna-accordion" checked />
+                    <div class="collapse-title font-semibold">
+                      <span>{data.title}?</span>
+                    </div>
+                    <div class="collapse-content">
+                      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-start">
+                        <div class="md:col-span-3">
+                          <div
+                            class="prose max-w-none text-sm"
+                            set:html={data.description}
+                          />
+                        </div>
+                        <div class="flex justify-end">
+                          {data.id === "fallback" ? (
+                            <button
+                              type="button"
+                              class="btn btn-accent"
+                              disabled
+                            >
+                              <span class="flex items-center gap-1">
+                                Content not available
+                              </span>
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              class="btn btn-accent"
+                              onclick="showVideoPlayer()"
+                            >
+                              <svg class="w-6 h-6" viewBox="0 0 24 24">
+                                <path
+                                  fill="currentColor"
+                                  d="M8,5.14V19.14L19,12.14L8,5.14Z"
+                                />
+                              </svg>
+                              <span>Play</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )
+        }
+
+        <!-- Episodes Tabs -->
+        {
+          data.info.episodes > 0 && (
+            <>
+              {/* First all non-OV (regular) tabs */}
+              {Array.from(
+                { length: data.info.seasons },
+                (_, season) =>
+                  data.playlist.regular?.[season + 1] && (
+                    <>
+                      <input
+                        type="radio"
+                        name="content_tabs"
+                        role="tab"
+                        class="tab"
+                        aria-label={
+                          data.info.seasons > 1
+                            ? `Season ${season + 1}`
+                            : "Episodes"
+                        }
+                      />
+                      <div class="tab-content bg-base-100 border-base-300 p-6">
+                        <div class="join join-vertical w-full">
+                          {data.playlist.regular[season + 1].map(
+                            (link: any, index: number) => (
+                              <div class="collapse collapse-arrow join-item border-base-300 border">
+                                <input
+                                  type="radio"
+                                  name={`episode-regular-accordion-s${season}`}
+                                  checked={index === 0}
+                                />
+                                <div class="collapse-title font-semibold">
+                                  <span class="font-bold mr-2">
+                                    S{link.season}-E{link.episode}:
+                                  </span>
+                                  <span>{link.title}</span>
+                                </div>
+                                <div class="collapse-content">
+                                  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-start">
+                                    <div class="md:col-span-3">
+                                      <p class="text-sm">
+                                        {link.description || "no description"}
+                                      </p>
+                                    </div>
+                                    <div class="flex justify-end">
+                                      {data.id === "fallback" ? (
+                                        <button
+                                          type="button"
+                                          class="btn btn-accent"
+                                          disabled
+                                        >
+                                          <span class="flex items-center gap-1">
+                                            Content not available
+                                          </span>
+                                        </button>
+                                      ) : data.info.geo !==
+                                        data.info.channel.country ? (
+                                        <button
+                                          type="button"
+                                          class="btn btn-accent"
+                                          data-playlist-type="regular"
+                                          data-season-index={season}
+                                          data-episode-index={index}
+                                        >
+                                          <svg
+                                            class="w-6 h-6"
+                                            viewBox="0 0 24 24"
+                                          >
+                                            <path
+                                              fill="currentColor"
+                                              d="M8,5.14V19.14L19,12.14L8,5.14Z"
+                                            />
+                                          </svg>
+                                          <span>Play Episode</span>
+                                        </button>
+                                      ) : (
+                                        <button
+                                          type="button"
+                                          class="btn btn-accent"
+                                          disabled
+                                        >
+                                          <span class="flex items-center gap-1">
+                                            <span
+                                              class={`fi fi-${data.info.channel.country}`}
+                                            />
+                                            IP required
+                                          </span>
+                                        </button>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                          )}
+                        </div>
+                      </div>
+                    </>
+                  )
+              )}
+
+              {/* Then all OV tabs */}
+              {Array.from(
+                { length: data.info.seasons },
+                (_, season) =>
+                  data.playlist.ov?.[season + 1] && (
+                    <>
+                      <input
+                        type="radio"
+                        name="content_tabs"
+                        role="tab"
+                        class="tab"
+                        aria-label={
+                          data.info.seasons > 1
+                            ? `Season ${season + 1} ov`
+                            : "Episodes ov"
+                        }
+                      />
+                      <div class="tab-content bg-base-100 border-base-300 p-6">
+                        <div class="join join-vertical w-full">
+                          {data.playlist.ov[season + 1].map(
+                            (link: any, index: number) => (
+                              <div class="collapse collapse-arrow join-item border-base-300 border">
+                                <input
+                                  type="radio"
+                                  name={`episode-accordion-s${season}`}
+                                  checked={index === 0}
+                                />
+                                <div class="collapse-title font-semibold">
+                                  <span class="font-bold mr-2">
+                                    S{link.season}-E{link.episode}:
+                                  </span>
+                                  <span>{link.title}</span>
+                                </div>
+                                <div class="collapse-content">
+                                  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-start">
+                                    <div class="md:col-span-3">
+                                      <p class="text-sm">
+                                        {link.description || "no description"}
+                                      </p>
+                                    </div>
+                                    <div class="flex justify-end">
+                                      {data.id === "fallback" ? (
+                                        <button
+                                          type="button"
+                                          class="btn btn-accent"
+                                          disabled
+                                        >
+                                          <span class="flex items-center gap-1">
+                                            Content not available
+                                          </span>
+                                        </button>
+                                      ) : data.info.geo !==
+                                        data.info.channel.country ? (
+                                        <button
+                                          type="button"
+                                          class="btn btn-accent play-btn"
+                                          data-playlist-type="ov"
+                                          data-season-index={season}
+                                          data-episode-index={index}
+                                        >
+                                          <svg
+                                            class="w-6 h-6"
+                                            viewBox="0 0 24 24"
+                                          >
+                                            <path
+                                              fill="currentColor"
+                                              d="M8,5.14V19.14L19,12.14L8,5.14Z"
+                                            />
+                                          </svg>
+                                          <span>Play Episode</span>
+                                        </button>
+                                      ) : (
+                                        <button
+                                          type="button"
+                                          class="btn btn-accent"
+                                          disabled
+                                        >
+                                          <span class="flex items-center gap-1">
+                                            <span
+                                              class={`fi fi-${data.info.channel.country.toLowerCase()}`}
+                                            />
+                                            IP required
+                                          </span>
+                                        </button>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                          )}
+                        </div>
+                      </div>
+                    </>
+                  )
+              )}
+            </>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</BlogPost>
+
+<style>
+  .gradient-text {
+    background: radial-gradient(
+      circle,
+      var(--tw-color-accent),
+      var(--tw-color-primary)
+    );
+    background-clip: text;
+  }
+
+  .gradient-text-light {
+    background: radial-gradient(circle, hsl(var(--a)), red);
+    background-clip: text;
+  }
+
+  .b21 {
+    padding: 1% 4% 0 4%;
+  }
+
+  .hero-container {
+    height: 50vh;
+    max-height: 60vh;
+    min-height: 400px;
+    transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    background: #000;
+    position: relative;
+  }
+
+  .hero-image-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .image-container {
+    display: flex;
+    align-items: flex-start;
+    overflow: hidden;
+  }
+
+  .hero-image {
+    min-width: 100%;
+    object-fit: cover;
+    object-position: top;
+    height: 100%;
+    min-height: 100%;
+  }
+
+  .gradient-overlay {
+    height: 75%;
+    width: 100%;
+    max-width: 100%;
+    background: linear-gradient(
+      to top,
+      rgb(17, 17, 17) 0%,
+      rgba(17, 17, 17, 0.987) 7.8%,
+      rgba(17, 17, 17, 0.951) 15.2%,
+      rgba(17, 17, 17, 0.896) 22.1%,
+      rgba(17, 17, 17, 0.825) 28.7%,
+      rgba(17, 17, 17, 0.741) 35.1%,
+      rgba(17, 17, 17, 0.648) 41.2%,
+      rgba(17, 17, 17, 0.55) 47.1%,
+      rgba(17, 17, 17, 0.45) 52.9%,
+      rgba(17, 17, 17, 0.352) 58.8%,
+      rgba(17, 17, 17, 0.259) 64.9%,
+      rgba(17, 17, 17, 0.175) 71.3%,
+      rgba(17, 17, 17, 0.104) 77.9%,
+      rgba(17, 17, 17, 0.049) 84.8%,
+      rgba(17, 17, 17, 0.013) 92.2%,
+      rgba(17, 17, 17, 0) 100%
+    );
+  }
+
+  .text-overlay {
+    text-align: left;
+    width: calc(100% - 2rem);
+    max-width: 100%;
+  }
+
+  .badge-icon {
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 0.375rem;
+    backdrop-filter: blur(4px);
+  }
+
+  .hero {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+  }
+
+  .hero-overlay {
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.8) 0%,
+      rgba(0, 0, 0, 0.4) 50%,
+      rgba(0, 0, 0, 0.2) 100%
+    );
+  }
+
+  .content-wrapper {
+    width: 100%;
+    margin: 0 1rem 1rem 0;
+    padding: 0 1rem 2rem 1rem;
+  }
+
+  .prose {
+    max-width: none;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 480px) {
+    .hero-container {
+      height: 40vh;
+      min-height: 250px;
+      max-height: 50vh;
+    }
+    .gradient-overlay {
+      height: 85%;
+    }
+  }
+
+  @media (min-width: 481px) and (max-width: 640px) {
+    .hero-container {
+      height: 50vh;
+      min-height: 300px;
+      max-height: 50vh;
+    }
+    .gradient-overlay {
+      height: 80%;
+    }
+  }
+
+  @media (min-width: 641px) and (max-width: 768px) {
+    .hero-container {
+      height: 50vh;
+      max-height: 50vh;
+    }
+    .gradient-overlay {
+      height: 75%;
+    }
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .hero-container {
+      height: 50vh;
+      max-height: 50vh;
+    }
+    .gradient-overlay {
+      height: 75%;
+    }
+  }
+
+  @media (min-width: 1025px) {
+    .hero-container {
+      height: 70vh;
+      max-height: 70vh;
+    }
+    .gradient-overlay {
+      height: 75%;
+    }
+  }
+
+  /* Video Player Styles */
+  .video-player-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 30;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(5px);
+    /* Ensure it matches the hero container dimensions exactly */
+    height: 100%;
+    width: 100%;
+  }
+
+  .floating-close-btn {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .floating-close-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  }
+
+  .video-player-card.hidden {
+    display: none;
+  }
+
+  .video-player-card.visible {
+    display: block;
+  }
+</style>
+
+<script type="module">
+  // Player state variables (client-side)
+  let show1 = 1; // Toggle for showing player, default is 1 (shown)
+  let active = 1; // Global active state for video player
+
+  // Video Player Functions - Enhanced with recreation logic
+  function showVideoPlayer() {
+    const videoCard = document.querySelector("#video-player-card");
+    const heroImageContent = document.querySelector("#hero-image-content");
+    active = 1;
+    if (videoCard && heroImageContent) {
+      videoCard.classList.remove("hidden");
+      videoCard.classList.add("visible");
+      setTimeout(() => {
+        const videoPlayerElement = document.querySelector("#main-videoplayer");
+        if (videoPlayerElement) {
+          const videoEl = videoPlayerElement;
+          const wasDestroyed = videoEl.style.display === "none" || videoEl.dataset.active === "0";
+          if (window.VideoPlayerAstro) {
+            if (wasDestroyed) {
+              window.VideoPlayerAstro.resetPlayer();
+            } else {
+              window.VideoPlayerAstro.setActive(1);
+            }
+          }
+        } else {
+          if (window.VideoPlayerAstro) {
+            window.VideoPlayerAstro.resetPlayer();
+          }
+        }
+      }, 100);
+    }
+  }
+
+  function hideVideoPlayer() {
+    active = show1;
+    const videoCard = document.querySelector("#video-player-card");
+    const heroImageContent = document.querySelector("#hero-image-content");
+    const videoPlayerElement = document.querySelector("#main-videoplayer");
+    if (videoPlayerElement) {
+      if (window.VideoPlayerAstro) {
+        window.VideoPlayerAstro.setActive(show1);
+      }
+    }
+    if (videoCard && heroImageContent) {
+      if (show1 === 0) {
+        videoCard.classList.add("hidden");
+        videoCard.classList.remove("visible");
+      } else {
+        videoCard.dataset.show1 = show1.toString();
+      }
+    }
+  }
+
+  function playEpisode(type = "regular", seasonIndex = 0, episodeIndex = 0) {
+    show1 = 1;
+    showVideoPlayer();
+    setTimeout(() => {
+      const videoPlayerElement = document.querySelector("#main-videoplayer");
+      if (videoPlayerElement) {
+        if (window.VideoPlayerAstro) {
+          window.VideoPlayerAstro.setActive(1);
+          setTimeout(() => {
+            window.VideoPlayerAstro.changeEpisode(type, seasonIndex);
+            setTimeout(() => {
+              if (window.VideoPlayerAstro) {
+                window.VideoPlayerAstro.setEpisodeIndex(seasonIndex, episodeIndex);
+              }
+            }, 50);
+          }, 50);
+        }
+      }
+    }, 100);
+  }
+
+  function restartVideoPlayer() {
+    show1 = 1;
+    showVideoPlayer();
+    setTimeout(() => {
+      if (window.VideoPlayerAstro) {
+        window.VideoPlayerAstro.setActive(1);
+        setTimeout(() => {
+          window.VideoPlayerAstro.resetPlayer();
+        }, 100);
+      }
+    }, 150);
+  }
+
+  function recreateVideoPlayer() {
+    show1 = 1;
+    const videoCard = document.querySelector("#video-player-card");
+    if (videoCard) {
+      videoCard.classList.remove("hidden");
+      videoCard.classList.add("visible");
+    }
+    setTimeout(() => {
+      if (window.VideoPlayerAstro) {
+        window.VideoPlayerAstro.resetPlayer();
+      }
+    }, 100);
+  }
+
+  function initializeVideoPlayer() {
+    const closeButton = document.querySelector("#close-video-btn");
+    closeButton?.addEventListener("click", () => {
+      show1 = show1 === 1 ? 0 : 1;
+      hideVideoPlayer();
+    });
+    const playButtons = document.querySelectorAll("button");
+    playButtons.forEach((button) => {
+      if (button.textContent?.includes("Play")) {
+        button.classList.add("play-btn");
+        if (!button.dataset.playlistType) {
+          button.dataset.playlistType = "regular";
+        }
+        if (!button.dataset.seasonIndex) {
+          button.dataset.seasonIndex = "0";
+        }
+        if (!button.dataset.episodeIndex) {
+          button.dataset.episodeIndex = "0";
+        }
+        button.addEventListener("click", () => {
+          show1 = 1;
+          const type = button.dataset.playlistType || "regular";
+          const seasonIndex = parseInt(button.dataset.seasonIndex || "0", 10);
+          const episodeIndex = parseInt(button.dataset.episodeIndex || "0", 10);
+          playEpisode(type, seasonIndex, episodeIndex);
+        });
+      }
+    });
+    document.addEventListener("click", function (event) {
+      const videoCard = document.querySelector("#video-player-card");
+      const closeButton = document.querySelector("#close-video-btn");
+      const target = event.target;
+      if (!videoCard || videoCard.classList.contains("hidden") || target === closeButton || closeButton?.contains(target)) {
+        return;
+      }
+      if (videoCard.contains(target)) {
+        return;
+      }
+      const isPlayButton =
+        target.closest(".btn") &&
+        (target.textContent?.includes("Play") ||
+          target.closest(".btn")?.textContent?.includes("Play"));
+      if (isPlayButton) {
+        return;
+      }
+      if (!videoCard.classList.contains("hidden")) {
+        hideVideoPlayer();
+      }
+    });
+    const videoCard = document.querySelector("#video-player-card");
+    if (videoCard) {
+      videoCard.addEventListener("click", function (event) {
+        const closeButton = document.querySelector("#close-video-btn");
+        const target = event.target;
+        if (target === closeButton || closeButton?.contains(target)) {
+          return;
+        }
+        event.stopPropagation();
+      });
+    }
+  }
+
+  // Legacy functions (kept for compatibility)
+  function playvideo() {
+    show1 = 1;
+    showVideoPlayer();
+  }
+  function toggleDynaWarn() {
+    show1 = 1;
+    showVideoPlayer();
+  }
+  function playepisode(dataid, episode, index, type) {
+    show1 = 1;
+    playEpisode(type || "regular", 0, index || 0);
+  }
+
+  // Make functions globally available for legacy/inline usage
+  window.showVideoPlayer = showVideoPlayer;
+  window.hideVideoPlayer = hideVideoPlayer;
+  window.playEpisode = playEpisode;
+  window.restartVideoPlayer = restartVideoPlayer;
+  window.recreateVideoPlayer = recreateVideoPlayer;
+  window.playvideo = playvideo;
+  window.toggleDynaWarn = toggleDynaWarn;
+  window.playepisode = playepisode;
+
+  document.addEventListener("DOMContentLoaded", () => {
+    initializeVideoPlayer();
+  });
+</script>
