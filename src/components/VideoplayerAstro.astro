@@ -1,0 +1,814 @@
+---
+// Astro component props interface
+export interface Props {
+  data?: any;
+  playlistType?: string; // Can be 'regular' or 'ov'
+  episodeIndex?: number; // Index of episode to play
+  active?: number; // Controls whether player should be active (1) or disposed (0)
+  class?: string;
+}
+
+// Destructure props with defaults
+const {
+  data = {},
+  playlistType = "regular",
+  episodeIndex = 0,
+  active = 1,
+  class: className = "",
+} = Astro.props as Props;
+
+// Process data to derive modalvideo (similar to Svelte reactive logic)
+let modalvideo = null;
+if (data?.info?.type?.includes("movie")) {
+  modalvideo = {
+    src: data?.videosource?.src,
+    type: data?.videosource?.type,
+    poster: data?.info?.poster || data?.info?.backdrop || "",
+    thumb: data?.info?.poster || data?.info?.backdrop || "",
+    title: data?.title || "",
+    sources: data?.videosource?.sources || (data?.videosource?.src ? [
+      {
+        src: data.videosource.src,
+        type: data.videosource.type,
+      },
+    ] : []),
+    tracks:
+      data?.sublangs?.map((sub: any) => ({
+        kind: "subtitles",
+        srclang: sub.srclang,
+        label: sub.srclang,
+      })) || [],
+  };
+} else {
+  modalvideo = data?.modalvideo || null;
+}
+
+// Process playlist based on playlistType
+let playlist = {};
+let fullPlaylistData = {}; // Store full playlist structure for type switching
+if (data?.info?.type?.includes("series")) {
+  if (data?.playlist) {
+    fullPlaylistData = data.playlist; // Store the full structure
+    const selectedPlaylist =
+      playlistType === "ov" ? data.playlist.ov : data.playlist.regular;
+    playlist = selectedPlaylist || {};
+  }
+} else {
+  playlist = data?.playlist || {};
+  fullPlaylistData = data?.playlist || {};
+}
+
+// Process playlist to ensure all items have sources property
+if (playlist && typeof playlist === "object" && !Array.isArray(playlist)) {
+  try {
+    const processedPlaylist = Object.entries(playlist).map(
+      ([seasonKey, episodes]) => {
+        if (Array.isArray(episodes)) {
+          const processedEpisodes = (episodes as any[]).map((episode) => {
+            // Flatten sources to top-level src/type, and ensure all required fields
+            let src = episode.src;
+            let type = episode.type;
+            if (Array.isArray(episode.sources) && episode.sources.length > 0) {
+              src = episode.sources[0].src || src;
+              type = episode.sources[0].type || type;
+            }
+            return {
+              src: src,
+              type: type,
+              tracks: episode.tracks || [],
+              thumb: episode.poster || episode.thumb || "",
+              title: episode.title || "",
+              duration: episode.duration || "",
+              poster: episode.poster || episode.thumb || "",
+              metaDescription:
+                episode.metaDescription || episode.description || "",
+              // Keep sources for compatibility, but Video.js will use top-level src/type
+              sources: episode.sources || (src ? [
+                {
+                  src: src,
+                  type: type,
+                },
+              ] : []),
+            };
+          });
+          return [seasonKey, processedEpisodes];
+        }
+        return [seasonKey, []];
+      }
+    );
+    if (processedPlaylist.length > 0) {
+      playlist = Object.fromEntries(processedPlaylist);
+    }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error("Error processing playlist:", error);
+  }
+}
+
+// Determine content type
+const seriestype = data?.info?.type?.includes("series") ? "playlist" : "single";
+
+// Calculate playlistindex (season index)
+const playlistindex = episodeIndex ?? data?.playlistindex ?? 0;
+
+// Subtitles info
+const subs = data?.sublangs || data?.subs || null;
+---
+
+<!-- Video element - Always render but conditionally initialize -->
+<div id="videoplayer-container" class={`videoplayer-container ${className}`}>
+  <video
+    id="main-videoplayer"
+    class="video-js overflow-hidden w-full h-full"
+    playsinline
+    preload="none"
+    data-videoplayer-component="true"
+    data-active={active.toString()}
+    data-playlist-type={playlistType}
+    data-episode-index={episodeIndex.toString()}
+    data-series-type={seriestype}
+    data-modalvideo={modalvideo ? JSON.stringify(modalvideo) : "null"}
+    data-playlist={Object.keys(playlist).length > 0
+      ? JSON.stringify(playlist)
+      : "{}"}
+    data-full-playlist={Object.keys(fullPlaylistData).length > 0
+      ? JSON.stringify(fullPlaylistData)
+      : "{}"}
+    data-playlistindex={playlistindex.toString()}
+    data-subs={subs ? JSON.stringify(subs) : "null"}
+    style={active === 0 ? "display: none;" : ""}
+  >
+    <p class="vjs-no-js">
+      To view this video please enable JavaScript, and consider upgrading to a
+      web browser that
+      <a href="https://videojs.com/html5-video-support/" target="_blank"
+        >supports HTML5 video</a
+      >.
+    </p>
+  </video>
+</div>
+
+<style>
+  .videoplayer-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+
+  .overflow-hidden {
+    overflow: hidden !important;
+  }
+
+  #main-videoplayer {
+    width: 100% !important;
+    height: 100% !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  :root {
+    --controlbar-bg-color: transparent;
+    --big-play-bg-color: #708090;
+    --big-play-color: #ffffff;
+    --button-icon-bg-color: #708090;
+    --button-icon-hover-bg-color: #c6c6c6;
+    --button-icon-color: #ffffff;
+    --button-icon-hover-color: #222222;
+    --menu-bg-color: #f0f8ff;
+    --menu-hover-bg-color: #d4d9de;
+    --menu-color: #222222;
+    --menu-active-color: #22222;
+    --menu-active-bg-color: #b0c4de;
+    --menu-secondary-color: #222222;
+    --menu-title-bg-color: #708090;
+    --menu-title-color: #fff;
+    --menu-zoom-level-color: #708090;
+    --menu-zoom-slider-color: #cccccc;
+    --menu-zoom-thumb-color: #708090;
+    --tooltip-bg-color: #ffffff;
+    --tooltip-color: #222222;
+    --progress-play-color: #c6c6c6;
+    --progress-load-color: #999999;
+    --progress-ad-color: #cc0000;
+    --chapter-marker-color: #ffffff;
+    --volume-bg-color: rgba(0, 0, 0, 0.5);
+    --volume-slider-color: #666666;
+    --volume-level-color: #ffffff;
+    --volume-thumb-color: #708090;
+  }
+</style>
+
+<script>
+  // Import CSS first
+  import "../videojs/skins/gold1/videojs.min.css";
+
+  // Then import JavaScript
+  import videojs from "video.js";
+  import "../videojs/plugins/es/nuevo.js";
+  import "../videojs/plugins/es/playlist.js";
+  import "../videojs/plugins/es/videojs.hotkeys";
+
+  // Global player instance and state
+  let player: any = null;
+  let videoSource: any = null;
+  let currentActive = 1;
+  let currentData: any = {};
+  let currentPlaylistType = "regular";
+  let currentEpisodeIndex = 0;
+  let currentModalvideo: any = null;
+  let currentPlaylist: any = {}; // The currently selected playlist (ov or regular)
+  let currentFullPlaylist: any = {}; // The full playlist structure containing both ov and regular
+  let currentPlaylistindex = 0;
+
+  // Video.js configuration options
+  const videojsOptions = {
+    license: "0902555a051359560f49525c090a445d0d1348",
+    controls: true,
+    autoplay: false, // Explicitly disable autoplay
+    preload: "none", // Don't preload anything to keep it black
+    playsinline: false,
+    fill: true,
+    hotkeys: true,
+    resume: true,
+    html5: {
+      hlsjsConfig: {
+        debug: false,
+        enableWorker: true,
+        lowLatencyMode: false,
+        backBufferLength: 90,
+        maxBufferSize: 30 * 1000 * 1000,
+        maxBufferLength: 30,
+      },
+    },
+  };
+
+  const nuevoOptions = {
+    pipButton: false,
+    shareMenu: false,
+    rateMenu: false,
+    zoomMenu: false,
+    buttonForward: true,
+    qualityMenu: false,
+    settingsButton: false,
+    contextMenu: true,
+    rewindforward: 30,
+  };
+
+  // Function to set video source
+  function setSource(
+    type: any,
+    modalvideo: any,
+    playlist: any,
+    seasonIndex: any = 0 // This should be the season index, not episode index
+  ) {
+    if (!player) return;
+    player.currentTime(0);
+
+    const setCommonSource = (src: any, poster: any, videoType: any) => {
+      videoSource = {
+        sources: [{ src, type: videoType }],
+        poster,
+        title: modalvideo?.title || "",
+      };
+      player.poster(poster);
+      player.src(videoSource.sources);
+    };
+
+    switch (type) {
+      case "playlist":
+        if (playlist && typeof playlist === "object") {
+          const seasonKeys = Object.keys(playlist).sort();
+          // Map seasonIndex to actual season key
+          let seasonKey;
+          if (seasonIndex !== undefined && seasonIndex !== null && seasonIndex >= 0 && seasonIndex < seasonKeys.length) {
+            seasonKey = seasonKeys[seasonIndex];
+          } else {
+            seasonKey = seasonKeys[0];
+          }
+          const episodes = playlist[seasonKey];
+          if (Array.isArray(episodes) && episodes.length > 0) {
+            // Use currentEpisodeIndex for which episode within the season, fallback to 0
+            let activeEpisodeIndex = currentEpisodeIndex || 0;
+            if (
+              activeEpisodeIndex < 0 ||
+              activeEpisodeIndex >= episodes.length
+            ) {
+              activeEpisodeIndex = 0;
+            }
+            const episode = episodes[activeEpisodeIndex];
+            try {
+              // Use playlist.new() to completely replace the playlist
+              if (player.playlist && typeof player.playlist.new === "function") {
+                player.playlist.new(episodes);
+              } else if (player.playlist && typeof player.playlist === "function") {
+                // Fallback to regular playlist() method
+                player.playlist([]);
+                player.playlist(episodes);
+              }
+              if (episode) {
+                player.poster(episode.thumb || episode.poster || "");
+                if (episode.sources && episode.sources.length > 0) {
+                  player.src(episode.sources);
+                } else if (episode.src) {
+                  player.src([
+                    { src: episode.src, type: episode.type },
+                  ]);
+                }
+                if (
+                  player.playlist &&
+                  typeof player.playlist.currentItem === "function"
+                ) {
+                  player.playlist.currentItem(activeEpisodeIndex);
+                }
+              }
+            } catch (error) {
+              // eslint-disable-next-line no-console
+              console.error("Error setting up playlist:", error);
+            }
+          }
+        }
+        break;
+
+      case "single":
+      case "default":
+        if (modalvideo) {
+          if (modalvideo.sources && modalvideo.sources.length > 0) {
+            player.poster(modalvideo.thumb || modalvideo.poster);
+            player.src(modalvideo.sources);
+          } else {
+            setCommonSource(
+              modalvideo.src,
+              modalvideo.thumb || modalvideo.poster,
+              modalvideo.type
+            );
+          }
+        }
+        break;
+    }
+
+    player.one("loadeddata", () =>
+      handleLoadedData(modalvideo, playlist, seasonIndex, type)
+    );
+  }
+
+  function handleLoadedData(
+    modalvideo: any,
+    playlist: any,
+    playlistindex: any,
+    seriestype: any
+  ) {
+    if (!player) return;
+
+    if (seriestype === "playlist") {
+      // For playlists, try to get tracks from the current episode
+      if (playlist && typeof playlist === "object") {
+        const seasonKey = playlistindex.toString() || "1";
+        const episodes = playlist[seasonKey];
+        if (Array.isArray(episodes) && episodes.length > 0) {
+          const activeEpisodeIndex = currentEpisodeIndex || 0;
+          const episode = episodes[activeEpisodeIndex];
+          if (episode?.tracks) {
+            player.loadTracks?.(episode.tracks);
+          }
+        }
+      }
+      // Set the correct playlist item
+      if (
+        player.playlist &&
+        typeof player.playlist.currentItem === "function"
+      ) {
+        const episodeIndex = currentEpisodeIndex || 0;
+        player.playlist.currentItem(episodeIndex);
+      }
+    } else {
+      // For single videos, use modalvideo tracks
+      if (modalvideo?.tracks) {
+        player.loadTracks?.(modalvideo.tracks);
+      }
+    }
+
+    // Don't pause here - let the user's play intent continue
+  }
+
+  // Initialize player function
+  function initializePlayer() {
+    const videoElement = document.getElementById("main-videoplayer");
+    if (!videoElement) {
+      console.error("Video element not found!");
+      return;
+    }
+
+    // Parse data from element attributes
+    try {
+      currentModalvideo = JSON.parse(videoElement.dataset.modalvideo || "null");
+      currentPlaylist = JSON.parse(videoElement.dataset.playlist || "{}");
+      currentFullPlaylist = JSON.parse(videoElement.dataset.fullPlaylist || "{}");
+      currentPlaylistindex = parseInt(
+        videoElement.dataset.playlistindex || "0"
+      );
+    } catch (error) {
+      console.error("Error parsing video data:", error);
+      currentModalvideo = null;
+      currentPlaylist = {};
+      currentFullPlaylist = {};
+      currentPlaylistindex = 0;
+    }
+
+    // Get other data from element attributes
+    const elementData = {
+      active: parseInt(videoElement.dataset.active || "1"),
+      playlistType: videoElement.dataset.playlistType || "regular",
+      episodeIndex: parseInt(videoElement.dataset.episodeIndex || "0"),
+      seriesType: videoElement.dataset.seriesType || "single",
+    };
+
+    if (elementData.active === 1) {
+      player = videojs(videoElement, videojsOptions);
+      player.ready(() => {
+        player.nuevo?.(nuevoOptions);
+        player.hotkeys?.({ seekStep: 10 });
+
+        // Add play event listener to handle loading + playing in one click
+        let hasTriedToPlay = false;
+        player.on("play", () => {
+          if (!hasTriedToPlay && player.readyState() < 3) {
+            hasTriedToPlay = true;
+
+            // Wait for enough data to play
+            const handleCanPlay = () => {
+              player.off("canplay", handleCanPlay);
+              player.off("canplaythrough", handleCanPlay);
+              // Video is ready, continue playing
+              setTimeout(() => {
+    if (player.paused()) {
+      player
+        .play()
+        .catch((e: any) => {/* ignore play error in production */});
+                }
+              }, 100);
+            };
+
+            player.on("canplay", handleCanPlay);
+            player.on("canplaythrough", handleCanPlay);
+          }
+        });
+
+        // Set initial source based on type using parsed data
+        if (elementData.seriesType === "playlist") {
+          setSource(
+            "playlist",
+            currentModalvideo,
+            currentPlaylist,
+            currentPlaylistindex
+          );
+          player.pause();
+        } else {
+          player.pause();
+          setSource(elementData.seriesType, currentModalvideo, {}, 0);
+        }
+      });
+    }
+
+    currentActive = elementData.active;
+    currentPlaylistType = elementData.playlistType;
+    currentEpisodeIndex = elementData.episodeIndex;
+  }
+
+  // Destroy player function
+  function destroyPlayer() {
+    if (player) {
+      player.pause();
+      player.dispose();
+      player = null;
+    }
+    return true;
+  }
+
+  // Reset player function - Enhanced based on your snippet
+  function resetPlayer() {
+    // Find video parent element
+    const videoParent = document.getElementById("videoplayer-container");
+    if (!videoParent) {
+      // eslint-disable-next-line no-console
+      console.error("Video parent container not found!");
+      return false;
+    }
+
+    // Remove player from document if it exists
+    if (player) {
+      player.dispose();
+      player = null;
+    }
+
+    // Remove existing video element
+    const existingVideo = document.getElementById("main-videoplayer");
+    if (existingVideo) {
+      existingVideo.remove();
+    }
+
+    // Create new video element and set appropriate attributes
+    const newVideo = document.createElement("video");
+    newVideo.id = "main-videoplayer";
+    newVideo.className = "video-js overflow-hidden w-full h-full";
+    newVideo.setAttribute("playsinline", "true");
+    newVideo.setAttribute("preload", "none");
+    newVideo.setAttribute("data-videoplayer-component", "true");
+    newVideo.style.width = "100%";
+    newVideo.style.height = "100%";
+
+    // Copy data attributes from original element if they existed
+    const containerElement = videoParent.querySelector("[data-active]");
+    if (containerElement) {
+      const dataAttrs = [
+        "active",
+        "playlist-type",
+        "episode-index",
+        "series-type",
+        "modalvideo",
+        "playlist",
+        "full-playlist",
+        "playlistindex",
+        "subs",
+      ];
+      dataAttrs.forEach((attr) => {
+        const value = containerElement.getAttribute(`data-${attr}`);
+        if (value) {
+          newVideo.setAttribute(`data-${attr}`, value);
+        }
+      });
+    } else {
+      // Set default data attributes
+      newVideo.setAttribute("data-active", currentActive.toString());
+      newVideo.setAttribute("data-playlist-type", currentPlaylistType);
+      newVideo.setAttribute(
+        "data-episode-index",
+        currentEpisodeIndex.toString()
+      );
+      newVideo.setAttribute("data-series-type", "single");
+      newVideo.setAttribute(
+        "data-modalvideo",
+        currentModalvideo ? JSON.stringify(currentModalvideo) : "null"
+      );
+      newVideo.setAttribute(
+        "data-playlist",
+        Object.keys(currentPlaylist).length > 0
+          ? JSON.stringify(currentPlaylist)
+          : "{}"
+      );
+      newVideo.setAttribute(
+        "data-full-playlist",
+        Object.keys(currentFullPlaylist).length > 0
+          ? JSON.stringify(currentFullPlaylist)
+          : "{}"
+      );
+      newVideo.setAttribute(
+        "data-playlistindex",
+        currentPlaylistindex.toString()
+      );
+    }
+
+    // Add the fallback content
+    newVideo.innerHTML = `
+      <p class="vjs-no-js">
+        To view this video please enable JavaScript, and consider upgrading to a web browser that
+        <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>.
+      </p>
+    `;
+
+    // Append new video element to parent element
+    videoParent.appendChild(newVideo);
+
+    // Initialize video.js and Nuevo plugin
+    setTimeout(() => {
+      player = videojs("main-videoplayer", videojsOptions);
+
+      player.ready(() => {
+        player.nuevo?.(nuevoOptions);
+        player.hotkeys?.({ seekStep: 10 });
+
+        // Add play event listener to handle loading + playing in one click
+        let hasTriedToPlay = false;
+        player.on("play", () => {
+          if (!hasTriedToPlay && player.readyState() < 3) {
+            hasTriedToPlay = true;
+
+            // Wait for enough data to play
+            const handleCanPlay = () => {
+              player.off("canplay", handleCanPlay);
+              player.off("canplaythrough", handleCanPlay);
+              // Video is ready, continue playing
+              setTimeout(() => {
+                if (!player.paused()) {
+                  // do nothing
+                } else {
+                  player
+                    .play()
+                    .catch((e: any) => {/* ignore play error in production */});
+                }
+              }, 100);
+            };
+
+            player.on("canplay", handleCanPlay);
+            player.on("canplaythrough", handleCanPlay);
+          }
+        });
+
+        // Set video source based on current state
+        const videoEl = document.getElementById("main-videoplayer");
+        const seriesType = videoEl?.dataset.seriesType || "single";
+
+        if (
+          seriesType === "playlist" &&
+          currentPlaylist &&
+          Object.keys(currentPlaylist).length > 0
+        ) {
+          setSource(
+            "playlist",
+            currentModalvideo,
+            currentPlaylist,
+            currentPlaylistindex // Use season index, not episode index
+          );
+        } else if (currentModalvideo) {
+          setSource("single", currentModalvideo, {}, 0);
+        }
+
+        // Don't autostart - just pause and wait for user interaction
+        player.pause();
+      });
+    }, 50);
+
+    return true;
+  }
+
+  // Change episode function
+  function changeEpisode(type = "regular", seasonIndex = 0, episodeIndex = 0) {
+    const validType = typeof type === "string" ? type : "regular";
+    const validSeasonIndex =
+      typeof seasonIndex === "number"
+        ? seasonIndex
+        : typeof seasonIndex === "string"
+          ? parseInt(seasonIndex, 10) || 0
+          : 0;
+    const validEpisodeIndex =
+      typeof episodeIndex === "number"
+        ? episodeIndex
+        : typeof episodeIndex === "string"
+          ? parseInt(episodeIndex, 10) || 0
+          : 0;
+
+    currentPlaylistType = validType;
+    currentEpisodeIndex = validEpisodeIndex;
+    currentPlaylistindex = validSeasonIndex; // Update the season index
+
+    // Update element attributes
+    const videoElement = document.getElementById("main-videoplayer");
+    if (videoElement) {
+      videoElement.dataset.playlistType = validType;
+      videoElement.dataset.episodeIndex = validEpisodeIndex.toString();
+      videoElement.dataset.seasonIndex = validSeasonIndex.toString();
+    }
+
+    // Update currentPlaylist based on the type selection from full playlist data
+    if (currentFullPlaylist && Object.keys(currentFullPlaylist).length > 0) {
+      // If we have the ov/regular structure, select the appropriate one
+      if (currentFullPlaylist.ov || currentFullPlaylist.regular) {
+        const selectedPlaylist = validType === "ov" ? currentFullPlaylist.ov : currentFullPlaylist.regular;
+        if (selectedPlaylist) {
+          currentPlaylist = selectedPlaylist;
+          // Update the data attribute as well
+          if (videoElement) {
+            videoElement.dataset.playlist = JSON.stringify(selectedPlaylist);
+          }
+          // If player is ready, update the source
+          if (player) {
+            setTimeout(() => {
+              setSource(
+                "playlist",
+                currentModalvideo,
+                selectedPlaylist,
+                validSeasonIndex
+              );
+            }, 10);
+          }
+        } else {
+          // eslint-disable-next-line no-console
+          console.warn("No playlist found for type:", validType);
+        }
+      } else {
+        // No ov/regular structure, use the playlist as-is
+        if (player && currentPlaylist && Object.keys(currentPlaylist).length > 0) {
+          setTimeout(() => {
+            setSource(
+              "playlist",
+              currentModalvideo,
+              currentPlaylist,
+              validSeasonIndex
+            );
+          }, 10);
+        }
+      }
+    } else {
+      // eslint-disable-next-line no-console
+      console.warn("No full playlist data available");
+    }
+
+    return { type: validType, seasonIndex: validSeasonIndex, episodeIndex: validEpisodeIndex };
+  }
+
+  // Handle active prop changes - Enhanced with full recreation
+  function handleActiveChange(newActive: any) {
+    const videoElement = document.getElementById("main-videoplayer");
+
+    if (newActive === 0) {
+      if (player) {
+        destroyPlayer();
+      }
+      // Hide the video element
+      if (videoElement) {
+        videoElement.style.display = "none";
+      }
+    } else if (newActive === 1) {
+      // Show/recreate the video element
+      if (videoElement) {
+        videoElement.style.display = "";
+      }
+
+      if (!player) {
+        const currentVideoEl = document.getElementById("main-videoplayer");
+
+        if (!currentVideoEl) {
+          resetPlayer(); // This will recreate everything
+        } else {
+          initializePlayer();
+        }
+      } else {
+        // Player already exists, just ensure it's ready and restart if needed
+        if (player.isDisposed()) {
+          resetPlayer();
+        } else {
+          player.ready(() => {});
+        }
+      }
+    }
+
+    currentActive = newActive;
+  }
+
+  // Make functions globally available for external access
+  (window as any).VideoPlayerAstro = {
+    destroyPlayer,
+    resetPlayer,
+    changeEpisode,
+    handleActiveChange,
+    setActive: (active: any) => {
+      const videoElement = document.getElementById("main-videoplayer");
+      if (videoElement) {
+        videoElement.dataset.active = active.toString();
+        handleActiveChange(active);
+      } else {
+        // eslint-disable-next-line no-console
+        console.error("Video element not found in setActive");
+      }
+    },
+    setEpisodeIndex: (seasonIndex: number, episodeIndex: number) => {
+      currentEpisodeIndex = episodeIndex;
+      currentPlaylistindex = seasonIndex; // Update season index too
+      
+      // Update the data attributes
+      const videoElement = document.getElementById("main-videoplayer");
+      if (videoElement) {
+        videoElement.dataset.episodeIndex = episodeIndex.toString();
+        videoElement.dataset.seasonIndex = seasonIndex.toString();
+      }
+      
+      // If player is ready and we have a playlist, update the current item
+      if (player && currentPlaylist && Object.keys(currentPlaylist).length > 0) {
+        setTimeout(() => {
+          setSource(
+            "playlist",
+            currentModalvideo,
+            currentPlaylist,
+            seasonIndex // Use the provided season index
+          );
+        }, 10);
+      }
+    },
+  };
+
+  // Initialize when DOM is ready
+  document.addEventListener("DOMContentLoaded", () => {
+    initializePlayer();
+  });
+
+  // Also try to initialize immediately if DOM is already ready
+  if (document.readyState === "loading") {
+  } else {
+    setTimeout(initializePlayer, 10);
+  }
+
+  // Cleanup on page unload
+  window.addEventListener("beforeunload", () => {
+    destroyPlayer();
+  });
+</script>

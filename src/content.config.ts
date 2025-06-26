@@ -64,6 +64,12 @@ const details = defineCollection({
         poster: z.string(),
         title: z.string(),
         audiolang: z.array(z.string()),
+        sources: z.array(
+          z.object({
+            src: z.string(),
+            type: z.string()
+          })
+        ).optional(),
       })
       .optional(),
     sublangs: z
@@ -93,6 +99,12 @@ const details = defineCollection({
                 title: z.string(),
                 description: z.string().optional(),
                 audiolang: z.string(),
+                sources: z.array(
+                  z.object({
+                    src: z.string(),
+                    type: z.string()
+                  })
+                ).optional(),
               })
             )
           )
@@ -106,6 +118,12 @@ const details = defineCollection({
                 title: z.string(),
                 description: z.string().optional(),
                 audiolang: z.array(z.string()),
+                sources: z.array(
+                  z.object({
+                    src: z.string(),
+                    type: z.string()
+                  })
+                ).optional(),
               })
             )
           )

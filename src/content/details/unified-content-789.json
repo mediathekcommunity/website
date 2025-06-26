@@ -42,7 +42,13 @@
           "episode": 1,
           "title": "The Beginning",
           "description": "In a world where technology has advanced beyond imagination, our heroes discover a conspiracy that threatens the very fabric of reality.",
-          "audiolang": ["de-dub", "en-dub"]
+          "audiolang": ["de-dub", "en-dub"],
+          "sources": [
+            {
+              "src": "https://tvdlzdf-a.akamaihd.net/dach/zdf/24/09/240908_2015_sendung_agg/1/240908_2015_sendung_agg_a3a4_6660k_p37v17.mp4",
+              "type": "video/mp4"
+            }
+          ]
         },
         {
           "season": 1,
@@ -83,7 +89,13 @@
           "episode": 1,
           "title": "The Beginning",
           "description": "In a world where technology has advanced beyond imagination, our heroes discover a conspiracy that threatens the very fabric of reality.",
-          "audiolang": "en"
+          "audiolang": "en",
+          "sources": [
+            {
+              "src": "https://tvdlzdf-a.akamaihd.net/dach/zdf/24/09/240908_2015_sendung_agg/1/240908_2015_sendung_agg_a3a4_6660k_p37v17.mp4",
+              "type": "video/mp4"
+            }
+          ]
         },
         {
           "season": 1,

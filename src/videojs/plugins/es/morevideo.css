@@ -1,0 +1,230 @@
+.video-js .vjs-more-button {
+	position: absolute;
+    left: 2%;
+ 
+	cursor:pointer;
+	color:#fff;
+	font-size:14px;
+	font-family:Arial,sans-serif;
+	font-weight:normal;
+	font-style:normal;
+	text-decoration:none;
+	text-shadow: 1px 1px 1px #000;
+}
+
+.video-js .vjs-more-button .svg {
+	width: 16px;
+    height: 16px;
+    fill: #fff;
+    display: inline-block;
+    float: left;
+    margin-right: 5px;
+	filter: drop-shadow(1px 1px 1px #000);
+}
+
+.video-js .vjs-more-video  {
+	width: 100%;
+	position:absolute;
+	left: 0;
+	z-index:97;
+	background:rgba(0,0,0,.33);
+	opacity:1;
+	pointer-events:auto;
+	display:block;
+	transition:top .5s ease, opacity .5s ease;
+}
+.video-js .vjs-more-hidden {
+	opacity:0;
+	pointer-events:none;
+}
+
+.video-js .vjs-more-header {
+	text-align:left;
+	width:100%;
+	left:1.5%;
+	font-size:14px;
+	text-shadow:1px 1px 1px #000;
+	font-weight:normal;
+	padding: 5px 1.5%;
+	padding-top:5px;
+}
+.video-js .vjs-more-header span {
+	cursor:pointer;
+}
+
+.video-js .vjs-more-close{
+	float:right;
+	cursor:pointer;
+	padding: 0;
+	margin-top:-8px;
+	-webkit-transition: all .3s;
+	transition: all .3s;
+}
+.video-js .vjs-more-close:after {
+  display: inline-block;
+  content: "\00d7";
+  font-size:30px;
+}
+.video-js .vjs-more-close:hover {
+	-webkit-transform:scale(1.3);
+	transform:scale(1.3);
+}
+
+
+.video-js .vjs-more-inside {
+	width: 100%;
+	position:relative;
+	background-color:transparent;
+	text-align:center;
+}
+.video-js .vjs-more-line {
+	width:97%;
+	left:1.5%;
+	bottom:8px;
+	position:absolute;
+}
+.vjs-more-video .vjs-more-arrow {
+	position: absolute;
+	cursor:pointer;
+	display:table;
+	width:27px;
+}
+.vjs-more-video .vjs-disabled {
+	opacity:  .35;
+	-moz-opacity: 0.35;
+	-khtml-opacity: 0.35;
+	cursor:none;
+}
+
+
+.vjs-more-video .vjs-more-arrow-prev, .vjs-more-video .vjs-more-arrow-next {
+    z-index: 10;
+    cursor: pointer;
+	display: block;
+    margin: 0 auto;
+    width: 35px;
+    height: 35px;
+    border-top: 2px solid #fff;
+    border-left: 2px solid #fff;
+	
+}
+.vjs-more-video .vjs-more-arrow-next {
+	right:10px;
+	transform: rotate(135deg) translateY(-50%);
+    top: 50%;
+    transform-origin: top center;
+}
+
+.vjs-more-video .vjs-more-arrow-prev {
+    transform: rotate(-45deg) translateY(-50%);
+    margin-left: 7px;
+    top: 50%;
+    transform-origin: top center;
+}
+
+
+.video-js .vjs-more-video .vjs-more-list {
+	position:absolute;
+	overflow:hidden;
+	top:0;
+	width:100%;
+	height:100%;
+ }
+
+.video-js .vjs-more-video .more-block {
+    position: absolute;
+    left: 0;
+    top: 0;
+	height:100%;
+	transition: left 0.5s ease;
+	-webkit-transition: left 0.5s ease;
+	-mos-transition: left 0.5s ease;
+}
+
+.video-js .more-anim-touch { 
+	position:relative;
+	overflow-x:scroll!important;
+	overflow-y:hidden!important;
+	-webkit-overflow-scrolling:touch!important;
+	white-space:nowrap;
+}
+.video-js .vjs-more-video .more-animo-touch {    
+	transition: left 0.5s ease-out;
+	-webkit-transition: left 0.5s ease-out;
+	-mos-transition: left 0.5s ease-out;
+}
+.video-js .vjs-more-video .vjs-more-list .more-item-parent {
+	position: absolute; padding:2px;height:100%;
+}
+.video-js .vjs-more-video .more-item {
+	width:100%;
+	height:100%;
+	
+}
+.video-js .vjs-more-video .more-item:hover .rel-bg{
+  opacity:0.7;
+}
+.video-js .vjs-more-video .more-item:hover label, .video-js .vjs-more-video .more-item:hover i {
+	opacity:1;
+}
+
+.video-js .vjs-more-video .more-item a {
+	width:100%;height:100%;display:block;
+	background-color:#000;
+}
+.video-js .vjs-more-video .more-item-bg {
+	width:100%;
+	height:100%;
+	background-size:cover;
+	background-position: center;
+    transition: opacity 0.3s ease;
+	-webkit-transition: opacity 0.3s ease;
+	-moz-transition: opacity 0.3s ease;
+	opacity:1;
+	display:block;
+}
+.video-js .vjs-more-video label {
+    width: 100%;
+	min-width:100%;
+	max-width:100%;
+	margin:0;
+    text-align: left;
+    color: #fff;
+    font-size: 13px;
+	white-space:nowrap;
+	font-weight:normal;
+	font-family:sans-serif;
+	line-height:20px;
+    max-height: 44px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 1px 1px 1px #000;
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 3% 5%;
+    cursor: pointer;
+	transition: opacity 1s ease;
+	-webkit-transition: opacity 1 ease;
+	-mos-transition: opacity 1 ease;
+	opacity:0;
+}
+.video-js .vjs-more-video i {
+	position: absolute;
+    color: #fff;
+    bottom: 0;
+    right: 0;
+    padding: 4px;
+    font-style: normal;
+	background:rgba(0,0,0,0.5);
+	margin:2px;
+	font-size:12px;
+	transition: opacity 1s ease;
+	-webkit-transition: opacity 1s ease;
+	-mos-transition: opacity 1s ease;
+	opacity:0;
+}
+.vjs-more-touch .vjs-more-video label, .vjs-more-touch .vjs-more-video i {
+	opacity:1;
+}

@@ -36,8 +36,8 @@
     "poster": "https://img.mediathek.community/t/p/w300/mzkstyDSsTRswCMRvoBD5ULPnIt.jpg"
   },
   "videosource": {
-    "src": "https://example.com/quantum-horizon.mpd",
-    "type": "application/dash+xml",
+    "src": "https://tvdlzdf-a.akamaihd.net/dach/zdf/24/09/240908_2015_sendung_agg/1/240908_2015_sendung_agg_a3a4_6660k_p37v17.mp4",
+    "type": "video/mp4",
     "poster": "/poster-quantum-horizon.jpg",
     "title": "Quantum Horizon",
     "audiolang": ["de", "en", "fr", "es"]

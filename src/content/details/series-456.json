@@ -40,14 +40,26 @@
           "episode": 1,
           "title": "The Arrival",
           "description": "Our protagonists arrive on the mysterious island and discover their first clue.",
-          "audiolang": "en"
+          "audiolang": "en",
+          "sources": [
+            {
+              "src": "https://tvdlzdf-a.akamaihd.net/dach/zdf/24/09/240908_2015_sendung_agg/1/240908_2015_sendung_agg_a3a4_6660k_p37v17.mp4",
+              "type": "video/mp4"
+            }
+          ]
         },
         {
           "season": 1,
           "episode": 2,
           "title": "Hidden Secrets",
           "description": "A hidden chamber reveals ancient secrets that change everything.",
-          "audiolang": "en"
+          "audiolang": "en",
+          "sources": [
+            {
+              "src": "https://tvdlzdf-a.akamaihd.net/dach/zdf/24/09/240908_2015_sendung_agg/1/240908_2015_sendung_agg_a3a4_6660k_p37v17.mp4",
+              "type": "video/mp4"
+            }
+          ]
         }
       ],
       "2": [
@@ -56,7 +68,13 @@
           "episode": 1,
           "title": "New Mysteries",
           "description": "The second season begins with even more puzzling discoveries.",
-          "audiolang": "en"
+          "audiolang": "en",
+          "sources": [
+            {
+              "src": "https://tvdlzdf-a.akamaihd.net/dach/zdf/24/09/240908_2015_sendung_agg/1/240908_2015_sendung_agg_a3a4_6660k_p37v17.mp4",
+              "type": "video/mp4"
+            }
+          ]
         }
       ]
     },
@@ -67,14 +85,26 @@
           "episode": 1,
           "title": "Die Ankunft",
           "description": "Unsere Protagonisten kommen auf der mysteriösen Insel an und entdecken ihren ersten Hinweis.",
-          "audiolang": ["de-dub"]
+          "audiolang": ["de-dub"],
+          "sources": [
+            {
+              "src": "https://tvdlzdf-a.akamaihd.net/dach/zdf/24/09/240908_2015_sendung_agg/1/240908_2015_sendung_agg_a3a4_6660k_p37v17.mp4",
+              "type": "video/mp4"
+            }
+          ]
         },
         {
           "season": 1,
           "episode": 2,
           "title": "Verborgene Geheimnisse",
           "description": "Eine versteckte Kammer offenbart uralte Geheimnisse, die alles verändern.",
-          "audiolang": ["de-dub"]
+          "audiolang": ["de-dub"],
+          "sources": [
+            {
+              "src": "https://tvdlzdf-a.akamaihd.net/dach/zdf/24/09/240908_2015_sendung_agg/1/240908_2015_sendung_agg_a3a4_6660k_p37v17.mp4",
+              "type": "video/mp4"
+            }
+          ]
         }
       ],
       "2": [
@@ -83,7 +113,13 @@
           "episode": 1,
           "title": "Neue Mysterien",
           "description": "Die zweite Staffel beginnt mit noch rätselhafteren Entdeckungen.",
-          "audiolang": ["de-dub"]
+          "audiolang": ["de-dub"],
+          "sources": [
+            {
+              "src": "https://tvdlzdf-a.akamaihd.net/dach/zdf/24/09/240908_2015_sendung_agg/1/240908_2015_sendung_agg_a3a4_6660k_p37v17.mp4",
+              "type": "video/mp4"
+            }
+          ]
         }
       ]
     }
