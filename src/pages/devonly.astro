@@ -1,0 +1,1087 @@
+---
+import Layout from "../layouts/default.astro";
+
+// Only render this page in development mode
+if (import.meta.env.PROD) {
+  throw new Error("Not found");
+}
+// Map short type to MIME type
+function getMimeType(type: any) {
+  switch (type) {
+    case "mpd":
+      return "application/dash+xml";
+    case "m3u8":
+      return "application/x-mpegURL";
+    case "mp4":
+      return "video/mp4";
+    case "webm":
+      return "video/webm";
+    default:
+      return type || "";
+  }
+}
+---
+
+<Layout>
+  <div class="flex flex-col items-center justify-center min-h-screen">
+    <h1 class="text-3xl font-bold mb-8">Dev Form (daisyUI 5)</h1>
+    <div
+      class="flex flex-col md:flex-row gap-8 w-full justify-center items-stretch"
+    >
+      <div class="flex flex-row gap-8 w-full justify-center items-stretch">
+        <!-- 3-column layout: 1. TMDB debug, 2. Form, 3. Normal debug -->
+        <div class="flex flex-col w-full max-w-xs" style="max-width: 22rem;">
+          <div
+            id="tmdb-debug-card"
+            class="bg-base-200 p-8 rounded-lg shadow-lg flex flex-col gap-4 border-2 border-error hidden h-full"
+            style="height:100%;"
+          >
+            <label class="label">
+              <span class="label-text text-error">TMDB API Result</span>
+            </label>
+            <textarea
+              id="tmdb-debug-json"
+              class="textarea textarea-bordered w-full h-full flex-grow font-mono text-xs resize-none"
+              readonly></textarea>
+          </div>
+        </div>
+        <form
+          id="dev-form"
+          class="w-full max-w-lg bg-base-200 p-8 rounded-lg shadow-lg flex flex-col gap-4 h-full"
+          style="height:100%"
+        >
+          <!-- General Info -->
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">ID (auto-generated)</span>
+            </label>
+            <input
+              id="id"
+              name="id"
+              type="text"
+              class="input input-bordered"
+              readonly
+            />
+          </div>
+          <div class="flex gap-4">
+            <div class="form-control flex-1">
+              <label class="label">
+                <span class="label-text">Title</span>
+              </label>
+              <input
+                id="title"
+                name="title"
+                type="text"
+                placeholder="Title"
+                class="input input-bordered"
+                required
+              />
+            </div>
+            <div class="form-control flex-1">
+              <label class="label">
+                <span class="label-text">TMDB ID</span>
+              </label>
+              <div class="flex gap-2">
+                <input
+                  id="tmdbid"
+                  name="tmdbid"
+                  type="text"
+                  placeholder="TMDB ID"
+                  class="input input-bordered flex-1"
+                />
+                <button
+                  id="fetch-tmdb"
+                  type="button"
+                  class="btn btn-outline btn-error">Fetch</button
+                >
+              </div>
+            </div>
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Original Title</span>
+            </label>
+            <input
+              id="orgtitle"
+              name="orgtitle"
+              type="text"
+              placeholder="Original Title"
+              class="input input-bordered"
+            />
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Country (geo)</span>
+            </label>
+            <select name="geo" class="select select-bordered" required>
+              <option value="">Select country</option>
+              <option value="gb">United Kingdom</option>
+              <option value="de">Germany</option>
+              <option value="fr">France</option>
+              <option value="es">Spain</option>
+              <option value="it">Italy</option>
+              <option value="pt">Portugal</option>
+              <option value="nl">Netherlands</option>
+              <option value="se">Sweden</option>
+              <option value="dk">Denmark</option>
+              <option value="no">Norway</option>
+              <option value="fi">Finland</option>
+              <option value="is">Iceland</option>
+              <option value="fo">Faroe Islands</option>
+              <option value="pl">Poland</option>
+              <option value="ru">Russia</option>
+              <option value="cz">Czech Republic</option>
+              <option value="hu">Hungary</option>
+              <option value="ro">Romania</option>
+              <option value="bg">Bulgaria</option>
+              <option value="hr">Croatia</option>
+              <option value="sk">Slovakia</option>
+              <option value="si">Slovenia</option>
+              <option value="ee">Estonia</option>
+              <option value="lv">Latvia</option>
+              <option value="lt">Lithuania</option>
+              <option value="ua">Ukraine</option>
+              <option value="by">Belarus</option>
+              <option value="gr">Greece</option>
+              <option value="mt">Malta</option>
+              <option value="al">Albania</option>
+              <option value="mk">North Macedonia</option>
+              <option value="rs">Serbia</option>
+              <option value="ba">Bosnia and Herzegovina</option>
+              <option value="me">Montenegro</option>
+              <option value="ie">Ireland</option>
+              <option value="lu">Luxembourg</option>
+              <option value="at">Austria</option>
+              <option value="ch">Switzerland</option>
+              <option value="be">Belgium</option>
+              <option value="li">Liechtenstein</option>
+              <option value="sm">San Marino</option>
+              <option value="va">Vatican City</option>
+              <option value="ad">Andorra</option>
+              <option value="mc">Monaco</option>
+            </select>
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Channel</span>
+            </label>
+            <input
+              id="channel"
+              name="channel"
+              type="text"
+              placeholder="Channel Name"
+              class="input input-bordered"
+              required
+            />
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Type</span>
+            </label>
+            <select
+              id="type"
+              name="type"
+              class="select select-bordered"
+              required
+            >
+              <option value="movie">Movie</option>
+              <option value="series">Series</option>
+              <option value="y-movie">Youth Movie</option>
+              <option value="y-series">Youth Series</option>
+            </select>
+          </div>
+          <!-- Movie/Series Specific Fields -->
+          <div id="duration-field" class="form-control">
+            <label class="label">
+              <span class="label-text">Duration (minutes)</span>
+            </label>
+            <input
+              id="duration"
+              name="duration"
+              type="number"
+              min="0"
+              class="input input-bordered"
+              required
+            />
+          </div>
+          <div id="series-fields" class="flex gap-4" style="display:none">
+            <div class="form-control flex-1">
+              <label class="label">
+                <span class="label-text">Seasons</span>
+              </label>
+              <input
+                id="seasons"
+                name="seasons"
+                type="number"
+                min="0"
+                class="input input-bordered"
+                value="0"
+              />
+            </div>
+            <div class="form-control flex-1">
+              <label class="label">
+                <span class="label-text">Episodes</span>
+              </label>
+              <input
+                id="episodes"
+                name="episodes"
+                type="number"
+                min="0"
+                class="input input-bordered"
+                value="0"
+              />
+            </div>
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Online Until</span>
+            </label>
+            <input
+              id="onlineuntil"
+              name="onlineuntil"
+              type="datetime-local"
+              class="input input-bordered"
+              required
+            />
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Quality</span>
+            </label>
+            <input
+              id="quality"
+              name="quality"
+              type="text"
+              class="input input-bordered"
+              required
+            />
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Audio Language(s)</span>
+            </label>
+            <input
+              id="audio_lang"
+              name="audio_lang"
+              type="text"
+              placeholder="e.g. de,en"
+              class="input input-bordered"
+            />
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Subtitle Language(s)</span>
+            </label>
+            <input
+              id="subtitle_lang"
+              name="subtitle_lang"
+              type="text"
+              placeholder="e.g. de,en"
+              class="input input-bordered"
+            />
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Forced Subtitle Language(s)</span>
+            </label>
+            <input
+              id="forced_subtitle_lang"
+              name="forced_subtitle_lang"
+              type="text"
+              placeholder="e.g. de"
+              class="input input-bordered"
+            />
+          </div>
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text">Description (HTML allowed)</span>
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              class="textarea textarea-bordered"
+              required></textarea>
+          </div>
+          <!-- Channel object -->
+          <div class="form-control border border-base-300 rounded-lg p-4 mb-2">
+            <label class="label">
+              <span class="label-text font-bold">Channel Info</span>
+            </label>
+            <input
+              id="channel_name"
+              name="channel_name"
+              type="text"
+              placeholder="Channel Name"
+              class="input input-bordered mb-2"
+              required
+            />
+            <select
+              id="channel_country"
+              name="channel_country"
+              class="select select-bordered mb-2"
+              required
+            >
+              <option value="">Select country</option>
+              <option value="gb">United Kingdom</option>
+              <option value="de">Germany</option>
+              <option value="fr">France</option>
+              <option value="es">Spain</option>
+              <option value="it">Italy</option>
+              <option value="pt">Portugal</option>
+              <option value="nl">Netherlands</option>
+              <option value="se">Sweden</option>
+              <option value="dk">Denmark</option>
+              <option value="no">Norway</option>
+              <option value="fi">Finland</option>
+              <option value="is">Iceland</option>
+              <option value="fo">Faroe Islands</option>
+              <option value="pl">Poland</option>
+              <option value="ru">Russia</option>
+              <option value="cz">Czech Republic</option>
+              <option value="hu">Hungary</option>
+              <option value="ro">Romania</option>
+              <option value="bg">Bulgaria</option>
+              <option value="hr">Croatia</option>
+              <option value="sk">Slovakia</option>
+              <option value="si">Slovenia</option>
+              <option value="ee">Estonia</option>
+              <option value="lv">Latvia</option>
+              <option value="lt">Lithuania</option>
+              <option value="ua">Ukraine</option>
+              <option value="by">Belarus</option>
+              <option value="gr">Greece</option>
+              <option value="mt">Malta</option>
+              <option value="al">Albania</option>
+              <option value="mk">North Macedonia</option>
+              <option value="rs">Serbia</option>
+              <option value="ba">Bosnia and Herzegovina</option>
+              <option value="me">Montenegro</option>
+              <option value="ie">Ireland</option>
+              <option value="lu">Luxembourg</option>
+              <option value="at">Austria</option>
+              <option value="ch">Switzerland</option>
+              <option value="be">Belgium</option>
+              <option value="li">Liechtenstein</option>
+              <option value="sm">San Marino</option>
+              <option value="va">Vatican City</option>
+              <option value="ad">Andorra</option>
+              <option value="mc">Monaco</option>
+            </select>
+            <input
+              id="channel_icon"
+              name="channel_icon"
+              type="text"
+              placeholder="Channel Icon (optional)"
+              class="input input-bordered mb-2"
+            />
+            <label class="label cursor-pointer">
+              <span class="label-text">Channel Info (bool)</span>
+              <input
+                id="channel_info"
+                name="channel_info"
+                type="checkbox"
+                class="checkbox ml-2"
+              />
+            </label>
+          </div>
+          <!-- Movie/Series Source Fields -->
+          <div id="movie-source-fields" class="form-control">
+            <label class="label">
+              <span class="label-text">Source (Movie)</span>
+            </label>
+            <input
+              name="movie_src"
+              type="text"
+              placeholder="Source URL"
+              class="input input-bordered mb-2"
+            />
+            <select name="movie_type" class="select select-bordered mb-2">
+              <option value="">Select Type</option>
+              <option value="mpd">mpd</option>
+              <option value="m3u8">m3u8</option>
+              <option value="mp4">mp4</option>
+              <option value="webm">webm</option>
+            </select>
+            <input
+              name="movie_title"
+              type="text"
+              placeholder="Source Title"
+              class="input input-bordered mb-2"
+            />
+          </div>
+          <div
+            id="series-source-fields"
+            class="form-control"
+            style="display:none"
+          >
+            <label class="label">
+              <span class="label-text">Add Episode to Playlist</span>
+            </label>
+            <div class="flex flex-wrap gap-2 mt-2">
+              <select
+                id="playlist_type"
+                class="select select-bordered flex-1 min-w-[120px]"
+              >
+                <option value="regular">regular</option>
+                <option value="ov">ov</option>
+              </select>
+              <input
+                id="playlist_season"
+                type="number"
+                min="1"
+                placeholder="Season"
+                class="input input-bordered flex-1 min-w-[100px]"
+              />
+              <input
+                id="playlist_episode"
+                type="number"
+                min="1"
+                placeholder="Episode"
+                class="input input-bordered flex-1 min-w-[100px]"
+              />
+              <input
+                id="playlist_title"
+                type="text"
+                placeholder="Episode Title"
+                class="input input-bordered flex-1 min-w-[140px]"
+              />
+              <input
+                id="playlist_description"
+                type="text"
+                placeholder="Episode Description (optional)"
+                class="input input-bordered flex-1 min-w-[180px]"
+              />
+              <input
+                id="playlist_audiolang"
+                type="text"
+                placeholder="Audio Lang(s) (comma, ov: single)"
+                class="input input-bordered flex-1 min-w-[160px]"
+              />
+            </div>
+            <div class="flex flex-col gap-2 mt-2">
+              <textarea
+                id="playlist_src"
+                placeholder="Source URL(s) (one per line)"
+                class="textarea textarea-bordered w-full min-h-[60px]"
+                style="resize:vertical"></textarea>
+              <select
+                id="playlist_srctype"
+                class="select select-bordered w-full"
+              >
+                <option value="">Select Type</option>
+                <option value="mpd">mpd</option>
+                <option value="m3u8">m3u8</option>
+                <option value="mp4">mp4</option>
+                <option value="webm">webm</option>
+              </select>
+              <button
+                id="add-episode"
+                type="button"
+                class="btn btn-secondary w-full">Add</button
+              >
+            </div>
+            <div id="playlist-list" class="mt-2"></div>
+          </div>
+          <!-- Cast and Crew fields removed from form as requested -->
+          <div class="form-control">
+            <label class="label cursor-pointer">
+              <span class="label-text">FSK Check</span>
+              <input name="fskcheck" type="checkbox" class="checkbox ml-2" />
+            </label>
+          </div>
+          <div class="form-control">
+            <label class="label cursor-pointer">
+              <span class="label-text">Dyna</span>
+              <input name="dyna" type="checkbox" class="checkbox ml-2" />
+            </label>
+          </div>
+          <!-- Hidden input for spoken_languages to ensure it is included in debug JSON -->
+          <input type="hidden" id="spoken_languages" name="spoken_languages" />
+          <div class="form-control mt-6">
+            <button type="submit" class="btn btn-primary w-full">Submit</button>
+          </div>
+        </form>
+        <div
+          class="flex flex-col gap-4 w-full max-w-xs"
+          style="max-width: 22rem;"
+        >
+          <div
+            id="debug-card"
+            class="bg-base-200 p-8 rounded-lg shadow-lg flex flex-col gap-4"
+            style="height:auto;"
+          >
+            <label class="label">
+              <span class="label-text">Debug: Form JSON</span>
+            </label>
+            <textarea
+              id="debug-json"
+              class="textarea textarea-bordered w-full h-full font-mono text-xs resize-none"
+              readonly></textarea>
+          </div>
+        </div>
+      </div>
+      <script>
+        // TMDB Fetch logic
+        const fetchTmdbBtn = document.getElementById("fetch-tmdb");
+        const tmdbDebugCard = document.getElementById("tmdb-debug-card");
+        const tmdbDebugJson = document.getElementById("tmdb-debug-json");
+        if (fetchTmdbBtn && tmdbDebugCard && tmdbDebugJson) {
+          fetchTmdbBtn.addEventListener("click", async function () {
+            tmdbDebugCard.classList.remove("hidden");
+            (tmdbDebugJson as HTMLTextAreaElement).value = "Loading...";
+            try {
+              // For demo, always fetch the static URL as requested
+              const resp = await fetch(
+                "https://api3.mediathek.community/movie/1087891"
+              );
+              if (!resp.ok) throw new Error("HTTP " + resp.status);
+              const data = await resp.json();
+              (tmdbDebugJson as HTMLTextAreaElement).value = JSON.stringify(data, null, 2);
+              // --- Map TMDB fields to form fields (except id) ---
+              // Helper: set value if element exists and is input/select/textarea
+              function setField(id: string, value: any) {
+                const el = document.getElementById(id);
+                if (!el) return;
+                if (
+                  el instanceof HTMLInputElement ||
+                  el instanceof HTMLSelectElement ||
+                  el instanceof HTMLTextAreaElement
+                ) {
+                  if (el instanceof HTMLInputElement && el.type === "checkbox") {
+                    el.checked = !!value;
+                  } else {
+                    el.value = value ?? "";
+                  }
+                }
+              }
+
+              setField("title", data.title || "");
+              setField("tmdbid", data.id || "");
+              // Always set orgtitle field by id, even if original_title is empty
+              const orgtitleInput = document.getElementById('orgtitle');
+              let orgtitleValue = '';
+              if (typeof data.original_title === 'string' && data.original_title.length > 0) {
+                orgtitleValue = data.original_title;
+              } else if (typeof data.orgtitle === 'string' && data.orgtitle.length > 0) {
+                orgtitleValue = data.orgtitle;
+              } else if (typeof data.title === 'string' && data.title.length > 0) {
+                orgtitleValue = data.title;
+              }
+              if (orgtitleInput && 'value' in orgtitleInput) orgtitleInput.value = orgtitleValue;
+              // Country/geo
+              if (
+                data.production_countries &&
+                data.production_countries.length > 0
+              ) {
+                setField(
+                  "geo",
+                  (data.production_countries[0].iso_3166_1 || "").toLowerCase()
+                );
+                setField(
+                  "channel_country",
+                  (data.production_countries[0].iso_3166_1 || "").toLowerCase()
+                );
+              }
+              // Channel fields are user input only; do not map from TMDB
+              // Description
+              setField("description", data.description || data.overview || "");
+              // Duration
+              setField("duration", data.runtime || "");
+              // Seasons/Episodes
+              setField("seasons", data.seasons || "");
+              setField("episodes", data.episodes || "");
+              // Quality (not in API, leave blank)
+              setField("quality", "");
+              // Audio languages
+              if (
+                Array.isArray(data.spoken_languages) &&
+                data.spoken_languages.length > 0
+              ) {
+                // Set audio_lang as before
+                setField(
+                  "audio_lang",
+                  data.spoken_languages.map((l: any) => l.iso_639_1).join(",")
+                );
+                // Set spoken_languages (optional, schema-compliant)
+                setField(
+                  "spoken_languages",
+                  data.spoken_languages.map((l: any) => l.iso_639_1).join(",")
+                );
+                // Also update the hidden input for spoken_languages
+                const spokenInput = document.getElementById("spoken_languages");
+                if (spokenInput && 'value' in spokenInput) spokenInput.value = data.spoken_languages.map((l: any) => l.iso_639_1).join(",");
+              } else if (data.original_language) {
+                setField("audio_lang", data.original_language);
+                setField("spoken_languages", data.original_language);
+                // Also update the hidden input for spoken_languages
+                const spokenInput = document.getElementById("spoken_languages");
+                if (spokenInput && 'value' in spokenInput) spokenInput.value = data.original_language;
+              }
+              // Subtitle/forced subtitle (not in API, leave blank)
+              setField("subtitle_lang", "");
+              setField("forced_subtitle_lang", "");
+              // Poster/backdrop (not in form, but could be used elsewhere)
+              // Cast
+              if (Array.isArray(data.credits?.cast)) {
+                window.castArr = data.credits.cast.map((c: any) => ({
+                  id: c.id,
+                  name: c.name,
+                }));
+              }
+              // Crew
+              if (Array.isArray(data.credits?.crew)) {
+                window.crewArr = data.credits.crew.map((c: any) => ({
+                  id: c.id,
+                  name: c.name,
+                }));
+              }
+              // Update debug JSON
+              if (typeof updateDebugJson === "function") updateDebugJson();
+            } catch (e: any) {
+              (tmdbDebugJson as HTMLTextAreaElement).value =
+                "Error: " + (e && e.message ? e.message : String(e));
+            }
+          });
+        }
+        // Map short type to MIME type
+        function getMimeType(type: string): string {
+          switch (type) {
+            case "mpd":
+              return "application/dash+xml";
+            case "m3u8":
+              return "application/x-mpegURL";
+            case "mp4":
+              return "video/mp4";
+            case "webm":
+              return "video/webm";
+            default:
+              return type || "";
+          }
+        }
+
+        // Sync debug and tmdb debug card height to form height
+        function syncDebugCardHeight() {
+          const formCard = document.getElementById("dev-form");
+          const debugCard = document.getElementById("debug-card");
+          const tmdbDebugCard = document.getElementById("tmdb-debug-card");
+          if (formCard && debugCard) {
+            debugCard.style.height = formCard.offsetHeight + "px";
+          }
+          if (formCard && tmdbDebugCard) {
+            tmdbDebugCard.style.height = formCard.offsetHeight + "px";
+          }
+        }
+        window.addEventListener("resize", syncDebugCardHeight);
+        window.addEventListener("DOMContentLoaded", syncDebugCardHeight);
+        setTimeout(syncDebugCardHeight, 100); // In case of late layout
+        // Auto-generate ID from title and channel
+        // Also update debug/tmdb card height on form input
+        const formCard = document.getElementById("dev-form");
+        if (formCard) {
+          formCard.addEventListener("input", syncDebugCardHeight);
+          formCard.addEventListener("change", syncDebugCardHeight);
+        }
+        const titleInput = document.getElementById("title");
+        const channelInput = document.getElementById("channel");
+        const idInput = document.getElementById("id");
+        function updateId() {
+          if (!titleInput || !channelInput || !idInput) return;
+          const title = (
+            titleInput instanceof HTMLInputElement ? titleInput.value : ""
+          )
+            .trim()
+            .toLowerCase()
+            .replace(/\s+/g, "-");
+          const channel = (
+            channelInput instanceof HTMLInputElement ? channelInput.value : ""
+          )
+            .trim()
+            .toLowerCase()
+            .replace(/\s+/g, "-");
+          if (idInput instanceof HTMLInputElement) {
+            idInput.value = title && channel ? `${title}-${channel}` : "";
+          }
+        }
+        if (titleInput) titleInput.addEventListener("input", updateId);
+        if (channelInput) channelInput.addEventListener("input", updateId);
+
+        // Show/hide fields based on type
+        function updateTypeFields() {
+          const typeSelect = document.getElementById("type");
+          const seriesFields = document.getElementById("series-fields");
+          const movieSourceFields = document.getElementById(
+            "movie-source-fields"
+          );
+          const seriesSourceFields = document.getElementById(
+            "series-source-fields"
+          );
+          if (
+            !typeSelect ||
+            !seriesFields ||
+            !movieSourceFields ||
+            !seriesSourceFields
+          )
+            return;
+          const val = (typeSelect as HTMLSelectElement).value;
+          if (val === "series" || val === "y-series") {
+            seriesFields.style.display = "";
+            seriesSourceFields.style.display = "";
+            movieSourceFields.style.display = "none";
+          } else {
+            seriesFields.style.display = "none";
+            seriesSourceFields.style.display = "none";
+            movieSourceFields.style.display = "";
+          }
+        }
+        document.addEventListener("DOMContentLoaded", function () {
+          const typeSelect = document.getElementById("type");
+          if (typeSelect) {
+            typeSelect.addEventListener("change", updateTypeFields);
+            updateTypeFields();
+          }
+        });
+
+        // Add series source entries to a list
+        const addSeriesSourceBtn = document.getElementById("add-series-source");
+        const seriesSourcesList = document.getElementById(
+          "series-sources-list"
+        );
+        const seriesSrcInput = document.getElementById("series_src");
+        const seriesTypeInput = document.getElementById("series_type");
+        const seriesTitleInput = document.getElementById("series_title");
+        let seriesSources: any[] = [];
+        // Playlist structure: { regular: { [season: string]: any[] }, ov: { [season: string]: any[] } }
+        type Playlist = {
+          regular: { [season: string]: any[] };
+          ov: { [season: string]: any[] };
+        };
+        let playlist: Playlist = { regular: {}, ov: {} };
+        const addEpisodeBtn = document.getElementById("add-episode");
+        const playlistTypeInput = document.getElementById("playlist_type");
+        const playlistSeasonInput = document.getElementById("playlist_season");
+        const playlistEpisodeInput =
+          document.getElementById("playlist_episode");
+        const playlistTitleInput = document.getElementById("playlist_title");
+        const playlistDescriptionInput = document.getElementById(
+          "playlist_description"
+        );
+        const playlistAudiolangInput =
+          document.getElementById("playlist_audiolang");
+        const playlistSrcInput = document.getElementById("playlist_src");
+        const playlistSrctypeInput =
+          document.getElementById("playlist_srctype");
+        const playlistList = document.getElementById("playlist-list");
+        function renderPlaylistList() {
+          if (!playlistList) return;
+          playlistList.innerHTML = "";
+          ["regular", "ov"].forEach((type: string) => {
+            const typeObj = (playlist as any)[type] as { [season: string]: any[] };
+            if (typeObj && Object.keys(typeObj).length > 0) {
+              const typeHeader = document.createElement("div");
+              typeHeader.className = "font-bold mt-2";
+              typeHeader.textContent = type.toUpperCase();
+              playlistList.appendChild(typeHeader);
+              Object.entries(typeObj).forEach(([season, episodes]) => {
+                const seasonHeader = document.createElement("div");
+                seasonHeader.className = "ml-2 font-semibold";
+                seasonHeader.textContent = `Season ${season}`;
+                playlistList.appendChild(seasonHeader);
+                (episodes as any[]).forEach((ep: any) => {
+                  const epDiv = document.createElement("div");
+                  epDiv.className = "ml-4";
+                  epDiv.textContent = `Ep ${ep.episode}: ${ep.title} [${Array.isArray(ep.audiolang) ? ep.audiolang.join(",") : ep.audiolang}] (${ep.sources && ep.sources.length ? (ep.sources as any[]).map((s: any) => s.type).join(", ") : ""})${ep.description ? " - " + ep.description : ""}`;
+                  playlistList.appendChild(epDiv);
+                });
+              });
+            }
+          });
+        }
+        if (
+          addEpisodeBtn &&
+          playlistTypeInput &&
+          playlistSeasonInput &&
+          playlistEpisodeInput &&
+          playlistTitleInput &&
+          playlistDescriptionInput &&
+          playlistAudiolangInput &&
+          playlistSrcInput &&
+          playlistSrctypeInput
+        ) {
+          addEpisodeBtn.addEventListener("click", function () {
+            const type =
+              playlistTypeInput instanceof HTMLSelectElement
+                ? playlistTypeInput.value
+                : "regular";
+            const season =
+              playlistSeasonInput instanceof HTMLInputElement
+                ? playlistSeasonInput.value.trim()
+                : "";
+            const episode =
+              playlistEpisodeInput instanceof HTMLInputElement
+                ? playlistEpisodeInput.value.trim()
+                : "";
+            const title =
+              playlistTitleInput instanceof HTMLInputElement
+                ? playlistTitleInput.value.trim()
+                : "";
+            const description =
+              playlistDescriptionInput instanceof HTMLInputElement
+                ? playlistDescriptionInput.value.trim()
+                : "";
+            const audiolang =
+              playlistAudiolangInput instanceof HTMLInputElement
+                ? playlistAudiolangInput.value.trim()
+                : "";
+            const srcRaw =
+              playlistSrcInput instanceof HTMLTextAreaElement
+                ? playlistSrcInput.value
+                : "";
+            const srctype =
+              playlistSrctypeInput instanceof HTMLSelectElement
+                ? playlistSrctypeInput.value
+                : playlistSrctypeInput instanceof HTMLInputElement
+                  ? playlistSrctypeInput.value
+                  : "";
+            const srcList = srcRaw
+              .split("\n")
+              .map((s) => s.trim())
+              .filter(Boolean);
+            if (
+              season &&
+              episode &&
+              title &&
+              audiolang &&
+              srcList.length > 0 &&
+              srctype
+            ) {
+              // For ov: audiolang is string, for regular: array
+              const audiolangVal =
+                type === "ov"
+                  ? audiolang
+                  : audiolang
+                      .split(",")
+                      .map((s) => s.trim())
+                      .filter(Boolean);
+              const sourcesArr = srcList.map((src) => ({
+                src,
+                type: getMimeType(srctype),
+              }));
+              const epObj = {
+                season: Number(season),
+                episode: Number(episode),
+                title,
+                description: description || undefined,
+                audiolang: audiolangVal,
+                sources: sourcesArr,
+              };
+              if (!(playlist as any)[type][season]) (playlist as any)[type][season] = [];
+              (playlist as any)[type][season].push(epObj);
+              renderPlaylistList();
+              // Clear inputs
+              if (playlistSeasonInput instanceof HTMLInputElement)
+                playlistSeasonInput.value = "";
+              if (playlistEpisodeInput instanceof HTMLInputElement)
+                playlistEpisodeInput.value = "";
+              if (playlistTitleInput instanceof HTMLInputElement)
+                playlistTitleInput.value = "";
+              if (playlistDescriptionInput instanceof HTMLInputElement)
+                playlistDescriptionInput.value = "";
+              if (playlistAudiolangInput instanceof HTMLInputElement)
+                playlistAudiolangInput.value = "";
+              if (playlistSrcInput instanceof HTMLTextAreaElement)
+                playlistSrcInput.value = "";
+              if (playlistSrctypeInput instanceof HTMLSelectElement)
+                playlistSrctypeInput.value = "";
+            }
+          });
+        }
+        // Debug: Show JSON object from form values (nested, schema-like)
+        const debugJson = document.getElementById("debug-json");
+        const form = document.getElementById("dev-form");
+        // Cast and Crew display as readonly JSON
+        let castArr: Array<{ id: number | string; name: string }> = [];
+        let crewArr: Array<{ id: number | string; name: string }> = [];
+        // (castJson/crewJson fields removed from form, so updateCastCrewJson is not needed)
+        // Make arrays global for debug
+        window.playlist = playlist;
+        window.castArr = castArr;
+        window.crewArr = crewArr;
+        // Update cast/crew textareas on load
+        // updateCastCrewJson();
+
+        function getFormJson() {
+        // updateCastCrewJson();
+          // Main fields
+          const tmdbInput = document.getElementById("tmdbid");
+          const orgtitleInput = document.getElementById("orgtitle");
+          const geoInput = form && "geo" in form ? form.geo : null;
+          const fskInput = form && "fskcheck" in form ? form.fskcheck : null;
+          const dynaInput = form && "dyna" in form ? form.dyna : null;
+          const movieSrcInput =
+            form && "movie_src" in form ? form.movie_src : null;
+          const movieTypeInput =
+            form && "movie_type" in form ? form.movie_type : null;
+          const movieTitleInput =
+            form && "movie_title" in form ? form.movie_title : null;
+          // Channel object
+          const channelNameInput = document.getElementById("channel_name");
+          const channelCountryInput =
+            document.getElementById("channel_country");
+          const channelIconInput = document.getElementById("channel_icon");
+          const channelInfoInput = document.getElementById("channel_info");
+          // Info object (example: duration, seasons, episodes, onlineuntil, quality, description)
+          const durationInput = document.getElementById("duration");
+          const seasonsInput = document.getElementById("seasons");
+          const episodesInput = document.getElementById("episodes");
+          const onlineuntilInput = document.getElementById("onlineuntil");
+          const qualityInput = document.getElementById("quality");
+          const descriptionInput = document.getElementById("description");
+          // Audio/subtitle fields
+          const audioLangInput = document.getElementById("audio_lang");
+          const subtitleLangInput = document.getElementById("subtitle_lang");
+          const forcedSubtitleLangInput = document.getElementById(
+            "forced_subtitle_lang"
+          );
+          // Get typeSelect locally for type safety
+          const typeSelectEl = document.getElementById("type");
+          const typeVal =
+            typeSelectEl instanceof HTMLSelectElement ? typeSelectEl.value : "";
+          // Type-safe window globals
+          const castArr = Array.isArray(window.castArr) ? window.castArr : [];
+          const crewArr = Array.isArray(window.crewArr) ? window.crewArr : [];
+          const playlist =
+            typeof window.playlist === "object" && window.playlist
+              ? window.playlist
+              : { regular: {}, ov: {} };
+          return {
+            id: idInput instanceof HTMLInputElement ? idInput.value : "",
+            title:
+              titleInput instanceof HTMLInputElement ? titleInput.value : "",
+            tmdbid:
+              tmdbInput instanceof HTMLInputElement ? tmdbInput.value : "",
+            orgtitle:
+              orgtitleInput instanceof HTMLInputElement
+                ? orgtitleInput.value
+                : "",
+            geo: geoInput instanceof HTMLSelectElement ? geoInput.value : "",
+            type: typeVal,
+            fskcheck:
+              fskInput instanceof HTMLInputElement ? fskInput.checked : false,
+            dyna:
+              dynaInput instanceof HTMLInputElement ? dynaInput.checked : false,
+            info: {
+              duration:
+                durationInput instanceof HTMLInputElement
+                  ? Number(durationInput.value)
+                  : 0,
+              seasons:
+                seasonsInput instanceof HTMLInputElement
+                  ? Number(seasonsInput.value)
+                  : 0,
+              episodes:
+                episodesInput instanceof HTMLInputElement
+                  ? Number(episodesInput.value)
+                  : 0,
+              onlineuntil:
+                onlineuntilInput instanceof HTMLInputElement
+                  ? onlineuntilInput.value
+                  : "",
+              quality:
+                qualityInput instanceof HTMLInputElement
+                  ? qualityInput.value
+                  : "",
+              audio_lang:
+                audioLangInput instanceof HTMLInputElement
+                  ? audioLangInput.value
+                  : "",
+              subtitle_lang:
+                subtitleLangInput instanceof HTMLInputElement
+                  ? subtitleLangInput.value
+                  : "",
+              forced_subtitle_lang:
+                forcedSubtitleLangInput instanceof HTMLInputElement
+                  ? forcedSubtitleLangInput.value
+                  : "",
+              description:
+                descriptionInput instanceof HTMLTextAreaElement
+                  ? descriptionInput.value
+                  : "",
+              // Optional spoken_languages field (schema-compliant: array of codes)
+              spoken_languages:
+                (document.getElementById("spoken_languages") instanceof HTMLInputElement)
+                  ? ((document.getElementById("spoken_languages") as HTMLInputElement).value
+                      .split(",")
+                      .map((s) => s.trim())
+                      .filter(Boolean))
+                  : undefined,
+            },
+            channel: {
+              name:
+                channelNameInput instanceof HTMLInputElement
+                  ? channelNameInput.value
+                  : "",
+              country:
+                channelCountryInput instanceof HTMLSelectElement
+                  ? channelCountryInput.value
+                  : "",
+              icon:
+                channelIconInput instanceof HTMLInputElement
+                  ? channelIconInput.value
+                  : "",
+              info:
+                channelInfoInput instanceof HTMLInputElement
+                  ? channelInfoInput.checked
+                  : false,
+            },
+            cast: castArr,
+            crew: crewArr,
+            videosource:
+              typeVal === "movie"
+                ? {
+                    src:
+                      movieSrcInput instanceof HTMLInputElement
+                        ? movieSrcInput.value
+                        : "",
+                    type: getMimeType(
+                      movieTypeInput instanceof HTMLSelectElement
+                        ? movieTypeInput.value
+                        : movieTypeInput instanceof HTMLInputElement
+                          ? movieTypeInput.value
+                          : ""
+                    ),
+                    title:
+                      movieTitleInput instanceof HTMLInputElement
+                        ? movieTitleInput.value
+                        : "",
+                    poster: "",
+                    audiolang: [],
+                    sources: [],
+                  }
+                : undefined,
+            playlist:
+              typeVal === "series" || typeVal === "y-series"
+                ? playlist
+                : undefined,
+          };
+        }
+        function updateDebugJson() {
+          if (debugJson && debugJson instanceof HTMLTextAreaElement) {
+            debugJson.value = JSON.stringify(getFormJson(), null, 2);
+          }
+        }
+        // Update JSON on input changes
+        if (form) {
+          form.addEventListener("input", updateDebugJson);
+          form.addEventListener("change", updateDebugJson);
+        }
+        // Also update when series sources, cast, or crew change
+        if (addSeriesSourceBtn) {
+          addSeriesSourceBtn.addEventListener("click", updateDebugJson);
+        }
+        // (Cast/Crew are readonly, no add buttons to listen for)
+        // Initial update
+        updateDebugJson();
+      </script>
+    </div>
+  </div>
+</Layout>
