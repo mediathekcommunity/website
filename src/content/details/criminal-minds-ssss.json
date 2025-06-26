@@ -1,7 +1,7 @@
 {
   "id": "criminal-minds-ssss",
   "title": "Criminal Minds",
-  "orgtitle": "Criminal Minds",
+  "orgtitle": "Sample Data",
   "geo": "de",
   "fskcheck": false,
   "dyna": false,
@@ -75,9 +75,8 @@
         "name": "Glenn Kershaw"
       }
     ],
-    "spoken_languages": [
-      "en"
-    ]
+    "spoken_languages": ["en"],
+    "audiolang": ["de", "en"]
   },
   "playlist": {
     "regular": {},

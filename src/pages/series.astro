@@ -6,7 +6,11 @@ import { Icon } from "astro-icon/components";
 import { getCollection } from "astro:content";
 
 // Get all details from content collection and filter for series only (excluding fallback)
-const allDetailsRaw = await getCollection("details");
+const allDetailsRaw = (await getCollection("details")).sort((a, b) => {
+  const dateA = a.data.created ? new Date(a.data.created) : a.data.lastupdated ? new Date(a.data.lastupdated) : new Date(0);
+  const dateB = b.data.created ? new Date(b.data.created) : b.data.lastupdated ? new Date(b.data.lastupdated) : new Date(0);
+  return dateB.valueOf() - dateA.valueOf(); // Descending order (newest first)
+});
 const seriesDetails = allDetailsRaw.filter(
   (entry: any) => entry.data.id !== "fallback" && entry.data.info.type === "series"
 );
@@ -72,14 +76,7 @@ const heroItems = seriesDetails.length > 0
     }];
 
 // Convert series details to card data with calculated remaining days
-// Sort by created timestamp in descending order (newest first)
-const sortedSeriesDetails = seriesDetails.sort((a: any, b: any) => {
-  const dateA = a.data.created ? new Date(a.data.created).getTime() : 0;
-  const dateB = b.data.created ? new Date(b.data.created).getTime() : 0;
-  return dateB - dateA; // Descending order (newest first)
-});
-
-const cardData = sortedSeriesDetails.map((entry: any) => ({
+const cardData = seriesDetails.map((entry: any) => ({
   id: entry.data.id,
   title: entry.data.title,
   orgtitle: entry.data.orgtitle,
