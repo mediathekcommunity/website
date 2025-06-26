@@ -1,6 +1,7 @@
 ---
 import "../assets/app.css";
 import Footer from "../lib/components/Footer.astro";
+import { ClientRouter } from "astro:transitions";
 
 const menuItems = [
   { href: "/", label: "Home" },
@@ -114,6 +115,7 @@ const currentPath = Astro.url.pathname;
       });
     </script>
  </head>
+ <ClientRouter />
 <div class="app min-h-screen bg-base-100 text-base-content">
   <!-- Navbar -->
   <nav
