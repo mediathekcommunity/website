@@ -18,7 +18,7 @@ const baseUrl = isProduction ? "https://mediathek.community" : "http://localhost
 
 // https://astro.build/config
 export default defineConfig({
-	site: "https://preview.mediathek.community",
+	site: "https://mediathek.community",
 	output: "server",
 	adapter: cloudflare({
 		platformProxy: {
