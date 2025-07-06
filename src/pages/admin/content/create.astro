@@ -1,0 +1,1310 @@
+---
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+
+// Authentication check
+const isAuthenticated = Astro.locals.isAuthenticated;
+if (!isAuthenticated) {
+	return Astro.redirect('/login');
+}
+---
+
+<AdminLayout>
+  <h1 class="text-2xl font-bold mb-4">Create New Content</h1>
+
+  <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+    <!-- Left Column: Main Form (50% width) -->
+    <div class="space-y-6">
+      <form id="createForm" class="w-full space-y-6">
+    <!-- General Info -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="label">
+          <span class="label-text">Title *</span>
+        </label>
+        <input
+          type="text"
+          name="title"
+          placeholder="Title"
+          class="input input-bordered w-full"
+          required
+        />
+      </div>
+
+      <div>
+        <label class="label">
+          <span class="label-text">TMDB ID</span>
+        </label>
+        <div class="flex gap-2">
+          <input
+            type="text"
+            name="tmdbid"
+            placeholder="TMDB ID"
+            class="input input-bordered flex-1"
+          />
+          <button
+            id="fetch-tmdb"
+            type="button"
+            class="btn btn-outline btn-primary">Fetch</button>
+        </div>
+      </div>
+
+      <div>
+        <label class="label">
+          <span class="label-text">Original Title</span>
+        </label>
+        <input
+          type="text"
+          name="orgtitle"
+          placeholder="Original Title"
+          class="input input-bordered w-full"
+        />
+      </div>
+
+      <div>
+        <label class="label">
+          <span class="label-text">Type *</span>
+        </label>
+        <select name="type" class="select select-bordered w-full" required>
+          <option value="">Select type...</option>
+          <option value="movie">Movie</option>
+          <option value="series">Series</option>
+          <option value="y-movie">Youth Movie</option>
+          <option value="y-series">Youth Series</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Country -->
+    <div>
+      <label class="label">
+        <span class="label-text">Country (geo) *</span>
+      </label>
+      <select name="country" class="select select-bordered w-full" required>
+        <option value="">Select country...</option>
+        <option value="gb">United Kingdom</option>
+        <option value="de">Germany</option>
+        <option value="fr">France</option>
+        <option value="es">Spain</option>
+        <option value="it">Italy</option>
+        <option value="pt">Portugal</option>
+        <option value="nl">Netherlands</option>
+        <option value="se">Sweden</option>
+        <option value="dk">Denmark</option>
+        <option value="no">Norway</option>
+        <option value="fi">Finland</option>
+        <option value="is">Iceland</option>
+        <option value="fo">Faroe Islands</option>
+        <option value="pl">Poland</option>
+        <option value="ru">Russia</option>
+        <option value="cz">Czech Republic</option>
+        <option value="hu">Hungary</option>
+        <option value="ro">Romania</option>
+        <option value="bg">Bulgaria</option>
+        <option value="hr">Croatia</option>
+        <option value="sk">Slovakia</option>
+        <option value="si">Slovenia</option>
+        <option value="ee">Estonia</option>
+        <option value="lv">Latvia</option>
+        <option value="lt">Lithuania</option>
+        <option value="ua">Ukraine</option>
+        <option value="by">Belarus</option>
+        <option value="gr">Greece</option>
+        <option value="mt">Malta</option>
+        <option value="al">Albania</option>
+        <option value="mk">North Macedonia</option>
+        <option value="rs">Serbia</option>
+        <option value="ba">Bosnia and Herzegovina</option>
+        <option value="me">Montenegro</option>
+        <option value="ie">Ireland</option>
+        <option value="lu">Luxembourg</option>
+        <option value="at">Austria</option>
+        <option value="ch">Switzerland</option>
+        <option value="be">Belgium</option>
+        <option value="li">Liechtenstein</option>
+        <option value="sm">San Marino</option>
+        <option value="va">Vatican City</option>
+        <option value="ad">Andorra</option>
+        <option value="mc">Monaco</option>
+      </select>
+    </div>
+
+    <!-- Channel Info -->
+    <div class="border border-base-300 rounded-lg p-4">
+      <h3 class="font-bold text-lg mb-4">Channel Information</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="label">
+            <span class="label-text">Channel Name *</span>
+          </label>
+          <input
+            type="text"
+            name="channel_name"
+            placeholder="Channel Name"
+            class="input input-bordered w-full"
+            required
+          />
+        </div>
+
+        <div>
+          <label class="label">
+            <span class="label-text">Channel Country *</span>
+          </label>
+          <select name="channel_country" class="select select-bordered w-full" required>
+            <option value="">Select country...</option>
+            <option value="gb">United Kingdom</option>
+            <option value="de">Germany</option>
+            <option value="fr">France</option>
+            <option value="es">Spain</option>
+            <option value="it">Italy</option>
+            <option value="pt">Portugal</option>
+            <option value="nl">Netherlands</option>
+            <option value="se">Sweden</option>
+            <option value="dk">Denmark</option>
+            <option value="no">Norway</option>
+            <option value="fi">Finland</option>
+            <option value="is">Iceland</option>
+            <option value="fo">Faroe Islands</option>
+            <option value="pl">Poland</option>
+            <option value="ru">Russia</option>
+            <option value="cz">Czech Republic</option>
+            <option value="hu">Hungary</option>
+            <option value="ro">Romania</option>
+            <option value="bg">Bulgaria</option>
+            <option value="hr">Croatia</option>
+            <option value="sk">Slovakia</option>
+            <option value="si">Slovenia</option>
+            <option value="ee">Estonia</option>
+            <option value="lv">Latvia</option>
+            <option value="lt">Lithuania</option>
+            <option value="ua">Ukraine</option>
+            <option value="by">Belarus</option>
+            <option value="gr">Greece</option>
+            <option value="mt">Malta</option>
+            <option value="al">Albania</option>
+            <option value="mk">North Macedonia</option>
+            <option value="rs">Serbia</option>
+            <option value="ba">Bosnia and Herzegovina</option>
+            <option value="me">Montenegro</option>
+            <option value="ie">Ireland</option>
+            <option value="lu">Luxembourg</option>
+            <option value="at">Austria</option>
+            <option value="ch">Switzerland</option>
+            <option value="be">Belgium</option>
+            <option value="li">Liechtenstein</option>
+            <option value="sm">San Marino</option>
+            <option value="va">Vatican City</option>
+            <option value="ad">Andorra</option>
+            <option value="mc">Monaco</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="label">
+            <span class="label-text">Channel Icon</span>
+          </label>
+          <input
+            type="text"
+            name="channel_icon"
+            placeholder="Channel Icon URL"
+            class="input input-bordered w-full"
+          />
+        </div>
+
+        <div class="flex items-center">
+          <label class="label cursor-pointer">
+            <span class="label-text">Channel Info</span>
+            <input type="checkbox" name="channel_info" class="checkbox ml-2" />
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Details -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <label class="label">
+          <span class="label-text">Duration (minutes) *</span>
+        </label>
+        <input
+          type="number"
+          name="duration"
+          placeholder="Duration in minutes"
+          class="input input-bordered w-full"
+          min="0"
+          required
+        />
+      </div>
+
+      <div>
+        <label class="label">
+          <span class="label-text">Quality *</span>
+        </label>
+        <input
+          type="text"
+          name="quality"
+          placeholder="HD, UHD, 4K, etc."
+          class="input input-bordered w-full"
+          required
+        />
+      </div>
+
+      <div>
+        <label class="label">
+          <span class="label-text">Online Until *</span>
+        </label>
+        <input
+          type="date"
+          name="onlineuntil"
+          class="input input-bordered w-full"
+          required
+        />
+      </div>
+    </div>
+
+    <!-- Series Fields -->
+    <div id="seriesFields" style="display: none;">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="label">
+            <span class="label-text">Number of Seasons</span>
+          </label>
+          <input
+            type="number"
+            name="seasons"
+            placeholder="Number of seasons"
+            class="input input-bordered w-full"
+            min="0"
+            value="0"
+          />
+        </div>
+
+        <div>
+          <label class="label">
+            <span class="label-text">Number of Episodes</span>
+          </label>
+          <input
+            type="number"
+            name="episodes"
+            placeholder="Total episodes"
+            class="input input-bordered w-full"
+            min="0"
+            value="0"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Language Fields -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <label class="label">
+          <span class="label-text">Audio Language(s)</span>
+        </label>
+        <input
+          type="text"
+          name="audio_lang"
+          placeholder="e.g. de,en"
+          class="input input-bordered w-full"
+        />
+      </div>
+
+      <div>
+        <label class="label">
+          <span class="label-text">Subtitle Language(s)</span>
+        </label>
+        <input
+          type="text"
+          name="subtitle_lang"
+          placeholder="e.g. de,en"
+          class="input input-bordered w-full"
+        />
+      </div>
+
+      <div>
+        <label class="label">
+          <span class="label-text">Forced Subtitle Language(s)</span>
+        </label>
+        <input
+          type="text"
+          name="forced_subtitle_lang"
+          placeholder="e.g. de"
+          class="input input-bordered w-full"
+        />
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div>
+      <label class="label">
+        <span class="label-text">Description *</span>
+      </label>
+      <textarea
+        name="description"
+        class="textarea textarea-bordered h-24 w-full"
+        placeholder="Description (HTML allowed)"
+        required
+      ></textarea>
+    </div>
+
+    <!-- Media URLs -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="label">
+          <span class="label-text">Backdrop URL</span>
+        </label>
+        <input
+          type="url"
+          name="backdrop"
+          placeholder="Backdrop image URL"
+          class="input input-bordered w-full"
+        />
+      </div>
+
+      <div>
+        <label class="label">
+          <span class="label-text">Poster URL</span>
+        </label>
+        <input
+          type="url"
+          name="poster"
+          placeholder="Poster image URL"
+          class="input input-bordered w-full"
+        />
+      </div>
+    </div>
+
+    <!-- Movie Source Fields -->
+    <div id="movieSourceFields" class="border border-base-300 rounded-lg p-4">
+      <h3 class="font-bold text-lg mb-4">Movie Source</h3>
+      <div class="space-y-4">
+        <div>
+          <label class="label">
+            <span class="label-text">Source URL</span>
+          </label>
+          <input
+            type="text"
+            name="movie_src"
+            placeholder="Source URL"
+            class="input input-bordered w-full"
+          />
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="label">
+              <span class="label-text">Source Type</span>
+            </label>
+            <select name="movie_type" class="select select-bordered w-full">
+              <option value="">Select Type</option>
+              <option value="mpd">mpd</option>
+              <option value="m3u8">m3u8</option>
+              <option value="mp4">mp4</option>
+              <option value="webm">webm</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="label">
+              <span class="label-text">Source Title</span>
+            </label>
+            <input
+              type="text"
+              name="movie_title"
+              placeholder="Source Title"
+              class="input input-bordered w-full"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Series Source Fields -->
+    <div id="seriesSourceFields" style="display: none;" class="border border-base-300 rounded-lg p-6">
+      <h3 class="font-bold text-lg mb-6">Series Episodes Management</h3>
+      
+      <!-- Main Layout: Form on left, Episodes list on right -->
+      <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        
+        <!-- Left Side: Add/Edit Episode Form -->
+        <div class="space-y-6">
+          <div class="bg-base-100 border border-base-300 rounded-lg p-4">
+            <h4 class="font-semibold text-md mb-4 flex items-center gap-2">
+              <span id="episode-form-icon">➕</span>
+              <span id="episode-form-title">Add New Episode</span>
+            </h4>
+            
+            <!-- Episode Basic Info -->
+            <div class="grid grid-cols-2 gap-3 mb-4">
+              <div>
+                <label class="label">
+                  <span class="label-text">Type</span>
+                </label>
+                <select id="playlist_type" class="select select-bordered select-sm">
+                  <option value="regular">Regular</option>
+                  <option value="ov">Original Version</option>
+                </select>
+              </div>
+              <div>
+                <label class="label">
+                  <span class="label-text">Season *</span>
+                </label>
+                <input
+                  id="playlist_season"
+                  type="number"
+                  min="1"
+                  placeholder="Season"
+                  class="input input-bordered input-sm"
+                  required
+                />
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-3 mb-4">
+              <div>
+                <label class="label">
+                  <span class="label-text">Episode *</span>
+                </label>
+                <input
+                  id="playlist_episode"
+                  type="number"
+                  min="1"
+                  placeholder="Episode"
+                  class="input input-bordered input-sm"
+                  required
+                />
+              </div>
+              <div>
+                <label class="label">
+                  <span class="label-text">Audio Languages *</span>
+                </label>
+                <input
+                  id="playlist_audiolang"
+                  type="text"
+                  placeholder="e.g. de,en"
+                  class="input input-bordered input-sm"
+                  required
+                />
+              </div>
+            </div>
+            
+            <!-- Episode Details -->
+            <div class="space-y-3 mb-4">
+              <div>
+                <label class="label">
+                  <span class="label-text">Episode Title *</span>
+                </label>
+                <input
+                  id="playlist_title"
+                  type="text"
+                  placeholder="Episode Title"
+                  class="input input-bordered input-sm"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label class="label">
+                  <span class="label-text">Description</span>
+                </label>
+                <textarea
+                  id="playlist_description"
+                  placeholder="Episode Description (optional)"
+                  class="textarea textarea-bordered textarea-sm"
+                  rows="2"
+                ></textarea>
+              </div>
+            </div>
+            
+            <!-- Source Configuration -->
+            <div class="space-y-3 mb-4">
+              <div>
+                <label class="label">
+                  <span class="label-text">Source URLs *</span>
+                </label>
+                <textarea
+                  id="playlist_src"
+                  placeholder="Source URL(s) - one per line"
+                  class="textarea textarea-bordered textarea-sm"
+                  rows="3"
+                  required
+                ></textarea>
+              </div>
+              
+              <div>
+                <label class="label">
+                  <span class="label-text">Source Type *</span>
+                </label>
+                <select id="playlist_srctype" class="select select-bordered select-sm">
+                  <option value="">Select Type</option>
+                  <option value="mpd">MPD (DASH)</option>
+                  <option value="m3u8">M3U8 (HLS)</option>
+                  <option value="mp4">MP4</option>
+                  <option value="webm">WebM</option>
+                </select>
+              </div>
+            </div>
+            
+            <!-- Form Actions -->
+            <div class="flex gap-2">
+              <button id="add-episode" type="button" class="btn btn-primary btn-sm flex-1">
+                <span id="episode-action-text">Add Episode</span>
+              </button>
+              <button id="cancel-edit-episode" type="button" class="btn btn-ghost btn-sm" style="display: none;">
+                Cancel
+              </button>
+            </div>
+          </div>
+          
+          <!-- Quick Actions -->
+          <div class="bg-base-100 border border-base-300 rounded-lg p-4">
+            <h4 class="font-semibold text-md mb-3">Quick Actions</h4>
+            <div class="flex flex-wrap gap-2">
+              <button id="clear-all-episodes" type="button" class="btn btn-error btn-outline btn-xs">
+                Clear All
+              </button>
+              <button id="sort-episodes" type="button" class="btn btn-outline btn-xs">
+                Sort Episodes
+              </button>
+              <button id="export-episodes" type="button" class="btn btn-outline btn-xs">
+                Export JSON
+              </button>
+              <button id="import-episodes" type="button" class="btn btn-outline btn-xs">
+                Import JSON
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Right Side: Episodes List -->
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h4 class="font-semibold text-md">Episodes List</h4>
+            <div class="flex gap-2">
+              <div class="badge badge-outline badge-sm">
+                <span id="episode-count">0</span> episodes
+              </div>
+              <select id="episodes-filter" class="select select-bordered select-xs">
+                <option value="">All Types</option>
+                <option value="regular">Regular Only</option>
+                <option value="ov">OV Only</option>
+              </select>
+            </div>
+          </div>
+          
+          <!-- Episodes Container -->
+          <div id="playlist-list" class="space-y-3 max-h-96 overflow-y-auto pr-2">
+            <!-- Episodes will be rendered here -->
+          </div>
+          
+          <!-- Empty State -->
+          <div id="episodes-empty-state" class="text-center py-8 text-base-content/60">
+            <div class="text-4xl mb-2">📺</div>
+            <p>No episodes added yet</p>
+            <p class="text-sm">Use the form on the left to add episodes</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Options -->
+    <div class="flex gap-6">
+      <label class="label cursor-pointer">
+        <input type="checkbox" name="fskcheck" class="checkbox" />
+        <span class="label-text ml-2">FSK Check</span>
+      </label>
+
+      <label class="label cursor-pointer">
+        <input type="checkbox" name="dyna" class="checkbox" />
+        <span class="label-text ml-2">Dyna</span>
+      </label>
+    </div>
+
+    <!-- Hidden Fields -->
+    <input type="hidden" id="spoken_languages" name="spoken_languages" />
+
+        <!-- Submit -->
+        <div class="flex gap-4">
+          <button type="submit" class="btn btn-primary">Create Content</button>
+          <a href="/admin/content" class="btn btn-ghost">Cancel</a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Right Column: Series Episodes Management (50% width) -->
+    <div>
+      <!-- Series Source Fields -->
+      <div id="seriesSourceFields" style="display: none;" class="border border-base-300 rounded-lg p-4 sticky top-4">
+        <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+          📺 <span>Series Episodes</span>
+        </h3>
+        
+        <!-- Episode Form -->
+        <div class="space-y-4">
+          <div class="bg-base-100 border border-base-300 rounded-lg p-3">
+            <h4 class="font-semibold text-sm mb-3 flex items-center gap-2">
+              <span id="episode-form-icon">➕</span>
+              <span id="episode-form-title">Add Episode</span>
+            </h4>
+            
+            <!-- Episode Basic Info -->
+            <div class="grid grid-cols-2 gap-2 mb-3">
+              <div>
+                <label class="label py-1">
+                  <span class="label-text text-xs">Type</span>
+                </label>
+                <select id="playlist_type" class="select select-bordered select-xs">
+                  <option value="regular">Regular</option>
+                  <option value="ov">OV</option>
+                </select>
+              </div>
+              <div>
+                <label class="label py-1">
+                  <span class="label-text text-xs">Season *</span>
+                </label>
+                <input
+                  id="playlist_season"
+                  type="number"
+                  min="1"
+                  placeholder="Season"
+                  class="input input-bordered input-xs"
+                  required
+                />
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-2 mb-3">
+              <div>
+                <label class="label py-1">
+                  <span class="label-text text-xs">Episode *</span>
+                </label>
+                <input
+                  id="playlist_episode"
+                  type="number"
+                  min="1"
+                  placeholder="Ep"
+                  class="input input-bordered input-xs"
+                  required
+                />
+              </div>
+              <div>
+                <label class="label py-1">
+                  <span class="label-text text-xs">Audio *</span>
+                </label>
+                <input
+                  id="playlist_audiolang"
+                  type="text"
+                  placeholder="de,en"
+                  class="input input-bordered input-xs"
+                  required
+                />
+              </div>
+            </div>
+            
+            <!-- Episode Details -->
+            <div class="space-y-2 mb-3">
+              <div>
+                <label class="label py-1">
+                  <span class="label-text text-xs">Title *</span>
+                </label>
+                <input
+                  id="playlist_title"
+                  type="text"
+                  placeholder="Episode Title"
+                  class="input input-bordered input-xs"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label class="label py-1">
+                  <span class="label-text text-xs">Description</span>
+                </label>
+                <textarea
+                  id="playlist_description"
+                  placeholder="Description"
+                  class="textarea textarea-bordered textarea-xs"
+                  rows="2"
+                ></textarea>
+              </div>
+            </div>
+            
+            <!-- Source Configuration -->
+            <div class="space-y-2 mb-3">
+              <div>
+                <label class="label py-1">
+                  <span class="label-text text-xs">Sources *</span>
+                </label>
+                <textarea
+                  id="playlist_src"
+                  placeholder="URLs (one per line)"
+                  class="textarea textarea-bordered textarea-xs"
+                  rows="2"
+                  required
+                ></textarea>
+              </div>
+              
+              <div>
+                <label class="label py-1">
+                  <span class="label-text text-xs">Type *</span>
+                </label>
+                <select id="playlist_srctype" class="select select-bordered select-xs">
+                  <option value="">Select</option>
+                  <option value="mpd">MPD</option>
+                  <option value="m3u8">M3U8</option>
+                  <option value="mp4">MP4</option>
+                  <option value="webm">WebM</option>
+                </select>
+              </div>
+            </div>
+            
+            <!-- Form Actions -->
+            <div class="flex gap-1">
+              <button id="add-episode" type="button" class="btn btn-primary btn-xs flex-1">
+                <span id="episode-action-text">Add</span>
+              </button>
+              <button id="cancel-edit-episode" type="button" class="btn btn-ghost btn-xs" style="display: none;">
+                Cancel
+              </button>
+            </div>
+          </div>
+          
+          <!-- Episode Count and Filter -->
+          <div class="flex items-center justify-between mb-2">
+            <div class="badge badge-outline badge-sm">
+              <span id="episode-count">0</span> episodes
+            </div>
+            <select id="episodes-filter" class="select select-bordered select-xs">
+              <option value="">All</option>
+              <option value="regular">Regular</option>
+              <option value="ov">OV</option>
+            </select>
+          </div>
+          
+          <!-- Episodes List -->
+          <div id="playlist-list" class="space-y-2 max-h-80 overflow-y-auto">
+            <!-- Episodes will be rendered here -->
+          </div>
+          
+          <!-- Empty State -->
+          <div id="episodes-empty-state" class="text-center py-4 text-base-content/60">
+            <div class="text-2xl mb-1">📺</div>
+            <p class="text-xs">No episodes yet</p>
+          </div>
+          
+          <!-- Quick Actions -->
+          <div class="border-t border-base-300 pt-3 mt-3">
+            <div class="flex flex-wrap gap-1">
+              <button id="clear-all-episodes" type="button" class="btn btn-error btn-outline btn-xs">
+                Clear
+              </button>
+              <button id="sort-episodes" type="button" class="btn btn-outline btn-xs">
+                Sort
+              </button>
+              <button id="export-episodes" type="button" class="btn btn-outline btn-xs">
+                Export
+              </button>
+              <button id="import-episodes" type="button" class="btn btn-outline btn-xs">
+                Import
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline>
+    // Global variables for playlist management
+    let playlist = { regular: {}, ov: {} };
+
+    // Map short type to MIME type
+    function getMimeType(type) {
+      switch (type) {
+        case "mpd": return "application/dash+xml";
+        case "m3u8": return "application/x-mpegURL";
+        case "mp4": return "video/mp4";
+        case "webm": return "video/webm";
+        default: return type || "";
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const typeSelect = document.querySelector('select[name="type"]');
+      const seriesFields = document.getElementById('seriesFields');
+      const movieSourceFields = document.getElementById('movieSourceFields');
+      const seriesSourceFields = document.getElementById('seriesSourceFields');
+
+      // Show/hide fields based on type selection
+      function updateTypeFields() {
+        if (!typeSelect || !seriesFields || !movieSourceFields || !seriesSourceFields) return;
+        
+        const val = typeSelect.value;
+        const isSeriesType = val === "series" || val === "y-series";
+
+        if (isSeriesType) {
+          seriesFields.style.display = "";
+          seriesSourceFields.style.display = "";
+          movieSourceFields.style.display = "none";
+        } else {
+          seriesFields.style.display = "none";
+          seriesSourceFields.style.display = "none";
+          movieSourceFields.style.display = "";
+        }
+      }
+
+      if (typeSelect) {
+        typeSelect.addEventListener('change', updateTypeFields);
+        updateTypeFields();
+      }
+
+      // TMDB fetch functionality
+      const fetchTmdbBtn = document.getElementById('fetch-tmdb');
+      if (fetchTmdbBtn) {
+        fetchTmdbBtn.addEventListener('click', async function() {
+          const tmdbId = document.querySelector('input[name="tmdbid"]').value.trim();
+          const typeSelect = document.querySelector('select[name="type"]');
+          
+          if (!tmdbId) {
+            alert('Please enter a TMDB ID first');
+            return;
+          }
+
+          if (!typeSelect.value) {
+            alert('Please select a content type first');
+            return;
+          }
+
+          const mediaType = typeSelect.value.includes('movie') ? 'movie' : 'tv';
+          
+          try {
+            this.disabled = true;
+            this.textContent = 'Fetching...';
+
+            const response = await fetch(`https://api.themoviedb.org/3/${mediaType}/${tmdbId}?api_key=${import.meta.env.TMDB_API_KEY}&language=en-US`);
+            
+            if (!response.ok) {
+              throw new Error('TMDB API request failed');
+            }
+
+            const data = await response.json();
+
+            // Fill form fields
+            document.querySelector('input[name="title"]').value = data.title || data.name || '';
+            document.querySelector('input[name="orgtitle"]').value = data.original_title || data.original_name || '';
+            document.querySelector('textarea[name="description"]').value = data.overview || '';
+            
+            if (data.poster_path) {
+              document.querySelector('input[name="poster"]').value = `https://image.tmdb.org/t/p/w500${data.poster_path}`;
+            }
+            if (data.backdrop_path) {
+              document.querySelector('input[name="backdrop"]').value = `https://image.tmdb.org/t/p/w1280${data.backdrop_path}`;
+            }
+
+            // Handle runtime/duration
+            if (data.runtime) {
+              document.querySelector('input[name="duration"]').value = data.runtime;
+            } else if (data.episode_run_time && data.episode_run_time.length > 0) {
+              document.querySelector('input[name="duration"]').value = data.episode_run_time[0];
+            }
+
+            // Handle series-specific data
+            if (mediaType === 'tv') {
+              if (data.number_of_seasons) {
+                document.querySelector('input[name="seasons"]').value = data.number_of_seasons;
+              }
+              if (data.number_of_episodes) {
+                document.querySelector('input[name="episodes"]').value = data.number_of_episodes;
+              }
+            }
+
+            alert('TMDB data fetched successfully!');
+          } catch (error) {
+            alert('Failed to fetch TMDB data. Please check the ID and try again.');
+          } finally {
+            this.disabled = false;
+            this.textContent = 'Fetch';
+          }
+        });
+      }
+
+      // Enhanced Playlist management for series
+      const addEpisodeBtn = document.getElementById('add-episode');
+      const cancelEditBtn = document.getElementById('cancel-edit-episode');
+      const playlistList = document.getElementById('playlist-list');
+      const episodeCountBadge = document.getElementById('episode-count');
+      const episodesFilter = document.getElementById('episodes-filter');
+      const emptyState = document.getElementById('episodes-empty-state');
+      
+      // Editing state
+      let currentEditingEpisode = null;
+
+      // Update episode count
+      function updateEpisodeCount() {
+        const total = Object.values(playlist.regular || {}).flat().length + 
+                     Object.values(playlist.ov || {}).flat().length;
+        if (episodeCountBadge) episodeCountBadge.textContent = total;
+        
+        if (emptyState) {
+          emptyState.style.display = total === 0 ? 'block' : 'none';
+        }
+      }
+
+      // Clear episode form
+      function clearEpisodeForm() {
+        document.getElementById('playlist_type').value = 'regular';
+        document.getElementById('playlist_season').value = '';
+        document.getElementById('playlist_episode').value = '';
+        document.getElementById('playlist_title').value = '';
+        document.getElementById('playlist_description').value = '';
+        document.getElementById('playlist_audiolang').value = '';
+        document.getElementById('playlist_src').value = '';
+        document.getElementById('playlist_srctype').value = '';
+        
+        // Reset form UI
+        document.getElementById('episode-form-icon').textContent = '➕';
+        document.getElementById('episode-form-title').textContent = 'Add New Episode';
+        document.getElementById('episode-action-text').textContent = 'Add Episode';
+        addEpisodeBtn.className = 'btn btn-primary btn-sm flex-1';
+        if (cancelEditBtn) cancelEditBtn.style.display = 'none';
+        
+        currentEditingEpisode = null;
+      }
+
+      // Set episode form for editing
+      function setEpisodeForEdit(type, season, episodeIdx, episodeData) {
+        document.getElementById('playlist_type').value = type;
+        document.getElementById('playlist_season').value = season;
+        document.getElementById('playlist_episode').value = episodeData.episode;
+        document.getElementById('playlist_title').value = episodeData.title;
+        document.getElementById('playlist_description').value = episodeData.description || '';
+        document.getElementById('playlist_audiolang').value = Array.isArray(episodeData.audiolang) ? episodeData.audiolang.join(',') : episodeData.audiolang;
+        document.getElementById('playlist_src').value = episodeData.sources.map(s => s.src).join('\n');
+        document.getElementById('playlist_srctype').value = getShortType(episodeData.sources[0]?.type || '');
+        
+        // Update form UI
+        document.getElementById('episode-form-icon').textContent = '✏️';
+        document.getElementById('episode-form-title').textContent = 'Edit Episode';
+        document.getElementById('episode-action-text').textContent = 'Update Episode';
+        addEpisodeBtn.className = 'btn btn-warning btn-sm flex-1';
+        if (cancelEditBtn) cancelEditBtn.style.display = 'block';
+        
+        currentEditingEpisode = { type, season, episodeIdx };
+      }
+
+      // Enhanced render function with edit capabilities
+      function renderPlaylistList() {
+        if (!playlistList) return;
+        
+        const filterType = episodesFilter?.value || '';
+        playlistList.innerHTML = "";
+        
+        const typesToShow = filterType ? [filterType] : ["regular", "ov"];
+        
+        typesToShow.forEach((type) => {
+          const typeObj = playlist[type] || {};
+          
+          if (Object.keys(typeObj).length === 0) return;
+          
+          // Type header
+          const typeHeader = document.createElement("div");
+          typeHeader.className = "bg-primary/10 rounded-lg p-3 mb-3";
+          typeHeader.innerHTML = `
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-sm uppercase">${type}</span>
+              <span class="badge badge-outline badge-xs">${Object.values(typeObj).flat().length} episodes</span>
+            </div>
+          `;
+          playlistList.appendChild(typeHeader);
+          
+          // Sort seasons
+          const sortedSeasons = Object.keys(typeObj).sort((a, b) => Number(a) - Number(b));
+          
+          sortedSeasons.forEach(season => {
+            const episodes = typeObj[season];
+            
+            episodes.forEach((ep, idx) => {
+              const episodeCard = document.createElement("div");
+              episodeCard.className = "bg-base-100 border border-base-200 rounded-lg p-3 hover:shadow-md transition-shadow";
+              
+              episodeCard.innerHTML = `
+                <div class="flex items-start justify-between gap-3">
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-1">
+                      <span class="badge badge-primary badge-xs">S${season}E${ep.episode}</span>
+                      <span class="badge badge-outline badge-xs">${Array.isArray(ep.audiolang) ? ep.audiolang.join(',') : ep.audiolang}</span>
+                    </div>
+                    <h5 class="font-medium text-sm truncate">${ep.title}</h5>
+                    ${ep.description ? `<p class="text-xs text-base-content/60 mt-1 line-clamp-2">${ep.description}</p>` : ''}
+                    <div class="text-xs text-base-content/50 mt-2">
+                      ${ep.sources.length} source${ep.sources.length !== 1 ? 's' : ''} • ${getShortType(ep.sources[0]?.type || '').toUpperCase()}
+                    </div>
+                  </div>
+                  <div class="flex flex-col gap-1">
+                    <button class="btn btn-ghost btn-xs" onclick="editEpisode('${type}', '${season}', ${idx})">
+                      ✏️
+                    </button>
+                    <button class="btn btn-ghost btn-xs text-error" onclick="deleteEpisode('${type}', '${season}', ${idx})">
+                      🗑️
+                    </button>
+                  </div>
+                </div>
+              `;
+              
+              playlistList.appendChild(episodeCard);
+            });
+          });
+        });
+        
+        updateEpisodeCount();
+      }
+
+      // Global functions for episode management
+      window.editEpisode = function(type, season, episodeIdx) {
+        const episodeData = playlist[type][season][episodeIdx];
+        setEpisodeForEdit(type, season, episodeIdx, episodeData);
+      };
+
+      window.deleteEpisode = function(type, season, episodeIdx) {
+        const episodeData = playlist[type][season][episodeIdx];
+        if (confirm(`Delete "${episodeData.title}" (S${season}E${episodeData.episode})?`)) {
+          playlist[type][season].splice(episodeIdx, 1);
+          if (playlist[type][season].length === 0) {
+            delete playlist[type][season];
+          }
+          renderPlaylistList();
+          
+          // Clear form if we were editing this episode
+          if (currentEditingEpisode && 
+              currentEditingEpisode.type === type && 
+              currentEditingEpisode.season === season && 
+              currentEditingEpisode.episodeIdx === episodeIdx) {
+            clearEpisodeForm();
+          }
+        }
+      };
+
+      // Episode form submission
+      if (addEpisodeBtn) {
+        addEpisodeBtn.addEventListener('click', function() {
+          const type = document.getElementById('playlist_type').value;
+          const season = document.getElementById('playlist_season').value.trim();
+          const episode = document.getElementById('playlist_episode').value.trim();
+          const title = document.getElementById('playlist_title').value.trim();
+          const description = document.getElementById('playlist_description').value.trim();
+          const audiolang = document.getElementById('playlist_audiolang').value.trim();
+          const srcRaw = document.getElementById('playlist_src').value;
+          const srctype = document.getElementById('playlist_srctype').value;
+
+          const srcList = srcRaw.split("\n").map(s => s.trim()).filter(Boolean);
+
+          // Validation
+          if (!season || !episode || !title || !audiolang || srcList.length === 0 || !srctype) {
+            alert('Please fill in all required fields (Season, Episode, Title, Audio Languages, Sources, and Source Type)');
+            return;
+          }
+
+          const audiolangVal = type === "ov" ? audiolang : audiolang.split(",").map(s => s.trim()).filter(Boolean);
+          const sourcesArr = srcList.map(src => ({ src, type: getMimeType(srctype) }));
+
+          const epObj = {
+            season: Number(season),
+            episode: Number(episode),
+            title,
+            description: description || undefined,
+            audiolang: audiolangVal,
+            sources: sourcesArr,
+          };
+
+          if (currentEditingEpisode) {
+            // Update existing episode
+            const { type: editType, season: editSeason, episodeIdx } = currentEditingEpisode;
+            playlist[editType][editSeason][episodeIdx] = epObj;
+          } else {
+            // Add new episode
+            if (!playlist[type]) playlist[type] = {};
+            if (!playlist[type][season]) playlist[type][season] = [];
+            
+            // Check for duplicate episode
+            const duplicate = playlist[type][season].find(ep => ep.episode === Number(episode));
+            if (duplicate) {
+              if (!confirm(`Episode ${episode} already exists in Season ${season}. Replace it?`)) {
+                return;
+              }
+              const idx = playlist[type][season].findIndex(ep => ep.episode === Number(episode));
+              playlist[type][season][idx] = epObj;
+            } else {
+              playlist[type][season].push(epObj);
+            }
+          }
+
+          renderPlaylistList();
+          clearEpisodeForm();
+        });
+      }
+
+      // Cancel edit
+      if (cancelEditBtn) {
+        cancelEditBtn.addEventListener('click', clearEpisodeForm);
+      }
+
+      // Episodes filter
+      if (episodesFilter) {
+        episodesFilter.addEventListener('change', renderPlaylistList);
+      }
+
+      // Quick actions
+      const clearAllBtn = document.getElementById('clear-all-episodes');
+      const sortEpisodesBtn = document.getElementById('sort-episodes');
+      const exportBtn = document.getElementById('export-episodes');
+      const importBtn = document.getElementById('import-episodes');
+
+      if (clearAllBtn) {
+        clearAllBtn.addEventListener('click', function() {
+          if (confirm('Are you sure you want to clear all episodes? This cannot be undone.')) {
+            playlist = { regular: {}, ov: {} };
+            renderPlaylistList();
+            clearEpisodeForm();
+          }
+        });
+      }
+
+      if (sortEpisodesBtn) {
+        sortEpisodesBtn.addEventListener('click', function() {
+          // Sort episodes within each season
+          ['regular', 'ov'].forEach(type => {
+            if (playlist[type]) {
+              Object.keys(playlist[type]).forEach(season => {
+                playlist[type][season].sort((a, b) => a.episode - b.episode);
+              });
+            }
+          });
+          renderPlaylistList();
+        });
+      }
+
+      if (exportBtn) {
+        exportBtn.addEventListener('click', function() {
+          const dataStr = JSON.stringify(playlist, null, 2);
+          const dataBlob = new Blob([dataStr], { type: 'application/json' });
+          const url = URL.createObjectURL(dataBlob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'episodes.json';
+          link.click();
+          URL.revokeObjectURL(url);
+        });
+      }
+
+      if (importBtn) {
+        importBtn.addEventListener('click', function() {
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.accept = '.json';
+          input.onchange = function(e) {
+            const file = e.target.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = function(e) {
+                try {
+                  const importedData = JSON.parse(e.target.result);
+                  if (confirm('This will replace all current episodes. Continue?')) {
+                    playlist = importedData;
+                    renderPlaylistList();
+                    clearEpisodeForm();
+                  }
+                } catch (error) {
+                  alert('Invalid JSON file');
+                }
+              };
+              reader.readAsText(file);
+            }
+          };
+          input.click();
+        });
+      }
+
+      // Initial render
+      updateEpisodeCount();
+
+      // Form submission
+      const createForm = document.getElementById('createForm');
+      if (createForm) {
+        createForm.addEventListener('submit', async function(event) {
+          event.preventDefault();
+
+          const formData = new FormData(this);
+          const formObject = Object.fromEntries(formData.entries());
+
+          // Generate a UUID for new content
+          const contentId = crypto.randomUUID();
+
+          // Transform the form data to match the API expected format
+          const apiData = {
+            id: contentId,
+            data: {
+              title: formObject.title,
+              orgtitle: formObject.orgtitle || null,
+              geo: formObject.country || 'de',
+              fskcheck: formObject.fskcheck === 'on',
+              dyna: formObject.dyna === 'on',
+              info: {
+                type: formObject.type,
+                description: formObject.description,
+                quality: formObject.quality || '',
+                duration: formObject.duration ? parseInt(formObject.duration) : 0,
+                seasons: formObject.seasons ? parseInt(formObject.seasons) : 0,
+                episodes: formObject.episodes ? parseInt(formObject.episodes) : 0,
+                onlineuntil: formObject.onlineuntil ? formObject.onlineuntil + "T23:59:59Z" : "",
+                poster: formObject.poster || null,
+                backdrop: formObject.backdrop || null,
+                channel: {
+                  name: formObject.channel_name,
+                  country: formObject.channel_country || formObject.country || 'de',
+                  icon: formObject.channel_icon || null,
+                  info: formObject.channel_info === 'on'
+                },
+                cast: null,
+                crew: null,
+                spoken_languages: formObject.audio_lang ? formObject.audio_lang.split(',').map(s => s.trim()).filter(Boolean) : undefined
+              },
+              // Add movie source if movie
+              videosource: (formObject.type === 'movie' || formObject.type === 'y-movie') ? {
+                src: formObject.movie_src || "",
+                type: getMimeType(formObject.movie_type || ""),
+                title: formObject.movie_title || "",
+                poster: "",
+                audiolang: [],
+                sources: []
+              } : undefined,
+              // Add playlist if series
+              playlist: (formObject.type === 'series' || formObject.type === 'y-series') ? playlist : undefined
+            },
+            source: 'local'
+          };
+
+          try {
+            const response = await fetch('/api/save-content', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(apiData),
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+              alert('Content created successfully!');
+              window.location.href = '/admin/content';
+            } else {
+              alert('Failed to create content: ' + (result.error || 'Unknown error'));
+            }
+          } catch (error) {
+            alert('Failed to create content due to network error.');
+          }
+        });
+      }
+
+      // Initial playlist render
+      renderPlaylistList();
+    });
+  </script>
+</AdminLayout>

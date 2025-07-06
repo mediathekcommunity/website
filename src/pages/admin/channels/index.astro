@@ -1,0 +1,10 @@
+---
+// Authentication check
+const isAuthenticated = Astro.locals.isAuthenticated;
+if (!isAuthenticated) {
+	return Astro.redirect('/login');
+}
+
+// Redirect to the channels list page
+return Astro.redirect("/admin/channels/list");
+---

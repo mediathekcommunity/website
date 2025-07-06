@@ -1,4 +1,4 @@
-import { VideoJsPlayer, VideoJsPlayerOptions } from 'video.js';
+import { VideoJsPlayer, VideoJsPlayerOptions } from "video.js";
 
 declare global {
 	interface Window {
@@ -9,7 +9,7 @@ declare global {
 	}
 }
 
-declare module 'video.js' {
+declare module "video.js" {
 	export interface VideoJsPlayer {
 		nuevo(options: any): void;
 		loadTracks(tracks?: any): void;

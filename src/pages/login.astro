@@ -1,0 +1,154 @@
+---
+const isAuthenticated = Astro.locals.isAuthenticated;
+// biome-ignore assist/source/organizeImports: <explanation>
+import { Icon } from "astro-icon/components";
+
+import Layout from "../layouts/default.astro";
+---
+
+<Layout>
+  <div class="min-h-screen bg-gradient-to-br from-primary/10 via-base-100 to-secondary/10 flex items-center justify-center p-4">
+    <div class="card w-full max-w-md bg-base-100/80 backdrop-blur-md shadow-2xl border border-base-300/50">
+      <div class="card-body">
+        <!-- Header -->
+        <div class="text-center mb-8">
+          <div class="avatar placeholder mb-4">
+           <Icon name="mdi:play-outline"  size="2xl"/>
+
+           </div>
+          <h1 class="text-3xl font-bold text-gradient mb-2">MediaThek Community</h1>
+          <p class="text-base-content/70">Access your media library</p>
+        </div>
+
+        {isAuthenticated ? (
+          <!-- Authenticated State -->
+          <div class="text-center space-y-6">
+            <div class="alert alert-success">
+              <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <h3 class="font-bold">Welcome back!</h3>
+                <div class="text-xs">You are successfully logged in</div>
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <a href="/admin" class="btn btn-primary btn-block gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Go to Admin Dashboard
+              </a>
+              
+              <a href="/" class="btn btn-outline btn-block gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z" />
+                </svg>
+                Browse Media Library
+              </a>
+            </div>
+
+            <div class="divider">or</div>
+
+            <a href="/api/kinde/signout" class="btn btn-ghost btn-sm gap-2 text-base-content/70">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              Sign Out
+            </a>
+          </div>
+        ) : (
+          <!-- Unauthenticated State -->
+          <div class="text-center space-y-6">
+            <div class="space-y-2">
+              <h2 class="text-xl font-semibold">Sign In Required</h2>
+              <p class="text-base-content/70 text-sm">
+                Please authenticate to access the admin panel and manage your media content.
+              </p>
+            </div>
+
+            <div class="space-y-4">
+              <!-- Features List -->
+              <div class="text-left space-y-3">
+                <div class="flex items-center gap-3 text-sm">
+                  <div class="badge badge-primary badge-sm">✓</div>
+                  <span>Manage movies and TV series</span>
+                </div>
+                <div class="flex items-center gap-3 text-sm">
+                  <div class="badge badge-primary badge-sm">✓</div>
+                  <span>Monitor system health</span>
+                </div>
+              </div>
+
+              <div class="divider text-xs text-base-content/50">Secure Authentication</div>
+
+              <a href="/api/kinde/login" class="btn btn-primary btn-block gap-2 btn-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Sign In with Kinde
+              </a>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  /* Gradient text effect matching the site branding */
+  .text-gradient {
+    background: linear-gradient(to right, #38bdf8, #818cf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Adjust gradient for corporate theme */
+  html[data-theme="corporate"] .text-gradient {
+    background: linear-gradient(to right, #0284c7, #4f46e5);
+    -webkit-background-clip: text;
+    background-clip: text;
+    text-shadow: none;
+  }
+
+  /* Enhanced card styling */
+  .card {
+    transition: all 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Animated background gradient */
+  .bg-gradient-to-br {
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+  }
+  
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Button hover effects */
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(56, 189, 248, 0.3);
+  }
+  
+  .btn-outline:hover {
+    transform: translateY(-1px);
+  }
+</style>

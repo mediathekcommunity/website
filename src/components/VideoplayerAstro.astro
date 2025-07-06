@@ -1,108 +1,116 @@
 ---
 // Astro component props interface
 export interface Props {
-  data?: any;
-  playlistType?: string; // Can be 'regular' or 'ov'
-  episodeIndex?: number; // Index of episode to play
-  active?: number; // Controls whether player should be active (1) or disposed (0)
-  class?: string;
+	data?: any;
+	playlistType?: string; // Can be 'regular' or 'ov'
+	episodeIndex?: number; // Index of episode to play
+	active?: number; // Controls whether player should be active (1) or disposed (0)
+	class?: string;
 }
 
 // Destructure props with defaults
 const {
-  data = {},
-  playlistType = "regular",
-  episodeIndex = 0,
-  active = 1,
-  class: className = "",
+	data = {},
+	playlistType = "regular",
+	episodeIndex = 0,
+	active = 1,
+	class: className = "",
 } = Astro.props as Props;
 
 // Process data to derive modalvideo (similar to Svelte reactive logic)
 let modalvideo = null;
 if (data?.info?.type?.includes("movie")) {
-  modalvideo = {
-    src: data?.videosource?.src,
-    type: data?.videosource?.type,
-    poster: data?.info?.poster || data?.info?.backdrop || "",
-    thumb: data?.info?.poster || data?.info?.backdrop || "",
-    title: data?.title || "",
-    sources: data?.videosource?.sources || (data?.videosource?.src ? [
-      {
-        src: data.videosource.src,
-        type: data.videosource.type,
-      },
-    ] : []),
-    tracks:
-      data?.sublangs?.map((sub: any) => ({
-        kind: "subtitles",
-        srclang: sub.srclang,
-        label: sub.srclang,
-      })) || [],
-  };
+	modalvideo = {
+		src: data?.videosource?.src,
+		type: data?.videosource?.type,
+		poster: data?.info?.poster || data?.info?.backdrop || "",
+		thumb: data?.info?.poster || data?.info?.backdrop || "",
+		title: data?.title || "",
+		sources:
+			data?.videosource?.sources ||
+			(data?.videosource?.src
+				? [
+						{
+							src: data.videosource.src,
+							type: data.videosource.type,
+						},
+					]
+				: []),
+		tracks:
+			data?.sublangs?.map((sub: any) => ({
+				kind: "subtitles",
+				srclang: sub.srclang,
+				label: sub.srclang,
+			})) || [],
+	};
 } else {
-  modalvideo = data?.modalvideo || null;
+	modalvideo = data?.modalvideo || null;
 }
 
 // Process playlist based on playlistType
 let playlist = {};
 let fullPlaylistData = {}; // Store full playlist structure for type switching
 if (data?.info?.type?.includes("series")) {
-  if (data?.playlist) {
-    fullPlaylistData = data.playlist; // Store the full structure
-    const selectedPlaylist =
-      playlistType === "ov" ? data.playlist.ov : data.playlist.regular;
-    playlist = selectedPlaylist || {};
-  }
+	if (data?.playlist) {
+		fullPlaylistData = data.playlist; // Store the full structure
+		const selectedPlaylist =
+			playlistType === "ov" ? data.playlist.ov : data.playlist.regular;
+		playlist = selectedPlaylist || {};
+	}
 } else {
-  playlist = data?.playlist || {};
-  fullPlaylistData = data?.playlist || {};
+	playlist = data?.playlist || {};
+	fullPlaylistData = data?.playlist || {};
 }
 
 // Process playlist to ensure all items have sources property
 if (playlist && typeof playlist === "object" && !Array.isArray(playlist)) {
-  try {
-    const processedPlaylist = Object.entries(playlist).map(
-      ([seasonKey, episodes]) => {
-        if (Array.isArray(episodes)) {
-          const processedEpisodes = (episodes as any[]).map((episode) => {
-            // Flatten sources to top-level src/type, and ensure all required fields
-            let src = episode.src;
-            let type = episode.type;
-            if (Array.isArray(episode.sources) && episode.sources.length > 0) {
-              src = episode.sources[0].src || src;
-              type = episode.sources[0].type || type;
-            }
-            return {
-              src: src,
-              type: type,
-              tracks: episode.tracks || [],
-              thumb: episode.poster || episode.thumb || "",
-              title: episode.title || "",
-              duration: episode.duration || "",
-              poster: episode.poster || episode.thumb || "",
-              metaDescription:
-                episode.metaDescription || episode.description || "",
-              // Keep sources for compatibility, but Video.js will use top-level src/type
-              sources: episode.sources || (src ? [
-                {
-                  src: src,
-                  type: type,
-                },
-              ] : []),
-            };
-          });
-          return [seasonKey, processedEpisodes];
-        }
-        return [seasonKey, []];
-      }
-    );
-    if (processedPlaylist.length > 0) {
-      playlist = Object.fromEntries(processedPlaylist);
-    }
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error("Error processing playlist:", error);
-  }
+	try {
+		const processedPlaylist = Object.entries(playlist).map(
+			([seasonKey, episodes]) => {
+				if (Array.isArray(episodes)) {
+					const processedEpisodes = (episodes as any[]).map((episode) => {
+						// Flatten sources to top-level src/type, and ensure all required fields
+						let src = episode.src;
+						let type = episode.type;
+						if (Array.isArray(episode.sources) && episode.sources.length > 0) {
+							src = episode.sources[0].src || src;
+							type = episode.sources[0].type || type;
+						}
+						return {
+							src: src,
+							type: type,
+							tracks: episode.tracks || [],
+							thumb: episode.poster || episode.thumb || "",
+							title: episode.title || "",
+							duration: episode.duration || "",
+							poster: episode.poster || episode.thumb || "",
+							metaDescription:
+								episode.metaDescription || episode.description || "",
+							// Keep sources for compatibility, but Video.js will use top-level src/type
+							sources:
+								episode.sources ||
+								(src
+									? [
+											{
+												src: src,
+												type: type,
+											},
+										]
+									: []),
+						};
+					});
+					return [seasonKey, processedEpisodes];
+				}
+				return [seasonKey, []];
+			},
+		);
+		if (processedPlaylist.length > 0) {
+			playlist = Object.fromEntries(processedPlaylist);
+		}
+	} catch (error) {
+		// eslint-disable-next-line no-console
+		console.error("Error processing playlist:", error);
+	}
 }
 
 // Determine content type

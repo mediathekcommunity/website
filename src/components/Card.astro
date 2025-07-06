@@ -1,55 +1,58 @@
 ---
+import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
-import { Image } from 'astro:assets';
 
 // Define the CardData interface
 interface CardData {
-  id: string;
-  title?: string;
-  orgtitle?: string;
-  metascore?: string;
-  type: 'movie' | 'series' | 'y-movie' | 'y-series';
-  poster?: string;
-  backdropup?: { filename_disk: string };
-  posterup?: { filename_disk: string };
-  channel: { country: string };
-  remainingDays?: number;
+	id: string;
+	title?: string;
+	orgtitle?: string;
+	metascore?: string;
+	type: "movie" | "series" | "y-movie" | "y-series";
+	poster?: string;
+	backdropup?: { filename_disk: string };
+	posterup?: { filename_disk: string };
+	channel: { country: string };
+	remainingDays?: number;
 }
 
 // Props for the Card component
 interface Props {
-  carddata: CardData;
-  countryflag?: string;
-  ico1?: string;
+	carddata: CardData;
+	countryflag?: string;
+	ico1?: string;
 }
 
 const { carddata, countryflag, ico1 } = Astro.props;
 
-const title = carddata?.title || 'Unknown Title';
+const title = carddata?.title || "Unknown Title";
 const orgtitle = carddata?.orgtitle || null;
-const metascore = carddata?.metascore || 'Unknown';
+const metascore = carddata?.metascore || "Unknown";
 const countryflag1 = `fi fi-${carddata.channel.country.toLowerCase()}`;
 
 // Type icon mapping
 const typeIconMap = {
-  movie: 'mdi:movie',
-  series: 'mdi:tv',
-  'y-movie': 'mdi:movie',
-  'y-series': 'mdi:tv'
+	movie: "mdi:movie",
+	series: "mdi:tv",
+	"y-movie": "mdi:movie",
+	"y-series": "mdi:tv",
 } as const;
 
-const getTypeIcon = (type: CardData['type']) => typeIconMap[type] || 'mdi:movie';
+const getTypeIcon = (type: CardData["type"]) =>
+	typeIconMap[type] || "mdi:movie";
 
 // Generate poster URL
 const getPosterUrl = () => {
-  if (carddata.poster) {
-    return carddata.poster.startsWith('http') ? carddata.poster : `https://img.mediathek.community/t/p/w300${carddata.poster}`;
-  } else if (carddata.posterup?.filename_disk) {
-    return `https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/${carddata.posterup.filename_disk}`;
-  } else if (carddata.backdropup?.filename_disk) {
-    return `https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/${carddata.backdropup.filename_disk}`;
-  }
-  return 'https://api.mediathek.community/assets/default-poster.jpg';
+	if (carddata.poster) {
+		return carddata.poster.startsWith("http")
+			? carddata.poster
+			: `https://img.mediathek.community/t/p/w300${carddata.poster}`;
+	} else if (carddata.posterup?.filename_disk) {
+		return `https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/${carddata.posterup.filename_disk}`;
+	} else if (carddata.backdropup?.filename_disk) {
+		return `https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/${carddata.backdropup.filename_disk}`;
+	}
+	return "https://api.mediathek.community/assets/default-poster.jpg";
 };
 
 const posterUrl = getPosterUrl();
@@ -87,7 +90,7 @@ const posterUrl = getPosterUrl();
             </span>
           </div>
         )}
-        {countryflag && <div class="country-flag"><span class={countryflag1} /></div>}
+        {countryflag && <div class="country-flag"><span class={`fi fi-${carddata.channel.country.toLowerCase()}`} /></div>}
       </div>
 
       <div class="card-overlay">

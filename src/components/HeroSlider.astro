@@ -1,80 +1,80 @@
 ---
+import { Image } from "astro:assets";
 // Import required components and types
 import { Icon } from "astro-icon/components";
-import { Image } from "astro:assets";
 
 // Define the HeroItem interface
 interface HeroItem {
-  backdrop?: string;
-  backdropup?: { filename_disk: string };
-  poster?: string;
-  posterup?: { filename_disk: string };
-  title: string;
-  orgtitle: string;
-  id: string;
-  channel: {
-    country: string;
-    icon: string;
-  };
-  quality: "4K" | "fhd" | "hd" | string;
-  type: "movie" | "series" | "music" | string;
-  special?: { name: string };
-  language?: string;
-  episode?: {
-    season: number;
-    episode: number;
-    lang?: string;
-  };
-  links?: Array<{
-    audiolang: string[];
-  }>;
+	backdrop?: string;
+	backdropup?: { filename_disk: string };
+	poster?: string;
+	posterup?: { filename_disk: string };
+	title: string;
+	orgtitle: string;
+	id: string;
+	channel: {
+		country: string;
+		icon: string;
+	};
+	quality: "4K" | "fhd" | "hd" | string;
+	type: "movie" | "series" | "music" | string;
+	special?: { name: string };
+	language?: string;
+	episode?: {
+		season: number;
+		episode: number;
+		lang?: string;
+	};
+	links?: Array<{
+		audiolang: string[];
+	}>;
 }
 
 // Component props
 interface Props {
-  heroItems: HeroItem[];
-  showcountry?: boolean;
-  special?: boolean;
+	heroItems: HeroItem[];
+	showcountry?: boolean;
+	special?: boolean;
 }
 
 const { heroItems, showcountry = false, special = false } = Astro.props;
 
 // Helper functions
 const getQualityIcon = (quality: string) => {
-  switch (quality.toLowerCase()) {
-    case "4k":
-      return "mdi:uhd";
-    case "fhd":
-    case "1080p":
-      return "material-symbols:full-hd";
-    case "hd":
-      return "mdi:video";
-    default:
-      return "mdi:video-outline";
-  }
+	switch (quality.toLowerCase()) {
+		case "4k":
+			return "mdi:uhd";
+		case "fhd":
+		case "1080p":
+			return "material-symbols:full-hd";
+		case "hd":
+			return "mdi:video";
+		default:
+			return "mdi:video-outline";
+	}
 };
 
 const getImageUrl = (slide: HeroItem) => {
-  if (!slide.backdrop && !slide.backdropup) {
-    console.warn("No backdrop found for slide", slide);
-    return "https://api.mediathek.community/assets/default-backdrop.jpg";
-  }
-  return slide.backdrop
-    ? `https://img.mediathek.community/t/p/original${slide.backdrop}`
-    : `https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/${slide.backdropup?.filename_disk}`;
+	if (!slide.backdrop && !slide.backdropup) {
+		console.warn("No backdrop found for slide", slide);
+		return "https://api.mediathek.community/assets/default-backdrop.jpg";
+	}
+	return slide.backdrop
+		? `https://img.mediathek.community/t/p/original${slide.backdrop}`
+		: `https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/${slide.backdropup?.filename_disk}`;
 };
 
 const getTypeIcon = (type: string) => {
-  switch (type.toLowerCase()) {
-    case "movie":
-      return "mdi:movie";
-    case "series":
-      return "mdi:tv";
-    case "music":
-      return "mdi:music";
-    default:
-      return "mdi:movie";
-  }
+	switch (type.toLowerCase()) {
+		case "movie":
+			return "mdi:movie";
+		case "series":
+			return "mdi:tv";
+		case "music":
+			return "mdi:music";
+		default:
+			return "mdi:movie";
+	}
 };
 ---
 

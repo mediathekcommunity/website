@@ -1,0 +1,222 @@
+---
+import Layout from "./default.astro";
+---
+
+<Layout>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/css/flag-icons.min.css" />
+
+<div class="drawer lg:drawer-open min-h-screen">
+  <input id="admin-drawer" type="checkbox" class="drawer-toggle" />
+  <div class="drawer-content flex flex-col min-h-screen">
+    <!-- Navbar -->
+    <div class="navbar bg-base-100 shadow-lg border-b border-base-300 z-10">
+      <div class="flex-none lg:hidden">
+        <label for="admin-drawer" class="btn btn-square btn-ghost">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+        </label>
+      </div>
+      <div class="flex-1 px-2">
+        <div class="flex items-center gap-3">
+          <a href="/admin" class="text-xl font-bold text-primary">MediaThek Admin</a>
+          <div class="badge badge-secondary badge-sm">v2.0</div>
+        </div>
+      </div>
+      <div class="flex-none gap-2">
+        <!-- Database Source Toggle -->
+        <div class="dropdown dropdown-end">
+          <label tabindex="0" class="btn btn-ghost btn-sm gap-2">
+            <span class="hidden sm:inline">DB:</span>
+            <span id="db-source-indicator" class="badge badge-outline badge-sm">Local</span>
+          </label>
+          <div tabindex="0" class="dropdown-content z-[1] card compact w-64 shadow-xl bg-base-100">
+            <div class="card-body">
+              <h3 class="card-title text-sm">Database Source</h3>
+              <div class="form-control">
+                <label class="label cursor-pointer">
+                  <span class="label-text">Local Database</span>
+                  <input type="radio" name="db-source" value="local" class="radio radio-primary radio-sm" checked />
+                </label>
+              </div>
+              <div class="form-control">
+                <label class="label cursor-pointer">
+                  <span class="label-text">Cloud (Turso)</span>
+                  <input type="radio" name="db-source" value="cloud" class="radio radio-primary radio-sm" />
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Health Status -->
+        <div class="indicator">
+          <span id="health-indicator" class="indicator-item badge badge-success badge-xs"></span>
+          <button class="btn btn-ghost btn-circle btn-sm" id="health-check">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- User Menu -->
+        <div class="dropdown dropdown-end">
+          <label tabindex="0" class="btn btn-ghost btn-circle avatar">
+            <div class="w-8 rounded-full bg-primary text-primary-content flex items-center justify-center">
+              <span class="text-sm font-bold">A</span>
+            </div>
+          </label>
+          <ul tabindex="0" class="mt-3 p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
+            <li><a class="gap-2"><span>👤</span>Profile</a></li>
+            <li><a class="gap-2"><span>🚪</span>Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Main Content -->
+    <main class="flex-1 w-full px-4 py-6">
+      <slot />
+    </main>
+  </div>
+  
+  <!-- Sidebar -->
+  <div class="drawer-side z-20">
+    <label for="admin-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+    <aside class="min-h-screen h-screen w-72 bg-base-200 border-r border-base-300 flex flex-col">
+      <!-- Sidebar Header -->
+      <div class="p-4 border-b border-base-300 flex-shrink-0">
+        <div class="flex items-center gap-3">
+          <div class="avatar placeholder">
+            <div class="bg-primary text-primary-content rounded-lg w-10">
+              <span class="text-lg">🎬</span>
+            </div>
+          </div>
+          <div>
+            <div class="font-bold text-base">Admin Panel</div>
+            <div class="text-xs opacity-60">Content Management</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Menu -->
+      <ul class="menu p-4 text-base-content flex-1 overflow-y-auto">
+        <li class="menu-title">
+          <span>Dashboard</span>
+        </li>
+        <li><a href="/admin" class="gap-3"><span>🏠</span>Overview</a></li>
+        
+        <li class="menu-title mt-4">
+          <span>Content</span>
+        </li>
+        <li>
+          <details open>
+            <summary class="gap-3"><span>🎬</span>Manage Content</summary>
+            <ul>
+              <li><a href="/admin/content" class="gap-2"><span>📋</span>All Content</a></li>
+              <li><a href="/admin/content/create" class="gap-2"><span>➕</span>Create New</a></li>
+            </ul>
+          </details>
+        </li>
+        <li>
+          <details open>
+            <summary class="gap-3"><span>📺</span>Channels</summary>
+            <ul>
+              <li><a href="/admin/channels/list" class="gap-2"><span>�</span>All Channels</a></li>
+              <li><a href="/admin/channels/create" class="gap-2"><span>➕</span>Create New</a></li>
+            </ul>
+          </details>
+        </li>
+        
+        <li class="menu-title mt-4">
+          <span>System</span>
+        </li>
+        <li><a href="/admin/health" class="gap-3"><span>❤️</span>Health Monitor</a></li>
+      </ul>
+
+      <!-- Footer - Fixed at bottom -->
+      <div class="p-4 bg-base-300/50 flex-shrink-0 border-t border-base-300">
+        <div class="text-center">
+          <div class="text-xs opacity-60">Powered by</div>
+          <div class="text-sm font-semibold">DaisyUI + MCP</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+  // Global admin utilities
+  window.adminUtils = {
+    currentDbSource: localStorage.getItem('dbSource') || 'local',
+    
+    // Database source switching
+    setDatabaseSource: function(source) {
+      this.currentDbSource = source;
+      localStorage.setItem('dbSource', source);
+      
+      const indicator = document.getElementById('db-source-indicator');
+      if (indicator) {
+        indicator.textContent = source === 'cloud' ? 'Cloud' : 'Local';
+        indicator.className = source === 'cloud' 
+          ? 'badge badge-warning badge-sm' 
+          : 'badge badge-outline badge-sm';
+      }
+      
+      // Update radio button
+      const radio = document.querySelector(`input[name="db-source"][value="${source}"]`);
+      if (radio) {
+        radio.checked = true;
+      }
+      
+      // Trigger custom event for other components to listen
+      window.dispatchEvent(new CustomEvent('dbSourceChanged', { detail: { source } }));
+    },
+
+    // Health monitoring
+    checkHealth: async function() {
+      const indicator = document.getElementById('health-indicator');
+      try {
+        const response = await fetch('/api/health');
+        const data = await response.json();
+        if (indicator) {
+          indicator.className = data.healthy 
+            ? 'indicator-item badge badge-success badge-xs'
+            : 'indicator-item badge badge-error badge-xs';
+        }
+      } catch (error) {
+        if (indicator) {
+          indicator.className = 'indicator-item badge badge-error badge-xs';
+        }
+      }
+    }
+  };
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize database source from localStorage
+    const savedSource = localStorage.getItem('dbSource') || 'local';
+    window.adminUtils.setDatabaseSource(savedSource);
+    
+    // Set up database source radio buttons
+    const dbRadios = document.querySelectorAll('input[name="db-source"]');
+    dbRadios.forEach(radio => {
+      radio.addEventListener('change', function() {
+        if (this.checked) {
+          window.adminUtils.setDatabaseSource(this.value);
+        }
+      });
+    });
+
+    // Set up health check button
+    const healthBtn = document.getElementById('health-check');
+    if (healthBtn) {
+      healthBtn.addEventListener('click', () => window.adminUtils.checkHealth());
+    }
+
+    // Initial health check
+    window.adminUtils.checkHealth();
+    
+    // Periodic health check every 30 seconds
+    setInterval(() => window.adminUtils.checkHealth(), 30000);
+  });
+</script>
+</Layout>

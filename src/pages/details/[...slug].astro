@@ -1,12 +1,12 @@
 ---
-import BlogPost from "../../layouts/default.astro";
 import { getCollection } from "astro:content";
 import VideoplayerAstro from "../../components/VideoplayerAstro.astro";
+import BlogPost from "../../layouts/default.astro";
 export const prerender = false; // Not needed in 'server' mode
 
 // Astro component recreated from Svelte source using DaisyUI
 export interface Props {
-  data?: any;
+	data?: any;
 }
 
 // Get the slug from URL params
@@ -18,140 +18,147 @@ const allDetails = await getCollection("details");
 
 // Helper function to find data by ID
 function findDataById(searchId: string) {
-  return allDetails.find((entry) => entry.data.id === searchId)?.data;
+	return allDetails.find((entry) => entry.data.id === searchId)?.data;
 }
 
 // Use provided data or fallback to content collection data based on ID
 let data;
 if (Astro.props.data) {
-  data = Astro.props.data;
+	data = Astro.props.data;
 } else {
-  // Try to find exact match only
-  data = findDataById(id || "");
+	// Try to find exact match only
+	data = findDataById(id || "");
 
-  // If no exact match found, use fallback
-  if (!data) {
-    // Try to get the fallback entry from content collection
-    data = findDataById("fallback");
+	// If no exact match found, use fallback
+	if (!data) {
+		// Try to get the fallback entry from content collection
+		data = findDataById("fallback");
 
-    // If even the fallback entry doesn't exist, create a minimal one
-    if (!data) {
-      data = {
-        id: "fallback",
-        title: "No series available at the moment",
-        orgtitle: "",
-        geo: "de",
-        info: {
-          id: "fallback", // Add ID to info object for detection
-          type: "movie",
-          duration: 0,
-          seasons: 0,
-          episodes: 0,
-          onlineuntil: "2025-12-31T23:59:59Z",
-          quality: ".",
-          description: "<p>No movie/series found with the provided id</p>",
-          channel: {
-            name: ".",
-            country: "de",
-          },
-        },
-      };
-    }
-  }
+		// If even the fallback entry doesn't exist, create a minimal one
+		if (!data) {
+			data = {
+				id: "fallback",
+				title: "No series available at the moment",
+				orgtitle: "",
+				geo: "de",
+				info: {
+					id: "fallback", // Add ID to info object for detection
+					type: "movie",
+					duration: 0,
+					seasons: 0,
+					episodes: 0,
+					onlineuntil: "2025-12-31T23:59:59Z",
+					quality: ".",
+					description: "<p>No movie/series found with the provided id</p>",
+					channel: {
+						name: ".",
+						country: "de",
+					},
+				},
+			};
+		}
+	}
 }
 
 // Helper functions
 function toHoursAndMinutes(totalMinutes: number): string {
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-  return `${hours}h${minutes > 0 ? ` ${minutes}m` : ""}`;
+	const hours = Math.floor(totalMinutes / 60);
+	const minutes = totalMinutes % 60;
+	return `${hours}h${minutes > 0 ? ` ${minutes}m` : ""}`;
 }
 
 function getformat(id: string): string {
-  switch (id) {
-    case "mpd":
-      return "application/dash+xml";
-    case "m3u8":
-      return "application/x-mpegURL";
-    default:
-      return "application/dash+xml";
-  }
+	switch (id) {
+		case "mpd":
+			return "application/dash+xml";
+		case "m3u8":
+			return "application/x-mpegURL";
+		default:
+			return "application/dash+xml";
+	}
 }
 
 function splitLangFormat(inputString: string): string[] {
-  if (typeof inputString !== "string") {
-    console.error("Invalid input: Expected a string.");
-    return [];
-  }
+	if (typeof inputString !== "string") {
+		console.error("Invalid input: Expected a string.");
+		return [];
+	}
 
-  const indexOfFirstHyphen = inputString.indexOf("-");
-  if (indexOfFirstHyphen === -1) {
-    return [inputString];
-  }
+	const indexOfFirstHyphen = inputString.indexOf("-");
+	if (indexOfFirstHyphen === -1) {
+		return [inputString];
+	}
 
-  const part1 = inputString.substring(0, indexOfFirstHyphen);
-  const part2 = inputString.substring(indexOfFirstHyphen + 1);
-  return [part1, part2];
+	const part1 = inputString.substring(0, indexOfFirstHyphen);
+	const part2 = inputString.substring(indexOfFirstHyphen + 1);
+	return [part1, part2];
 }
 
 // Simple language to flag mapping for cases where language code differs from country code
 function langToFlag(lang: string): string {
-  const map: Record<string, string> = {
-    'en': 'gb', 'el': 'gr', 'cs': 'cz', 'sl': 'si', 'et': 'ee', 
-    'uk': 'ua', 'be': 'by', 'sv': 'se', 'da': 'dk'
-  };
-  return map[lang] || lang;
+	const map: Record<string, string> = {
+		en: "gb",
+		el: "gr",
+		cs: "cz",
+		sl: "si",
+		et: "ee",
+		uk: "ua",
+		be: "by",
+		sv: "se",
+		da: "dk",
+	};
+	return map[lang] || lang;
 }
 
 function getImageUrl(slide: any): string {
-  // For fallback case, always return placeholder
-  if (slide.id === "fallback") {
-    return "https://images.unsplash.com/photo-1489599743717-9c7b9b6ea9c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080&q=80";
-  }
+	// For fallback case, always return placeholder
+	if (slide.id === "fallback") {
+		return "https://images.unsplash.com/photo-1489599743717-9c7b9b6ea9c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080&q=80";
+	}
 
-  let imageUrl = "";
-  switch (true) {
-    case !!slide.backdrop:
-      // Check if it's already a full URL
-      imageUrl = slide.backdrop.startsWith("http")
-        ? slide.backdrop
-        : "https://img.mediathek.community/t/p/original" + slide.backdrop;
-      break;
-    case !!slide.backdropup:
-      imageUrl =
-        "https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/" +
-        slide.backdropup;
-      break;
-    case !!slide.poster:
-      // Check if it's already a full URL
-      imageUrl = slide.poster.startsWith("http")
-        ? slide.poster
-        : "https://img.mediathek.community/t/p/original" + slide.poster;
-      break;
-    case !!slide.posterup:
-      imageUrl =
-        "https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/" +
-        slide.posterup;
-      break;
-    default:
-      console.warn("No backdrop found for slide", slide);
-      // Use a better placeholder image for demo
-      imageUrl =
-        "https://images.unsplash.com/photo-1489599743717-9c7b9b6ea9c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080&q=80";
-  }
-  return imageUrl;
+	let imageUrl = "";
+	switch (true) {
+		case !!slide.backdrop:
+			// Check if it's already a full URL
+			imageUrl = slide.backdrop.startsWith("http")
+				? slide.backdrop
+				: "https://img.mediathek.community/t/p/original" + slide.backdrop;
+			break;
+		case !!slide.backdropup:
+			imageUrl =
+				"https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/" +
+				slide.backdropup;
+			break;
+		case !!slide.poster:
+			// Check if it's already a full URL
+			imageUrl = slide.poster.startsWith("http")
+				? slide.poster
+				: "https://img.mediathek.community/t/p/original" + slide.poster;
+			break;
+		case !!slide.posterup:
+			imageUrl =
+				"https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/" +
+				slide.posterup;
+			break;
+		default:
+			console.warn("No backdrop found for slide", slide);
+			// Use a better placeholder image for demo
+			imageUrl =
+				"https://images.unsplash.com/photo-1489599743717-9c7b9b6ea9c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080&q=80";
+	}
+	return imageUrl;
 }
 
 function getqualityicon(quality: string): string {
-  if (quality === "4k") {
-    return "mdi:uhd";
-  } else if (quality === "1080p" || quality === "fhd") {
-    return "material-symbols:full-hd";
-  } else if (quality === "hd") {
-    return "mdi:video";
-  } else {
-    return "mdi:video-outline";
-  }
+	if (quality === "4k") {
+		return "mdi:uhd";
+	} else if (quality === "1080p" || quality === "fhd") {
+		return "material-symbols:full-hd";
+	} else if (quality === "hd") {
+		return "mdi:video";
+	} else {
+		return "mdi:video-outline";
+	}
 }
 
 // Video player state

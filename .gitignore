@@ -22,3 +22,8 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+.drizzle.env
+.wrangler
+migrations/*
+export/*
+scripts/*

@@ -1,0 +1,647 @@
+---
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+
+// Authentication check
+const isAuthenticated = Astro.locals.isAuthenticated;
+if (!isAuthenticated) {
+	return Astro.redirect('/login');
+}
+
+// Fetch content data with dynamic source
+// Note: This will default to 'local' on page load, but can be refreshed via database switch
+const defaultSource = "local"; // Could be made dynamic in the future
+let contentData = { files: [], total: 0 };
+try {
+	const contentRes = await fetch(
+		`${Astro.url.origin}/api/list-content?source=${defaultSource}`,
+	);
+	contentData = await contentRes.json();
+} catch (error) {
+}
+
+const files = contentData.files || [];
+const totalItems = files.length;
+
+// Pagination settings
+const itemsPerPage = 10;
+const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
+const urlParams = new URLSearchParams(Astro.url.search);
+const currentPage = Math.max(
+	1,
+	Math.min(totalPages, parseInt(urlParams.get("page") || "1", 10)),
+);
+
+// Get items for current page
+const startIndex = (currentPage - 1) * itemsPerPage;
+const endIndex = startIndex + itemsPerPage;
+const paginatedFiles = files.slice(startIndex, endIndex);
+
+// Content type counts (based on all items, not just current page)
+const contentStats = {
+	movies: files.filter((item: any) => item.type === "movie").length,
+	series: files.filter((item: any) => item.type === "series").length,
+	yMovies: files.filter((item: any) => item.type === "y-movie").length,
+	ySeries: files.filter((item: any) => item.type === "y-series").length,
+};
+---
+
+<AdminLayout>
+  <!-- Page Header -->
+  <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
+    <div>
+      <div class="breadcrumbs text-sm">
+        <ul>
+          <li><a href="/admin">Dashboard</a></li>
+          <li>Content Management</li>
+        </ul>
+      </div>
+      <h1 class="text-3xl font-bold text-base-content flex items-center gap-2">
+        Content Library
+        <span id="content-list-db-badge" class="badge badge-outline badge-sm">Local DB</span>
+      </h1>
+      <p class="text-base-content/70 mt-1">Manage your movies, series, and media content</p>
+    </div>
+    <div class="flex gap-2">
+      <a href="/admin/content/create" class="btn btn-primary gap-2">
+        <span>➕</span>
+        Add Content
+      </a>
+    </div>
+  </div>
+
+  <!-- Content Statistics -->
+  <div class="stats stats-vertical lg:stats-horizontal shadow mb-6 w-full">
+    <div class="stat place-items-center">
+      <div class="stat-title">Total Items</div>
+      <div class="stat-value text-primary">{totalItems}</div>
+      <div class="stat-desc">All content</div>
+    </div>
+    <div class="stat place-items-center">
+      <div class="stat-title">Movies</div>
+      <div class="stat-value text-secondary">{contentStats.movies}</div>
+      <div class="stat-desc">Feature films</div>
+    </div>
+    <div class="stat place-items-center">
+      <div class="stat-title">Series</div>
+      <div class="stat-value text-accent">{contentStats.series}</div>
+      <div class="stat-desc">TV shows</div>
+    </div>
+    <div class="stat place-items-center">
+      <div class="stat-title">Youth Content</div>
+      <div class="stat-value text-info">{contentStats.yMovies + contentStats.ySeries}</div>
+      <div class="stat-desc">Youth category</div>
+    </div>
+  </div>
+
+  <!-- Search and Filter Controls -->
+  <div class="card bg-base-100 shadow-xl mb-6">
+    <div class="card-body">
+      <div class="flex flex-col lg:flex-row gap-4">
+        <div class="form-control flex-1">
+          <label class="label">
+            <span class="label-text">Search Content</span>
+          </label>
+          <input type="text" placeholder="Search by title, ID, or description..." class="input input-bordered w-full" id="content-search" />
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Filter by Type</span>
+          </label>
+          <select class="select select-bordered w-full max-w-xs" id="type-filter">
+            <option value="">All Types</option>
+            <option value="movie">Movies</option>
+            <option value="series">Series</option>
+            <option value="y-movie">Youth Movies</option>
+            <option value="y-series">Youth Series</option>
+          </select>
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Sort By</span>
+          </label>
+          <select class="select select-bordered w-full max-w-xs" id="sort-select">
+            <option value="title">Title A-Z</option>
+            <option value="title-desc">Title Z-A</option>
+            <option value="date">Date Added</option>
+            <option value="type">Content Type</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Table -->
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="card-title" id="content-items-title">Content Items ({totalItems})</h2>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="table table-zebra">
+          <thead>
+            <tr>
+              <th>Preview</th>
+              <th>Title</th>
+              <th>Type</th>
+              <th>Quality</th>
+              <th>Added</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="content-table-body">
+            {paginatedFiles.map((item: any, index: number) => (
+              <tr class="content-row" data-title={item.title?.toLowerCase()} data-type={item.type} data-id={item.id}>
+                <td>
+                  <div class="flex items-center gap-3">
+                    <div class="avatar">
+                      <div class="mask mask-squircle w-12 h-12 bg-base-300">
+                        {item.poster ? (
+                          <img src={item.poster} alt={item.title} class="object-cover" />
+                        ) : (
+                          <div class="flex items-center justify-center text-lg">
+                            {item.type === 'movie' || item.type === 'y-movie' ? '🎬' : '📺'}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="font-bold">{item.title || item.id}</div>
+                  <div class="text-sm opacity-50 max-w-xs truncate">{item.description || '—'}</div>
+                </td>
+                <td>
+                  <span class={`badge badge-sm ${
+                    item.type === 'movie' ? 'badge-primary' :
+                    item.type === 'series' ? 'badge-secondary' :
+                    item.type === 'y-movie' ? 'badge-accent' :
+                    'badge-info'
+                  }`}>
+                    {item.type}
+                  </span>
+                </td>
+                <td>
+                  <span class="badge badge-outline badge-xs">
+                    {item.quality || 'HD'}
+                  </span>
+                </td>
+                <td class="text-sm opacity-70">
+                  {item.lastModified ? new Date(item.lastModified).toLocaleDateString() : 'Unknown'}
+                </td>
+                <td>
+                  <div class="join">
+                    <a href={`/admin/content/edit/${item.id}`} class="btn btn-ghost btn-xs join-item">
+                      ✏️
+                    </a>
+                    <a href={`/details/${item.id}`} target="_blank" class="btn btn-ghost btn-xs join-item">
+                      👁️
+                    </a>
+                    <button class="btn btn-ghost btn-xs join-item text-error" onclick={`deleteContent('${item.id}', '${item.title || item.id}')`}>
+                      🗑️
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <!-- Empty State -->
+        {files.length === 0 && (
+          <div class="text-center py-16">
+            <div class="text-6xl mb-4">📚</div>
+            <h3 class="text-xl font-bold mb-2">No content found</h3>
+            <p class="text-base-content/70 mb-4">Start building your media library</p>
+            <a href="/admin/content/create" class="btn btn-primary">
+              Add First Content
+            </a>
+          </div>
+        )}
+      </div>
+
+      <!-- Pagination -->
+      {files.length > 0 && (
+        <div class="flex justify-between items-center mt-6">
+          <div class="text-sm text-base-content/70">
+            Showing {startIndex + 1}-{Math.min(endIndex, totalItems)} of {totalItems} items
+          </div>
+          <div class="join">
+            <button 
+              class={`join-item btn btn-sm ${currentPage <= 1 ? 'btn-disabled' : ''}`}
+              onclick={currentPage > 1 ? `goToPage(${currentPage - 1})` : ''}
+              disabled={currentPage <= 1}
+            >
+              «
+            </button>
+            
+            <button class="join-item btn btn-sm btn-active" onclick="goToPage(1)">
+              1
+            </button>
+            {totalPages > 1 && (
+              <button class="join-item btn btn-sm" onclick="goToPage(2)">
+                2
+              </button>
+            )}
+            {totalPages > 2 && (
+              <button class="join-item btn btn-sm" onclick="goToPage(3)">
+                3
+              </button>
+            )}
+            {totalPages > 3 && (
+              <button class="join-item btn btn-sm" onclick="goToPage(4)">
+                4
+              </button>
+            )}
+            {totalPages > 4 && (
+              <button class="join-item btn btn-sm" onclick="goToPage(5)">
+                5
+              </button>
+            )}
+            
+            <button 
+              class={`join-item btn btn-sm ${currentPage >= totalPages ? 'btn-disabled' : ''}`}
+              onclick={currentPage < totalPages ? `goToPage(${currentPage + 1})` : ''}
+              disabled={currentPage >= totalPages}
+            >
+              »
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  </div>
+
+  <!-- Bulk Actions Modal - REMOVED -->
+
+</AdminLayout>
+
+<script>
+  // TypeScript declarations
+  declare global {
+    interface Window {
+      adminUtils: any;
+      refreshContentFromDatabase: (source: string) => Promise<void>;
+    }
+  }
+
+  // Content management functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    initializeContentFilters();
+    initializeDatabaseSourceBadge();
+  });
+
+  function initializeDatabaseSourceBadge() {
+    // Initialize database source badge
+    const contentBadge = document.getElementById('content-list-db-badge');
+    if (contentBadge && window.adminUtils) {
+      const currentSource = window.adminUtils.currentDbSource;
+      contentBadge.textContent = currentSource === 'cloud' ? 'Cloud DB' : 'Local DB';
+      contentBadge.className = currentSource === 'cloud' 
+        ? 'badge badge-warning badge-sm' 
+        : 'badge badge-outline badge-sm';
+    }
+
+    // Listen for database source changes
+    window.addEventListener('dbSourceChanged', function(event) {
+      const newSource = (event as CustomEvent).detail.source;
+      
+      // Update the content list badge
+      const contentBadge = document.getElementById('content-list-db-badge');
+      if (contentBadge) {
+        contentBadge.textContent = newSource === 'cloud' ? 'Cloud DB' : 'Local DB';
+        contentBadge.className = newSource === 'cloud' 
+          ? 'badge badge-warning badge-sm' 
+          : 'badge badge-outline badge-sm';
+      }
+      
+      // Automatically refresh content
+      refreshContentFromDatabase(newSource);
+    });
+  }
+
+  // Make refresh function globally accessible for testing
+  window.refreshContentFromDatabase = refreshContentFromDatabase;
+
+  async function refreshContentFromDatabase(source: string) {
+    try {
+      
+      // Show loading state
+      const contentTableBody = document.getElementById('content-table-body');
+      
+      if (contentTableBody) {
+        contentTableBody.innerHTML = '<tr><td colspan="6" class="text-center py-8">🔄 Loading content from ' + source + ' database...</td></tr>';
+      }
+      
+      // Fetch new content from the selected database
+      const response = await fetch(`/api/list-content?source=${source}`);
+      const result = await response.json();
+      
+      if (result.files) {
+        // Update content table
+        updateContentTable(result.files);
+        
+        // Update statistics
+        updateContentStats(result.files);
+        
+        // Show success toast
+        showToast(`Content refreshed from ${source} database (${result.files.length} items)`, 'success');
+      } else {
+        throw new Error(result.error || 'Failed to fetch content');
+      }
+    } catch (error) {
+      showToast(`Error refreshing content: ${(error as Error).message}`, 'error');
+      
+      // Fallback: reload page
+      if (confirm('Failed to refresh content automatically. Reload page?')) {
+        window.location.reload();
+      }
+    }
+  }
+
+  function updateContentTable(files: any[]) {
+    const contentTableBody = document.getElementById('content-table-body');
+    if (!contentTableBody) return;
+    
+    if (files.length === 0) {
+      contentTableBody.innerHTML = `
+        <tr>
+          <td colspan="6" class="text-center py-16">
+            <div class="text-6xl mb-4">📚</div>
+            <h3 class="text-xl font-bold mb-2">No content found</h3>
+            <p class="text-base-content/70 mb-4">This database is empty</p>
+            <a href="/admin/content/create" class="btn btn-primary">Add First Content</a>
+          </td>
+        </tr>
+      `;
+      return;
+    }
+    
+    contentTableBody.innerHTML = files.map(item => `
+      <tr class="content-row" data-title="${(item.title || '').toLowerCase()}" data-type="${item.type}" data-id="${item.id}">
+        <td>
+          <div class="flex items-center gap-3">
+            <div class="avatar">
+              <div class="mask mask-squircle w-12 h-12 bg-base-300">
+                ${item.poster 
+                  ? `<img src="${item.poster}" alt="${item.title}" class="object-cover" />` 
+                  : `<div class="flex items-center justify-center text-lg">${item.type === 'movie' || item.type === 'y-movie' ? '🎬' : '📺'}</div>`
+                }
+              </div>
+            </div>
+          </div>
+        </td>
+        <td>
+          <div class="font-bold">${item.title || item.id}</div>
+          <div class="text-sm opacity-50 max-w-xs truncate">${item.description || '—'}</div>
+        </td>
+        <td>
+          <span class="badge badge-sm ${
+            item.type === 'movie' ? 'badge-primary' :
+            item.type === 'series' ? 'badge-secondary' :
+            item.type === 'y-movie' ? 'badge-accent' :
+            'badge-info'
+          }">
+            ${item.type}
+          </span>
+        </td>
+        <td>
+          <span class="badge badge-outline badge-xs">
+            ${item.quality || 'HD'}
+          </span>
+        </td>
+        <td class="text-sm opacity-70">
+          ${item.lastModified ? new Date(item.lastModified).toLocaleDateString() : 'Unknown'}
+        </td>
+        <td>
+          <div class="join">
+            <a href="/admin/content/edit/${item.id}" class="btn btn-ghost btn-xs join-item">
+              ✏️
+            </a>
+            <a href="/details/${item.id}" target="_blank" class="btn btn-ghost btn-xs join-item">
+              👁️
+            </a>
+            <button class="btn btn-ghost btn-xs join-item text-error" onclick="deleteContent('${item.id}', '${(item.title || item.id).replace(/'/g, "\\'")}')">
+              🗑️
+            </button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+    
+    // Reinitialize filters and clear selections after content update
+    setTimeout(() => {
+      initializeContentFilters();
+    }, 100);
+  }
+
+  function updateContentStats(files: any[]) {
+    const totalItems = files.length;
+    const contentStats = {
+      movies: files.filter(item => item.type === 'movie').length,
+      series: files.filter(item => item.type === 'series').length,
+      yMovies: files.filter(item => item.type === 'y-movie').length,
+      ySeries: files.filter(item => item.type === 'y-series').length
+    };
+    
+    // Update stats display
+    const statsElements = document.querySelectorAll('.stat');
+    
+    if (statsElements.length >= 4) {
+      // Total items
+      const totalStat = statsElements[0];
+      const totalValue = totalStat.querySelector('.stat-value');
+      if (totalValue) {
+        totalValue.textContent = totalItems.toString();
+      }
+      
+      // Movies
+      const moviesStat = statsElements[1];
+      const moviesValue = moviesStat.querySelector('.stat-value');
+      if (moviesValue) {
+        moviesValue.textContent = contentStats.movies.toString();
+      }
+      
+      // Series
+      const seriesStat = statsElements[2];
+      const seriesValue = seriesStat.querySelector('.stat-value');
+      if (seriesValue) {
+        seriesValue.textContent = contentStats.series.toString();
+      }
+      
+      // Youth content
+      const youthStat = statsElements[3];
+      const youthValue = youthStat.querySelector('.stat-value');
+      if (youthValue) {
+        const youthTotal = contentStats.yMovies + contentStats.ySeries;
+        youthValue.textContent = youthTotal.toString();
+      }
+    }
+    
+    // Update content items count in table header
+    const tableTitle = document.getElementById('content-items-title');
+    if (tableTitle) {
+      tableTitle.textContent = `Content Items (${totalItems})`;
+    }
+  }
+
+  function initializeContentFilters() {
+    const searchInput = document.getElementById('content-search');
+    const typeFilter = document.getElementById('type-filter');
+    const sortSelect = document.getElementById('sort-select');
+
+    if (searchInput) {
+      searchInput.addEventListener('input', filterContent);
+    }
+    if (typeFilter) {
+      typeFilter.addEventListener('change', filterContent);
+    }
+    if (sortSelect) {
+      sortSelect.addEventListener('change', sortContent);
+    }
+  }
+
+  function filterContent() {
+    const searchTerm = (document.getElementById('content-search') as HTMLInputElement)?.value.toLowerCase() || '';
+    const typeFilter = (document.getElementById('type-filter') as HTMLSelectElement)?.value || '';
+    const rows = document.querySelectorAll('.content-row');
+
+    rows.forEach(row => {
+      const title = (row as HTMLElement).dataset.title || '';
+      const type = (row as HTMLElement).dataset.type || '';
+      
+      const matchesSearch = title.includes(searchTerm);
+      const matchesType = !typeFilter || type === typeFilter;
+
+      if (matchesSearch && matchesType) {
+        (row as HTMLElement).style.display = '';
+      } else {
+        (row as HTMLElement).style.display = 'none';
+      }
+    });
+
+    updateVisibleCount();
+  }
+
+  function sortContent() {
+    const sortBy = (document.getElementById('sort-select') as HTMLSelectElement)?.value || 'title';
+    const tbody = document.getElementById('content-table-body');
+    const rows = Array.from(tbody?.querySelectorAll('.content-row') || []);
+
+    rows.sort((a, b) => {
+      let aValue, bValue;
+      
+      switch(sortBy) {
+        case 'title':
+          aValue = (a as HTMLElement).dataset.title || '';
+          bValue = (b as HTMLElement).dataset.title || '';
+          return aValue.localeCompare(bValue);
+        case 'title-desc':
+          aValue = (a as HTMLElement).dataset.title || '';
+          bValue = (b as HTMLElement).dataset.title || '';
+          return bValue.localeCompare(aValue);
+        case 'type':
+          aValue = (a as HTMLElement).dataset.type || '';
+          bValue = (b as HTMLElement).dataset.type || '';
+          return aValue.localeCompare(bValue);
+        default:
+          return 0;
+      }
+    });
+
+    // Reorder rows in DOM
+    rows.forEach(row => tbody?.appendChild(row));
+  }
+
+  function updateVisibleCount() {
+    const visibleRows = document.querySelectorAll('.content-row:not([style*="display: none"])');
+    const totalRows = document.querySelectorAll('.content-row');
+    
+    // Update any count displays if they exist
+  }
+
+  // Listen for filter and sort changes
+  document.addEventListener('change', function(e: Event) {
+    const target = e.target as HTMLSelectElement;
+    if (target.id === 'type-filter' || target.id === 'quality-filter') {
+      filterContent();
+    }
+    if (target.id === 'sort-by') {
+      sortContent();
+    }
+  });
+
+  // Content management functions
+  async function deleteContent(id: string, title: string) {
+    if (confirm(`Are you sure you want to delete "${title}"?`)) {
+      try {
+        const currentSource = (window as any).adminUtils?.currentDbSource || 'local';
+        const response = await fetch(`/api/delete-content?id=${id}&source=${currentSource}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          showToast(`Content deleted from ${currentSource} database successfully`, 'success');
+          setTimeout(() => location.reload(), 1000);
+        } else {
+          showToast(`Failed to delete content: ${result.error}`, 'error');
+        }
+      } catch (error) {
+        showToast('Error deleting content', 'error');
+      }
+    }
+  }
+
+  function showToast(message: string, type: string = 'info') {
+    const toast = document.createElement('div');
+    toast.className = 'toast toast-top toast-end z-50';
+    
+    const alertClass = type === 'success' ? 'alert-success' : 
+                     type === 'warning' ? 'alert-warning' : 
+                     type === 'error' ? 'alert-error' : 'alert-info';
+    
+    toast.innerHTML = `
+      <div class="alert ${alertClass}">
+        <span>${message}</span>
+        <button onclick="this.parentElement.parentElement.remove()" class="btn btn-ghost btn-xs">✕</button>
+      </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      if (document.body.contains(toast)) {
+        document.body.removeChild(toast);
+      }
+    }, 5000);
+  }
+
+  // Pagination function
+  function goToPage(pageNumber: number) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('page', pageNumber.toString());
+    window.location.href = url.toString();
+  }
+
+  // Make pagination function globally accessible
+  (window as any).goToPage = goToPage;
+</script>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</AdminLayout>
+
+<style>
+  /* Enhanced table row styling */
+  .content-row {
+    transition: background-color 0.2s ease;
+  }
+  
+  .content-row:hover {
+    background-color: hsl(var(--b2));
+  }
+</style>

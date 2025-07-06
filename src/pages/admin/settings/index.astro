@@ -1,0 +1,9 @@
+---
+// Authentication check
+const isAuthenticated = Astro.locals.isAuthenticated;
+if (!isAuthenticated) {
+	return Astro.redirect('/login');
+}
+---
+
+<!-- Settings page content would go here -->

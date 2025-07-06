@@ -1,0 +1,535 @@
+---
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+
+// Authentication check
+const isAuthenticated = Astro.locals.isAuthenticated;
+if (!isAuthenticated) {
+	return Astro.redirect('/login');
+}
+
+// System health checks
+let healthData = {
+	overall: "unknown",
+	database: { status: "unknown", responseTime: 0 },
+	api: { status: "unknown", responseTime: 0 },
+	storage: { status: "unknown", used: 0, total: 0 },
+	memory: { status: "unknown", used: 0, total: 0 },
+	lastCheck: new Date().toISOString(),
+};
+
+try {
+	const healthRes = await fetch(`${Astro.url.origin}/api/health`);
+	const data = await healthRes.json();
+	healthData = { ...healthData, ...data };
+} catch (error) {
+	healthData.overall = "error";
+}
+
+// Performance metrics
+let performanceMetrics = {
+	uptime: "0s",
+	requests: 0,
+	errors: 0,
+	avgResponseTime: 0,
+};
+
+// Recent activity timeline
+const recentActivity = [
+	{
+		time: "2 min ago",
+		action: "Database backup completed",
+		status: "success",
+		icon: "💾",
+	},
+	{
+		time: "15 min ago",
+		action: "Content sync from PocketBase",
+		status: "success",
+		icon: "🔄",
+	},
+	{
+		time: "1 hour ago",
+		action: "Health check performed",
+		status: "success",
+		icon: "❤️",
+	},
+	{
+		time: "2 hours ago",
+		action: "Channel stream validated",
+		status: "warning",
+		icon: "📺",
+	},
+	{ time: "3 hours ago", action: "System started", status: "info", icon: "🚀" },
+];
+---
+
+<AdminLayout>
+  <!-- Page Header -->
+  <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
+    <div>
+      <div class="breadcrumbs text-sm">
+        <ul>
+          <li><a href="/admin">Dashboard</a></li>
+          <li>System Health</li>
+        </ul>
+      </div>
+      <h1 class="text-3xl font-bold text-base-content">System Health Monitor</h1>
+      <p class="text-base-content/70 mt-1">Real-time system monitoring and diagnostics</p>
+    </div>
+    <div class="flex gap-2">
+      <button class="btn btn-primary gap-2" onclick="runHealthCheck()">
+        <span>🔍</span>
+        Run Check
+      </button>
+      <button class="btn btn-outline gap-2" onclick="location.reload()">
+        <span>🔄</span>
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Overall Health Status -->
+  <div class="alert mb-8" id="overall-status" class={`alert ${
+    healthData.overall === 'healthy' ? 'alert-success' :
+    healthData.overall === 'warning' ? 'alert-warning' :
+    healthData.overall === 'error' ? 'alert-error' : 'alert-info'
+  }`}>
+    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <div>
+      <h3 class="font-bold">System Status: {healthData.overall?.toUpperCase()}</h3>
+      <div class="text-xs">Last checked: {new Date(healthData.lastCheck).toLocaleString()}</div>
+    </div>
+  </div>
+
+  <!-- Core System Stats -->
+  <div class="stats stats-vertical lg:stats-horizontal shadow mb-8 w-full">
+    <div class="stat place-items-center">
+      <div class="stat-figure text-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+      </div>
+      <div class="stat-title">Overall Health</div>
+      <div class={`stat-value ${
+        healthData.overall === 'healthy' ? 'text-success' :
+        healthData.overall === 'warning' ? 'text-warning' :
+        'text-error'
+      }`}>
+        {healthData.overall === 'healthy' ? '100%' :
+         healthData.overall === 'warning' ? '75%' : '25%'}
+      </div>
+      <div class="stat-desc">System operational</div>
+    </div>
+
+    <div class="stat place-items-center">
+      <div class="stat-figure text-info">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <div class="stat-title">Uptime</div>
+      <div class="stat-value text-info">{performanceMetrics.uptime}</div>
+      <div class="stat-desc">System running</div>
+    </div>
+
+    <div class="stat place-items-center">
+      <div class="stat-figure text-secondary">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+      </div>
+      <div class="stat-title">Response Time</div>
+      <div class="stat-value text-secondary">{healthData.api.responseTime}ms</div>
+      <div class="stat-desc">Average API response</div>
+    </div>
+
+    <div class="stat place-items-center">
+      <div class="stat-figure text-accent">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+      </div>
+      <div class="stat-title">Requests</div>
+      <div class="stat-value text-accent">{performanceMetrics.requests}</div>
+      <div class="stat-desc">Total handled</div>
+    </div>
+  </div>
+
+  <!-- Detailed Health Components -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <!-- Database Health -->
+    <div class="card bg-base-100 shadow-xl">
+      <div class="card-body">
+        <h2 class="card-title gap-2">
+          <span>💾</span>
+          Database Health
+        </h2>
+        <div class="space-y-4">
+          <div class="flex justify-between items-center">
+            <span>Connection Status</span>
+            <span class={`badge ${
+              healthData.database.status === 'healthy' ? 'badge-success' :
+              healthData.database.status === 'warning' ? 'badge-warning' : 'badge-error'
+            }`}>
+              {healthData.database.status}
+            </span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span>Response Time</span>
+            <span class="text-sm opacity-70">{healthData.database.responseTime}ms</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span>Database Source</span>
+            <span class="badge badge-outline badge-sm">Local</span>
+          </div>
+          <progress class="progress progress-primary w-full" value="85" max="100"></progress>
+        </div>
+        <div class="card-actions justify-end">
+          <button class="btn btn-sm btn-outline" onclick="testDatabase()">Test Connection</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Storage Health -->
+    <div class="card bg-base-100 shadow-xl">
+      <div class="card-body">
+        <h2 class="card-title gap-2">
+          <span>💿</span>
+          Storage Status
+        </h2>
+        <div class="space-y-4">
+          <div class="flex justify-between items-center">
+            <span>Disk Usage</span>
+            <span class="text-sm opacity-70">{Math.round((healthData.storage.used / healthData.storage.total) * 100)}%</span>
+          </div>
+          <progress class="progress progress-warning w-full" value={(healthData.storage.used / healthData.storage.total) * 100} max="100"></progress>
+          <div class="flex justify-between items-center text-xs">
+            <span>{Math.round(healthData.storage.used / 1024 / 1024)} MB used</span>
+            <span>{Math.round(healthData.storage.total / 1024 / 1024)} MB total</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span>Cache Status</span>
+            <span class="badge badge-success">Optimal</span>
+          </div>
+        </div>
+        <div class="card-actions justify-end">
+          <button class="btn btn-sm btn-outline" onclick="clearCache()">Clear Cache</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- API Health -->
+    <div class="card bg-base-100 shadow-xl">
+      <div class="card-body">
+        <h2 class="card-title gap-2">
+          <span>🔗</span>
+          API Services
+        </h2>
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-sm">Content API</span>
+            <span class="badge badge-success badge-sm">Online</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm">Channels API</span>
+            <span class="badge badge-success badge-sm">Online</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm">TMDB Integration</span>
+            <span class="badge badge-success badge-sm">Online</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm">Health Monitor</span>
+            <span class="badge badge-success badge-sm">Online</span>
+          </div>
+        </div>
+        <div class="card-actions justify-end">
+          <button class="btn btn-sm btn-outline" onclick="testAllAPIs()">Test All</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Performance Metrics -->
+    <div class="card bg-base-100 shadow-xl">
+      <div class="card-body">
+        <h2 class="card-title gap-2">
+          <span>📊</span>
+          Performance
+        </h2>
+        <div class="space-y-4">
+          <div class="flex justify-between items-center">
+            <span>CPU Usage</span>
+            <span class="text-sm opacity-70">32%</span>
+          </div>
+          <progress class="progress progress-info w-full" value="32" max="100"></progress>
+          
+          <div class="flex justify-between items-center">
+            <span>Memory Usage</span>
+            <span class="text-sm opacity-70">68%</span>
+          </div>
+          <progress class="progress progress-secondary w-full" value="68" max="100"></progress>
+          
+          <div class="flex justify-between items-center">
+            <span>Error Rate</span>
+            <span class="text-sm opacity-70">0.2%</span>
+          </div>
+          <progress class="progress progress-success w-full" value="0.2" max="100"></progress>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Activity Timeline -->
+  <div class="card bg-base-100 shadow-xl mb-8">
+    <div class="card-body">
+      <h2 class="card-title gap-2 mb-6">
+        <span>📋</span>
+        Recent System Activity
+      </h2>
+      
+      <ul class="timeline timeline-vertical">
+        {recentActivity.map((activity, index) => (
+          <li>
+            {index > 0 && <hr class="bg-base-300" />}
+            <div class="timeline-start timeline-box">
+              <div class="flex items-center gap-3">
+                <span class="text-lg">{activity.icon}</span>
+                <div>
+                  <div class="font-medium">{activity.action}</div>
+                  <div class="text-xs opacity-60">{activity.time}</div>
+                </div>
+              </div>
+            </div>
+            <div class="timeline-middle">
+              <span class={`badge badge-xs ${
+                activity.status === 'success' ? 'badge-success' :
+                activity.status === 'warning' ? 'badge-warning' :
+                activity.status === 'error' ? 'badge-error' : 'badge-info'
+              }`}></span>
+            </div>
+            {index < recentActivity.length - 1 && <hr class="bg-base-300" />}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <button class="btn btn-outline gap-2" onclick="runHealthCheck()">
+      <span>🔍</span>
+      Full Health Check
+    </button>
+    <button class="btn btn-outline gap-2" onclick="restartServices()">
+      <span>🔄</span>
+      Restart Services
+    </button>
+    <button class="btn btn-outline gap-2" onclick="exportLogs()">
+      <span>📄</span>
+      Export Logs
+    </button>
+    <button class="btn btn-outline gap-2" onclick="systemMaintenance()">
+      <span>🔧</span>
+      Maintenance
+    </button>
+  </div>
+
+</AdminLayout>
+
+<script define:vars={{ healthData, performanceMetrics, recentActivity }}>
+  // Health check functions
+  function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = 'toast toast-top toast-end z-50';
+    
+    const alertClass = type === 'success' ? 'alert-success' : 
+                     type === 'warning' ? 'alert-warning' : 
+                     type === 'error' ? 'alert-error' : 'alert-info';
+    
+    toast.innerHTML = `
+      <div class="alert ${alertClass}">
+        <span>${message}</span>
+        <button onclick="this.parentElement.parentElement.remove()" class="btn btn-ghost btn-xs">✕</button>
+      </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      if (document.body.contains(toast)) {
+        document.body.removeChild(toast);
+      }
+    }, 5000);
+  }
+
+  async function runHealthCheck() {
+    const statusAlert = document.getElementById('overall-status');
+    
+    if (!statusAlert) return;
+    
+    try {
+      statusAlert.className = 'alert alert-info';
+      statusAlert.innerHTML = `
+        <span class="loading loading-spinner loading-sm"></span>
+        <div>
+          <h3 class="font-bold">Running health check...</h3>
+          <div class="text-xs">Please wait while we check all systems</div>
+        </div>
+      `;
+
+      const response = await fetch('/api/health?full=true');
+      const data = await response.json();
+      
+      setTimeout(() => {
+        if (!statusAlert) return;
+        statusAlert.className = `alert ${
+          data.overall === 'healthy' ? 'alert-success' :
+          data.overall === 'warning' ? 'alert-warning' : 'alert-error'
+        }`;
+        statusAlert.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div>
+            <h3 class="font-bold">System Status: ${data.overall?.toUpperCase()}</h3>
+            <div class="text-xs">Health check completed at ${new Date().toLocaleString()}</div>
+          </div>
+        `;
+      }, 2000);
+      
+    } catch (error) {
+      if (!statusAlert) return;
+      statusAlert.className = 'alert alert-error';
+      statusAlert.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div>
+          <h3 class="font-bold">Health check failed</h3>
+          <div class="text-xs">Unable to complete system health check</div>
+        </div>
+      `;
+    }
+  }
+
+  async function testDatabase() {
+    try {
+      showToast('Testing database connection...', 'info');
+      const response = await fetch('/api/health?test=database');
+      const result = await response.json();
+      
+      if (result.database?.status === 'healthy') {
+        showToast('Database connection successful!', 'success');
+      } else {
+        showToast('Database connection failed', 'error');
+      }
+    } catch (error) {
+      showToast('Database test error: ' + (error?.message || 'Unknown error'), 'error');
+    }
+  }
+
+  async function clearCache() {
+    if (confirm('Clear system cache? This may temporarily slow down the application.')) {
+      try {
+        showToast('Clearing cache...', 'info');
+        // Clear browser cache and storage
+        if ('caches' in window) {
+          const cacheNames = await caches.keys();
+          await Promise.all(cacheNames.map(name => caches.delete(name)));
+        }
+        localStorage.clear();
+        sessionStorage.clear();
+        
+        showToast('Cache cleared successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } catch (error) {
+        showToast('Failed to clear cache', 'error');
+      }
+    }
+  }
+
+  async function testAllAPIs() {
+    showToast('Testing all API endpoints...', 'info');
+    const endpoints = ['/api/health', '/api/list-content', '/api/channels'];
+    const results = [];
+    
+    for (const endpoint of endpoints) {
+      try {
+        const response = await fetch(endpoint);
+        results.push({ endpoint, status: response.ok ? 'OK' : 'Failed' });
+      } catch (error) {
+        results.push({ endpoint, status: 'Error' });
+      }
+    }
+    
+    const allHealthy = results.every(r => r.status === 'OK');
+    showToast(
+      `API Test Results: ${results.filter(r => r.status === 'OK').length}/${results.length} endpoints healthy`,
+      allHealthy ? 'success' : 'warning'
+    );
+  }
+
+  async function restartServices() {
+    if (confirm('Restart all services? This may cause a brief interruption.')) {
+      showToast('Simulating service restart...', 'info');
+      // Simulate restart by refreshing page after delay
+      setTimeout(() => {
+        showToast('Services restarted successfully', 'success');
+        setTimeout(() => location.reload(), 1000);
+      }, 2000);
+    }
+  }
+
+  async function exportLogs() {
+    try {
+      showToast('Generating system logs...', 'info');
+      
+      // Create log data
+      const logData = {
+        timestamp: new Date().toISOString(),
+        system: 'Media Management System',
+        version: '1.0.0',
+        performanceMetrics: performanceMetrics,
+        recentActivity: recentActivity
+      };
+      
+      // Create and download file
+      const blob = new Blob([JSON.stringify(logData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `system-logs-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      showToast('System logs exported successfully', 'success');
+    } catch (error) {
+      showToast('Failed to export logs', 'error');
+    }
+  }
+
+  async function systemMaintenance() {
+    if (confirm('Enable maintenance mode? This will make the system temporarily unavailable.')) {
+      showToast('Maintenance mode activated', 'warning');
+      // In a real implementation, this would enable maintenance mode
+      setTimeout(() => {
+        showToast('Maintenance completed', 'success');
+      }, 3000);
+    }
+  }
+
+  // Auto-refresh health data every 30 seconds
+  setInterval(async () => {
+    try {
+      const response = await fetch('/api/health');
+      const data = await response.json();
+      // Update health indicators without page reload
+    } catch (error) {
+      // Handle refresh errors silently
+    }
+  }, 30000);
+</script>

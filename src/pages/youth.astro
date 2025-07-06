@@ -1,105 +1,127 @@
 ---
-import Layout from "../layouts/default.astro";
-import HeroSlider from "../components/HeroSlider.astro";
-import Card from "../components/Card.astro";
-import { Icon } from "astro-icon/components";
 import { getCollection } from "astro:content";
+import { Icon } from "astro-icon/components";
+import Card from "../components/Card.astro";
+import HeroSlider from "../components/HeroSlider.astro";
+import Layout from "../layouts/default.astro";
 
 // Get all details from content collection and filter for youth content only (excluding fallback)
 const allDetailsRaw = (await getCollection("details")).sort((a, b) => {
-  const dateA = a.data.created ? new Date(a.data.created) : a.data.lastupdated ? new Date(a.data.lastupdated) : new Date(0);
-  const dateB = b.data.created ? new Date(b.data.created) : b.data.lastupdated ? new Date(b.data.lastupdated) : new Date(0);
-  return dateB.valueOf() - dateA.valueOf(); // Descending order (newest first)
+	const dateA = a.data.created
+		? new Date(a.data.created)
+		: a.data.lastupdated
+			? new Date(a.data.lastupdated)
+			: new Date(0);
+	const dateB = b.data.created
+		? new Date(b.data.created)
+		: b.data.lastupdated
+			? new Date(b.data.lastupdated)
+			: new Date(0);
+	return dateB.valueOf() - dateA.valueOf(); // Descending order (newest first)
 });
 const youthDetails = allDetailsRaw.filter(
-  (entry: any) => entry.data.id !== "fallback" && (entry.data.info.type === "y-movie" || entry.data.info.type === "y-series")
+	(entry: any) =>
+		entry.data.id !== "fallback" &&
+		(entry.data.info.type === "y-movie" || entry.data.info.type === "y-series"),
 );
 
 // Function to calculate remaining days from onlineuntil date in visitor's local time
 function calculateRemainingDays(onlineuntil: string): number {
-  const currentDate = new Date();
+	const currentDate = new Date();
 
-  // Handle both date formats: "2025-06-24" and "2025-06-24T23:59:59Z"
-  let expiryDate: Date;
-  if (onlineuntil.includes("T")) {
-    // Full ISO format with time
-    expiryDate = new Date(onlineuntil);
-  } else {
-    // Date-only format, treat as end of day in local timezone
-    expiryDate = new Date(onlineuntil + "T23:59:59");
-  }
+	// Handle both date formats: "2025-06-24" and "2025-06-24T23:59:59Z"
+	let expiryDate: Date;
+	if (onlineuntil.includes("T")) {
+		// Full ISO format with time
+		expiryDate = new Date(onlineuntil);
+	} else {
+		// Date-only format, treat as end of day in local timezone
+		expiryDate = new Date(onlineuntil + "T23:59:59");
+	}
 
-  // Convert to local dates (removing time component) for accurate day calculation
-  const currentLocalDate = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth(),
-    currentDate.getDate()
-  );
-  const expiryLocalDate = new Date(
-    expiryDate.getFullYear(),
-    expiryDate.getMonth(),
-    expiryDate.getDate()
-  );
+	// Convert to local dates (removing time component) for accurate day calculation
+	const currentLocalDate = new Date(
+		currentDate.getFullYear(),
+		currentDate.getMonth(),
+		currentDate.getDate(),
+	);
+	const expiryLocalDate = new Date(
+		expiryDate.getFullYear(),
+		expiryDate.getMonth(),
+		expiryDate.getDate(),
+	);
 
-  const diffTime = expiryLocalDate.getTime() - currentLocalDate.getTime();
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  return Math.max(0, diffDays); // Return 0 if expired
+	const diffTime = expiryLocalDate.getTime() - currentLocalDate.getTime();
+	const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+	return Math.max(0, diffDays); // Return 0 if expired
 }
 
 // Convert youth details to hero items and card data
-const heroItems = youthDetails.length > 0
-  ? youthDetails.slice(0, 3).map((entry: any) => ({
-      backdrop: entry.data.info.backdrop || "/8zLyVhEsH6SM9diX7CUUWcaRlk0.jpg",
-      title: entry.data.title,
-      orgtitle: entry.data.orgtitle,
-      id: entry.data.id,
-      channel: {
-        country: entry.data.info.channel.country,
-        icon: entry.data.info.channel.name?.toLowerCase() || "unknown",
-      },
-      quality: entry.data.info.quality || "HD",
-      type: entry.data.info.type,
-      channelicon: "mdi:baby-face",
-    }))
-  : [{
-      backdrop: "https://images.unsplash.com/photo-1489599743717-9c7b9b6ea9c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080&q=80",
-      title: "No youth content available at the moment",
-      orgtitle: "",
-      id: "no-youth-placeholder",
-      channel: {
-        country: "de",
-        icon: "unknown",
-      },
-      quality: "HD",
-      type: "y-movie",
-      channelicon: "mdi:baby-face-outline",
-    }];
+const heroItems =
+	youthDetails.length > 0
+		? youthDetails.slice(0, 3).map((entry: any) => ({
+				backdrop:
+					entry.data.info.backdrop || "/8zLyVhEsH6SM9diX7CUUWcaRlk0.jpg",
+				title: entry.data.title,
+				orgtitle: entry.data.orgtitle,
+				id: entry.data.id,
+				channel: {
+					country: entry.data.info.channel.country,
+					icon: entry.data.info.channel.name?.toLowerCase() || "unknown",
+				},
+				quality: entry.data.info.quality || "HD",
+				type: entry.data.info.type,
+				channelicon: "mdi:baby-face",
+			}))
+		: [
+				{
+					backdrop:
+						"https://images.unsplash.com/photo-1489599743717-9c7b9b6ea9c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080&q=80",
+					title: "No youth content available at the moment",
+					orgtitle: "",
+					id: "no-youth-placeholder",
+					channel: {
+						country: "de",
+						icon: "unknown",
+					},
+					quality: "HD",
+					type: "y-movie",
+					channelicon: "mdi:baby-face-outline",
+				},
+			];
 
 // Convert youth details to card data with calculated remaining days
 const cardData = youthDetails.map((entry: any) => ({
-  id: entry.data.id,
-  title: entry.data.title,
-  orgtitle: entry.data.orgtitle,
-  metascore: entry.data.info.metascore || "N/A",
-  type: entry.data.info.type,
-  poster: entry.data.info.poster || "/mzkstyDSsTRswCMRvoBD5ULPnIt.jpg",
-  channel: { country: entry.data.info.channel.country },
-  remainingDays: calculateRemainingDays(entry.data.info.onlineuntil),
+	id: entry.data.id,
+	title: entry.data.title,
+	orgtitle: entry.data.orgtitle,
+	metascore: entry.data.info.metascore || "N/A",
+	type: entry.data.info.type,
+	poster: entry.data.info.poster || "/mzkstyDSsTRswCMRvoBD5ULPnIt.jpg",
+	channel: { country: entry.data.info.channel.country },
+	remainingDays: calculateRemainingDays(entry.data.info.onlineuntil),
 }));
 
 // Filter youth entries by country
-const entriesByCountry = youthDetails.reduce((acc: Record<string, any[]>, entry: any) => {
-  const country = entry.data.info.channel.country;
-  if (!acc[country]) {
-    acc[country] = [];
-  }
-  acc[country].push(entry);
-  return acc;
-}, {});
+const entriesByCountry = youthDetails.reduce(
+	(acc: Record<string, any[]>, entry: any) => {
+		const country = entry.data.info.channel.country;
+		if (!acc[country]) {
+			acc[country] = [];
+		}
+		acc[country].push(entry);
+		return acc;
+	},
+	{},
+);
 
 // Split youth content by type
-const youthMovies = youthDetails.filter((entry: any) => entry.data.info.type === "y-movie");
-const youthSeries = youthDetails.filter((entry: any) => entry.data.info.type === "y-series");
+const youthMovies = youthDetails.filter(
+	(entry: any) => entry.data.info.type === "y-movie",
+);
+const youthSeries = youthDetails.filter(
+	(entry: any) => entry.data.info.type === "y-series",
+);
 ---
 
 <Layout>

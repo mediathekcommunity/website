@@ -3,22 +3,22 @@ import Layout from "../layouts/default.astro";
 
 // Only render this page in development mode
 if (import.meta.env.PROD) {
-  throw new Error("Not found");
+	throw new Error("Not found");
 }
 // Map short type to MIME type
 function getMimeType(type: any) {
-  switch (type) {
-    case "mpd":
-      return "application/dash+xml";
-    case "m3u8":
-      return "application/x-mpegURL";
-    case "mp4":
-      return "video/mp4";
-    case "webm":
-      return "video/webm";
-    default:
-      return type || "";
-  }
+	switch (type) {
+		case "mpd":
+			return "application/dash+xml";
+		case "m3u8":
+			return "application/x-mpegURL";
+		case "mp4":
+			return "video/mp4";
+		case "webm":
+			return "video/webm";
+		default:
+			return type || "";
+	}
 }
 ---
 

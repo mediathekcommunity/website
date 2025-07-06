@@ -1,61 +1,85 @@
-import type { APIRoute } from 'astro';
-import { readdir, stat } from 'fs/promises';
-import { join } from 'path';
+import { createClient } from "@libsql/client";
+import type { APIRoute } from "astro";
+import { desc } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/libsql";
+import { db } from "../../lib/db.js";
+import * as schema from "../../schema.js";
 
-export const GET: APIRoute = async () => {
-  // Only allow in development mode
-  if (import.meta.env.PROD) {
-    return new Response(JSON.stringify({ 
-      error: 'This endpoint is only available in development mode' 
-    }), {
-      status: 403,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
+export const GET: APIRoute = async ({ url }) => {
+	// Only allow in development mode
+	if (import.meta.env.PROD) {
+		return new Response(
+			JSON.stringify({
+				error: "This endpoint is only available in development mode",
+			}),
+			{
+				status: 403,
+				headers: { "Content-Type": "application/json" },
+			},
+		);
+	}
 
-  try {
-    // Define the content folder path
-    const contentPath = join(process.cwd(), 'src', 'content', 'details');
-    
-    // Read all files in the directory
-    const files = await readdir(contentPath);
-    
-    // Filter only JSON files and get their stats
-    const jsonFiles = files.filter(file => file.endsWith('.json'));
-    
-    const fileList = await Promise.all(
-      jsonFiles.map(async (filename) => {
-        const filePath = join(contentPath, filename);
-        const stats = await stat(filePath);
-        
-        return {
-          filename,
-          id: filename.replace('.json', ''),
-          lastModified: stats.mtime.toISOString(),
-          size: stats.size
-        };
-      })
-    );
-    
-    // Sort by last modified date (newest first)
-    fileList.sort((a, b) => new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime());
-    
-    return new Response(JSON.stringify({ 
-      success: true,
-      files: fileList
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
-    
-  } catch (error) {
-    console.error('Error listing files:', error);
-    return new Response(JSON.stringify({ 
-      error: 'Failed to list content files',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
+	try {
+		// Get source parameter (local or cloud)
+		const source = url.searchParams.get("source") || "local";
+
+		let dbToUse;
+		if (source === "cloud") {
+			// Use remote database
+			const remoteClient = createClient({
+				url: process.env.TURSO_DATABASE_URL!,
+				authToken: process.env.TURSO_AUTH_TOKEN!,
+			});
+			dbToUse = drizzle(remoteClient);
+		} else {
+			// Use local database (default)
+			dbToUse = db;
+		}
+
+		// Get all mediathek items
+		const items = await dbToUse
+			.select({
+				id: schema.mediathek.id,
+				title: schema.mediathek.title,
+				type: schema.mediathek.type,
+				updated: schema.mediathek.updated,
+				created: schema.mediathek.created,
+			})
+			.from(schema.mediathek)
+			.orderBy(desc(schema.mediathek.updated));
+
+		const fileList = items.map((item) => ({
+			filename: `${item.id}.json`, // For compatibility with existing frontend
+			id: item.id,
+			title: item.title,
+			type: item.type,
+			lastModified: item.updated.toISOString(),
+			created: item.created.toISOString(),
+			size: 0, // Not applicable for database records
+		}));
+
+		return new Response(
+			JSON.stringify({
+				success: true,
+				files: fileList,
+				source: source, // Include source in response
+			}),
+			{
+				status: 200,
+				headers: { "Content-Type": "application/json" },
+			},
+		);
+	} catch (error) {
+		console.error("Error listing content from database:", error);
+		return new Response(
+			JSON.stringify({
+				error: "Failed to list content from database",
+				details: error instanceof Error ? error.message : "Unknown error",
+			}),
+			{
+				status: 500,
+				headers: { "Content-Type": "application/json" },
+			},
+		);
+	}
 };

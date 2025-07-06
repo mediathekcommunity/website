@@ -4,19 +4,19 @@
  * Version 1.3.0
  */
 /* eslint-disable */
-import videojs from 'video.js';
+import videojs from "video.js";
+
 // @ts-ignore
 var first_play,
 	first_item = !0,
 	// @ts-ignore
-	validSeconds = function (e) {
-		return 'number' === typeof e && !isNaN(e) && e >= 0 && e < 1 / 0;
-	},
+	validSeconds = (e) =>
+		"number" === typeof e && !isNaN(e) && e >= 0 && e < 1 / 0,
 	// @ts-ignore
-	reset = function (e) {
+	reset = (e) => {
 		var t = e.playlist.autoadvance_;
 		t.timeout && e.clearTimeout(t.timeout);
-		t.trigger && e.off('ended', t.trigger);
+		t.trigger && e.off("ended", t.trigger);
 		t.timeout = null;
 		t.trigger = null;
 	},
@@ -25,33 +25,32 @@ var first_play,
 		reset(r);
 		if (validSeconds(n)) {
 			r.playlist.autoadvance_.delay = n;
-			r.playlist.autoadvance_.trigger = function () {
-				var e = function () {
-					return t(r, n);
-				};
-				r.one('play', e);
+			r.playlist.autoadvance_.trigger = () => {
+				var e = () => t(r, n);
+				r.one("play", e);
 				r.playlist.autoadvance_.timeout = r.setTimeout(() => {
 					reset(r);
-					r.off('play', e);
+					r.off("play", e);
 					r.playlist.next();
 				}, 1e3 * n);
 			};
-			r.one('ended', r.playlist.autoadvance_.trigger);
+			r.one("ended", r.playlist.autoadvance_.trigger);
 		} else r.playlist.autoadvance_.delay = null;
 	},
 	// @ts-ignore
-	playItem = function (t, r) {
+	playItem = (t, r) => {
 		var n = !t.paused() || t.ended();
-		r.playlistItemId_ && (t.playlist.currentPlaylistItemId_ = r.playlistItemId_);
-		if ('function' === typeof t.beforePlaylistChange) {
+		r.playlistItemId_ &&
+			(t.playlist.currentPlaylistItemId_ = r.playlistItemId_);
+		if ("function" === typeof t.beforePlaylistChange) {
 			var e = t.beforePlaylistChange(r.playlistItemId_, r);
 			e && (r = e);
 		}
-		t.one('playing', function () {
+		t.one("playing", () => {
 			first_play = !0;
 		});
 		// Defensive: only call changeSource if it exists, otherwise fallback to src
-		if (typeof t.changeSource === 'function') {
+		if (typeof t.changeSource === "function") {
 			t.changeSource(r);
 		} else if (r && r.sources) {
 			t.src(r.sources);
@@ -60,11 +59,11 @@ var first_play,
 		}
 		// @ts-ignore
 		first_play &&
-			setTimeout(function () {
-				t.trigger('playlist_change', { id: r.playlistItemId_ });
+			setTimeout(() => {
+				t.trigger("playlist_change", { id: r.playlistItemId_ });
 			}, 500);
 		if (t.uniquePlaylist && localStorage) {
-			e = String('vjs_playlist-' + t.uniquePlaylist);
+			e = String("vjs_playlist-" + t.uniquePlaylist);
 			localStorage[e] = r.playlistItemId_;
 		}
 		// @ts-ignore
@@ -72,30 +71,30 @@ var first_play,
 			setTimeout(() => {
 				t.play();
 			}, 200);
-		t.ready(function () {
-			t.trigger('playlistitem', r.originalValue || r);
-			t.trigger('playlist_newitem', { id: r.playlistItemId_ });
+		t.ready(() => {
+			t.trigger("playlistitem", r.originalValue || r);
+			t.trigger("playlist_newitem", { id: r.playlistItemId_ });
 			first_item = first_item && !1;
 			if (n) {
 				var e = t.play();
 				// @ts-ignore
-				'undefined' !== typeof e && 'function' === typeof e.then && e.then(null, function (e) {});
+				"undefined" !== typeof e &&
+					"function" === typeof e.then &&
+					e.then(null, (e) => {});
 			}
 			setup(t, t.playlist.autoadvance_.delay);
 		});
 		return t;
 	},
 	// @ts-ignore
-	isItemObject = function (e) {
-		return !!e && 'object' === typeof e;
-	},
+	isItemObject = (e) => !!e && "object" === typeof e,
 	// @ts-ignore
-	transformPrimitiveItems = function (e) {
+	transformPrimitiveItems = (e) => {
 		var t,
 			// @ts-ignore
 			r = [];
 		// @ts-ignore
-		e.forEach(function (e) {
+		e.forEach((e) => {
 			isItemObject(e) ? (t = e) : ((t = Object(e)).originalValue = e);
 			r.push(t);
 		});
@@ -103,29 +102,29 @@ var first_play,
 		return r;
 	},
 	// @ts-ignore
-	generatePlaylistItemId = function (e) {
+	generatePlaylistItemId = (e) => {
 		var t = 1;
 		// @ts-ignore
-		e.forEach(function (e) {
+		e.forEach((e) => {
 			e.playlistItemId_ = t++;
 		});
 	},
 	// @ts-ignore
-	indexInPlaylistItemIds = function (e, t) {
+	indexInPlaylistItemIds = (e, t) => {
 		for (var r = 0; r < e.length; r++) if (e[r].playlistItemId_ === t) return r;
 		return -1;
 	},
 	// @ts-ignore
-	sourceEquals = function (e, t) {
+	sourceEquals = (e, t) => {
 		var r = e,
 			n = t;
-		'object' === typeof e && (r = e.src);
-		'object' === typeof t && (n = t.src);
-		/^\/\//.test(r) && (n = n.slice(n.indexOf('//')));
-		return (r = /^\/\//.test(n) ? r.slice(r.indexOf('//')) : r) === n;
+		"object" === typeof e && (r = e.src);
+		"object" === typeof t && (n = t.src);
+		/^\/\//.test(r) && (n = n.slice(n.indexOf("//")));
+		return (r = /^\/\//.test(n) ? r.slice(r.indexOf("//")) : r) === n;
 	},
 	// @ts-ignore
-	indexInSources = function (e, t) {
+	indexInSources = (e, t) => {
 		for (var r = 0; r < e.length; r++) {
 			var n = e[r].sources;
 			if (Array.isArray(n))
@@ -140,15 +139,17 @@ var first_play,
 function factory(n, e, t) {
 	void 0 === t && (t = 0);
 	if (n.uniquePlaylist) {
-		var r = String('vjs_playlist-' + n.uniquePlaylist);
+		var r = String("vjs_playlist-" + n.uniquePlaylist);
 		// @ts-ignore
-		localStorage && localStorage.getItem(r) && (t = Number(localStorage.getItem(r) - 1));
+		localStorage &&
+			localStorage.getItem(r) &&
+			(t = Number(localStorage.getItem(r) - 1));
 	}
 	// @ts-ignore
 	var i = null,
 		a = !1,
 		// @ts-ignore
-		l = (n.playlist = function (e, t) {
+		l = (n.playlist = (e, t) => {
 			void 0 === t && (t = 0);
 			if (Array.isArray(e)) {
 				// @ts-ignore
@@ -156,29 +157,26 @@ function factory(n, e, t) {
 					// @ts-ignore
 					e = e.slice();
 				// @ts-ignore
-				(i = e.slice()).filter(function (e) {
-					return isItemObject(e);
-				}).length !== i.length && (i = transformPrimitiveItems(i));
+				(i = e.slice()).filter((e) => isItemObject(e)).length !== i.length &&
+					(i = transformPrimitiveItems(i));
 				generatePlaylistItemId(i);
 				a = !1;
 				// @ts-ignore
 				-1 !== t && l.currentItem(t);
 				r &&
 					n.setTimeout(() => {
-						n.trigger('playlistchange');
+						n.trigger("playlistchange");
 					}, 0);
 			}
 			// @ts-ignore
 			return (
 				i
 					// @ts-ignore
-					.map(function (e) {
-						return e.originalValue || e;
-					})
+					.map((e) => e.originalValue || e)
 					.slice()
 			);
 		});
-	n.on('loadstart', () => {
+	n.on("loadstart", () => {
 		// @ts-ignore
 		-1 === l.currentItem() && reset(n);
 	});
@@ -193,19 +191,24 @@ function factory(n, e, t) {
 	// @ts-ignore
 	l.currentPlaylistItemId_ = null;
 	// @ts-ignore
-	l.currentItem = function (e) {
+	l.currentItem = (e) => {
 		if (!a) {
 			// @ts-ignore
-			'undefined' === l.currentIndex_ && (l.currentIndex_ = 0);
+			"undefined" === l.currentIndex_ && (l.currentIndex_ = 0);
 			// @ts-ignore
-			if ('number' === typeof e && l.currentIndex_ !== e && e >= 0 && e < i.length) {
+			if (
+				"number" === typeof e &&
+				l.currentIndex_ !== e &&
+				e >= 0 &&
+				e < i.length
+			) {
 				// @ts-ignore
 				l.currentIndex_ = e;
 				// @ts-ignore
 				playItem(l.player_, i[l.currentIndex_]);
 			} else {
 				// @ts-ignore
-				e = l.player_.currentSrc() || '';
+				e = l.player_.currentSrc() || "";
 				// @ts-ignore
 				if (l.currentPlaylistItemId_) {
 					// @ts-ignore
@@ -226,80 +229,84 @@ function factory(n, e, t) {
 		return l.currentIndex_;
 	};
 	// @ts-ignore
-	l.contains = function (e) {
+	l.contains = (e) => {
 		// @ts-ignore
 		return -1 !== l.indexOf(e);
 	};
 	// @ts-ignore
-	l.indexOf = function (e) {
+	l.indexOf = (e) => {
 		// @ts-ignore
-		if ('string' === typeof e) return indexInSources(i, e);
+		if ("string" === typeof e) return indexInSources(i, e);
 		for (var t = Array.isArray(e) ? e : e.sources, r = 0; r < t.length; r++) {
 			var n = t[r];
 			// @ts-ignore
-			if ('string' === typeof n) return indexInSources(i, n);
+			if ("string" === typeof n) return indexInSources(i, n);
 			// @ts-ignore
 			if (n.src) return indexInSources(i, n.src);
 		}
 		return -1;
 	};
 	// @ts-ignore
-	l.remove = function (e) {
-		if ('number' === typeof e && e < i.length) {
+	l.remove = (e) => {
+		if ("number" === typeof e && e < i.length) {
 			n.removeFromPlaylist(e);
 			// @ts-ignore
 			i.splice(e, 1);
 		}
 	};
 	// @ts-ignore
-	l.insert = function (e) {
-		if ('undefined' !== typeof e.src || 'undefined' !== typeof e.sources) {
+	l.insert = (e) => {
+		if ("undefined" !== typeof e.src || "undefined" !== typeof e.sources) {
 			i.push(e);
 			n.addToPlaylist(e);
 		}
 	};
 	// @ts-ignore
-	l.insertAfter = function (e, t) {
-		if ((e.src, 'number' === typeof t) && t <= i.length && t > -1) {
-			n.addToPlaylist(e, 'after', t);
+	l.insertAfter = (e, t) => {
+		if ((e.src, "number" === typeof t) && t <= i.length && t > -1) {
+			n.addToPlaylist(e, "after", t);
 			// @ts-ignore
 			i.splice(t + 1, 0, e);
 		}
 	};
 	// @ts-ignore
-	l.insertBefore = function (e, t) {
-		if ((e.src, 'number' === typeof t) && t < i.length && t > -1) {
-			n.addToPlaylist(e, 'before', t);
+	l.insertBefore = (e, t) => {
+		if ((e.src, "number" === typeof t) && t < i.length && t > -1) {
+			n.addToPlaylist(e, "before", t);
 			// @ts-ignore
 			i.splice(t, 0, e);
 		}
 	};
 	// @ts-ignore
-	l.currentIndex = function () {
+	l.currentIndex = () => {
 		// @ts-ignore
 		return l.currentItem();
 	};
 	// @ts-ignore
-	l.lastIndex = function () {
-		return i.length - 1;
-	};
+	l.lastIndex = () => i.length - 1;
 	// @ts-ignore
-	l.nextIndex = function () {
+	l.nextIndex = () => {
 		var e,
 			// @ts-ignore
 			t = l.currentItem();
 		// @ts-ignore
-		return -1 === t ? -1 : ((e = l.lastIndex()), l.repeat_ && t === e ? 0 : Math.min(t + 1, e));
+		return -1 === t
+			? -1
+			: ((e = l.lastIndex()), l.repeat_ && t === e ? 0 : Math.min(t + 1, e));
 	};
 	// @ts-ignore
-	l.previousIndex = function () {
+	l.previousIndex = () => {
 		// @ts-ignore
 		var e = l.currentItem();
 		// @ts-ignore
-		return -1 === e ? -1 : l.repeat_ && 0 === e ? l.lastIndex() : Math.max(e - 1, 0);
+		return -1 === e
+			? -1
+			: l.repeat_ && 0 === e
+				? l.lastIndex()
+				: Math.max(e - 1, 0);
 	};
 	// @ts-ignore
-	l.first = function () {
+	l.first = () => {
 		if (!a) {
 			// @ts-ignore
 			var e = l.currentItem(0);
@@ -310,7 +317,7 @@ function factory(n, e, t) {
 		}
 	};
 	// @ts-ignore
-	l.last = function () {
+	l.last = () => {
 		if (!a) {
 			// @ts-ignore
 			var e = l.currentItem(l.lastIndex());
@@ -321,7 +328,7 @@ function factory(n, e, t) {
 		}
 	};
 	// @ts-ignore
-	l.next = function (e) {
+	l.next = (e) => {
 		var t;
 		// @ts-ignore
 		return !a && (t = l.nextIndex()) !== l.currentIndex_
@@ -330,12 +337,12 @@ function factory(n, e, t) {
 			: void 0;
 	};
 	// @ts-ignore
-	l.new = function (e) {
+	l.new = (e) => {
 		i = e;
 		n.newPlaylist(i);
 	};
 	// @ts-ignore
-	l.previous = function () {
+	l.previous = () => {
 		var e;
 		// @ts-ignore
 		return !a && (e = l.previousIndex()) !== l.currentIndex_
@@ -344,24 +351,24 @@ function factory(n, e, t) {
 			: void 0;
 	};
 	// @ts-ignore
-	l.autoadvance = function (e) {
+	l.autoadvance = (e) => {
 		// @ts-ignore
 		setup(l.player_, e);
 	};
 	// @ts-ignore
-	l.repeat = function (e) {
+	l.repeat = (e) => {
 		// @ts-ignore
 		if (void 0 === e) return l.repeat_;
 		// @ts-ignore
-		if ('boolean' === typeof e) return (l.repeat_ = !!e), l.repeat_;
+		if ("boolean" === typeof e) return (l.repeat_ = !!e), l.repeat_;
 	};
 	// @ts-ignore
-	l.list = function () {
+	l.list = () => {
 		// @ts-ignore
 		return i;
 	};
 	// @ts-ignore
-	l.sort = function (e) {
+	l.sort = (e) => {
 		// @ts-ignore
 		i.length && i.sort(e);
 	};
@@ -378,8 +385,8 @@ var registerPlugin = videojs.registerPlugin || videojs.plugin,
 			// @ts-ignore
 			this.playlist.autoadvance(0);
 			// @ts-ignore
-			this.trigger('playlistready');
+			this.trigger("playlistready");
 		});
 	};
-registerPlugin('playlist', plugin);
+registerPlugin("playlist", plugin);
 export default plugin;

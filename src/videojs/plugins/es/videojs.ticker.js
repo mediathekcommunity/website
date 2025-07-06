@@ -4,33 +4,32 @@
  * Version 1.0.0
  */
 !(function (e, t) {
-	'function' == typeof define && define.amd
+	"function" == typeof define && define.amd
 		? define([], t.bind(this, e, e.videojs))
-		: 'undefined' != typeof module && module.exports
+		: "undefined" != typeof module && module.exports
 			? (module.exports = t(e, e.videojs))
 			: t(e, e.videojs);
-})(window, function (q, R) {
-	'use strict';
-	q.videojs_scroll = { version: '1.0' };
-	R.registerPlugin('ticker', function (m) {
+})(window, (q, R) => {
+	q.videojs_scroll = { version: "1.0" };
+	R.registerPlugin("ticker", function (m) {
 		var t = {
-				rss: '',
-				logo: '',
-				logourl: '',
-				logotitle: '',
+				rss: "",
+				logo: "",
+				logourl: "",
+				logotitle: "",
 				titleOnly: !1,
 				clock: !0,
 				speed: 5,
-				direction: 'ltr',
-				position: 'auto',
+				direction: "ltr",
+				position: "auto",
 				toggleButton: !1,
 				feed: void 0,
 				refresh: 10,
-				target: '_blank',
+				target: "_blank",
 				withCredentials: !1,
-				timeout: 2e3
+				timeout: 2e3,
 			},
-			e = (e = document.currentScript.src).substring(0, e.lastIndexOf('/'));
+			e = (e = document.currentScript.src).substring(0, e.lastIndexOf("/"));
 		try {
 			m = R.obj.merge(t, m || {});
 		} catch (e) {
@@ -61,53 +60,60 @@
 				S(!1),
 				0 < m.refresh &&
 					(function e() {
-						n = setTimeout(function () {
+						n = setTimeout(() => {
 							g && (clearTimeout(n), u.ticker.update(), e());
 						}, 6e4 * m.refresh);
 					})(),
 				this
 			);
 		function x(e) {
-			let t = '';
+			let t = "";
 			var n, s;
 			return (
 				e &&
 					((n = e),
-					((s = document.createElement('textarea')).innerHTML = n),
+					((s = document.createElement("textarea")).innerHTML = n),
 					(e = s.firstChild.nodeValue),
-					(t = e.replace('<![CDATA[', '').replace(']]>', '')),
-					'mix' == m.scrollType &&
-						(t = (t = t.replace('<img', '||img')).replace('</img>', '||/img||')),
-					'html' !== m.scrollType && (t = t.replace(/(<([^>]+)>)/gi, '')),
+					(t = e.replace("<![CDATA[", "").replace("]]>", "")),
+					"mix" == m.scrollType &&
+						(t = (t = t.replace("<img", "||img")).replace(
+							"</img>",
+							"||/img||",
+						)),
+					"html" !== m.scrollType && (t = t.replace(/(<([^>]+)>)/gi, "")),
 					(t = (t = (t = (t =
-						'mix' == m.scrollType
-							? (t = t.replace('||img', '<img')).replace('||/img||', '</img>')
-							: t).replace(/\\u[\dA-F]{4}/gi, function (e) {
-						return String.fromCharCode(parseInt(e.replace(/\\u/g, ''), 16));
-					})).replace(/^\s+|\s+$/gm, '')).replace(/['"]+/g, ''))),
+						"mix" == m.scrollType
+							? (t = t.replace("||img", "<img")).replace("||/img||", "</img>")
+							: t).replace(/\\u[\dA-F]{4}/gi, (e) =>
+						String.fromCharCode(parseInt(e.replace(/\\u/g, ""), 16)),
+					)).replace(/^\s+|\s+$/gm, "")).replace(/['"]+/g, ""))),
 				t
 			);
 		}
 		function s(e, t) {
 			t || e.status;
 			t
-				? console.log('XHR URLHandler: Request timed out after ' + m.timeout + ' +ms.')
-				: console.log('XHR URLHandler: ' + e.statusText + ' ' + e.statusCode);
+				? console.log(
+						"XHR URLHandler: Request timed out after " + m.timeout + " +ms.",
+					)
+				: console.log("XHR URLHandler: " + e.statusText + " " + e.statusCode);
 		}
 		function l(e, t) {
 			if (
-				(4 == e.readyState && 404 === e.status && console.log('Error 404. RSS file not found.'),
+				(4 == e.readyState &&
+					404 === e.status &&
+					console.log("Error 404. RSS file not found."),
 				4 == e.readyState &&
 					0 === e.status &&
-					console.log('XHTML Response Empty or blocked by CORS policy.'),
+					console.log("XHTML Response Empty or blocked by CORS policy."),
 				200 === e.status)
 			)
 				try {
 					var n = e.responseXML;
-					if ('rss' == n.documentElement.localName)
+					if ("rss" == n.documentElement.localName)
 						for (var s in n.documentElement.childNodes) {
 							var l = n.documentElement.childNodes[s];
-							if ('item' == l.localName) {
+							if ("item" == l.localName) {
 								var o,
 									a = {},
 									r = {};
@@ -115,31 +121,38 @@
 									var i,
 										d,
 										c = l.childNodes[o];
-									'title' == c.nodeName &&
-										((i = (c.textContent || c.text || null).trim()), (a.content = x(i))),
-										'link' == c.nodeName &&
+									"title" == c.nodeName &&
+										((i = (c.textContent || c.text || null).trim()),
+										(a.content = x(i))),
+										"link" == c.nodeName &&
 											a.content &&
-											(a.link = (c.textContent || c.text || '').trim()),
-										'description' == c.nodeName &&
-											((d = (c.textContent || c.text || null).trim()), (r.content = x(d))),
-										'link' == c.nodeName &&
+											(a.link = (c.textContent || c.text || "").trim()),
+										"description" == c.nodeName &&
+											((d = (c.textContent || c.text || null).trim()),
+											(r.content = x(d))),
+										"link" == c.nodeName &&
 											r.content &&
-											(r.link = (c.textContent || c.text || '').trim()),
-										'pubTime' == c.nodeName &&
+											(r.link = (c.textContent || c.text || "").trim()),
+										"pubTime" == c.nodeName &&
 											r.content &&
-											(r.time = (c.textContent || c.text || '').trim());
+											(r.time = (c.textContent || c.text || "").trim());
 								}
 								a && M.push(a),
 									r && E.push(r),
 									0 < M.length || 0 < E.length
 										? t
-											? (function (e, t) {
+											? ((e, t) => {
 													if (0 < t.length && 1 != m.titleOnly) {
-														k.innerHTML = '';
+														k.innerHTML = "";
 														for (var n = 0; n < t.length; n++) {
-															var s = document.createElement('div'),
-																l = ((s.className = 'news-item'), t[n].content);
-															t[n].time && (l = '<span class="ct">' + t[n].time + '</span>' + l),
+															var s = document.createElement("div"),
+																l = ((s.className = "news-item"), t[n].content);
+															t[n].time &&
+																(l =
+																	'<span class="ct">' +
+																	t[n].time +
+																	"</span>" +
+																	l),
 																t[n].link &&
 																	(l =
 																		'<a target="' +
@@ -148,17 +161,23 @@
 																		t[n].link +
 																		'">' +
 																		l +
-																		'</a>'),
-																(s.innerHTML = '<span class="break"></span>' + l),
+																		"</a>"),
+																(s.innerHTML =
+																	'<span class="break"></span>' + l),
 																k.appendChild(s);
 														}
 														(w.innerHTML = k.innerHTML), (H = 0), (M = e);
 													} else {
-														k.innerHTML = '';
+														k.innerHTML = "";
 														for (n = 0; n < e.length; n++) {
-															var o = document.createElement('div'),
-																l = ((o.className = 'news-item'), e[n].content);
-															e[n].time && (l = '<span class="ct">' + e[n].time + '</span>' + l),
+															var o = document.createElement("div"),
+																l = ((o.className = "news-item"), e[n].content);
+															e[n].time &&
+																(l =
+																	'<span class="ct">' +
+																	e[n].time +
+																	"</span>" +
+																	l),
 																e[n].link &&
 																	(l =
 																		'<a target="' +
@@ -167,8 +186,9 @@
 																		e[n].link +
 																		'">' +
 																		l +
-																		'</a>'),
-																(o.innerHTML = '<span class="break"></span>' + l),
+																		"</a>"),
+																(o.innerHTML =
+																	'<span class="break"></span>' + l),
 																k.appendChild(o);
 														}
 														w.innerHTML = k.innerHTML;
@@ -176,46 +196,66 @@
 													let a = 150;
 													5 < m.speed && (a = 190);
 													7 < m.speed && (a = 240);
-													setTimeout(function () {
-														var e = parseInt(k.offsetWidth / (a * (m.speed / 10)));
-														k.style.animationDuration = w.style.animationDuration = e + 's';
+													setTimeout(() => {
+														var e = parseInt(
+															k.offsetWidth / (a * (m.speed / 10)),
+														);
+														k.style.animationDuration =
+															w.style.animationDuration = e + "s";
 													}, 200);
 												})(M, E)
-											: (function () {
+											: (() => {
 													function d() {
 														if (L) {
 															var n = new Date();
 															let e = n.getHours().toString(),
-																t = (e.length < 2 && (e = '0' + e), n.getMinutes().toString());
-															t.length < 2 && (t = '0' + t),
-																(L.innerHTML = e + ':' + t),
+																t =
+																	(e.length < 2 && (e = "0" + e),
+																	n.getMinutes().toString());
+															t.length < 2 && (t = "0" + t),
+																(L.innerHTML = e + ":" + t),
 																setTimeout(d, 1e3);
 														}
 													}
 													function c() {
 														var e, t, n;
-														'top' === m.position
-															? u.el_.classList.add('news-top')
+														"top" === m.position
+															? u.el_.classList.add("news-top")
 															: ((e = (t =
-																	u.el_.querySelector('.vjs-control-bar')).getBoundingClientRect()),
+																	u.el_.querySelector(
+																		".vjs-control-bar",
+																	)).getBoundingClientRect()),
 																u.el_.getBoundingClientRect(),
-																(t = q.getComputedStyle(t).getPropertyValue('bottom')),
+																(t = q
+																	.getComputedStyle(t)
+																	.getPropertyValue("bottom")),
 																(e = e.bottom - e.top + parseInt(t)),
 																(t = 8),
 																u.duration() === 1 / 0 ||
-																	('8' === R.browser.IOS_VERSION && 0 === u.duration()) ||
-																	(p.querySelector('.vjs-skin-treso') && (t = 20),
-																	p.querySelector('.vjs-skin-roundal') && (t = 15),
-																	p.querySelector('.vjs-skin-mockup') && (t = 14),
-																	p.querySelector('.vjs-skin-jwlike') && (t = 14),
-																	p.querySelector('.vjs-skin-chrome') && (t = 11),
-																	p.querySelector('.vjs-skin-chrome') && (t = 14),
-																	p.querySelector('.vjs-skin-gold') &&
-																		(n = p.querySelector('.vjs-progress-control')) &&
-																		((n = q.getComputedStyle(n).getPropertyValue('bottom')),
+																	("8" === R.browser.IOS_VERSION &&
+																		0 === u.duration()) ||
+																	(p.querySelector(".vjs-skin-treso") &&
+																		(t = 20),
+																	p.querySelector(".vjs-skin-roundal") &&
+																		(t = 15),
+																	p.querySelector(".vjs-skin-mockup") &&
+																		(t = 14),
+																	p.querySelector(".vjs-skin-jwlike") &&
+																		(t = 14),
+																	p.querySelector(".vjs-skin-chrome") &&
+																		(t = 11),
+																	p.querySelector(".vjs-skin-chrome") &&
+																		(t = 14),
+																	p.querySelector(".vjs-skin-gold") &&
+																		(n = p.querySelector(
+																			".vjs-progress-control",
+																		)) &&
+																		((n = q
+																			.getComputedStyle(n)
+																			.getPropertyValue("bottom")),
 																		10 < parseInt(n)) &&
 																		(t = 14)),
-																(g.style.bottom = e + t + 'px'));
+																(g.style.bottom = e + t + "px"));
 													}
 													function e() {
 														if (
@@ -224,32 +264,43 @@
 															(m.direction = m.direction.toLowerCase()),
 															(0 < M.length || 0 < E.length) && null === g)
 														) {
-															'rtl' == m.direction && R.dom.addClass(p, 'vjs-rtl'),
-																((g = document.createElement('div')).className = 'vjs-news'),
+															"rtl" == m.direction &&
+																R.dom.addClass(p, "vjs-rtl"),
+																((g = document.createElement("div")).className =
+																	"vjs-news"),
 																c(),
-																((f = document.createElement('div')).className = 'vjs-news-scroll'),
-																((C = document.createElement('div')).className = 'marq'),
-																(k = document.createElement('div')),
-																(w = document.createElement('div')),
+																((f = document.createElement("div")).className =
+																	"vjs-news-scroll"),
+																((C = document.createElement("div")).className =
+																	"marq"),
+																(k = document.createElement("div")),
+																(w = document.createElement("div")),
 																m.clock
-																	? (k.className = w.className = 'marq-group')
-																	: (k.className = w.className = 'marq-group marq-group-nt'),
-																'rtl' == m.direction &&
+																	? (k.className = w.className = "marq-group")
+																	: (k.className = w.className =
+																			"marq-group marq-group-nt"),
+																"rtl" == m.direction &&
 																	(m.clock
-																		? (R.dom.addClass(k, 'group-rtl'),
-																			R.dom.addClass(w, 'group-rtl'))
-																		: (R.dom.addClass(k, 'group-nt-rtl'),
-																			R.dom.addClass(w, 'group-nt-rtl'))),
+																		? (R.dom.addClass(k, "group-rtl"),
+																			R.dom.addClass(w, "group-rtl"))
+																		: (R.dom.addClass(k, "group-nt-rtl"),
+																			R.dom.addClass(w, "group-nt-rtl"))),
 																C.appendChild(k),
 																C.appendChild(w);
 															var t = !1,
 																n = !1;
 															if (0 < E.length && 1 != m.titleOnly)
 																for (var t = !0, s = 0; s < E.length; s++) {
-																	var l = document.createElement('div'),
-																		o = ((l.className = 'news-item'), E[s].content);
+																	var l = document.createElement("div"),
+																		o =
+																			((l.className = "news-item"),
+																			E[s].content);
 																	E[s].time &&
-																		(o = '<span class="ct">' + E[s].time + '</span>' + o),
+																		(o =
+																			'<span class="ct">' +
+																			E[s].time +
+																			"</span>" +
+																			o),
 																		E[s].link &&
 																			(o =
 																				'<a target="' +
@@ -258,17 +309,24 @@
 																				E[s].link +
 																				'">' +
 																				o +
-																				'</a>'),
-																		(l.innerHTML = '<span class="break"></span>' + o),
+																				"</a>"),
+																		(l.innerHTML =
+																			'<span class="break"></span>' + o),
 																		k.appendChild(l);
 																}
 															else {
-																k.innerHTML = '';
+																k.innerHTML = "";
 																for (s = 0; s < M.length; s++) {
-																	var a = document.createElement('div'),
-																		o = ((a.className = 'news-item'), M[s].content);
+																	var a = document.createElement("div"),
+																		o =
+																			((a.className = "news-item"),
+																			M[s].content);
 																	M[s].time &&
-																		(o = '<span class="ct">' + M[s].time + '</span>' + o),
+																		(o =
+																			'<span class="ct">' +
+																			M[s].time +
+																			"</span>" +
+																			o),
 																		M[s].link &&
 																			(o =
 																				'<a target="' +
@@ -277,87 +335,110 @@
 																				M[s].link +
 																				'">' +
 																				o +
-																				'</a>'),
-																		(a.innerHTML = '<span class="break"></span>' + o),
+																				"</a>"),
+																		(a.innerHTML =
+																			'<span class="break"></span>' + o),
 																		k.appendChild(a);
 																}
 															}
 															w.innerHTML = k.innerHTML;
-															-1 < p.className.indexOf('vjs-controls-none') &&
-																(m.position = 'static'),
+															-1 < p.className.indexOf("vjs-controls-none") &&
+																(m.position = "static"),
 																m.speed < 1 && (m.speed = 1),
 																20 < m.speed && (m.speed = 20),
-																'rtl' === m.direction && g.setAttribute('dir', 'rtl'),
+																"rtl" === m.direction &&
+																	g.setAttribute("dir", "rtl"),
 																f.appendChild(C);
 															var r,
 																n = !1;
-															'' != m.logo &&
-																'top' !== m.position &&
+															"" != m.logo &&
+																"top" !== m.position &&
 																((n = !0),
-																((r = document.createElement('div')).className = 'left-block'),
-																((i = document.createElement('div')).className = 'left-logo'),
+																((r = document.createElement("div")).className =
+																	"left-block"),
+																((i = document.createElement("div")).className =
+																	"left-logo"),
 																m.logourl
-																	? ((h = document.createElement('a')).setAttribute(
-																			'href',
-																			m.logourl
+																	? ((h =
+																			document.createElement("a")).setAttribute(
+																			"href",
+																			m.logourl,
 																		),
-																		h.setAttribute('nofollow', 'nofollow'),
-																		h.setAttribute('target', m.target),
-																		((v = document.createElement('img')).src = m.logo),
-																		'' != m.logotitle
-																			? v.setAttribute('alt', m.logotitle)
-																			: v.setAttribute('alt', u.localize('Recent news')),
+																		h.setAttribute("nofollow", "nofollow"),
+																		h.setAttribute("target", m.target),
+																		((v = document.createElement("img")).src =
+																			m.logo),
+																		"" != m.logotitle
+																			? v.setAttribute("alt", m.logotitle)
+																			: v.setAttribute(
+																					"alt",
+																					u.localize("Recent news"),
+																				),
 																		h.appendChild(v),
 																		i.appendChild(h))
-																	: (((v = document.createElement('img')).src = m.logo),
+																	: (((v = document.createElement("img")).src =
+																			m.logo),
 																		i.appendChild(v)),
-																!0 !== m.clock && (r.style.bottom = '25px'),
+																!0 !== m.clock && (r.style.bottom = "25px"),
 																r.appendChild(i)),
 																m.clock &&
 																	(1 != n &&
-																		((r = document.createElement('div')).className = 'left-block'),
+																		((r =
+																			document.createElement("div")).className =
+																			"left-block"),
 																	(n = !0),
-																	((L = document.createElement('div')).className = 'left-time'),
+																	((L =
+																		document.createElement("div")).className =
+																		"left-time"),
 																	(i = new Date()).getHours(),
 																	i.getMinutes(),
 																	r.appendChild(L),
 																	d()),
-																((N = document.createElement('div')).className = 'vjs-news-title'),
-																('' != m.logo && 1 == n && 'top' != m.position) ||
-																	(N.className = 'vjs-news-title no-logo'),
-																(T = document.createElement('p')),
+																((N = document.createElement("div")).className =
+																	"vjs-news-title"),
+																("" != m.logo &&
+																	1 == n &&
+																	"top" != m.position) ||
+																	(N.className = "vjs-news-title no-logo"),
+																(T = document.createElement("p")),
 																N.appendChild(T),
-																1 != t && R.dom.addClass(N, 'vjs-news-hidden'),
+																1 != t && R.dom.addClass(N, "vjs-news-hidden"),
 																0 < E.length &&
 																	0 == M.length &&
-																	R.dom.addClass(N, 'vjs-news-hidden'),
+																	R.dom.addClass(N, "vjs-news-hidden"),
 																n &&
-																	(f.appendChild(r), 'rtl' == m.direction) &&
-																	(f.className = 'vjs-news-scroll scroll-rtl'),
+																	(f.appendChild(r), "rtl" == m.direction) &&
+																	(f.className = "vjs-news-scroll scroll-rtl"),
 																m.toggleButton &&
-																	(((j = document.createElement('div')).className = 'news-toggle'),
-																	'rtl' == m.direction && j.classList.add('toggle-rtl'),
-																	((y = document.createElement('div')).className =
-																		'toggle-icon-down'),
+																	(((j =
+																		document.createElement("div")).className =
+																		"news-toggle"),
+																	"rtl" == m.direction &&
+																		j.classList.add("toggle-rtl"),
+																	((y =
+																		document.createElement("div")).className =
+																		"toggle-icon-down"),
 																	j.appendChild(y),
 																	g.appendChild(j),
-																	(j.onclick = function (e) {
+																	(j.onclick = (e) => {
 																		e.stopPropagation(),
-																			'toggle-icon-down' === y.className
-																				? ((y.className = 'toggle-icon-up'),
-																					R.dom.addClass(g, 'news-hidden'))
-																				: ((y.className = 'toggle-icon-down'),
-																					R.dom.removeClass(g, 'news-hidden'));
+																			"toggle-icon-down" === y.className
+																				? ((y.className = "toggle-icon-up"),
+																					R.dom.addClass(g, "news-hidden"))
+																				: ((y.className = "toggle-icon-down"),
+																					R.dom.removeClass(g, "news-hidden"));
 																	})),
 																g.appendChild(N),
 																g.appendChild(f),
 																p.appendChild(g);
 															let e = 150;
 															5 < m.speed && (e = 190);
-															var i = parseInt(k.offsetWidth / (e * (m.speed / 10)));
+															var i = parseInt(
+																k.offsetWidth / (e * (m.speed / 10)),
+															);
 															if (
-																((k.style.animationDuration = i + 's'),
-																(w.style.animationDuration = i + 's'),
+																((k.style.animationDuration = i + "s"),
+																(w.style.animationDuration = i + "s"),
 																t && k)
 															) {
 																let t =
@@ -372,12 +453,12 @@
 																		'">' +
 																		t +
 																		e +
-																		'</a>'),
+																		"</a>"),
 																	(T.innerHTML = e),
 																	1 < M.length &&
 																		setTimeout(function e() {
 																			(T.style.opacity = 0),
-																				setTimeout(function () {
+																				setTimeout(() => {
 																					H > M.length - 1 && (H = 0);
 																					let e = M[H].content;
 																					M[H].link &&
@@ -389,7 +470,7 @@
 																							'">' +
 																							t +
 																							e +
-																							'</a>'),
+																							"</a>"),
 																						(T.innerHTML = e),
 																						(T.style.opacity = 1);
 																				}, 500),
@@ -398,101 +479,121 @@
 																		}, 7e3);
 															}
 															(N.onclick = N.ontouchend =
-																function (e) {
+																(e) => {
 																	e.stopPropagation(),
 																		e.preventDefault(),
 																		k &&
-																			(k.classList.contains('vjs-scroll-paused')
-																				? (R.dom.removeClass(k, 'vjs-scroll-paused'),
-																					R.dom.removeClass(w, 'vjs-scroll-paused'))
-																				: (R.dom.addClass(k, 'vjs-scroll-paused'),
-																					R.dom.addClass(w, 'vjs-scroll-paused')));
+																			(k.classList.contains("vjs-scroll-paused")
+																				? (R.dom.removeClass(
+																						k,
+																						"vjs-scroll-paused",
+																					),
+																					R.dom.removeClass(
+																						w,
+																						"vjs-scroll-paused",
+																					))
+																				: (R.dom.addClass(
+																						k,
+																						"vjs-scroll-paused",
+																					),
+																					R.dom.addClass(
+																						w,
+																						"vjs-scroll-paused",
+																					)));
 																}),
-																(C.ontouchend = function (e) {
-																	k.classList.contains('vjs-scroll-paused')
-																		? (R.dom.removeClass(k, 'vjs-scroll-paused'),
-																			R.dom.removeClass(w, 'vjs-scroll-paused'))
-																		: (R.dom.addClass(k, 'vjs-scroll-paused'),
-																			R.dom.addClass(w, 'vjs-scroll-paused'));
+																(C.ontouchend = (e) => {
+																	k.classList.contains("vjs-scroll-paused")
+																		? (R.dom.removeClass(
+																				k,
+																				"vjs-scroll-paused",
+																			),
+																			R.dom.removeClass(w, "vjs-scroll-paused"))
+																		: (R.dom.addClass(k, "vjs-scroll-paused"),
+																			R.dom.addClass(w, "vjs-scroll-paused"));
 																}),
-																(C.onmouseenter = function () {
-																	R.dom.addClass(k, 'vjs-scroll-paused'),
-																		R.dom.addClass(w, 'vjs-scroll-paused');
+																(C.onmouseenter = () => {
+																	R.dom.addClass(k, "vjs-scroll-paused"),
+																		R.dom.addClass(w, "vjs-scroll-paused");
 																}),
-																(C.onmouseleave = function () {
-																	R.dom.removeClass(k, 'vjs-scroll-paused'),
-																		R.dom.removeClass(w, 'vjs-scroll-paused');
+																(C.onmouseleave = () => {
+																	R.dom.removeClass(k, "vjs-scroll-paused"),
+																		R.dom.removeClass(w, "vjs-scroll-paused");
 																});
 														}
 													}
-													(u.ticker.hide = function () {
+													(u.ticker.hide = () => {
 														null != g &&
-															(g && R.dom.addClass(g, 'vjs-hidden'), C) &&
-															R.dom.addClass(C, 'vjs-scroll-paused');
+															(g && R.dom.addClass(g, "vjs-hidden"), C) &&
+															R.dom.addClass(C, "vjs-scroll-paused");
 													}),
-														(u.ticker.show = function () {
+														(u.ticker.show = () => {
 															null != g &&
-																(g && R.dom.removeClass(g, 'vjs-hidden'), C) &&
-																R.dom.removeClass(C, 'vjs-scroll-paused');
+																(g && R.dom.removeClass(g, "vjs-hidden"), C) &&
+																R.dom.removeClass(C, "vjs-scroll-paused");
 														}),
-														(u.ticker.logo = function (e) {
+														(u.ticker.logo = (e) => {
 															null != v &&
 																(Array.isArray(e)
 																	? (e.src && (v.src = e.src),
 																		e.title && v.setAttribute(e.title),
-																		e.url && null != h && h.setAttribute('href', e.url))
+																		e.url &&
+																			null != h &&
+																			h.setAttribute("href", e.url))
 																	: (v.src = e));
 														}),
-														(u.ticker.update = function (e) {
+														(u.ticker.update = (e) => {
 															e && (m.rss = e), m.rss && S(!0);
 														}),
-														u.on('playerresize', function () {
+														u.on("playerresize", () => {
 															c();
 														}),
-														u.on('playing', function () {
-															R.dom.hasClass(p, 'vjs-ad-playing') ||
-															R.dom.hasClass(p, 'vjs-dai') ||
-															R.dom.hasClass(p, 'vjs-up-next')
-																? null !== g && R.dom.addClass(g, 'news-hidden')
+														u.on("playing", () => {
+															R.dom.hasClass(p, "vjs-ad-playing") ||
+															R.dom.hasClass(p, "vjs-dai") ||
+															R.dom.hasClass(p, "vjs-up-next")
+																? null !== g && R.dom.addClass(g, "news-hidden")
 																: 1 != b && (startTime = Date.now());
 														}),
-														u.on('timeupdate', function () {
-															(R.dom.hasClass(p, 'vjs-ad-playing') ||
-																R.dom.hasClass(p, 'vjs-dai') ||
-																R.dom.hasClass(p, 'vjs-up-next')) &&
+														u.on("timeupdate", () => {
+															(R.dom.hasClass(p, "vjs-ad-playing") ||
+																R.dom.hasClass(p, "vjs-dai") ||
+																R.dom.hasClass(p, "vjs-up-next")) &&
 																null !== g &&
-																R.dom.addClass(g, 'news-hidden'),
-																0 < u.currentTime() && !0 !== b && ((b = !0), e());
+																R.dom.addClass(g, "news-hidden"),
+																0 < u.currentTime() &&
+																	!0 !== b &&
+																	((b = !0), e());
 														}),
-														u.on('ended', function () {
-															R.dom.hasClass(p, 'vjs-ad-playing') ||
-																R.dom.hasClass(p, 'vjs-dai') ||
-																R.dom.hasClass(p, 'vjs-up-next') ||
-																(null !== g && R.dom.addClass(g, 'news-hidden'));
+														u.on("ended", () => {
+															R.dom.hasClass(p, "vjs-ad-playing") ||
+																R.dom.hasClass(p, "vjs-dai") ||
+																R.dom.hasClass(p, "vjs-up-next") ||
+																(null !== g &&
+																	R.dom.addClass(g, "news-hidden"));
 														});
 												})()
-										: console.log('Missing RSS content or invalid strutrure');
+										: console.log("Missing RSS content or invalid strutrure");
 							}
 						}
 				} catch (e) {
-					console.log('Invalid XML document');
+					console.log("Invalid XML document");
 				}
 		}
 		function o() {
 			try {
 				var e = new q.XMLHttpRequest();
-				return 'withCredentials' in e ? e : null;
+				return "withCredentials" in e ? e : null;
 			} catch (e) {
 				return null;
 			}
 		}
 		function S(e) {
-			var t = m.rss + '?' + Date.now();
-			let n = new o();
-			n.open('GET', t),
+			var t = m.rss + "?" + Date.now();
+			const n = new o();
+			n.open("GET", t),
 				(n.timeout = m.timeout),
 				(n.withCredentials = m.withCredentials),
-				n.overrideMimeType && n.overrideMimeType('text/xml'),
+				n.overrideMimeType && n.overrideMimeType("text/xml"),
 				(n.onload = e ? () => l(n, !0) : () => l(n, !1)),
 				(n.onerror = () => s(n, !1)),
 				(n.onabort = () => s(n, !1)),

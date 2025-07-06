@@ -1,0 +1,158 @@
+---
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+
+// Authentication check
+const isAuthenticated = Astro.locals.isAuthenticated;
+if (!isAuthenticated) {
+	return Astro.redirect('/login');
+}
+---
+
+<AdminLayout>
+  <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
+    <div>
+      <div class="breadcrumbs text-sm">
+        <ul>
+          <li><a href="/admin">Dashboard</a></li>
+          <li><a href="/admin/channels">Channels</a></li>
+          <li>Create New Channel</li>
+        </ul>
+      </div>
+      <h1 class="text-3xl font-bold text-base-content">Create New Channel</h1>
+      <p class="text-base-content/70 mt-1">Add a new TV channel or streaming source</p>
+    </div>
+  </div>
+
+  <form id="createChannelForm" class="w-full max-w-4xl space-y-6">
+    <!-- Basic Information -->
+    <div class="card bg-base-100 shadow-xl">
+      <div class="card-body">
+        <h2 class="card-title mb-4">Basic Information</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="label">
+              <span class="label-text">Channel Name *</span>
+            </label>
+            <input
+              type="text"
+              name="name"
+              placeholder="Enter channel name"
+              class="input input-bordered w-full"
+              required
+            />
+          </div>
+
+          <div>
+            <label class="label">
+              <span class="label-text">Country *</span>
+            </label>
+            <select name="country" class="select select-bordered w-full" required>
+              <option value="">Select Country</option>
+              <option value="de">Germany</option>
+              <option value="gb">United Kingdom</option>
+              <option value="se">Sweden</option>
+              <option value="fr">France</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="label">
+            <span class="label-text">Channel Icon URL</span>
+          </label>
+          <input
+            type="url"
+            name="icon"
+            placeholder="https://example.com/channel-icon.png"
+            class="input input-bordered w-full"
+          />
+          <div class="label">
+            <span class="label-text-alt">Optional: URL to the channel's logo/icon</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex gap-4">
+      <button type="submit" class="btn btn-primary">Create Channel</button>
+      <a href="/admin/channels" class="btn btn-ghost">Cancel</a>
+    </div>
+  </form>
+
+  <!-- Success/Error Messages -->
+  <div id="message-container" class="fixed top-4 right-4 z-50"></div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const createForm = document.getElementById('createChannelForm');
+      const messageContainer = document.getElementById('message-container');
+
+      function showMessage(text, type = 'success') {
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${type} shadow-lg max-w-sm`;
+        alert.innerHTML = `
+          <div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+              ${type === 'success' 
+                ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />'
+                : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />'
+              }
+            </svg>
+            <span>${text}</span>
+          </div>
+        `;
+        
+        messageContainer.appendChild(alert);
+        
+        setTimeout(() => {
+          alert.remove();
+        }, 5000);
+      }
+
+      if (createForm) {
+        createForm.addEventListener('submit', async function(event) {
+          event.preventDefault();
+
+          const formData = new FormData(this);
+          const formObject = Object.fromEntries(formData.entries());
+
+          // Validate required fields
+          if (!formObject.name || !formObject.country) {
+            showMessage('Please fill in all required fields', 'error');
+            return;
+          }
+
+          // Transform the form data to match the API expected format
+          const apiData = {
+            name: formObject.name.trim(),
+            country: formObject.country,
+            icon: formObject.icon?.trim() || null,
+          };
+
+          try {
+            const response = await fetch('/api/save-channel', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(apiData),
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+              showMessage('Channel created successfully!', 'success');
+              setTimeout(() => {
+                window.location.href = '/admin/channels';
+              }, 2000);
+            } else {
+              showMessage('Failed to create channel: ' + (result.error || 'Unknown error'), 'error');
+            }
+          } catch (error) {
+            showMessage('Failed to create channel due to network error.', 'error');
+          }
+        });
+      }
+    });
+  </script>
+</AdminLayout>

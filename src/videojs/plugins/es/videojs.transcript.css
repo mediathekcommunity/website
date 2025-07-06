@@ -1,401 +1,400 @@
 .vjs-trns {
-    background-color: #000;
-    color: #fff;
-    height: 100%;
-    overflow: hidden;
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 360px;
-    z-index: 6;
+	background-color: #000;
+	color: #fff;
+	height: 100%;
+	overflow: hidden;
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 360px;
+	z-index: 6;
 }
 .vjs-trns .vjs-trns-back {
 	cursor: pointer;
-    padding: 10px;
-    background: #f0f0f0;
-	color:#000;
-    border-radius: 6px;
-	white-space:nowrap;
-	width:auto;
-    margin: 15px auto;
-    display: block;
-	-webkit-transition: background .3s ease-out;
-	transition: background .3s ease-out;
-	border:solid 1px #ccc;
+	padding: 10px;
+	background: #f0f0f0;
+	color: #000;
+	border-radius: 6px;
+	white-space: nowrap;
+	width: auto;
+	margin: 15px auto;
+	display: block;
+	-webkit-transition: background 0.3s ease-out;
+	transition: background 0.3s ease-out;
+	border: solid 1px #ccc;
 }
 .vjs-trns .vjs-trns-back:hover {
 	background: #e5e5e5;
 }
 .vjs-trns-lt {
-    background-color: #f5f5f5;
-    color: #222;
-    border: solid 1px #e5e5e5;
+	background-color: #f5f5f5;
+	color: #222;
+	border: solid 1px #e5e5e5;
 }
 .vjs-trns-full {
-    width: 100%;
+	width: 100%;
 }
 .vjs-trns .vjs-trns-lang {
-    background-color: inherit;
-    color: inherit;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 3;
-	overflow-x:hidden;
-	overflow-y:auto;
-	scrollbar-width:none;
-	
+	background-color: inherit;
+	color: inherit;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 3;
+	overflow-x: hidden;
+	overflow-y: auto;
+	scrollbar-width: none;
 }
 .vjs-trns .vjs-trns-lang::-webkit-scrollbar {
-	display:none;
+	display: none;
 }
 .vjs-trns .vjs-trns-lang .vjs-lang-header {
-    text-align: center;
-    padding: 18px;
-    font-size: 14px;
-    font-weight: bold;
-    border-bottom: solid 1px #ccc;
-    position: relative;
+	text-align: center;
+	padding: 18px;
+	font-size: 14px;
+	font-weight: bold;
+	border-bottom: solid 1px #ccc;
+	position: relative;
 }
 .vjs-trns .vjs-trns-lang .trns-lang-item {
-    padding: 10px 18px;
-    display: flex;
-    line-height: 22px;
-    cursor: pointer;
+	padding: 10px 18px;
+	display: flex;
+	line-height: 22px;
+	cursor: pointer;
 }
 .vjs-trns .vjs-trns-lang .vjs-lang-back {
-    fill: #fff;
-    width: 40px;
-    height: 40px;
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    cursor: pointer;
-    padding: 3px;
-    background-color: transparent;
-    border-radius: 5px;
+	fill: #fff;
+	width: 40px;
+	height: 40px;
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	cursor: pointer;
+	padding: 3px;
+	background-color: transparent;
+	border-radius: 5px;
 }
 .vjs-trns-lt .vjs-trns-lang .vjs-lang-back {
-    fill: #000;
+	fill: #000;
 }
 .vjs-trns .vjs-trns-lang .vjs-lang-back svg {
-    transform: rotate(180deg);
+	transform: rotate(180deg);
 }
 .vjs-trns .vjs-trns-lang .vjs-lang-back:hover {
-    background-color: #484848;
+	background-color: #484848;
 }
 .vjs-trns-lt .vjs-trns-lang .vjs-lang-back:hover {
-    background-color: #e5e5e5;
+	background-color: #e5e5e5;
 }
 .vjs-trns .vjs-trns-lang .vjs-lang-list::-webkit-scrollbar {
-    display: none;
+	display: none;
 }
 .vjs-trns .vjs-trns-lang .vjs-lang-list {
-    overflow-x: hidden;
-    overflow-y: auto;
-    position: relative;
-    display: block;
-    font-size: 15px;
-    color: inherit;
-    line-height: 20px;
-    text-shadow: none;
-    font-weight: 300;
-    font-family: Arial, sans-serif;
-    list-style: none;
-    margin: 20px 8px 10px 8px;
-    padding: 0;
+	overflow-x: hidden;
+	overflow-y: auto;
+	position: relative;
+	display: block;
+	font-size: 15px;
+	color: inherit;
+	line-height: 20px;
+	text-shadow: none;
+	font-weight: 300;
+	font-family: Arial, sans-serif;
+	list-style: none;
+	margin: 20px 8px 10px 8px;
+	padding: 0;
 	scrollbar-width: none;
 }
 .vjs-trns .vjs-trns-lang .vjs-lang-item {
-    position: relative;
-    line-height: 22px;
-    cursor: pointer;
-    padding: 10px 10px 10px 35px;
+	position: relative;
+	line-height: 22px;
+	cursor: pointer;
+	padding: 10px 10px 10px 35px;
 }
 .vjs-trns .vjs-trns-lang .vjs-lang-item:hover {
-    background-color: #333;
+	background-color: #333;
 }
 .vjs-trns-lt .vjs-trns-lang .vjs-lang-item:hover {
-    background-color: #ccc;
+	background-color: #ccc;
 }
 .vjs-trns .vjs-trns-lang .vjs-lang-checked {
-    fill: #fff;
-    width: 24px;
-    height: 24px;
-    position: absolute;
-    top: 8px;
-    left: 10px;
+	fill: #fff;
+	width: 24px;
+	height: 24px;
+	position: absolute;
+	top: 8px;
+	left: 10px;
 }
 .vjs-trns-lt .vjs-trns-lang .vjs-lang-checked {
-    fill: #222;
+	fill: #222;
 }
 .vjs-trns .vjs-trns-settings {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-color: inherit;
-    z-index: 3;
-	overflow-x:hidden;
-	overflow-y:auto;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background-color: inherit;
+	z-index: 3;
+	overflow-x: hidden;
+	overflow-y: auto;
 	scrollbar-width: none;
 }
 .vjs-trns .vjs-trns-settings::-webkit-scrollbar {
-	display:none;
+	display: none;
 }
 .vjs-trns .vjs-trns-settings .vjs-settings-header {
-    text-align: left;
-    margin-bottom: 10px;
-    padding: 18px;
-    font-size: 14px;
-    color: inherit;
-    font-weight: bold;
-    border-bottom: solid 1px #ccc;
-    position: relative;
+	text-align: left;
+	margin-bottom: 10px;
+	padding: 18px;
+	font-size: 14px;
+	color: inherit;
+	font-weight: bold;
+	border-bottom: solid 1px #ccc;
+	position: relative;
 }
 .vjs-trns-lt .vjs-trns-settings .vjs-settings-header {
-	background:#f0f0f0;
+	background: #f0f0f0;
 }
 .vjs-trns .vjs-trns-settings .vjs-settings-close {
-    fill: #fff;
-    width: 32px;
-    height: 32px;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    padding: 4px;
-    background-color: transparent;
-    border-radius: 5px;
+	fill: #fff;
+	width: 32px;
+	height: 32px;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	cursor: pointer;
+	padding: 4px;
+	background-color: transparent;
+	border-radius: 5px;
 }
 .vjs-trns-lt .vjs-trns-settings .vjs-settings-close {
-    fill: #222;
+	fill: #222;
 }
 .vjs-trns .vjs-trns-settings .vjs-settings-close:hover {
-    background-color: #484848;
+	background-color: #484848;
 }
 .vjs-trns-lt .vjs-trns-settings .vjs-settings-close:hover {
-    background-color: #ccc;
+	background-color: #ccc;
 }
 .vjs-trns .vjs-trns-settings .trns-item {
-    padding: 10px 18px;
-    display: flex;
-    line-height: 22px;
-    cursor: pointer;
+	padding: 10px 18px;
+	display: flex;
+	line-height: 22px;
+	cursor: pointer;
 }
 .vjs-trns .vjs-trns-settings .trns-item span {
-    flex-grow: 1;
+	flex-grow: 1;
 }
 .vjs-trns-settings .trns-item:hover {
-    background: #333;
+	background: #333;
 }
 .vjs-trns-lt .vjs-trns-settings .trns-item:hover {
-    background: #ccc;
+	background: #ccc;
 }
 .vjs-trns .vjs-trns-settings .trns-item svg {
-    fill: #fff;
-    padding-left: 8px;
-    width: auto;
-    height: 24px;
+	fill: #fff;
+	padding-left: 8px;
+	width: auto;
+	height: 24px;
 }
 .vjs-trns-lt .vjs-trns-settings .trns-item svg {
-    fill: #222;
+	fill: #222;
 }
 .vjs-trns .vjs-trns-settings .trns-switch {
-    display: inline-block;
-    width: 33px;
-    height: 16px;
-    background-color: #2f8363;
-    margin: 3px 6px;
-    border-radius: 10px;
-    position: relative;
+	display: inline-block;
+	width: 33px;
+	height: 16px;
+	background-color: #2f8363;
+	margin: 3px 6px;
+	border-radius: 10px;
+	position: relative;
 }
 .vjs-trns .vjs-trns-settings .trns-switch:before {
-    content: "";
-    background-color: #fff;
-    height: 12px;
-    width: 12px;
-    position: absolute;
-    top: 2px;
-    right: 3px;
-    border-radius: 50%;
+	content: "";
+	background-color: #fff;
+	height: 12px;
+	width: 12px;
+	position: absolute;
+	top: 2px;
+	right: 3px;
+	border-radius: 50%;
 }
 .vjs-trns .vjs-trns-settings .trns-switch-off {
-    background-color: #666;
+	background-color: #666;
 }
 .vjs-trns .vjs-trns-settings .trns-switch-off:before {
-    left: 3px;
+	left: 3px;
 }
 .vjs-trns .vjs-trns-header {
-    display: flex;
-    width: 100%;
-    padding: 8px 10px;
+	display: flex;
+	width: 100%;
+	padding: 8px 10px;
 }
 .vjs-trns .vjs-trns-search {
-    background-color: #222;
-    display: flex;
-    flex: auto;
-    position: relative;
-    border: solid 1px #999;
-    -webkit-border-radius: 6px;
-    border-radius: 6px;
-    padding: 0 5px;
+	background-color: #222;
+	display: flex;
+	flex: auto;
+	position: relative;
+	border: solid 1px #999;
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
+	padding: 0 5px;
 }
 .vjs-trns-lt .vjs-trns-search {
-    background-color: #f0f0f0;
-    border: solid 1px #ccc;
+	background-color: #f0f0f0;
+	border: solid 1px #ccc;
 }
 .vjs-trns .vjs-trns-header input[type="text"] {
-    width: 100%;
-    border: 0;
-    background-color: #222;
-    color: #f0f0f0;
-    font-size: 12px;
-    padding: 10px 5px;
+	width: 100%;
+	border: 0;
+	background-color: #222;
+	color: #f0f0f0;
+	font-size: 12px;
+	padding: 10px 5px;
 }
 .vjs-trns-lt .vjs-trns-header input[type="text"] {
-    background-color: #f0f0f0;
-    color: #222;
+	background-color: #f0f0f0;
+	color: #222;
 }
 .vjs-trns .vjs-trns-nav {
-    padding-top: 4px;
+	padding-top: 4px;
 }
 .vjs-trns .vjs-trns-nav .trns-search-action {
-    fill: #fff;
-    width: 24px;
-    height: 24px;
-    display: inline-block;
-    border-radius: 4px;
+	fill: #fff;
+	width: 24px;
+	height: 24px;
+	display: inline-block;
+	border-radius: 4px;
 }
 .vjs-trns-lt .vjs-trns-nav .trns-search-action {
-    fill: #222;
+	fill: #222;
 }
 .vjs-trns .vjs-trns-nav .trns-search-action:hover {
-    background: #484848;
+	background: #484848;
 }
 .vjs-trns-lt .vjs-trns-nav .trns-search-action:hover {
-    background: transparent;
+	background: transparent;
 }
 .vjs-trns .vjs-trns-btns {
-    padding-left: 8px;
+	padding-left: 8px;
 }
 .trns-cursor {
-    cursor: pointer;
+	cursor: pointer;
 }
 .vjs-trns .vjs-trns-sicon {
-    stroke: #fff;
-    width: 24px;
-    height: 24px;
-    display: inline-block;
-    padding-top: 4px;
+	stroke: #fff;
+	width: 24px;
+	height: 24px;
+	display: inline-block;
+	padding-top: 4px;
 }
 .vjs-trns-lt .vjs-trns-sicon {
-    stroke: #222;
+	stroke: #222;
 }
 .vjs-trns .vjs-trns-btn {
-    fill: #fff;
-    cursor: pointer;
-    width: 34px;
-    height: 100%;
-    -webkit-border-radius: 4px;
-    border-radius: 4px;
-    background: #444;
-    margin: 0 2px;
+	fill: #fff;
+	cursor: pointer;
+	width: 34px;
+	height: 100%;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+	background: #444;
+	margin: 0 2px;
 }
-.vjs-trns-lt .vjs-trns-btn svg{
-	fill:#222;
+.vjs-trns-lt .vjs-trns-btn svg {
+	fill: #222;
 }
 .vjs-trns-lt .vjs-trns-btn {
-    fill: #222;
-    background: #e5e5e5;
+	fill: #222;
+	background: #e5e5e5;
 }
 .vjs-trns-lt .vjs-trns-btn:hover {
 	background: #ccc;
 }
 .vjs-trns .vjs-trns-list::-webkit-scrollbar {
-    display: none;
+	display: none;
 }
 .vjs-trns .vjs-trns-list {
-    -webkit-overflow-scrolling: touch;
-    height: calc(100% - 55px);
-    overflow-x: hidden;
-    overflow-y: auto;
-    width: 100%;
+	-webkit-overflow-scrolling: touch;
+	height: calc(100% - 55px);
+	overflow-x: hidden;
+	overflow-y: auto;
+	width: 100%;
 	scrollbar-width: none;
 	-ms-overflow-style: none;
 }
 .vjs-trns .vjs-trns-list ul {
-    position: relative;
-    display: block;
-    font-size: 12px;
-    color: #ccc;
-    line-height: 20px;
-    text-shadow: none;
-    font-weight: 300;
-    font-family: Arial, sans-serif;
-    list-style: none;
-    margin: 0 8px;
-    padding: 0;
+	position: relative;
+	display: block;
+	font-size: 12px;
+	color: #ccc;
+	line-height: 20px;
+	text-shadow: none;
+	font-weight: 300;
+	font-family: Arial, sans-serif;
+	list-style: none;
+	margin: 0 8px;
+	padding: 0;
 }
 .vjs-trns-lt .vjs-trns-list ul {
-    color: #222;
+	color: #222;
 }
 .vjs-trns .vjs-trns-list ul li {
-    border: solid 2px transparent;
-    display: flex;
-    cursor: pointer;
-    padding: 8px;
-    text-align: left;
-    width: 100%;
-	-webkit-transition:background .3s ease-out;
-	transition:background .3s ease-out;
+	border: solid 2px transparent;
+	display: flex;
+	cursor: pointer;
+	padding: 8px;
+	text-align: left;
+	width: 100%;
+	-webkit-transition: background 0.3s ease-out;
+	transition: background 0.3s ease-out;
 }
 .vjs-trns-lt .vjs-trns-list ul li {
-	padding-left:0;
+	padding-left: 0;
 }
 .vjs-trns .vjs-trns-list ul li .vjs-m1 {
-    background-color: #e5e5e5;
-    color: #000;
-    padding: 3px 4px;
-    border-radius: 4px;
-    font-weight: bold;
-    z-index: 1;
+	background-color: #e5e5e5;
+	color: #000;
+	padding: 3px 4px;
+	border-radius: 4px;
+	font-weight: bold;
+	z-index: 1;
 }
 .vjs-trns .vjs-trns-list ul li .vjs-m1 {
-    background-color: #999;
-    color: #fff;
-    font-weight: normal;
+	background-color: #999;
+	color: #fff;
+	font-weight: normal;
 }
 .vjs-trns .vjs-trns-list ul li .vjs-m2 {
-    background: #666;
-    padding: 4px 2px;
-    border-radius: 4px;
+	background: #666;
+	padding: 4px 2px;
+	border-radius: 4px;
 }
 .vjs-trns .vjs-trns-list ul li:hover {
-    background: #363636;
-    color: #fff;
+	background: #363636;
+	color: #fff;
 }
 .vjs-trns-lt .vjs-trns-list ul li:hover {
-    background: #e0e0e0;
-    color: #222;
+	background: #e0e0e0;
+	color: #222;
 }
 .vjs-trns .vjs-trns-list .trns-current {
-    border: solid 2px #b5b5b5;
-    -webkit-border-radius: 8px;
-    border-radius: 8px;
+	border: solid 2px #b5b5b5;
+	-webkit-border-radius: 8px;
+	border-radius: 8px;
 }
 .vjs-trns-lt .vjs-trns-list .trns-current {
-    border:0;
+	border: 0;
 	border-left: solid 1px #f99;
-	border-radius:0;
+	border-radius: 0;
 	background: #e5e5e5;
 }
 .vjs-trns .vjs-trns-list ul li .txt {
 	pointer-events: none;
-    padding: 0 8px 0 5px;
+	padding: 0 8px 0 5px;
 }
 
 .vjs-trns-lt .vjs-trns-list ul li {
@@ -403,23 +402,23 @@
 }
 
 .vjs-trns .vjs-trns-list ul li .vjs-stamp {
-    pointer-events: none;
-    display: flex;
-    height: 20px;
-    padding: 4px;
-    -webkit-border-radius: 2px;
-    border-radius: 2px;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    background: hsla(0, 0%, 100%, 0.2);
+	pointer-events: none;
+	display: flex;
+	height: 20px;
+	padding: 4px;
+	-webkit-border-radius: 2px;
+	border-radius: 2px;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+	background: hsla(0, 0%, 100%, 0.2);
 }
 .vjs-trns-lt .vjs-trns-list ul li .vjs-stamp {
-    background: #e5e5e5;
+	background: #e5e5e5;
 }
 .vjs-trns .vjs-trns-list ul li:hover .vjs-stamp {
-    background: #565656;
+	background: #565656;
 }
 .vjs-trns-lt .vjs-trns-list ul li:hover .vjs-stamp {
-    background: #ccc;
+	background: #ccc;
 }
