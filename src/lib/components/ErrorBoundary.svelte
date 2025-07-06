@@ -8,7 +8,12 @@
 		dev?: boolean;
 	}
 
-	let { message = 'An unexpected error occurred', status = 500, stack = '', dev = false } = $props<Props>();
+	let {
+		message = 'An unexpected error occurred',
+		status = 500,
+		stack = '',
+		dev = false
+	} = $props<Props>();
 
 	const errorMessages = {
 		404: 'Page not found',
@@ -43,19 +48,11 @@
 		<p class="error-description">{getErrorMessage(status)}</p>
 
 		<div class="error-actions">
-			<button
-				class="action-button primary"
-				onclick={handleBack}
-				type="button"
-			>
+			<button class="action-button primary" onclick={handleBack} type="button">
 				<Icon icon="lucide:arrow-left" />
 				Go Back
 			</button>
-			<button
-				class="action-button secondary"
-				onclick={handleRetry}
-				type="button"
-			>
+			<button class="action-button secondary" onclick={handleRetry} type="button">
 				<Icon icon="lucide:refresh-cw" />
 				Try Again
 			</button>

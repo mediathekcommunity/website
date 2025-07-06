@@ -36,7 +36,7 @@
 		} catch (e) {
 			m = R.mergeOptions(t, m || {});
 		}
-		(m.refresh = parseInt(m.refresh)), m.refresh < 1 && (m.refresh = 1);
+		((m.refresh = parseInt(m.refresh)), m.refresh < 1 && (m.refresh = 1));
 		var u = this,
 			p = u.el(),
 			g = null,
@@ -115,7 +115,7 @@
 									var i,
 										d,
 										c = l.childNodes[o];
-									'title' == c.nodeName &&
+									('title' == c.nodeName &&
 										((i = (c.textContent || c.text || null).trim()), (a.content = x(i))),
 										'link' == c.nodeName &&
 											a.content &&
@@ -127,9 +127,9 @@
 											(r.link = (c.textContent || c.text || '').trim()),
 										'pubTime' == c.nodeName &&
 											r.content &&
-											(r.time = (c.textContent || c.text || '').trim());
+											(r.time = (c.textContent || c.text || '').trim()));
 								}
-								a && M.push(a),
+								(a && M.push(a),
 									r && E.push(r),
 									0 < M.length || 0 < E.length
 										? t
@@ -139,7 +139,7 @@
 														for (var n = 0; n < t.length; n++) {
 															var s = document.createElement('div'),
 																l = ((s.className = 'news-item'), t[n].content);
-															t[n].time && (l = '<span class="ct">' + t[n].time + '</span>' + l),
+															(t[n].time && (l = '<span class="ct">' + t[n].time + '</span>' + l),
 																t[n].link &&
 																	(l =
 																		'<a target="' +
@@ -150,15 +150,15 @@
 																		l +
 																		'</a>'),
 																(s.innerHTML = '<span class="break"></span>' + l),
-																k.appendChild(s);
+																k.appendChild(s));
 														}
-														(w.innerHTML = k.innerHTML), (H = 0), (M = e);
+														((w.innerHTML = k.innerHTML), (H = 0), (M = e));
 													} else {
 														k.innerHTML = '';
 														for (n = 0; n < e.length; n++) {
 															var o = document.createElement('div'),
 																l = ((o.className = 'news-item'), e[n].content);
-															e[n].time && (l = '<span class="ct">' + e[n].time + '</span>' + l),
+															(e[n].time && (l = '<span class="ct">' + e[n].time + '</span>' + l),
 																e[n].link &&
 																	(l =
 																		'<a target="' +
@@ -169,7 +169,7 @@
 																		l +
 																		'</a>'),
 																(o.innerHTML = '<span class="break"></span>' + l),
-																k.appendChild(o);
+																k.appendChild(o));
 														}
 														w.innerHTML = k.innerHTML;
 													}
@@ -187,9 +187,9 @@
 															var n = new Date();
 															let e = n.getHours().toString(),
 																t = (e.length < 2 && (e = '0' + e), n.getMinutes().toString());
-															t.length < 2 && (t = '0' + t),
+															(t.length < 2 && (t = '0' + t),
 																(L.innerHTML = e + ':' + t),
-																setTimeout(d, 1e3);
+																setTimeout(d, 1e3));
 														}
 													}
 													function c() {
@@ -224,7 +224,7 @@
 															(m.direction = m.direction.toLowerCase()),
 															(0 < M.length || 0 < E.length) && null === g)
 														) {
-															'rtl' == m.direction && R.dom.addClass(p, 'vjs-rtl'),
+															('rtl' == m.direction && R.dom.addClass(p, 'vjs-rtl'),
 																((g = document.createElement('div')).className = 'vjs-news'),
 																c(),
 																((f = document.createElement('div')).className = 'vjs-news-scroll'),
@@ -241,14 +241,14 @@
 																		: (R.dom.addClass(k, 'group-nt-rtl'),
 																			R.dom.addClass(w, 'group-nt-rtl'))),
 																C.appendChild(k),
-																C.appendChild(w);
+																C.appendChild(w));
 															var t = !1,
 																n = !1;
 															if (0 < E.length && 1 != m.titleOnly)
 																for (var t = !0, s = 0; s < E.length; s++) {
 																	var l = document.createElement('div'),
 																		o = ((l.className = 'news-item'), E[s].content);
-																	E[s].time &&
+																	(E[s].time &&
 																		(o = '<span class="ct">' + E[s].time + '</span>' + o),
 																		E[s].link &&
 																			(o =
@@ -260,14 +260,14 @@
 																				o +
 																				'</a>'),
 																		(l.innerHTML = '<span class="break"></span>' + o),
-																		k.appendChild(l);
+																		k.appendChild(l));
 																}
 															else {
 																k.innerHTML = '';
 																for (s = 0; s < M.length; s++) {
 																	var a = document.createElement('div'),
 																		o = ((a.className = 'news-item'), M[s].content);
-																	M[s].time &&
+																	(M[s].time &&
 																		(o = '<span class="ct">' + M[s].time + '</span>' + o),
 																		M[s].link &&
 																			(o =
@@ -279,19 +279,19 @@
 																				o +
 																				'</a>'),
 																		(a.innerHTML = '<span class="break"></span>' + o),
-																		k.appendChild(a);
+																		k.appendChild(a));
 																}
 															}
 															w.innerHTML = k.innerHTML;
-															-1 < p.className.indexOf('vjs-controls-none') &&
+															(-1 < p.className.indexOf('vjs-controls-none') &&
 																(m.position = 'static'),
 																m.speed < 1 && (m.speed = 1),
 																20 < m.speed && (m.speed = 20),
 																'rtl' === m.direction && g.setAttribute('dir', 'rtl'),
-																f.appendChild(C);
+																f.appendChild(C));
 															var r,
 																n = !1;
-															'' != m.logo &&
+															('' != m.logo &&
 																'top' !== m.position &&
 																((n = !0),
 																((r = document.createElement('div')).className = 'left-block'),
@@ -342,16 +342,16 @@
 																	j.appendChild(y),
 																	g.appendChild(j),
 																	(j.onclick = function (e) {
-																		e.stopPropagation(),
+																		(e.stopPropagation(),
 																			'toggle-icon-down' === y.className
 																				? ((y.className = 'toggle-icon-up'),
 																					R.dom.addClass(g, 'news-hidden'))
 																				: ((y.className = 'toggle-icon-down'),
-																					R.dom.removeClass(g, 'news-hidden'));
+																					R.dom.removeClass(g, 'news-hidden')));
 																	})),
 																g.appendChild(N),
 																g.appendChild(f),
-																p.appendChild(g);
+																p.appendChild(g));
 															let e = 150;
 															5 < m.speed && (e = 190);
 															var i = parseInt(k.offsetWidth / (e * (m.speed / 10)));
@@ -363,7 +363,7 @@
 																let t =
 																		'<span class="vjs-icon"><svg version="1.1" viewBox="0 0 48 48"><path d="M0 0h48v48H0z" fill="none"></path><path d="M38 38H10V10h14V6H10c-2.21 0-4 1.79-4 4v28c0 2.21 1.79 4 4 4h28c2.21 0 4-1.79 4-4V24h-4v14zM28 6v4h7.17L15.51 29.66l2.83 2.83L38 12.83V20h4V6H28z"></path></svg></span>',
 																	e = M[0].content;
-																M[0].link &&
+																(M[0].link &&
 																	(e =
 																		'<a target="' +
 																		m.target +
@@ -376,11 +376,11 @@
 																	(T.innerHTML = e),
 																	1 < M.length &&
 																		setTimeout(function e() {
-																			(T.style.opacity = 0),
+																			((T.style.opacity = 0),
 																				setTimeout(function () {
 																					H > M.length - 1 && (H = 0);
 																					let e = M[H].content;
-																					M[H].link &&
+																					(M[H].link &&
 																						(e =
 																							'<a target="' +
 																							m.target +
@@ -391,22 +391,22 @@
 																							e +
 																							'</a>'),
 																						(T.innerHTML = e),
-																						(T.style.opacity = 1);
+																						(T.style.opacity = 1));
 																				}, 500),
 																				H++,
-																				setTimeout(e, 7e3);
-																		}, 7e3);
+																				setTimeout(e, 7e3));
+																		}, 7e3));
 															}
-															(N.onclick = N.ontouchend =
+															((N.onclick = N.ontouchend =
 																function (e) {
-																	e.stopPropagation(),
+																	(e.stopPropagation(),
 																		e.preventDefault(),
 																		k &&
 																			(k.classList.contains('vjs-scroll-paused')
 																				? (R.dom.removeClass(k, 'vjs-scroll-paused'),
 																					R.dom.removeClass(w, 'vjs-scroll-paused'))
 																				: (R.dom.addClass(k, 'vjs-scroll-paused'),
-																					R.dom.addClass(w, 'vjs-scroll-paused')));
+																					R.dom.addClass(w, 'vjs-scroll-paused'))));
 																}),
 																(C.ontouchend = function (e) {
 																	k.classList.contains('vjs-scroll-paused')
@@ -416,16 +416,16 @@
 																			R.dom.addClass(w, 'vjs-scroll-paused'));
 																}),
 																(C.onmouseenter = function () {
-																	R.dom.addClass(k, 'vjs-scroll-paused'),
-																		R.dom.addClass(w, 'vjs-scroll-paused');
+																	(R.dom.addClass(k, 'vjs-scroll-paused'),
+																		R.dom.addClass(w, 'vjs-scroll-paused'));
 																}),
 																(C.onmouseleave = function () {
-																	R.dom.removeClass(k, 'vjs-scroll-paused'),
-																		R.dom.removeClass(w, 'vjs-scroll-paused');
-																});
+																	(R.dom.removeClass(k, 'vjs-scroll-paused'),
+																		R.dom.removeClass(w, 'vjs-scroll-paused'));
+																}));
 														}
 													}
-													(u.ticker.hide = function () {
+													((u.ticker.hide = function () {
 														null != g &&
 															(g && R.dom.addClass(g, 'vjs-hidden'), C) &&
 															R.dom.addClass(C, 'vjs-scroll-paused');
@@ -444,7 +444,7 @@
 																	: (v.src = e));
 														}),
 														(u.ticker.update = function (e) {
-															e && (m.rss = e), m.rss && S(!0);
+															(e && (m.rss = e), m.rss && S(!0));
 														}),
 														u.on('playerresize', function () {
 															c();
@@ -457,21 +457,21 @@
 																: 1 != b && (startTime = Date.now());
 														}),
 														u.on('timeupdate', function () {
-															(R.dom.hasClass(p, 'vjs-ad-playing') ||
+															((R.dom.hasClass(p, 'vjs-ad-playing') ||
 																R.dom.hasClass(p, 'vjs-dai') ||
 																R.dom.hasClass(p, 'vjs-up-next')) &&
 																null !== g &&
 																R.dom.addClass(g, 'news-hidden'),
-																0 < u.currentTime() && !0 !== b && ((b = !0), e());
+																0 < u.currentTime() && !0 !== b && ((b = !0), e()));
 														}),
 														u.on('ended', function () {
 															R.dom.hasClass(p, 'vjs-ad-playing') ||
 																R.dom.hasClass(p, 'vjs-dai') ||
 																R.dom.hasClass(p, 'vjs-up-next') ||
 																(null !== g && R.dom.addClass(g, 'news-hidden'));
-														});
+														}));
 												})()
-										: console.log('Missing RSS content or invalid strutrure');
+										: console.log('Missing RSS content or invalid strutrure'));
 							}
 						}
 				} catch (e) {
@@ -489,7 +489,7 @@
 		function S(e) {
 			var t = m.rss + '?' + Date.now();
 			let n = new o();
-			n.open('GET', t),
+			(n.open('GET', t),
 				(n.timeout = m.timeout),
 				(n.withCredentials = m.withCredentials),
 				n.overrideMimeType && n.overrideMimeType('text/xml'),
@@ -497,7 +497,7 @@
 				(n.onerror = () => s(n, !1)),
 				(n.onabort = () => s(n, !1)),
 				(n.ontimeout = () => s(n, !0)),
-				n.send();
+				n.send());
 		}
 	});
 });

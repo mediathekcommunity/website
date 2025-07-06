@@ -2,3 +2,10 @@
 package-lock.json
 pnpm-lock.yaml
 yarn.lock
+
+# Video.js plugins (vendor files)
+src/lib/videojs/plugins/es/nuevo.js
+src/lib/videojs/plugins/es/upnext.js
+
+# Video.js skins (vendor CSS files)
+src/lib/videojs/skins/**/*.css

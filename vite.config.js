@@ -4,6 +4,5 @@ import { defineConfig } from 'vite';
 import devtoolsJson from 'vite-plugin-devtools-json';
 
 export default defineConfig({
-	plugins: [sveltekit(), tailwindcss(),devtoolsJson()]
+	plugins: [sveltekit(), tailwindcss(), devtoolsJson()]
 });
- 

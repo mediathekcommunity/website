@@ -77,7 +77,7 @@
 				return 'mdi:movie';
 		}
 	};
- 
+
 	const plugins = [
 		Autoplay({
 			delay: 8000,
@@ -143,7 +143,6 @@
 								>
 									<Icon icon={getTypeIcon(slide.type)} height="28px" />
 								</span>
-
 							</div>
 							<h1
 								class="mb-2 text-2xl leading-tight font-bold tracking-tight sm:text-3xl md:text-4xl lg:text-5xl"

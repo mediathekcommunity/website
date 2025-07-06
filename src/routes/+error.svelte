@@ -8,9 +8,4 @@
 	$: isDev = import.meta.env.DEV;
 </script>
 
-<ErrorBoundary 
-	message={error?.message} 
-	status={status} 
-	stack={error?.stack} 
-	dev={isDev}
-/>
+<ErrorBoundary message={error?.message} {status} stack={error?.stack} dev={isDev} />

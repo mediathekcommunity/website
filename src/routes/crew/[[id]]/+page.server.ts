@@ -1,7 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { groupByChannelCountry } from '$lib/utils';
 
-
 type MediathekItem = {
 	id: string;
 	channel?: {

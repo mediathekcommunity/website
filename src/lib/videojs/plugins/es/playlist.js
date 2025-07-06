@@ -214,7 +214,7 @@ function factory(n, e, t) {
 						r = i[t];
 					if (r && Array.isArray(r.sources) && indexInSources([r], e) > -1)
 						// @ts-ignore
-						return (l.currentIndex_ = t), l.currentIndex_;
+						return ((l.currentIndex_ = t), l.currentIndex_);
 					// @ts-ignore
 					l.currentPlaylistItemId_ = null;
 				}
@@ -353,7 +353,7 @@ function factory(n, e, t) {
 		// @ts-ignore
 		if (void 0 === e) return l.repeat_;
 		// @ts-ignore
-		if ('boolean' === typeof e) return (l.repeat_ = !!e), l.repeat_;
+		if ('boolean' === typeof e) return ((l.repeat_ = !!e), l.repeat_);
 	};
 	// @ts-ignore
 	l.list = function () {

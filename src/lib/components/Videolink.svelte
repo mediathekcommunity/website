@@ -18,20 +18,13 @@
 	}
 </script>
 
-<div 
-	class="video-player-container" 
-	style:background-image="url({posterUrl})"
->
+<div class="video-player-container" style:background-image="url({posterUrl})">
 	<div class="video-placeholder">
 		<div class="content">
 			<div>
 				To watch {videotitle} you need to go to the homepage of {channel.name}
 			</div>
-			<button
-				type="button"
-				class="btn btn-accent"
-				onclick={navigateToVideo}
-			>
+			<button type="button" class="btn btn-accent" onclick={navigateToVideo}>
 				Go to {channel.name} & watch {videotitle}
 			</button>
 		</div>

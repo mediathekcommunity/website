@@ -91,7 +91,6 @@
 		will-change: transform;
 	}
 
-
 	.no-image {
 		width: 100%;
 		height: 100%;
@@ -103,7 +102,6 @@
 		padding: 1rem;
 		gap: 0.5rem;
 	}
-
 
 	.name {
 		font-size: 0.875rem;
@@ -125,7 +123,6 @@
 			width: 180px;
 			height: 106px;
 		}
-
 
 		.name {
 			font-size: 0.75rem;

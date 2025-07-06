@@ -5,7 +5,7 @@ const BASE_ASSET_URL = 'https://api2.mediathek.community/api/files/pbc_772122303
 const DEFAULT_FORMAT_TYPE = 'application/dash+xml';
 
 // Helper: get image url for poster (use original generateImageUrl logic)
-function getPoster(mediaEntry, params, type,basedata): string {
+function getPoster(mediaEntry, params, type, basedata): string {
 	//console.log('getPoster1', params);
 	const backdropFile = mediaEntry.backdrop;
 	const localFile = mediaEntry.backdropup;
@@ -21,11 +21,10 @@ function getPoster(mediaEntry, params, type,basedata): string {
 			return `${BASE_MEDIA_URL}${mediaEntry.backdrop}`;
 		}
 	} else {
-		console.log('getPoster2',basedata.coverimageup);
+		console.log('getPoster2', basedata.coverimageup);
 		if (mediaEntry.poster && mediaEntry.poster.trim() !== '') {
-		return `${BASE_MEDIA_URL}${mediaEntry.poster}`;
-		} else
-		return `${BASE_ASSET_URL}${basedata.backdropup}`;
+			return `${BASE_MEDIA_URL}${mediaEntry.poster}`;
+		} else return `${BASE_ASSET_URL}${basedata.backdropup}`;
 	}
 }
 // Helper: get video format
@@ -68,11 +67,11 @@ function createPlaylistByOvAndSeason(
 			title: link.title || '',
 			src: link.streamlink,
 			type: determineFormat(link.streamformat),
-			poster: getPoster(link, params, 'PlaylistByOvAndSeason',mediaLinks),
+			poster: getPoster(link, params, 'PlaylistByOvAndSeason', mediaLinks),
 			episode: link.episode !== undefined && link.episode !== null ? String(link.episode) : '',
 			season: seasonKey,
 			ov: link.ov,
-			thumb: getPoster(link, params, 'PlaylistByOvAndSeason',basedata),
+			thumb: getPoster(link, params, 'PlaylistByOvAndSeason', basedata),
 			description: link.description || '',
 			audiolang: link.audiolang || []
 		};
@@ -130,7 +129,7 @@ export async function load({ params, request, setHeaders, locals }) {
 		channel: mediaEntry.expand?.channel || mediaEntry.channel || '',
 		country: mediaEntry.expand?.channel?.country || '',
 		quality: mediaEntry.quality,
-		poster: getPoster(mediaEntry, '', '',''),
+		poster: getPoster(mediaEntry, '', '', ''),
 		backdrop: mediaEntry.backdrop,
 		imdbrating: mediaEntry.imdbrating,
 		metascore: mediaEntry.metascore,
@@ -147,10 +146,10 @@ export async function load({ params, request, setHeaders, locals }) {
 	} else {
 		//console.log('createVideoSource', 'links.length', links.length);
 	}
-	
-	var geo = request.headers.get('CDN-RequestCountryCode')?.toLowerCase()|| 'de'
+
+	var geo = request.headers.get('CDN-RequestCountryCode')?.toLowerCase() || 'de';
 	// 3. playlist (ov/nonov arrays from slinks, grouped by season)
-	const playlist = createPlaylistByOvAndSeason(slinks, id1,mediaEntry);
+	const playlist = createPlaylistByOvAndSeason(slinks, id1, mediaEntry);
 
 	// 4. debug: print mediaEntry
 	const debug = mediaEntry;

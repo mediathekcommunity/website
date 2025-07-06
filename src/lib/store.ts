@@ -9,36 +9,36 @@ export const visible = writable<boolean>(false);
 
 // Modal and video states
 interface ModalProps {
-    isOpen?: boolean;
-    title?: string;
-    content?: any;
-    [key: string]: any;
+	isOpen?: boolean;
+	title?: string;
+	content?: any;
+	[key: string]: any;
 }
 
 interface VideoData {
-    src?: string;
-    thumb?: string;
-    poster?: string;
-    type?: string;
-    title?: string;
-    tracks?: Array<{
-        kind: string;
-        src: string;
-        label: string;
-        srclang?: string;
-    }>;
+	src?: string;
+	thumb?: string;
+	poster?: string;
+	type?: string;
+	title?: string;
+	tracks?: Array<{
+		kind: string;
+		src: string;
+		label: string;
+		srclang?: string;
+	}>;
 }
 
 interface PlaylistItem extends VideoData {
-    id: string | number;
+	id: string | number;
 }
 
 // Subtitle and track interface
 interface SubtitleData {
-    language?: string;
-    src?: string;
-    label?: string;
-    default?: boolean;
+	language?: string;
+	src?: string;
+	label?: string;
+	default?: boolean;
 }
 
 // Type-safe store exports
