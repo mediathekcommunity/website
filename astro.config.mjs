@@ -14,11 +14,11 @@ dotenv.config();
 
 // Environment-based URL configuration
 const isProduction = process.env.NODE_ENV === "production";
-const baseUrl = isProduction ? "https://mediathek.community" : "http://localhost:4321";
+const baseUrl = isProduction ? "https://preview.mediathek.community" : "http://localhost:4321";
 
 // https://astro.build/config
 export default defineConfig({
-	site: "https://mediathek.community",
+	site: "https://preview.mediathek.community",
 	output: "server",
 	adapter: cloudflare({
 		platformProxy: {
