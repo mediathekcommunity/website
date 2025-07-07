@@ -5,45 +5,51 @@ import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import svelte from "@astrojs/svelte";
 import tailwindcss from "@tailwindcss/vite";
-import { defineConfig } from "astro/config";
+import { defineConfig, envField } from "astro/config";
 import icon from "astro-icon";
-import kinde from "astro-kinde";
-
-
-
-
+import clerk from "@clerk/astro";
+import dotenv from "dotenv";
+console.log("Loading environment variables...");
+// Load environment variables from .env files
+// This will load variables from .env and .env.dev if they exist  
+console.log(JSON.stringify(process.env, null, 2));
+dotenv.config();
 // Environment-based URL configuration
 const isProduction = process.env.NODE_ENV === "production";
-const baseUrl = isProduction ? "https://mediathek.community" : "http://localhost:4321";
+const baseUrl = isProduction
+  ? "https://mediathek.community"
+  : "http://localhost:4321";
 
 // https://astro.build/config
 export default defineConfig({
-	site: "https://preview.mediathek.community",
-	output: "server",
-	adapter: cloudflare({
-		platformProxy: {
-			enabled: true,
-		},
-	}),
-	integrations: [
-		kinde({
-			clientId: "205eca344cf140c3a043325267a57503",
-			clientSecret: process.env.KINDE_MANAGEMENT_CLIENT_SECRET,
-			domain: process.env.KINDE_DOMAIN,
-			callbackUri: `${baseUrl}/api/kinde/callback`,
-			signedInUri: baseUrl,
-			signedOutUri: baseUrl,
-			sessionMaxAge: 3600,
-		}),
-		mdx(),
-		sitemap(),
-		icon(),
-		svelte(),
-	],
-	vite: {
-		plugins: [tailwindcss()],
-		define: {
-        "process.env": process.env
-		}
-	},
+  site: "https://preview.mediathek.community",
+  output: "server",
+  adapter: cloudflare({
+    imageService: "passthrough",
+    platformProxy: {
+      enabled: true,
+    },
+  }),
+  integrations: [
+    clerk({ enableEnvSchema: false }),
+    mdx(),
+    sitemap(),
+    icon(),
+    svelte(),
+  ],
+  vite: {
+    plugins: [tailwindcss()],
+  },
+  env: {
+    schema: {
+      PUBLIC_CLERK_PUBLISHABLE_KEY: envField.string({
+        access: "public",
+        context: "client",
+      }),
+      CLERK_SECRET_KEY: envField.string({
+        access: "secret",
+        context: "server",
+      })
+    },
+  },
 });

@@ -681,7 +681,7 @@ let active = 1; // Global active state for video player
                             <button
                               type="button"
                               class="btn btn-accent"
-                              onclick="showVideoPlayer()"
+                              id="play-dyna-btn"
                             >
                               <svg class="w-6 h-6" viewBox="0 0 24 24">
                                 <path
@@ -1108,6 +1108,7 @@ let active = 1; // Global active state for video player
 </style>
 
 <script type="module">
+
   // Player state variables (client-side)
   let show1 = 1; // Toggle for showing player, default is 1 (shown)
   let active = 1; // Global active state for video player
@@ -1123,7 +1124,7 @@ let active = 1; // Global active state for video player
       setTimeout(() => {
         const videoPlayerElement = document.querySelector("#main-videoplayer");
         if (videoPlayerElement) {
-          const videoEl = videoPlayerElement;
+          const videoEl = videoPlayerElement as HTMLElement; // Cast to HTMLElement
           const wasDestroyed = videoEl.style.display === "none" || videoEl.dataset.active === "0";
           if (window.VideoPlayerAstro) {
             if (wasDestroyed) {
@@ -1156,7 +1157,7 @@ let active = 1; // Global active state for video player
         videoCard.classList.add("hidden");
         videoCard.classList.remove("visible");
       } else {
-        videoCard.dataset.show1 = show1.toString();
+        (videoCard as HTMLElement).dataset.show1 = show1.toString(); // Cast to HTMLElement
       }
     }
   }
@@ -1215,6 +1216,14 @@ let active = 1; // Global active state for video player
       show1 = show1 === 1 ? 0 : 1;
       hideVideoPlayer();
     });
+
+    const playDynaButton = document.querySelector("#play-dyna-btn");
+    if (playDynaButton) {
+      playDynaButton.addEventListener("click", () => {
+        showVideoPlayer();
+      });
+    }
+
     const playButtons = document.querySelectorAll("button");
     playButtons.forEach((button) => {
       if (button.textContent?.includes("Play")) {
@@ -1240,17 +1249,17 @@ let active = 1; // Global active state for video player
     document.addEventListener("click", function (event) {
       const videoCard = document.querySelector("#video-player-card");
       const closeButton = document.querySelector("#close-video-btn");
-      const target = event.target;
-      if (!videoCard || videoCard.classList.contains("hidden") || target === closeButton || closeButton?.contains(target)) {
+      const target = event.target as Node | null; // Cast to Node | null
+      if (!videoCard || videoCard.classList.contains("hidden") || target === closeButton || closeButton?.contains(target as Node)) { // Cast to Node
         return;
       }
-      if (videoCard.contains(target)) {
+      if (videoCard.contains(target as Node)) { // Cast to Node
         return;
       }
       const isPlayButton =
-        target.closest(".btn") &&
-        (target.textContent?.includes("Play") ||
-          target.closest(".btn")?.textContent?.includes("Play"));
+        target && (target as HTMLElement).closest(".btn") && // Null check and cast to HTMLElement
+        ((target as HTMLElement).textContent?.includes("Play") || // Null check and cast to HTMLElement
+          (target as HTMLElement).closest(".btn")?.textContent?.includes("Play")); // Null check and cast to HTMLElement
       if (isPlayButton) {
         return;
       }
@@ -1262,8 +1271,8 @@ let active = 1; // Global active state for video player
     if (videoCard) {
       videoCard.addEventListener("click", function (event) {
         const closeButton = document.querySelector("#close-video-btn");
-        const target = event.target;
-        if (target === closeButton || closeButton?.contains(target)) {
+        const target = event.target as Node | null; // Cast to Node | null
+        if (target === closeButton || closeButton?.contains(target as Node)) { // Cast to Node
           return;
         }
         event.stopPropagation();
@@ -1280,7 +1289,7 @@ let active = 1; // Global active state for video player
     show1 = 1;
     showVideoPlayer();
   }
-  function playepisode(dataid, episode, index, type) {
+  function playepisode(dataid: string, episode: number, index: number, type: string) {
     show1 = 1;
     playEpisode(type || "regular", 0, index || 0);
   }

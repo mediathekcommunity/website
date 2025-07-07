@@ -11,9 +11,9 @@ type MediathekItem = typeof mediathek.$inferSelect;
 type ChannelItem = typeof channel.$inferSelect;
 
 // Fetch data from the database
-const { getMediathekItems, getChannels } = getMediathekQueries();
-const dbMediathekItems = await getMediathekItems();
-const dbChannels = await getChannels();
+const queries = getMediathekQueries();
+const dbMediathekItems = await queries.getMediathekItems();
+const dbChannels = await queries.getChannels();
 
 // Create a map for quick channel lookup, explicitly typing channel
 const channelMap = new Map<string, ChannelItem>(dbChannels.map((channel: ChannelItem) => [channel.id, channel]));

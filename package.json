@@ -26,6 +26,7 @@
 		"@astrojs/sitemap": "^3.4.1",
 		"@astrojs/svelte": "^7.1.0",
 		"@authopia/widget": "^0.9.4",
+		"@clerk/astro": "^2.10.2",
 		"@libsql/client": "^0.14.0",
 		"@tailwindcss/vite": "^4.1.11",
 		"@unpic/astro": "^1.0.0",

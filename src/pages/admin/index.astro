@@ -3,10 +3,7 @@ import AdminLayout from "../../layouts/AdminLayout.astro";
 
 // Authentication check
 const isAuthenticated = Astro.locals.isAuthenticated;
-if (!isAuthenticated) {
-	return Astro.redirect('/login');
-}
-
+ 
 // Fetch content statistics from API
 let contentStats = { movies: 0, series: 0, yMovies: 0, ySeries: 0, total: 0 };
 let channelStats = { total: 0, countries: 0 };
