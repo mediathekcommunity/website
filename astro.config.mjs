@@ -8,9 +8,9 @@ import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 import icon from "astro-icon";
 import kinde from "astro-kinde";
-import dotenv from "dotenv";
 
-dotenv.config();
+
+
 
 // Environment-based URL configuration
 const isProduction = process.env.NODE_ENV === "production";
