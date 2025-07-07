@@ -27,7 +27,7 @@ export default defineConfig({
 	}),
 	integrations: [
 		kinde({
-			clientId: process.env.KINDE_MANAGEMENT_CLIENT_ID,
+			clientId: "205eca344cf140c3a043325267a57503",
 			clientSecret: process.env.KINDE_MANAGEMENT_CLIENT_SECRET,
 			domain: process.env.KINDE_DOMAIN,
 			callbackUri: `${baseUrl}/api/kinde/callback`,
