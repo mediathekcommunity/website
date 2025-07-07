@@ -42,5 +42,8 @@ export default defineConfig({
 	],
 	vite: {
 		plugins: [tailwindcss()],
+		define: {
+        "process.env": process.env
+		}
 	},
 });
