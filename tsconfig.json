@@ -1,8 +1,10 @@
 {
-	"extends": "astro/tsconfigs/strict",
-	"include": [".astro/types.d.ts", "**/*"],
-	"exclude": ["dist"],
-	"compilerOptions": {
-		"strictNullChecks": true
-	}
+  "extends": "astro/tsconfigs/strict",
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules/.svelte2tsx-language-server-files"],
+  "compilerOptions": {
+    "jsx": "preserve",
+    "allowJs": true,
+    "checkJs": true
+  }
 }

@@ -122,6 +122,8 @@ export const channelRelations = relations(channel, ({ many }) => ({
 	mediathek: many(mediathek),
 }));
 
+import type { InferSelectModel } from "drizzle-orm";
+
 export const mediathekRelations = relations(mediathek, ({ one, many }) => ({
 	channel: one(channel, {
 		fields: [mediathek.channel],
@@ -150,4 +152,10 @@ export const db = {
 	medialinks,
 	medialinks_series,
 	mediathek,
+};
+
+export type MediathekItemWithRelations = InferSelectModel<typeof mediathek> & {
+    channel?: InferSelectModel<typeof channel>;
+    medialinks?: InferSelectModel<typeof medialinks>;
+    seriesLinks?: InferSelectModel<typeof medialinks_series>[];
 };

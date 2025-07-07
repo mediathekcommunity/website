@@ -1,34 +1,13 @@
 ---
-import { Image } from "astro:assets";
 // Import required components and types
 import { Icon } from "astro-icon/components";
 
-// Define the HeroItem interface
-interface HeroItem {
-	backdrop?: string;
-	backdropup?: { filename_disk: string };
-	poster?: string;
-	posterup?: { filename_disk: string };
-	title: string;
-	orgtitle: string;
-	id: string;
-	channel: {
-		country: string;
-		icon: string;
-	};
-	quality: "4K" | "fhd" | "hd" | string;
-	type: "movie" | "series" | "music" | string;
-	special?: { name: string };
-	language?: string;
-	episode?: {
-		season: number;
-		episode: number;
-		lang?: string;
-	};
-	links?: Array<{
-		audiolang: string[];
-	}>;
-}
+import type { InferSelectModel } from "drizzle-orm";
+import type { mediathek, channel } from "../schema";
+import type { HeroItem } from "../types/global"; // Import from global.d.ts
+
+type Mediathek = InferSelectModel<typeof mediathek>;
+type Channel = InferSelectModel<typeof channel>;
 
 // Component props
 interface Props {
@@ -55,13 +34,15 @@ const getQualityIcon = (quality: string) => {
 };
 
 const getImageUrl = (slide: HeroItem) => {
-	if (!slide.backdrop && !slide.backdropup) {
-		console.warn("No backdrop found for slide", slide);
-		return "https://api.mediathek.community/assets/default-backdrop.jpg";
-	}
-	return slide.backdrop
-		? `https://img.mediathek.community/t/p/original${slide.backdrop}`
-		: `https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/${slide.backdropup?.filename_disk}`;
+  if (slide.backdrop) {
+    return slide.backdrop.startsWith("http")
+      ? slide.backdrop
+      : `https://img.mediathek.community/t/p/original${slide.backdrop}`;
+  } else if (slide.backdropup) {
+    return `https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/${slide.backdropup}`;
+  }
+  console.warn("No backdrop found for slide", slide);
+  return "https://api.mediathek.community/assets/default-backdrop.jpg";
 };
 
 const getTypeIcon = (type: string) => {
@@ -85,7 +66,7 @@ const getTypeIcon = (type: string) => {
   import Fade from "embla-carousel-fade";
 
   document.addEventListener("DOMContentLoaded", () => {
-    const emblaNode = document.querySelector(".embla");
+    const emblaNode = document.querySelector(".embla"); // Remove explicit cast to HTMLElement
     if (emblaNode) {
       const options = {
         align: "start",
@@ -105,7 +86,7 @@ const getTypeIcon = (type: string) => {
         Fade(),
       ];
 
-      const emblaApi = EmblaCarousel(emblaNode, options, plugins);
+      const emblaApi = EmblaCarousel(emblaNode as HTMLElement, options as any, plugins as any); // Cast options and plugins to any
     }
   });
 </script>
@@ -118,13 +99,11 @@ const getTypeIcon = (type: string) => {
           <div class="embla__slide">
             <div class="relative h-full w-full">
               <div class="image-container absolute inset-0">
-                <Image
+                <img
                   src={getImageUrl(slide)}
                   alt={slide.title}
-                  width={1920}
-                  height={1080}
-                  quality={90}
-                  format="webp"
+                  width="1920"
+                  height="1080"
                   class="hero-image w-full"
                   loading="eager"
                 />
@@ -132,26 +111,36 @@ const getTypeIcon = (type: string) => {
               </div>
               <div class="text-overlay absolute text-base-content sm:bottom-12 sm:left-8 md:bottom-16 md:left-16 lg:bottom-20 lg:left-32">
                 <div class="mb-0.5 flex flex-wrap items-center gap-0.5 sm:gap-1 sm:mb-4">
-                  <span class="badge-icon badge-ghost inline-flex items-center gap-1 px-1 py-1">
-                    <span class={slide.icon} />
-                    <Icon name={slide.channelicon} height="28px" width="36px" />
-                  </span>
+                  {slide.channel.icon && (
+                    <span class="badge-icon badge-ghost inline-flex items-center gap-1 px-1 py-1">
+                      <span class={slide.channel.icon} />
+                    </span>
+                  )}
+                  {slide.channelicon && ( // This is typically passed in from the calling page (movies/series.astro)
+                    <span class="badge-icon badge-ghost inline-flex items-center gap-1 px-1 py-1">
+                      <Icon name={slide.channelicon} height="28px" width="36px" />
+                    </span>
+                  )}
 
-                  <span class="badge-icon badge-ghost inline-flex items-center gap-1 px-1 py-1">
-                    <Icon
-                      name={getQualityIcon(slide.quality)}
-                      height="28px"
-                      width="36px"
-                    />
-                  </span>
+                  {slide.quality && (
+                    <span class="badge-icon badge-ghost inline-flex items-center gap-1 px-1 py-1">
+                      <Icon
+                        name={getQualityIcon(slide.quality as string)}
+                        height="28px"
+                        width="36px"
+                      />
+                    </span>
+                  )}
 
-                  <span class="badge-icon badge-ghost inline-flex items-center gap-1 px-1 py-1">
-                    <Icon
-                      name={getTypeIcon(slide.type)}
-                      height="28px"
-                      width="36px"
-                    />
-                  </span>
+                  {slide.type && (
+                    <span class="badge-icon badge-ghost inline-flex items-center gap-1 px-1 py-1">
+                      <Icon
+                        name={getTypeIcon(slide.type as string)}
+                        height="28px"
+                        width="36px"
+                      />
+                    </span>
+                  )}
                 </div>
 
                 <h1 class="mb-2 text-2xl font-bold tracking-tight leading-tight sm:text-3xl md:text-4xl lg:text-5xl text-white/80">

@@ -1,28 +1,20 @@
 ---
-import { getCollection } from "astro:content";
 import { Icon } from "astro-icon/components";
+import { eq, desc } from "drizzle-orm";
 import Card from "../components/Card.astro";
 import HeroSlider from "../components/HeroSlider.astro";
 import Layout from "../layouts/default.astro";
+import { db } from "../lib/db";
+import { mediathek, channel } from "../schema";
 
-// Get all details from content collection and filter for series only (excluding fallback)
-const allDetailsRaw = (await getCollection("details")).sort((a, b) => {
-	const dateA = a.data.created
-		? new Date(a.data.created)
-		: a.data.lastupdated
-			? new Date(a.data.lastupdated)
-			: new Date(0);
-	const dateB = b.data.created
-		? new Date(b.data.created)
-		: b.data.lastupdated
-			? new Date(b.data.lastupdated)
-			: new Date(0);
-	return dateB.valueOf() - dateA.valueOf(); // Descending order (newest first)
+// Get all details from the database and filter for series only
+const seriesDetails = await db.query.mediathek.findMany({
+  where: eq(mediathek.type, "series"),
+  orderBy: desc(mediathek.created),
+  with: {
+    channel: true,
+  },
 });
-const seriesDetails = allDetailsRaw.filter(
-	(entry: any) =>
-		entry.data.id !== "fallback" && entry.data.info.type === "series",
-);
 
 // Function to calculate remaining days from onlineuntil date in visitor's local time
 function calculateRemainingDays(onlineuntil: string): number {
@@ -57,60 +49,61 @@ function calculateRemainingDays(onlineuntil: string): number {
 
 // Convert series details to hero items and card data
 const heroItems =
-	seriesDetails.length > 0
-		? seriesDetails.slice(0, 3).map((entry: any) => ({
-				backdrop:
-					entry.data.info.backdrop || "/8zLyVhEsH6SM9diX7CUUWcaRlk0.jpg",
-				title: entry.data.title,
-				orgtitle: entry.data.orgtitle,
-				id: entry.data.id,
-				channel: {
-					country: entry.data.info.channel.country,
-					icon: entry.data.info.channel.name?.toLowerCase() || "unknown",
-				},
-				quality: entry.data.info.quality || "HD",
-				type: entry.data.info.type,
-				channelicon: "simple-icons:netflix",
-			}))
-		: [
-				{
-					backdrop: "/8zLyVhEsH6SM9diX7CUUWcaRlk0.jpg",
-					title: "No series available at the moment",
-					orgtitle: "",
-					id: "no-series-placeholder",
-					channel: {
-						country: "de",
-						icon: "unknown",
-					},
-					quality: "HD",
-					type: "series",
-					channelicon: "mdi:tv-off",
-				},
-			];
+  seriesDetails.length > 0
+    ? seriesDetails.slice(0, 3).map((entry) => ({
+        backdrop: entry.backdrop || "/8zLyVhEsH6SM9diX7CUUWcaRlk0.jpg",
+        title: entry.title,
+        orgtitle: entry.orgtitle,
+        id: entry.id,
+        channel: {
+          country: entry.channel?.country || "de",
+          icon: `fi fi-${(entry.channel?.country || "de").toLowerCase()}`, // Use actual country flag for icon
+        },
+        quality: entry.quality || "HD",
+        type: entry.type,
+        channelicon: "simple-icons:netflix", // This is a fixed icon, not dynamic from DB
+      }))
+    : [
+        {
+          backdrop: "/8zLyVhEsH6SM9diX7CUUWcaRlk0.jpg",
+          title: "No series available at the moment",
+          orgtitle: "",
+          id: "no-series-placeholder",
+          channel: {
+            country: "de",
+            icon: "unknown",
+          },
+          quality: "HD",
+          type: "series",
+          channelicon: "mdi:tv-off",
+        },
+      ];
 
 // Convert series details to card data with calculated remaining days
-const cardData = seriesDetails.map((entry: any) => ({
-	id: entry.data.id,
-	title: entry.data.title,
-	orgtitle: entry.data.orgtitle,
-	metascore: entry.data.info.metascore || "N/A",
-	type: entry.data.info.type,
-	poster: entry.data.info.poster || "/mzkstyDSsTRswCMRvoBD5ULPnIt.jpg",
-	channel: { country: entry.data.info.channel.country },
-	remainingDays: calculateRemainingDays(entry.data.info.onlineuntil),
+const cardData = seriesDetails.map((entry) => ({
+  id: entry.id,
+  title: entry.title,
+  orgtitle: entry.orgtitle,
+  metascore: entry.metascore || "N/A",
+  type: entry.type,
+  poster: entry.poster || "/mzkstyDSsTRswCMRvoBD5ULPnIt.jpg",
+  backdropup: entry.backdropup, // Add backdropup from DB
+  posterup: entry.coverimageup, // Add coverimageup (as posterup) from DB
+  channel: { country: entry.channel?.country || "de" },
+  remainingDays: calculateRemainingDays(entry.onlineuntil?.toISOString() || ""),
 }));
 
 // Filter series entries by country
 const entriesByCountry = seriesDetails.reduce(
-	(acc: Record<string, any[]>, entry: any) => {
-		const country = entry.data.info.channel.country;
-		if (!acc[country]) {
-			acc[country] = [];
-		}
-		acc[country].push(entry);
-		return acc;
-	},
-	{},
+  (acc: Record<string, any[]>, entry) => {
+    const country = entry.channel?.country || "de";
+    if (!acc[country]) {
+      acc[country] = [];
+    }
+    acc[country].push(entry);
+    return acc;
+  },
+  {},
 );
 ---
 
@@ -150,15 +143,17 @@ const entriesByCountry = seriesDetails.reduce(
     {
       Object.keys(entriesByCountry).map((country) => {
         const countryEntries = entriesByCountry[country];
-        const countryCardData = countryEntries.map((entry: any) => ({
-          id: entry.data.id,
-          title: entry.data.title,
-          orgtitle: entry.data.orgtitle,
-          metascore: entry.data.info.metascore || "N/A",
-          type: entry.data.info.type,
-          poster: entry.data.info.poster || "/mzkstyDSsTRswCMRvoBD5ULPnIt.jpg",
-          channel: { country: entry.data.info.channel.country },
-          remainingDays: calculateRemainingDays(entry.data.info.onlineuntil),
+        const countryCardData = countryEntries.map((entry) => ({
+          id: entry.id,
+          title: entry.title,
+          orgtitle: entry.orgtitle,
+          metascore: entry.metascore || "N/A",
+          type: entry.type,
+          poster: entry.poster || "/mzkstyDSsTRswCMRvoBD5ULPnIt.jpg",
+          backdropup: entry.backdropup, // Add backdropup from DB
+          posterup: entry.coverimageup, // Add coverimageup (as posterup) from DB
+          channel: { country: entry.channel?.country || "de" },
+          remainingDays: calculateRemainingDays(entry.onlineuntil?.toISOString() || ""),
         }));
 
         return (

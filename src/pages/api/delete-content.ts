@@ -1,7 +1,5 @@
-import { createClient } from "@libsql/client";
 import type { APIRoute } from "astro";
 import { eq } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/libsql";
 import { db } from "../../lib/db.js";
 import * as schema from "../../schema.js";
 
@@ -38,7 +36,6 @@ export const DELETE: APIRoute = async ({ request, locals }) => {
 
 		const url = new URL(request.url);
 		const id = url.searchParams.get("id");
-		const source = url.searchParams.get("source") || "local";
 
 		if (!id) {
 			return new Response(
@@ -53,22 +50,8 @@ export const DELETE: APIRoute = async ({ request, locals }) => {
 			);
 		}
 
-		// Determine which database to use
-		let dbToUse;
-		if (source === "cloud") {
-			// Use remote database
-			const remoteClient = createClient({
-				url: process.env.TURSO_DATABASE_URL!,
-				authToken: process.env.TURSO_AUTH_TOKEN!,
-			});
-			dbToUse = drizzle(remoteClient);
-		} else {
-			// Use local database (default)
-			dbToUse = db;
-		}
-
 		// Check if record exists
-		const existing = await dbToUse
+		const existing = await db
 			.select()
 			.from(schema.mediathek)
 			.where(eq(schema.mediathek.id, id))
@@ -88,12 +71,12 @@ export const DELETE: APIRoute = async ({ request, locals }) => {
 		}
 
 		// Delete related episodes first (if any)
-		await dbToUse
+		await db
 			.delete(schema.medialinks_series)
 			.where(eq(schema.medialinks_series.mediaitem, id));
 
 		// Delete the main record
-		await dbToUse.delete(schema.mediathek).where(eq(schema.mediathek.id, id));
+		await db.delete(schema.mediathek).where(eq(schema.mediathek.id, id));
 
 		return new Response(
 			JSON.stringify({

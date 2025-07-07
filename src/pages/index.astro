@@ -1,13 +1,54 @@
 ---
-import { getCollection } from "astro:content";
 import Card from "../components/Card.astro";
 import HeroSlider from "../components/HeroSlider.astro";
 import Layout from "../layouts/default.astro";
+import { getMediathekQueries } from "../lib/db";
+import { mediathek, channel } from "../schema";
+import type { MediathekEntry, HeroItem, CardData } from "../types/global"; // Import from global.d.ts
 
-// Get all details from content collection, filter out fallback entries, and sort by timestamp
-const allDetails = (await getCollection("details"))
-	.filter((entry: any) => entry.data.id !== "fallback")
-	.sort((a, b) => {
+// Define types for clarity
+type MediathekItem = typeof mediathek.$inferSelect;
+type ChannelItem = typeof channel.$inferSelect;
+
+// Fetch data from the database
+const { getMediathekItems, getChannels } = getMediathekQueries();
+const dbMediathekItems = await getMediathekItems();
+const dbChannels = await getChannels();
+
+// Create a map for quick channel lookup, explicitly typing channel
+const channelMap = new Map<string, ChannelItem>(dbChannels.map((channel: ChannelItem) => [channel.id, channel]));
+
+// Transform database items to match the expected content collection structure
+const allDetails: MediathekEntry[] = dbMediathekItems.map((item: MediathekItem) => {
+    const channelData = channelMap.get(item.channel as string) as ChannelItem | undefined;
+    return {
+        id: item.id,
+        slug: item.id, // Using id as slug for consistency with content collection structure
+        data: {
+            id: item.id,
+            title: item.title,
+            orgtitle: item.orgtitle,
+            description: item.description,
+            poster: item.poster || "/mzkstyDSsTRswCMRvoBD5ULPnIt.jpg", // Default poster
+            backdrop: item.backdrop || "/8zLyVhEsH6SM9diX7CUUWcaRlk0.jpg", // Default backdrop
+            backdropup: item.backdropup,
+            posterup: item.coverimageup,
+            type: item.type as "movie" | "series" | "other" | "music" | "ymovie" | "yseries", // Cast type
+            created: item.created ? new Date(item.created) : null,
+            lastupdated: item.updated ? new Date(item.updated) : null, // Use updated as lastupdated
+            info: {
+                metascore: item.metascore || "N/A", // Default metascore
+                quality: (item.quality as "4k" | "1080p" | "720p" | "SD") || null, // Default quality
+                onlineuntil: item.onlineuntil,
+                channel: {
+                    name: channelData?.name ?? "unknown",
+                    country: channelData?.country ?? "us", // Default country if not found
+                },
+            },
+        },
+    } as MediathekEntry; // Explicitly cast to MediathekEntry
+}).filter((entry) => entry.data.id !== "fallback")
+  .sort((a, b) => {
 		const dateA = a.data.created
 			? new Date(a.data.created)
 			: a.data.lastupdated
@@ -22,60 +63,72 @@ const allDetails = (await getCollection("details"))
 	});
 
 // Function to calculate remaining days from onlineuntil date in visitor's local time
-function calculateRemainingDays(onlineuntil: string): number {
-	const currentDate = new Date();
+function calculateRemainingDays(onlineuntil: string | number | null): number {
+		const currentDate = new Date();
 
-	// Handle both date formats: "2025-06-24" and "2025-06-24T23:59:59Z"
-	let expiryDate: Date;
-	if (onlineuntil.includes("T")) {
-		// Full ISO format with time
-		expiryDate = new Date(onlineuntil);
-	} else {
-		// Date-only format, treat as end of day in local timezone
-		expiryDate = new Date(onlineuntil + "T23:59:59");
-	}
+		let onlineUntilDate: Date;
+		if (typeof onlineuntil === 'number' && onlineuntil !== null) {
+				onlineUntilDate = new Date(onlineuntil); // onlineuntil is a timestamp in milliseconds
+		} else if (typeof onlineuntil === 'string' && onlineuntil) {
+				// Handle both date formats: "2025-06-24" and "2025-06-24T23:59:59Z"
+				if (onlineuntil.includes("T")) {
+				  // Full ISO format with time
+				  onlineUntilDate = new Date(onlineuntil);
+				} else {
+				  // Date-only format, treat as end of day in local timezone
+				  onlineUntilDate = new Date(onlineuntil + "T23:59:59");
+				}
+		} else {
+				return 0; // If onlineuntil is null or invalid, consider it expired
+		}
 
-	// Convert to local dates (removing time component) for accurate day calculation
-	const currentLocalDate = new Date(
-		currentDate.getFullYear(),
-		currentDate.getMonth(),
-		currentDate.getDate(),
-	);
-	const expiryLocalDate = new Date(
-		expiryDate.getFullYear(),
-		expiryDate.getMonth(),
-		expiryDate.getDate(),
-	);
+		// Convert to local dates (removing time component) for accurate day calculation
+		const currentLocalDate = new Date(
+				currentDate.getFullYear(),
+				currentDate.getMonth(),
+				currentDate.getDate(),
+		);
+		const expiryLocalDate = new Date(
+				onlineUntilDate.getFullYear(),
+				onlineUntilDate.getMonth(),
+				onlineUntilDate.getDate(),
+		);
 
-	const diffTime = expiryLocalDate.getTime() - currentLocalDate.getTime();
-	const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-	return Math.max(0, diffDays); // Return 0 if expired
+		const diffTime = expiryLocalDate.getTime() - currentLocalDate.getTime();
+		const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+		return Math.max(0, diffDays); // Return 0 if expired
 }
 
 // Convert details collection to hero items and card data
-const heroItems =
+const heroItems: HeroItem[] =
 	allDetails.length > 0
-		? allDetails.slice(0, 3).map((entry: any) => ({
+		? allDetails.slice(0, 3).map((entry: MediathekEntry) => ({
 				backdrop:
-					entry.data.info.backdrop || "/8zLyVhEsH6SM9diX7CUUWcaRlk0.jpg",
-				title: entry.data.title,
-				orgtitle: entry.data.orgtitle,
+					entry.data.backdrop || "/8zLyVhEsH6SM9diX7CUUWcaRlk0.jpg",
+				    backdropup: entry.data.backdropup,
+				    poster: entry.data.poster || "https://api.mediathek.community/assets/default-poster.jpg", // Default poster
+				    posterup: entry.data.posterup,
+				title: entry.data.title || "",
+				orgtitle: entry.data.orgtitle || "",
 				id: entry.data.id,
 				channel: {
 					country: entry.data.info.channel.country,
 					icon: entry.data.info.channel.name?.toLowerCase() || "unknown",
 				},
 				quality: entry.data.info.quality || "HD",
-				type: entry.data.info.type,
+				type: entry.data.type || "unknown",
 				channelicon:
-					entry.data.info.type === "movie"
+					entry.data.type === "movie"
 						? "simple-icons:warnerbros"
 						: "simple-icons:netflix",
 			}))
 		: [
 				{
 					backdrop:
-						"https://images.unsplash.com/photo-1489599743717-9c7b9b6ea9c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080&q=80",
+						"https://images.unsplash.com/photo-1489599743717-9c7b9b6ea9c4?ixlib=rb-4.0.3&auto=format&fit=cover&w=1920&h=1080&q=80",
+				      backdropup: null,
+				      poster: "https://api.mediathek.community/assets/default-poster.jpg",
+				      posterup: null,
 					title: "No content available at the moment",
 					orgtitle: "",
 					id: "no-content-placeholder",
@@ -89,21 +142,23 @@ const heroItems =
 				},
 			];
 
-// Convert details collection to card data with calculated remaining days
-const cardData = allDetails.map((entry: any) => ({
+// Convert details collection to card data with calculated remaining days, explicitly typing entry
+const cardData: CardData[] = allDetails.map((entry: MediathekEntry) => ({
 	id: entry.data.id, // Use the actual ID from collection instead of generating one
-	title: entry.data.title,
-	orgtitle: entry.data.orgtitle,
+	title: entry.data.title || "",
+	orgtitle: entry.data.orgtitle || "",
 	metascore: entry.data.info.metascore || "N/A",
-	type: entry.data.info.type,
-	poster: entry.data.info.poster || "/mzkstyDSsTRswCMRvoBD5ULPnIt.jpg",
+	type: entry.data.type || "unknown",
+	poster: entry.data.poster || "/mzkstyDSsTRswCMRvoBD5ULPnIt.jpg",
+		backdropup: entry.data.backdropup,
+		posterup: entry.data.posterup,
 	channel: { country: entry.data.info.channel.country },
 	remainingDays: calculateRemainingDays(entry.data.info.onlineuntil),
 }));
 
-// Filter collection entries by country
-const entriesByCountry = allDetails.reduce(
-	(acc: Record<string, any[]>, entry: any) => {
+// Filter collection entries by country, explicitly typing acc and entry
+const entriesByCountry: Record<string, MediathekEntry[]> = allDetails.reduce(
+	(acc: Record<string, MediathekEntry[]>, entry: MediathekEntry) => {
 		const country = entry.data.info.channel.country;
 		if (!acc[country]) {
 			acc[country] = [];
@@ -119,15 +174,15 @@ const entriesByCountry = allDetails.reduce(
   <div class="flex flex-col min-h-screen">
     <HeroSlider heroItems={heroItems} special={true} showcountry={true} />
 
-    <!-- Recently Added Section -->
+    {/* Recently Added Section */}
     <div class="px-4 sm:px-6 md:px-8">
       <h2 class="text-base-content text-xl sm:text-2xl font-bold my-4 sm:my-6 md:my-8">Recently Added</h2>
 
-      <!-- Card Carousel -->
+      {/* Card Carousel */}
       <div class="card-carousel embla">
         <div class="embla__container">
           {
-            cardData.map((card) => (
+            cardData.map((card: CardData) => (
               <div class="embla__slide">
                 <Card carddata={card} countryflag="true"/>
               </div>
@@ -137,18 +192,20 @@ const entriesByCountry = allDetails.reduce(
       </div>
     </div>
 
-    <!-- Country Sections -->
+    {/* Country Sections */}
     {
       Object.keys(entriesByCountry).map((country, index, array) => {
         const isLast = index === array.length - 1;
         const countryEntries = entriesByCountry[country];
-        const countryCardData = countryEntries.map((entry: any) => ({
+        const countryCardData = countryEntries.map((entry: MediathekEntry) => ({
           id: entry.data.id,
-          title: entry.data.title,
-          orgtitle: entry.data.orgtitle,
+          title: entry.data.title || "",
+          orgtitle: entry.data.orgtitle || "",
           metascore: entry.data.info.metascore || "N/A",
-          type: entry.data.info.type,
-          poster: entry.data.info.poster || "/mzkstyDSsTRswCMRvoBD5ULPnIt.jpg",
+          type: entry.data.type || "unknown",
+          poster: entry.data.poster || "/mzkstyDSsTRswCMRvoBD5ULPnIt.jpg",
+          backdropup: entry.data.backdropup,
+          posterup: entry.data.posterup,
           channel: { country: entry.data.info.channel.country },
           remainingDays: calculateRemainingDays(entry.data.info.onlineuntil),
         }));
@@ -160,11 +217,11 @@ const entriesByCountry = allDetails.reduce(
               {country.toUpperCase()} Content
             </h2>
 
-            <!-- Card Carousel -->
+            {/* Card Carousel */}
             <div class={`card-carousel embla ${isLast ? "last-carousel" : ""}`}>
               <div class="embla__container">
                 {
-                  countryCardData.map((card) => (
+                  countryCardData.map((card: CardData) => (
                     <div class="embla__slide">
                       <Card carddata={card}  />
                     </div>
@@ -193,7 +250,7 @@ const entriesByCountry = allDetails.reduce(
         slidesToScroll: 1,
       };
 
-      const emblaApi = EmblaCarousel(emblaNode, options);
+      const emblaApi = EmblaCarousel(emblaNode as HTMLElement, options as any); // Cast options to any
     }
   });
 </script>

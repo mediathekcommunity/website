@@ -1,7 +1,5 @@
-import { createClient } from "@libsql/client";
 import type { APIRoute } from "astro";
 import { eq } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/libsql";
 import { db } from "../../lib/db.js";
 import * as schema from "../../schema.js";
 
@@ -20,9 +18,7 @@ export const GET: APIRoute = async ({ url }) => {
 	}
 
 	try {
-		// Get the content ID and source from URL parameters
 		const contentId = url.searchParams.get("id");
-		const source = url.searchParams.get("source") || "local";
 
 		if (!contentId) {
 			return new Response(
@@ -34,28 +30,16 @@ export const GET: APIRoute = async ({ url }) => {
 			);
 		}
 
-		let dbToUse;
-		if (source === "cloud") {
-			// Use remote database
-			const remoteClient = createClient({
-				url: process.env.TURSO_DATABASE_URL!,
-				authToken: process.env.TURSO_AUTH_TOKEN!,
-			});
-			dbToUse = drizzle(remoteClient);
-		} else {
-			// Use local database (default)
-			dbToUse = db;
-		}
+		const mediathekItem = await db.query.mediathek.findFirst({
+			where: eq(schema.mediathek.id, contentId),
+			with: {
+				channel: true,
+				medialinks: true,
+				seriesLinks: true,
+			},
+		});
 
-		// Load the mediathek item with related data
-		const items = await dbToUse
-			.select()
-			.from(schema.mediathek)
-			.leftJoin(schema.channel, eq(schema.mediathek.channel, schema.channel.id))
-			.where(eq(schema.mediathek.id, contentId))
-			.limit(1);
-
-		if (items.length === 0) {
+		if (!mediathekItem) {
 			return new Response(
 				JSON.stringify({
 					error: "Content not found",
@@ -67,28 +51,17 @@ export const GET: APIRoute = async ({ url }) => {
 			);
 		}
 
-		const item = items[0];
-		const mediathekRecord = item.mediathek;
-		const channelRecord = item.channel;
-
-		// Load episodes if this is a series
 		let playlist: any;
 		if (
-			mediathekRecord.type === "series" ||
-			mediathekRecord.type === "yseries"
+			mediathekItem.type === "series" ||
+			mediathekItem.type === "yseries"
 		) {
-			const episodes = await dbToUse
-				.select()
-				.from(schema.medialinks_series)
-				.where(eq(schema.medialinks_series.mediaitem, contentId));
-
-			// Group episodes by type (regular/ov) and season
 			playlist = {
 				regular: {} as any,
 				ov: {} as any,
 			};
 
-			episodes.forEach((episode) => {
+			mediathekItem.seriesLinks.forEach((episode) => {
 				const type = episode.ov ? "ov" : "regular";
 				const seasonKey = String(episode.season);
 
@@ -120,33 +93,32 @@ export const GET: APIRoute = async ({ url }) => {
 			});
 		}
 
-		// Convert database record back to the expected JSON format
 		const jsonData = {
-			id: mediathekRecord.id,
-			title: mediathekRecord.title,
-			orgtitle: mediathekRecord.orgtitle || undefined,
-			geo: channelRecord?.country || undefined,
-			fskcheck: mediathekRecord.fskcheck,
-			dyna: mediathekRecord.dyna,
-			created: mediathekRecord.created.toISOString(),
-			lastupdated: mediathekRecord.updated.toISOString(),
+			id: mediathekItem.id,
+			title: mediathekItem.title,
+			orgtitle: mediathekItem.orgtitle || undefined,
+			geo: mediathekItem.channel?.country || undefined,
+			fskcheck: mediathekItem.fskcheck,
+			dyna: mediathekItem.dyna,
+			created: mediathekItem.created?.toISOString(),
+			lastupdated: mediathekItem.updated?.toISOString(),
 			info: {
-				type: mediathekRecord.type,
-				duration: mediathekRecord.duration || 0,
-				seasons: mediathekRecord.seasons || 0,
-				episodes: mediathekRecord.episodes || 0,
-				onlineuntil: mediathekRecord.onlineuntil
-					? mediathekRecord.onlineuntil.toISOString()
+				type: mediathekItem.type,
+				duration: mediathekItem.duration || 0,
+				seasons: mediathekItem.seasons || 0,
+				episodes: mediathekItem.episodes || 0,
+				onlineuntil: mediathekItem.onlineuntil
+					? mediathekItem.onlineuntil.toISOString()
 					: "",
-				quality: mediathekRecord.quality || "",
-				description: mediathekRecord.description || "",
-				backdrop: mediathekRecord.backdrop || undefined,
-				poster: mediathekRecord.poster || undefined,
-				channel: channelRecord
+				quality: mediathekItem.quality || "",
+				description: mediathekItem.description || "",
+				backdrop: mediathekItem.backdrop || undefined,
+				poster: mediathekItem.poster || undefined,
+				channel: mediathekItem.channel
 					? {
-							name: channelRecord.name,
-							country: channelRecord.country,
-							icon: channelRecord.icon || undefined,
+							name: mediathekItem.channel.name,
+							country: mediathekItem.channel.country,
+							icon: mediathekItem.channel.icon || undefined,
 							info: false, // Default value
 						}
 					: {
@@ -155,27 +127,34 @@ export const GET: APIRoute = async ({ url }) => {
 							icon: undefined,
 							info: false,
 						},
-				cast: mediathekRecord.cast
-					? JSON.parse(mediathekRecord.cast)
+				cast: mediathekItem.cast
+					? JSON.parse(mediathekItem.cast)
 					: undefined,
-				crew: mediathekRecord.crew
-					? JSON.parse(mediathekRecord.crew)
+				crew: mediathekItem.crew
+					? JSON.parse(mediathekItem.crew)
 					: undefined,
 				spoken_languages: undefined, // This would need to be stored separately if needed
 			},
-			// Add movie-specific fields if movie
 			videosource:
-				mediathekRecord.type === "movie"
+				mediathekItem.type === "movie" && mediathekItem.medialinks
 					? {
-							src: "",
-							type: "",
-							title: "",
-							poster: "",
-							audiolang: [],
-							sources: [],
+							src: mediathekItem.medialinks.streamlink,
+							type: mediathekItem.medialinks.streamformat,
+							title: mediathekItem.medialinks.streamnote,
+							poster: "", // No direct poster for medialinks in schema
+							audiolang: mediathekItem.medialinks.audiolang
+								? JSON.parse(mediathekItem.medialinks.audiolang)
+								: [],
+							sources: mediathekItem.medialinks.streamlink
+								? [
+										{
+											src: mediathekItem.medialinks.streamlink,
+											type: mediathekItem.medialinks.streamformat || "video/mp4",
+										},
+									]
+								: [],
 						}
 					: undefined,
-			// Add series-specific fields if series
 			playlist: playlist,
 		};
 

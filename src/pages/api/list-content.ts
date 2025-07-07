@@ -20,24 +20,8 @@ export const GET: APIRoute = async ({ url }) => {
 	}
 
 	try {
-		// Get source parameter (local or cloud)
-		const source = url.searchParams.get("source") || "local";
-
-		let dbToUse;
-		if (source === "cloud") {
-			// Use remote database
-			const remoteClient = createClient({
-				url: process.env.TURSO_DATABASE_URL!,
-				authToken: process.env.TURSO_AUTH_TOKEN!,
-			});
-			dbToUse = drizzle(remoteClient);
-		} else {
-			// Use local database (default)
-			dbToUse = db;
-		}
-
 		// Get all mediathek items
-		const items = await dbToUse
+		const items = await db
 			.select({
 				id: schema.mediathek.id,
 				title: schema.mediathek.title,
@@ -62,7 +46,7 @@ export const GET: APIRoute = async ({ url }) => {
 			JSON.stringify({
 				success: true,
 				files: fileList,
-				source: source, // Include source in response
+				source: "database", // Indicate source is database
 			}),
 			{
 				status: 200,

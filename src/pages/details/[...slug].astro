@@ -1,63 +1,126 @@
 ---
-import { getCollection } from "astro:content";
+import { eq, or } from "drizzle-orm";
 import VideoplayerAstro from "../../components/VideoplayerAstro.astro";
 import BlogPost from "../../layouts/default.astro";
+import { channel, mediathek, medialinks, medialinks_series, type MediathekItemWithRelations } from "../../schema";
+import { db } from "../../lib/db";
+
 export const prerender = false; // Not needed in 'server' mode
 
-// Astro component recreated from Svelte source using DaisyUI
 export interface Props {
-	data?: any;
+  data?: any;
 }
 
-// Get the slug from URL params
 const { slug } = Astro.params;
-const id = slug; // The ID is extracted from the URL slug
+const id = slug;
 
-// Get all details from content collection
-const allDetails = await getCollection("details");
-
-// Helper function to find data by ID
-function findDataById(searchId: string) {
-	return allDetails.find((entry) => entry.data.id === searchId)?.data;
-}
-
-// Use provided data or fallback to content collection data based on ID
-let data;
+let data: MediathekItemWithRelations | any; // Type with MediathekItemWithRelations or any for fallback
 if (Astro.props.data) {
-	data = Astro.props.data;
+  data = Astro.props.data;
 } else {
-	// Try to find exact match only
-	data = findDataById(id || "");
+  const mediathekItem = await db.query.mediathek.findFirst({
+    where: eq(mediathek.id, id!),
+    with: {
+      channel: true,
+      medialinks: true,
+      seriesLinks: true,
+    },
+  });
 
-	// If no exact match found, use fallback
-	if (!data) {
-		// Try to get the fallback entry from content collection
-		data = findDataById("fallback");
+  if (mediathekItem) {
+    const isMovie = mediathekItem.type === "movie";
 
-		// If even the fallback entry doesn't exist, create a minimal one
-		if (!data) {
-			data = {
-				id: "fallback",
-				title: "No series available at the moment",
-				orgtitle: "",
-				geo: "de",
-				info: {
-					id: "fallback", // Add ID to info object for detection
-					type: "movie",
-					duration: 0,
-					seasons: 0,
-					episodes: 0,
-					onlineuntil: "2025-12-31T23:59:59Z",
-					quality: ".",
-					description: "<p>No movie/series found with the provided id</p>",
-					channel: {
-						name: ".",
-						country: "de",
-					},
-				},
-			};
-		}
-	}
+    data = {
+      id: mediathekItem.id,
+      title: mediathekItem.title,
+      orgtitle: mediathekItem.orgtitle,
+      geo: mediathekItem.channel?.country || "de",
+      fskcheck: mediathekItem.fskcheck,
+      dyna: mediathekItem.dyna,
+      videosource: isMovie ? mediathekItem.medialinks : null,
+      links: isMovie ? [mediathekItem.medialinks] : [],
+      playlist: isMovie
+        ? null
+        : {
+            regular: {
+              1: mediathekItem.seriesLinks.filter((link: { ov: any; }) => !link.ov),
+            },
+            ov: {
+              1: mediathekItem.seriesLinks.filter((link: { ov: any; }) => link.ov),
+            },
+          },
+      sublangs: [], // Placeholder for now, needs to be derived from medialinks if available
+      info: {
+        id: mediathekItem.id,
+        type: mediathekItem.type,
+        duration: mediathekItem.duration,
+        seasons: mediathekItem.seasons,
+        episodes: mediathekItem.episodes,
+        onlineuntil: mediathekItem.onlineuntil?.toISOString(),
+        quality: mediathekItem.quality,
+        description: mediathekItem.description,
+        channel: {
+          name: mediathekItem.channel?.name || ".",
+          country: mediathekItem.channel?.country || "de",
+        },
+        backdrop: mediathekItem.backdrop,
+        backdropup: mediathekItem.backdropup,
+        poster: mediathekItem.poster,
+        posterup: mediathekItem.coverimageup, // Assuming coverimageup maps to posterup
+        cast: (() => {
+          let parsedCast = [];
+          if (mediathekItem.cast) {
+            try {
+              const tempCast = JSON.parse(mediathekItem.cast);
+              if (Array.isArray(tempCast)) {
+                parsedCast = tempCast;
+              }
+            } catch (e) {
+              // Optional: Add logging for debugging purposes if needed.
+              // console.error("Failed to parse mediathekItem.cast, defaulting to empty array:", e);
+            }
+          }
+          return parsedCast;
+        })(),
+        crew: (() => {
+          let parsedCrew = [];
+          if (mediathekItem.crew) {
+            try {
+              const tempCrew = JSON.parse(mediathekItem.crew);
+              if (Array.isArray(tempCrew)) {
+                parsedCrew = tempCrew;
+              }
+            } catch (e) {
+              // Optional: Add logging for debugging purposes if needed.
+              // console.error("Failed to parse mediathekItem.crew, defaulting to empty array:", e);
+            }
+          }
+          return parsedCrew;
+        })(),
+      },
+    };
+  } else {
+    data = {
+      id: "fallback",
+      title: "No content available at the moment",
+      orgtitle: "",
+      geo: "de",
+      info: {
+        id: "fallback",
+        type: "movie",
+        duration: 0,
+        seasons: 0,
+        episodes: 0,
+        onlineuntil: "2025-12-31T23:59:59Z",
+        quality: ".",
+        description: "<p>No movie/series found with the provided id</p>",
+        channel: {
+          name: ".",
+          country: "de",
+        },
+      },
+    };
+  }
 }
 
 // Helper functions
@@ -453,7 +516,7 @@ let active = 1; // Global active state for video player
                         <span set:html={data.id === "fallback" ? "&infin;" : new Date(data.info.onlineuntil).toLocaleDateString()} />
                       </td>
                     </tr>
-                    {data.info.cast?.length > 0 && (
+                    {Array.isArray(data.info.cast) && data.info.cast.length > 0 && (
                       <tr>
                         <th class="font-semibold text-primary">Cast</th>
                         <td>

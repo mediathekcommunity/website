@@ -2,25 +2,18 @@
 import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
 
-// Define the CardData interface
-interface CardData {
-	id: string;
-	title?: string;
-	orgtitle?: string;
-	metascore?: string;
-	type: "movie" | "series" | "y-movie" | "y-series";
-	poster?: string;
-	backdropup?: { filename_disk: string };
-	posterup?: { filename_disk: string };
-	channel: { country: string };
-	remainingDays?: number;
-}
+import type { InferSelectModel } from "drizzle-orm";
+import type { mediathek, channel } from "../schema";
+import type { CardData } from "../types/global"; // Import from global.d.ts
+
+type Mediathek = InferSelectModel<typeof mediathek>;
+type Channel = InferSelectModel<typeof channel>;
 
 // Props for the Card component
 interface Props {
-	carddata: CardData;
-	countryflag?: string;
-	ico1?: string;
+  carddata: CardData;
+  countryflag?: string;
+  ico1?: string;
 }
 
 const { carddata, countryflag, ico1 } = Astro.props;
@@ -28,31 +21,39 @@ const { carddata, countryflag, ico1 } = Astro.props;
 const title = carddata?.title || "Unknown Title";
 const orgtitle = carddata?.orgtitle || null;
 const metascore = carddata?.metascore || "Unknown";
-const countryflag1 = `fi fi-${carddata.channel.country.toLowerCase()}`;
+const countryflag1 = `fi fi-${carddata.channel?.country?.toLowerCase() || "us"}`; // Default to "us" if country is null
 
 // Type icon mapping
-const typeIconMap = {
-	movie: "mdi:movie",
-	series: "mdi:tv",
-	"y-movie": "mdi:movie",
-	"y-series": "mdi:tv",
-} as const;
+const typeIconMap: Record<NonNullable<CardData["type"]>, string> = {
+  movie: "mdi:movie",
+  series: "mdi:tv",
+  other: "mdi:video-outline", // Add other types from schema if needed
+  music: "mdi:music",
+  ymovie: "mdi:movie",
+  yseries: "mdi:tv",
+};
 
-const getTypeIcon = (type: CardData["type"]) =>
-	typeIconMap[type] || "mdi:movie";
+const getTypeIcon = (type: CardData["type"]) => {
+  if (type && typeIconMap[type]) {
+    return typeIconMap[type];
+  }
+  return "mdi:movie"; // Default icon
+};
 
 // Generate poster URL
 const getPosterUrl = () => {
-	if (carddata.poster) {
-		return carddata.poster.startsWith("http")
-			? carddata.poster
-			: `https://img.mediathek.community/t/p/w300${carddata.poster}`;
-	} else if (carddata.posterup?.filename_disk) {
-		return `https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/${carddata.posterup.filename_disk}`;
-	} else if (carddata.backdropup?.filename_disk) {
-		return `https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/${carddata.backdropup.filename_disk}`;
-	}
-	return "https://api.mediathek.community/assets/default-poster.jpg";
+  if (carddata.poster) {
+    return carddata.poster.startsWith("http")
+      ? carddata.poster
+      : `https://img.mediathek.community/t/p/w300${carddata.poster}`;
+  } else if (carddata.posterup) {
+    // Directly use posterup as it's now expected to be a string path or null
+    return `https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/${carddata.posterup}`;
+  } else if (carddata.backdropup) {
+    // Directly use backdropup as it's now expected to be a string path or null
+    return `https://api2.mediathek.community/api/files/pbc_772122303/sjyo8dgc5h51h63/${carddata.backdropup}`;
+  }
+  return "https://api.mediathek.community/assets/default-poster.jpg";
 };
 
 const posterUrl = getPosterUrl();
@@ -90,7 +91,11 @@ const posterUrl = getPosterUrl();
             </span>
           </div>
         )}
-        {countryflag && <div class="country-flag"><span class={`fi fi-${carddata.channel.country.toLowerCase()}`} /></div>}
+        {countryflag && (
+          <div class="country-flag">
+            <span class={`fi fi-${carddata.channel?.country?.toLowerCase() || "us"}`} />
+          </div>
+        )}
       </div>
 
       <div class="card-overlay">
