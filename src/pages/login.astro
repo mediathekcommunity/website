@@ -2,9 +2,11 @@
 const isAuthenticated = Astro.locals.isAuthenticated;
 import { Icon } from "astro-icon/components";
 import Layout from "../layouts/default.astro";
- import { SignedIn, SignedOut, UserButton, SignInButton } from '@clerk/astro/components'
+import type { Session } from '@auth/core/types';
+import { Auth, SignIn, SignOut } from 'auth-astro/components';
+ const session = await getSession(Astro.request)
+import { getSession } from 'auth-astro/server';
 
- 
 ---
 
 <Layout>
@@ -85,14 +87,20 @@ import Layout from "../layouts/default.astro";
               </div>
 
               <div class="divider text-xs text-base-content/50">Secure Authentication</div>
+<Auth>
+  {(session: Session) => 
+    {session ? 
+      <SignOut>Logout</SignOut>
+    :
+      <SignIn provider="github">Login</SignIn>
+   
+    <p>
+      {session ? `Logged in as ${session.user?.name}` : 'Not logged in'}
+    </p> }
+  }
+</Auth>
 
-                      <SignedOut>
-          <SignInButton mode="modal" />
-        </SignedOut>
-        <SignedIn>
-          <UserButton />
-        </SignedIn>
-            </div>
+             </div>
           </div>
         )}
       </div>

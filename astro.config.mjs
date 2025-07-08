@@ -7,11 +7,11 @@ import svelte from "@astrojs/svelte";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, envField } from "astro/config";
 import icon from "astro-icon";
-import clerk from "@clerk/astro";
 import dotenv from "dotenv";
+import auth from "auth-astro";
 console.log("Loading environment variables...");
 // Load environment variables from .env files
-// This will load variables from .env and .env.dev if they exist  
+// This will load variables from .env and .env.dev if they exist
 console.log(JSON.stringify(process.env, null, 2));
 dotenv.config();
 // Environment-based URL configuration
@@ -30,15 +30,12 @@ export default defineConfig({
       enabled: true,
     },
   }),
-  integrations: [
-    clerk({ enableEnvSchema: false }),
-    mdx(),
-    sitemap(),
-    icon(),
-    svelte(),
-  ],
+  integrations: [mdx(), sitemap(), icon(), svelte(), auth()],
   vite: {
     plugins: [tailwindcss()],
+    ssr: {
+      external: ["node:path"],
+    },
   },
   env: {
     schema: {
@@ -49,7 +46,7 @@ export default defineConfig({
       CLERK_SECRET_KEY: envField.string({
         access: "secret",
         context: "server",
-      })
+      }),
     },
   },
 });
