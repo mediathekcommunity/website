@@ -1,6 +1,6 @@
 import { SvelteKitAuth } from "@auth/sveltekit"
 import Auth0 from "@auth/sveltekit/providers/auth0"
-  import * as rawEnv from '$env/dynamic/private';
+  import * as rawEnv from '$env/static/private';
 
 console.log("Auth0 clientId", rawEnv)
 export const { handle, signIn, signOut } = SvelteKitAuth({
