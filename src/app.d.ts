@@ -8,7 +8,14 @@ declare global {
 		// interface Locals {}
 		// interface PageData {}
 		// interface PageState {}
-		// interface Platform {}
+		interface Platform {
+			env: {
+				DATABASE_URL: string;
+				DATABASE_AUTH_TOKEN: string;
+				AUTH_SECRET: string;
+				// Add other environment variables as needed
+			};
+		}
 	}
 }
 
