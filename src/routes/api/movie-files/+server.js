@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import { createDatabase } from '$lib/server/db';
 import { moviesFiles } from '$lib/server/schema';
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 
 export async function POST({ request, locals, platform }) {
     const session = await locals.auth();
