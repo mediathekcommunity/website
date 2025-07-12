@@ -1,11 +1,12 @@
 import { json } from '@sveltejs/kit';
-import db from '$lib/server/db';
+import { createDatabase } from '$lib/server/db';
 import { channels } from '$lib/server/schema';
 import { channelSchema } from '$lib/schemas/channel';
 import { eq } from 'drizzle-orm';
 
-export async function GET() {
+export async function GET({ platform }) {
     try {
+        const db = createDatabase(platform);
         const allChannels = await db.select().from(channels).all();
         return json(allChannels);
     } catch (/** @type {any} */ error) {
@@ -16,13 +17,14 @@ export async function GET() {
 
 import { redirect } from '@sveltejs/kit';
 
-export async function POST({ request, locals }) {
-    const { userId } = locals.auth();
+export async function POST({ request, locals, platform }) {
+    const session = await locals.auth();
 
-    if (!userId) {
-        return redirect(307, '/admin/login');
+    if (!session?.user) {
+        return new Response(null, { status: 401, statusText: "Unauthorized" });
     }
     try {
+        const db = createDatabase(platform);
         const body = await request.json();
         const validatedData = channelSchema.parse(body);
 

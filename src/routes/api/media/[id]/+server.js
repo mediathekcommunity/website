@@ -1,11 +1,12 @@
 import { json } from '@sveltejs/kit';
-import db from '$lib/server/db';
+import { createDatabase } from '$lib/server/db';
 import { media, channels, moviesFiles, episodes } from '$lib/server/schema';
 import { eq } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 
-export async function GET({ params }) {
+export async function GET({ params, platform }) {
     try {
+        const db = createDatabase(platform);
         const { id } = params;
         const mediaItem = await db.query.media.findFirst({
             where: eq(media.id, id),
@@ -27,8 +28,9 @@ export async function GET({ params }) {
     }
 }
 
-export async function PUT({ params, request }) {
+export async function PUT({ params, request, platform }) {
     try {
+        const db = createDatabase(platform);
         const { id } = params;
         const data = await request.json();
         const { type, channelId, videoFiles, episodes: seriesEpisodes, ...rest } = data;
@@ -92,8 +94,9 @@ export async function PUT({ params, request }) {
     }
 }
 
-export async function DELETE({ params }) {
+export async function DELETE({ params, platform }) {
     try {
+        const db = createDatabase(platform);
         const { id } = params;
         const deletedMedia = await db.delete(media).where(eq(media.id, id)).returning().get();
 

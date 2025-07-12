@@ -1,16 +1,17 @@
 import { json } from '@sveltejs/kit';
-import db from '$lib/server/db';
+import { createDatabase } from '$lib/server/db';
 import { episodes } from '$lib/server/schema';
 import { eq } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 
-export async function PUT({ params, request, locals }) {
+export async function PUT({ params, request, locals, platform }) {
     const session = await locals.auth();
     if (!session?.user) {
         return new Response(null, { status: 401, statusText: "Unauthorized" });
     }
 
     try {
+        const db = createDatabase(platform);
         const { id } = params;
         const data = await request.json();
         
@@ -41,13 +42,14 @@ export async function PUT({ params, request, locals }) {
     }
 }
 
-export async function DELETE({ params, locals }) {
+export async function DELETE({ params, locals, platform }) {
     const session = await locals.auth();
     if (!session?.user) {
         return new Response(null, { status: 401, statusText: "Unauthorized" });
     }
 
     try {
+        const db = createDatabase(platform);
         const { id } = params;
         const deletedEpisode = await db.delete(episodes)
             .where(eq(episodes.id, id))

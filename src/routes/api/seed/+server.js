@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import db from '$lib/server/db';
+import { createDatabase } from '$lib/server/db';
 import { channels, media, moviesFiles, episodes } from '$lib/server/schema';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -11,6 +11,10 @@ export const POST = async (event) => {
   if (!session?.user?.id) {
     return new Response(null, { status: 401, statusText: "Unauthorized" })
   }
+  
+  // Get platform-aware database connection
+  const db = createDatabase(event.platform);
+  
     try {
         // Clear existing data (optional, for fresh seeding)
         await db.delete(moviesFiles);

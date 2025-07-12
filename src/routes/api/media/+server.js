@@ -1,11 +1,12 @@
 import { json } from '@sveltejs/kit';
-import db from '$lib/server/db';
+import { createDatabase } from '$lib/server/db';
 import { media, moviesFiles, episodes, channels } from '$lib/server/schema';
 import { eq } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 
-export async function GET() {
+export async function GET({ platform }) {
     try {
+        const db = createDatabase(platform);
         const allMedia = await db.query.media.findMany({
             with: {
                 moviesFiles: true,
@@ -38,7 +39,7 @@ export async function GET() {
 
 import { redirect } from '@sveltejs/kit';
 
-export async function POST({ request, locals }) {
+export async function POST({ request, locals, platform }) {
   const session = await locals.auth()
 
  
@@ -46,6 +47,7 @@ export async function POST({ request, locals }) {
     return new Response(null, { status: 401, statusText: "Unauthorized" })
   }
     try {
+        const db = createDatabase(platform);
         const data = await request.json();
         const { type, videoFiles, episodes: seriesEpisodes, ...rest } = data;
 
@@ -92,7 +94,7 @@ export async function POST({ request, locals }) {
     }
 }
 
-export async function PUT({ request, locals }) {
+export async function PUT({ request, locals, platform }) {
   const session = await locals.auth()
 
  
@@ -100,6 +102,7 @@ export async function PUT({ request, locals }) {
     return new Response(null, { status: 401, statusText: "Unauthorized" })
     }
     try {
+        const db = createDatabase(platform);
         const data = await request.json();
         const { id, type, channelId, videoFiles, episodes: seriesEpisodes, ...rest } = data; // Extract videoFiles and episodes directly
 
@@ -162,13 +165,14 @@ export async function PUT({ request, locals }) {
     }
 }
 
-export async function DELETE({ request, locals }) {
+export async function DELETE({ request, locals, platform }) {
     const session = await locals.auth();
 
     if (!session?.user) {
         return new Response(null, { status: 401, statusText: "Unauthorized" });
     }
     try {
+        const db = createDatabase(platform);
         const { id } = await request.json();
         if (!id) {
             return json({ error: 'Media ID is required for deletion' }, { status: 400 });

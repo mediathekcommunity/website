@@ -1,15 +1,16 @@
 import { json } from '@sveltejs/kit';
-import db from '$lib/server/db';
+import { createDatabase } from '$lib/server/db';
 import { episodes } from '$lib/server/schema';
 import { randomUUID } from 'crypto';
 
-export async function POST({ request, locals }) {
+export async function POST({ request, locals, platform }) {
     const session = await locals.auth();
     if (!session?.user) {
         return new Response(null, { status: 401, statusText: "Unauthorized" });
     }
 
     try {
+        const db = createDatabase(platform);
         const data = await request.json();
         
         const newEpisode = await db.insert(episodes)

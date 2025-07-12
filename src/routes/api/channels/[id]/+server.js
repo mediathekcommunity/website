@@ -1,11 +1,12 @@
 import { json } from '@sveltejs/kit';
-import db from '$lib/server/db';
+import { createDatabase } from '$lib/server/db';
 import { channels } from '$lib/server/schema';
 import { channelSchema } from '$lib/schemas/channel';
 import { eq } from 'drizzle-orm';
 
-export async function GET({ params }) {
+export async function GET({ params, platform }) {
     try {
+        const db = createDatabase(platform);
         const { id } = params;
         const channel = await db.select().from(channels).where(eq(channels.id, id)).get();
 
@@ -20,8 +21,9 @@ export async function GET({ params }) {
     }
 }
 
-export async function PUT({ params, request }) {
+export async function PUT({ params, request, platform }) {
     try {
+        const db = createDatabase(platform);
         const { id } = params;
         const body = await request.json();
         const validatedData = channelSchema.parse(body);
@@ -46,8 +48,9 @@ export async function PUT({ params, request }) {
     }
 }
 
-export async function DELETE({ params }) {
+export async function DELETE({ params, platform }) {
     try {
+        const db = createDatabase(platform);
         const { id } = params;
         const deletedChannel = await db.delete(channels)
             .where(eq(channels.id, id))
