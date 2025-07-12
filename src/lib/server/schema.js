@@ -20,6 +20,7 @@ export const media = sqliteTable('MEDIA', {
     release_date_year: text('release_date_year'),
     cast_crew: text('cast_crew'),
     channelId: text('channel_id').references(() => channels.id),
+    tmdbid: text('tmdbid'),
 });
 
 export const moviesFiles = sqliteTable('MOVIES_FILES', {
@@ -45,6 +46,7 @@ export const episodes = sqliteTable('EPISODES', {
     releaseDate: text('release_date'),
     audioLanguageFormat: text('audio_language_format'),
     subtitlesInfo: text('subtitles_info'),
+    tmdbid: text('tmdbid'),
 });
 
 export const channelsRelations = relations(channels, ({ many }) => ({

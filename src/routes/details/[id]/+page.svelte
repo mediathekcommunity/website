@@ -213,24 +213,24 @@
                     <h3 class="text-lg font-medium mb-3">{file.quality}</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <!-- Left column: File Info -->
-                      <div>
-                        <table class="w-full">
+                      <div class="min-w-0">
+                        <table class="w-full table-fixed">
                           <tbody>
                             <tr>
-                              <td class="py-2 pr-4 font-semibold align-top">Quality:</td>
-                              <td class="py-2"><span class="badge badge-primary">{file.quality}</span></td>
+                              <td class="py-2 pr-4 font-semibold align-top w-1/2">Quality:</td>
+                              <td class="py-2 w-1/2"><span class="badge badge-primary">{file.quality}</span></td>
                             </tr>
                             <tr>
-                              <td class="py-2 pr-4 font-semibold align-top">Format:</td>
-                              <td class="py-2"><span class="badge badge-secondary">{file.format}</span></td>
+                              <td class="py-2 pr-4 font-semibold align-top w-1/2">Format:</td>
+                              <td class="py-2 w-1/2"><span class="badge badge-secondary">{file.format}</span></td>
                             </tr>
                             <tr>
-                              <td class="py-2 pr-4 font-semibold align-top">Audio:</td>
-                              <td class="py-2">{file.audioLanguageFormat}</td>
+                              <td class="py-2 pr-4 font-semibold align-top w-1/2">Audio:</td>
+                              <td class="py-2 w-1/2">{file.audioLanguageFormat}</td>
                             </tr>
                             <tr>
-                              <td class="py-2 pr-4 font-semibold align-top">Subtitles:</td>
-                              <td class="py-2">{file.subtitlesInfo}</td>
+                              <td class="py-2 pr-4 font-semibold align-top w-1/2">Subtitles:</td>
+                              <td class="py-2 w-1/2">{file.subtitlesInfo}</td>
                             </tr>
                           </tbody>
                         </table>

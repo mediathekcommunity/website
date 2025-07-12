@@ -32,6 +32,7 @@
     release_date_year: string;
     cast_crew: string;
     channelId: string; // New field for channel selection
+    tmdbid: string; // New field for TMDB ID
   }
 
   interface MediaPayload extends MediaData {
@@ -50,6 +51,7 @@
     release_date_year: '',
     cast_crew: '',
     channelId: '', // Initialize new field
+    tmdbid: '', // Initialize new field
   };
   let movieFiles: MovieFile[] = [{ videoUrl: '', localVideoUrl: '', quality: '', format: '', audioLanguageFormat: '', subtitlesInfo: '' }];
   let episodes: Episode[] = [{ seasonNumber: 1, episodeNumber: 1, title: '', description: '', originalVideoUrl: '', localVideoUrl: '', releaseDate: '', audioLanguageFormat: '', subtitlesInfo: '' }];
@@ -141,6 +143,32 @@
       alert('An unexpected error occurred during submission.');
     }
   }
+
+  async function fetchTMDBData() {
+    try {
+      const response = await fetch("https://api3.mediathek.community/movie/1087891");
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+
+      // Map fetched data to general information
+      mediaData.title = data.title;
+      mediaData.description = data.overview;
+      mediaData.thumbnail_url = data.poster_path;
+      mediaData.genre = data.genres.map(genre => genre.name).join(", ");
+      mediaData.release_date_year = data.release_date.split("-")[0];
+      mediaData.cast_crew = data.credits.cast.map(cast => `${cast.name} (${cast.character})`).join(", ");
+      mediaData.tmdbid = data.id;
+
+      fetchedData = "Data successfully mapped to general information.";
+    } catch (error) {
+      console.error("Error fetching TMDB data:", error);
+      fetchedData = "Failed to fetch data.";
+    }
+  }
+
+  let fetchedData = "";
 </script>
 
   <form on:submit|preventDefault={handleSubmit} class="space-y-6">
@@ -175,7 +203,7 @@
           <label for="id" class="label">
             <span class="label-text">ID:</span>
           </label>
-          <input type="text" id="id" bind:value={mediaData.id} required readonly class="input input-bordered w-full" />
+          <input type="text" id="id" bind:value={mediaData.id} disabled class="input input-bordered w-full" />
         </div>
 
         <div class="form-control">
@@ -218,6 +246,14 @@
             <span class="label-text">Cast & Crew:</span>
           </label>
           <input type="text" id="castCrew" bind:value={mediaData.cast_crew} class="input input-bordered w-full" />
+        </div>
+
+        <div class="form-control flex flex-row items-center gap-2">
+          <label for="tmdbid" class="label">
+            <span class="label-text">TMDB ID:</span>
+          </label>
+          <input type="text" id="tmdbid" bind:value={mediaData.tmdbid} class="input input-bordered w-1/2" />
+          <button type="button" class="btn btn-primary" on:click={fetchTMDBData}>Fetch</button>
         </div>
       </div>
 
@@ -339,6 +375,13 @@
           <button type="button" class="btn btn-secondary" on:click={addEpisode}>Add Another Episode</button>
         {/if}
       </div>
+    </div>
+
+    <div class="form-control">
+      <label for="fetchedData" class="label">
+        <span class="label-text">Fetched Data:</span>
+      </label>
+      <textarea id="fetchedData" readonly class="textarea textarea-bordered w-full h-24">{fetchedData}</textarea>
     </div>
 
     <div class="flex justify-center mt-8">

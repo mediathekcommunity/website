@@ -62,31 +62,35 @@
         </div>
       </section>
 
-      <section class="series-section mb-8">
-        <h2 class="section-title">Recent Series</h2>
-        <div class="embla" use:EmblaCarouselSvelte={{ options: { loop: false, slidesToScroll: 1, containScroll: 'trimSnaps' }, plugins: [] }}>
-          <div class="embla__container">
-            {#each recentSeries as mediaItem (mediaItem.id)}
-              <div class="embla__slide">
-                <MediaCarouselCard {mediaItem} />
-              </div>
-            {/each}
+      {#if recentSeries.length > 0}
+        <section class="series-section mb-8">
+          <h2 class="section-title">Recent Series</h2>
+          <div class="embla" use:EmblaCarouselSvelte={{ options: { loop: false, slidesToScroll: 1, containScroll: 'trimSnaps' }, plugins: [] }}>
+            <div class="embla__container">
+              {#each recentSeries as mediaItem (mediaItem.id)}
+                <div class="embla__slide">
+                  <MediaCarouselCard {mediaItem} />
+                </div>
+              {/each}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      {/if}
 
-      <section class="movies-section">
-        <h2 class="section-title">Recent Movies</h2>
-        <div class="embla" use:EmblaCarouselSvelte={{ options: { loop: false, slidesToScroll: 1, containScroll: 'trimSnaps' }, plugins: [] }}>
-          <div class="embla__container">
-            {#each recentMovies as mediaItem (mediaItem.id)}
-              <div class="embla__slide">
-                <MediaCarouselCard {mediaItem} />
-              </div>
-            {/each}
+      {#if recentMovies.length > 0}
+        <section class="movies-section">
+          <h2 class="section-title">Recent Movies</h2>
+          <div class="embla" use:EmblaCarouselSvelte={{ options: { loop: false, slidesToScroll: 1, containScroll: 'trimSnaps' }, plugins: [] }}>
+            <div class="embla__container">
+              {#each recentMovies as mediaItem (mediaItem.id)}
+                <div class="embla__slide">
+                  <MediaCarouselCard {mediaItem} />
+                </div>
+              {/each}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      {/if}
 
       <CountrySlider langlist={companyList} langdata={groupedByCompany} {geo} />
     </div>

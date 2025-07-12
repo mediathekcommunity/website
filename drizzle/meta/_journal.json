@@ -15,6 +15,13 @@
       "when": 1752350933565,
       "tag": "0001_fancy_miracleman",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1752359212364,
+      "tag": "0002_rich_the_captain",
+      "breakpoints": true
     }
   ]
 }
