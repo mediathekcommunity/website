@@ -11,4 +11,5 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
       issuer: rawEnv.AUTH0_ISSUER_BASE_URL
     })
   ],
+  trustHost: true, // Set to true if you trust the host
 })
