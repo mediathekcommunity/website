@@ -2,14 +2,13 @@ import { json } from '@sveltejs/kit';
 import db from '$lib/server/db';
 import { channels, media, moviesFiles, episodes } from '$lib/server/schema';
 import { v4 as uuidv4 } from 'uuid';
-import type { RequestHandler } from "./$types"
 
 import { redirect } from '@sveltejs/kit';
 
-export const POST: RequestHandler = async ({ locals, event }) => {
+export const POST = async (event) => {
   const session = await event.locals.auth()
 
-  if (!session?.user?.userId) {
+  if (!session?.user?.id) {
     return new Response(null, { status: 401, statusText: "Unauthorized" })
   }
     try {
