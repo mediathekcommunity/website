@@ -55,6 +55,7 @@
 		"embla-carousel-svelte": "^8.6.0",
 		"uuid": "^11.1.0",
 		"video.js": "^8.23.3",
+		"wrangler": "^4.24.3",
 		"zod": "^3.25.76"
 	}
 }
