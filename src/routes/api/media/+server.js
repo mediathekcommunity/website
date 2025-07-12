@@ -2,7 +2,6 @@ import { json } from '@sveltejs/kit';
 import { createDatabase } from '$lib/server/db';
 import { media, moviesFiles, episodes, channels } from '$lib/server/schema';
 import { eq } from 'drizzle-orm';
-import { randomUUID } from 'crypto';
 
 export async function GET({ platform }) {
     try {
@@ -55,7 +54,7 @@ export async function POST({ request, locals, platform }) {
             const newMedia = await db.insert(media).values({ ...rest, type }).returning();
             if (videoFiles && newMedia.length > 0) {
                 const filesToInsert = videoFiles.map(/** @param {any} file */ file => ({
-                    id: randomUUID(), // Generate unique ID for each file
+                    id: crypto.randomUUID(), // Generate unique ID for each file
                     videoUrl: file.videoUrl,
                     quality: file.quality,
                     format: file.format,
@@ -70,7 +69,7 @@ export async function POST({ request, locals, platform }) {
             const newMedia = await db.insert(media).values({ ...rest, type }).returning();
             if (seriesEpisodes && newMedia.length > 0) {
                 const episodesToInsert = seriesEpisodes.map(/** @param {any} episode */ episode => ({
-                    id: randomUUID(), // Generate unique ID for each episode
+                    id: crypto.randomUUID(), // Generate unique ID for each episode
                     seasonNumber: episode.seasonNumber,
                     episodeNumber: episode.episodeNumber,
                     title: episode.title,
@@ -127,7 +126,7 @@ export async function PUT({ request, locals, platform }) {
                 // Delete existing movie files and re-insert
                 await db.delete(moviesFiles).where(eq(moviesFiles.movieId, id));
                 const filesToInsert = videoFiles.map(/** @param {any} file */ file => ({
-                    id: randomUUID(), // Generate unique ID for each file
+                    id: crypto.randomUUID(), // Generate unique ID for each file
                     videoUrl: file.videoUrl,
                     quality: file.quality,
                     format: file.format,
@@ -142,7 +141,7 @@ export async function PUT({ request, locals, platform }) {
                 // Delete existing episodes and re-insert
                 await db.delete(episodes).where(eq(episodes.seriesId, id));
                 const episodesToInsert = seriesEpisodes.map(/** @param {any} episode */ episode => ({
-                    id: randomUUID(), // Generate unique ID for each episode
+                    id: crypto.randomUUID(), // Generate unique ID for each episode
                     seasonNumber: episode.seasonNumber,
                     episodeNumber: episode.episodeNumber,
                     title: episode.title,

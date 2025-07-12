@@ -2,7 +2,6 @@ import { json } from '@sveltejs/kit';
 import { createDatabase } from '$lib/server/db';
 import { moviesFiles } from '$lib/server/schema';
 import { eq } from 'drizzle-orm';
-import { randomUUID } from 'crypto';
 
 export async function PUT({ params, request, locals, platform }) {
     const session = await locals.auth();

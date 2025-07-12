@@ -1,7 +1,6 @@
 import { json } from '@sveltejs/kit';
 import { createDatabase } from '$lib/server/db';
 import { episodes } from '$lib/server/schema';
-import { randomUUID } from 'crypto';
 
 export async function POST({ request, locals, platform }) {
     const session = await locals.auth();
@@ -15,7 +14,7 @@ export async function POST({ request, locals, platform }) {
         
         const newEpisode = await db.insert(episodes)
             .values({
-                id: randomUUID(),
+                id: crypto.randomUUID(),
                 seriesId: data.seriesId,
                 seasonNumber: data.seasonNumber,
                 episodeNumber: data.episodeNumber,
