@@ -401,11 +401,13 @@
 		width: 100%;
 		height: 85vh;
 		max-height: 95vh;
+		top: auto;
 		background-size: cover;
 		background-position: center;
 		background-repeat: no-repeat;
 		overflow: hidden;
 	}
+
 	.hero-container2 {
 		position: relative;
 		width: 100%;
@@ -566,8 +568,8 @@
 
 	@media (min-width: 1025px) {
 		.hero-container {
-			height: 75vh;
-			max-height: 75vh;
+			height: 85vh;
+			max-height: 95vh;
 		}
 		.hero-container2 {
 			height: 85vh;
