@@ -5,7 +5,7 @@
 
   const { children }: { children: Snippet } = $props();
 
-  let drawerOpen = true; // Default to open for desktop, will be controlled by CSS for mobile
+  let drawerOpen = $state(true); // Default to open for desktop, will be controlled by CSS for mobile
 
   onMount(() => {
     // Close drawer on navigation
