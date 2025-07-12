@@ -2,7 +2,6 @@ import { json } from '@sveltejs/kit';
 import { createDatabase } from '$lib/server/db';
 import { media, channels, moviesFiles, episodes } from '$lib/server/schema';
 import { eq } from 'drizzle-orm';
-import { randomUUID } from 'crypto';
 
 export async function GET({ params, platform }) {
     try {
@@ -50,7 +49,7 @@ export async function PUT({ params, request, platform }) {
             if (videoFiles && videoFiles.length > 0) {
                 await db.delete(moviesFiles).where(eq(moviesFiles.movieId, id));
                 const filesToInsert = videoFiles.map(/** @param {any} file */ file => ({
-                    id: randomUUID(), // Generate unique ID for each file
+                    id: crypto.randomUUID(), // Generate unique ID for each file
                     videoUrl: file.videoUrl,
                     quality: file.quality,
                     format: file.format,

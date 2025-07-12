@@ -42,7 +42,7 @@
     episodes?: Episode[];
   }
 
-  let mediaType: 'movie' | 'series' = 'movie';
+  let mediaType: 'movie' | 'series' | 'y_movie' | 'y_series' = 'movie';
   let mediaData: MediaData = {
     id: '',
     title: '',

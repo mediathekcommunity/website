@@ -1,7 +1,6 @@
 import { json } from '@sveltejs/kit';
 import { createDatabase } from '$lib/server/db';
 import { moviesFiles } from '$lib/server/schema';
-import { randomUUID } from 'node:crypto';
 
 export async function POST({ request, locals, platform }) {
     const session = await locals.auth();
@@ -15,7 +14,7 @@ export async function POST({ request, locals, platform }) {
         
         const newFile = await db.insert(moviesFiles)
             .values({
-                id: randomUUID(),
+                id: crypto.randomUUID(),
                 movieId: data.movieId,
                 videoUrl: data.videoUrl,
                 quality: data.quality,
