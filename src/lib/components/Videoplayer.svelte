@@ -20,12 +20,10 @@
 	const videojsOptions = {
 		license: '0902555a051359560f49525c090a445d0d1348',
 		controls: true,
-		playsinline: true,
+		playsinline: false,
 		fill: true,
 		hotkeys: true,
 		resume: true,
-		responsive: true,
-		fluid: true,
 		html5: {
 			hlsjsConfig: {
 				debug: false,
@@ -78,37 +76,40 @@
 
 	function getVideoType(format) {
 		const formatMap = {
-			'mp4': 'video/mp4',
-			'webm': 'video/webm',
-			'ogg': 'video/ogg',
-			'm3u8': 'application/x-mpegURL',
-			'hls': 'application/x-mpegURL',
-			'dash': 'application/dash+xml'
+			mp4: 'video/mp4',
+			webm: 'video/webm',
+			ogg: 'video/ogg',
+			m3u8: 'application/x-mpegURL',
+			hls: 'application/x-mpegURL',
+			dash: 'application/dash+xml'
 		};
 		return formatMap[format?.toLowerCase()] || 'video/mp4';
 	}
 
 	function parseSubtitles(subtitlesInfo) {
 		if (!subtitlesInfo) return [];
-		
+
 		try {
 			// Try to parse as JSON first
 			if (subtitlesInfo.startsWith('[') || subtitlesInfo.startsWith('{')) {
 				const parsed = JSON.parse(subtitlesInfo);
 				return Array.isArray(parsed) ? parsed : [parsed];
 			}
-			
+
 			// Simple format: "English:en.vtt,German:de.vtt"
-			return subtitlesInfo.split(',').map(sub => {
-				const [label, src] = sub.split(':');
-				const lang = src ? src.split('.')[0] : 'en';
-				return {
-					kind: 'subtitles',
-					src: src?.trim(),
-					label: label?.trim(),
-					srclang: lang
-				};
-			}).filter(track => track.src);
+			return subtitlesInfo
+				.split(',')
+				.map((sub) => {
+					const [label, src] = sub.split(':');
+					const lang = src ? src.split('.')[0] : 'en';
+					return {
+						kind: 'subtitles',
+						src: src?.trim(),
+						label: label?.trim(),
+						srclang: lang
+					};
+				})
+				.filter((track) => track.src);
 		} catch (e) {
 			console.warn('Could not parse subtitles info:', subtitlesInfo);
 			return [];
@@ -117,7 +118,7 @@
 
 	function setSource() {
 		if (!player || !mediaData) return;
-		
+
 		player.currentTime(0);
 
 		const setCommonSource = (src, poster, videoType, title) => {
@@ -131,7 +132,7 @@
 		};
 
 		let videoData;
-		
+
 		if (mediaData.type === 'movie' && currentFile) {
 			// Single movie file
 			videoData = convertMovieFileToVideoData(currentFile, mediaData);
@@ -147,7 +148,7 @@
 				setCommonSource(videoData.src, videoData.poster, videoData.type, videoData.title);
 			} else {
 				// Multiple quality files - create playlist
-				const playlistData = movieFiles.map(file => ({
+				const playlistData = movieFiles.map((file) => ({
 					...convertMovieFileToVideoData(file, mediaData),
 					id: file.id
 				}));
@@ -166,7 +167,7 @@
 			}
 		} else if (mediaData.type === 'series' && episodes.length > 0) {
 			// Series with episodes
-			const playlistData = episodes.map(episode => ({
+			const playlistData = episodes.map((episode) => ({
 				...convertEpisodeToVideoData(episode, mediaData),
 				id: episode.id
 			}));
@@ -192,15 +193,19 @@
 		const index = $playlistindex;
 		const currentModalVideo = $modalvideo;
 		const currentPlaylist = $playlist;
-		
+
 		if (currentModalVideo?.tracks) {
 			player.loadTracks?.(currentModalVideo.tracks);
 		} else if (currentPlaylist && currentPlaylist[index]?.tracks) {
 			player.loadTracks?.(currentPlaylist[index].tracks);
 		}
-		
+
 		player.pause();
-		if ($seriestype === 'playlist' && player.playlist && typeof player.playlist.currentItem === 'function') {
+		if (
+			$seriestype === 'playlist' &&
+			player.playlist &&
+			typeof player.playlist.currentItem === 'function'
+		) {
 			player.playlist.currentItem($playlistindex || 0);
 		}
 	}
@@ -225,10 +230,10 @@
 	onMount(() => {
 		if (videoElement) {
 			player = videojs(videoElement, videojsOptions);
-			
+
 			player.ready(() => {
 				console.log('Video player ready');
-				
+
 				// Initialize nuevo plugins
 				if (player.nuevo) {
 					player.nuevo(nuevoOptions);
@@ -236,7 +241,7 @@
 				if (player.hotkeys) {
 					player.hotkeys({ seekStep: 10 });
 				}
-				
+
 				// Set initial source
 				if ($seriestype === 'playlist') {
 					setSource();
@@ -245,7 +250,7 @@
 					player.pause();
 					setSource();
 				}
-				
+
 				// Set up playlist navigation for series
 				if (mediaData?.type === 'series' && episodes.length > 1) {
 					player.on('ended', () => {
@@ -264,7 +269,12 @@
 	});
 
 	// React to external changes
-	$: if (player && mediaData && ($seriestype === 'single' || $seriestype === 'default') && $modalvideo) {
+	$: if (
+		player &&
+		mediaData &&
+		($seriestype === 'single' || $seriestype === 'default') &&
+		$modalvideo
+	) {
 		setSource();
 	}
 
@@ -285,15 +295,14 @@
 	});
 </script>
 
-<div class="video-container">
-	<!-- svelte-ignore a11y_media_has_caption -->
-	<video 
+ 	<!-- svelte-ignore a11y_media_has_caption -->
+	<video
 		bind:this={videoElement}
 		id="my-video"
 		class="video-js overflow-hidden"
 		controls
 		preload="metadata"
- 	>
+	>
 		<p class="vjs-no-js">
 			To view this video please enable JavaScript, and consider upgrading to a web browser that
 			<a href="https://videojs.com/html5-video-support/" target="_blank" rel="noopener">
@@ -301,47 +310,10 @@
 			</a>.
 		</p>
 	</video>
-</div>
-
+ 
 <style>
 	.overflow-hidden {
 		overflow: hidden !important;
-	}
-	
-	.video-container {
-		position: relative;
-		width: 100%;
-		height: 100%;
-		max-width: 100%;
-	}
-	
-	/* Mobile-specific styling - 50% height on mobile */
-	@media (max-width: 768px) {
-		.video-container {
-			height: 50vh;
-		}
-	}
-	
-	:global(.video-js) {
-		width: 100%;
-		height: 100%;
-	}
-	
-	:global(.video-js video) {
-		width: 100%;
-		height: 100%;
-		object-fit: contain;
-	}
-	
-	/* Fix for video.js fluid aspect ratio classes */
-	:global(.video-js.vjs-fluid:not(.vjs-audio-only-mode)),
-	:global(.video-js.vjs-16-9:not(.vjs-audio-only-mode)),
-	:global(.video-js.vjs-4-3:not(.vjs-audio-only-mode)),
-	:global(.video-js.vjs-9-16:not(.vjs-audio-only-mode)),
-	:global(.video-js.vjs-1-1:not(.vjs-audio-only-mode)) {
-		width: 100%;
-		height: 100%;
-		padding-top: 0 !important;
 	}
 
 	/* Custom nuevo/video.js styling from oldsite */
@@ -374,28 +346,5 @@
 		--volume-slider-color: #666666;
 		--volume-level-color: #ffffff;
 		--volume-thumb-color: #708090;
-	}
-	
-	/* Legacy video.js styling */
-	:global(.vjs-default-skin) {
-		color: #fff;
-	}
-	
-	:global(.video-js .vjs-big-play-button) {
-		background-color: rgba(43, 51, 63, 0.7);
-		border-color: rgba(43, 51, 63, 0.7);
-		color: #fff;
-	}
-	
-	:global(.video-js .vjs-control-bar) {
-		background-color: rgba(43, 51, 63, 0.7);
-	}
-	
-	:global(.video-js .vjs-progress-control .vjs-progress-holder) {
-		background-color: rgba(255, 255, 255, 0.3);
-	}
-	
-	:global(.video-js .vjs-progress-control .vjs-play-progress) {
-		background-color: #ff6b6b;
 	}
 </style>
