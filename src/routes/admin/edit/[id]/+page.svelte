@@ -22,6 +22,7 @@
     releaseDate: string;
     audioLanguageFormat: string;
     subtitlesInfo: string;
+    tmdbid: string; // New field for TMDB Episode ID
   }
 
   interface MediaData {
@@ -58,7 +59,7 @@
     tmdbid: '', // Initialize new field
   };
   let movieFiles: MovieFile[] = [{ videoUrl: '', localVideoUrl: '', quality: '', format: '', audioLanguageFormat: '', subtitlesInfo: '' }];
-  let episodes: Episode[] = [{ seasonNumber: 1, episodeNumber: 1, title: '', description: '', originalVideoUrl: '', localVideoUrl: '', releaseDate: '', audioLanguageFormat: '', subtitlesInfo: '' }];
+  let episodes: Episode[] = [{ seasonNumber: 1, episodeNumber: 1, title: '', description: '', originalVideoUrl: '', localVideoUrl: '', releaseDate: '', audioLanguageFormat: '', subtitlesInfo: '', tmdbid: '' }];
 
   interface Channel {
     id: string;
@@ -105,7 +106,7 @@
   }
 
   function addEpisode() {
-    episodes = [...episodes, { seasonNumber: 1, episodeNumber: 1, title: '', description: '', originalVideoUrl: '', localVideoUrl: '', releaseDate: '', audioLanguageFormat: '', subtitlesInfo: '' }];
+    episodes = [...episodes, { seasonNumber: 1, episodeNumber: 1, title: '', description: '', originalVideoUrl: '', localVideoUrl: '', releaseDate: '', audioLanguageFormat: '', subtitlesInfo: '', tmdbid: '' }];
   }
 
   function removeEpisode(index: number) {
@@ -338,7 +339,11 @@
 
   async function fetchTMDBData() {
     try {
-      const response = await fetch("https://api3.mediathek.community/movie/1087891");
+      const url = mediaType === "movie" || mediaType === "y_movie" 
+        ? `https://api3.mediathek.community/movie/${mediaData.tmdbid}` 
+        : `https://api3.mediathek.community/tv/${mediaData.tmdbid}`;
+
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -360,7 +365,40 @@
     }
   }
 
-  let fetchedData = "";
+  function mapEpisodeData(data) {
+    return {
+      seriesId: data.show_id.toString(),
+      seasonNumber: data.season,
+      episodeNumber: data.episode,
+      title: data.name,
+      description: data.overview,
+      originalVideoUrl: null,
+      localVideoUrl: null,
+      releaseDate: data.air_date,
+      audioLanguageFormat: null,
+      subtitlesInfo: null,
+      tmdbid: data.id.toString(),
+    };
+  }
+
+  async function fetchEpisodeData(tmdbid, season, episode) {
+    try {
+      const url = `https://api3.mediathek.community/episode/${tmdbid}/${season}/${episode}`;
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+
+      fetchedEpisodeData = JSON.stringify(data, null, 2); // Format JSON for display
+    } catch (error) {
+      console.error("Error fetching episode data:", error);
+      fetchedEpisodeData = "Failed to fetch episode data.";
+    }
+  }
+
+  let fetchedData = ""; // Only visible after fetch
+  let fetchedEpisodeData = "";
 </script>
 
   <form on:submit|preventDefault={handleSubmit} class="space-y-6">
@@ -567,6 +605,13 @@
                   </label>
                   <input type="text" id="episodeSubtitles-{i}" bind:value={episode.subtitlesInfo} class="input input-bordered w-full" />
                 </div>
+                <div class="form-control flex flex-row items-center gap-2">
+                  <label for="episodeTmdbId-{i}" class="label">
+                    <span class="label-text">TMDB Episode ID:</span>
+                  </label>
+                  <input type="text" id="episodeTmdbId-{i}" bind:value={episode.tmdbid} class="input input-bordered w-1/2" />
+                  <button type="button" class="btn btn-primary" on:click={() => fetchEpisodeData(episode.tmdbid, episode.seasonNumber, episode.episodeNumber)}>Fetch</button>
+                </div>
                 <div class="flex gap-2 mt-3">
                   <button type="button" class="btn btn-primary btn-sm" on:click={() => updateEpisode(i)}>
                     {episode.id ? 'Update' : 'Save'} Episode
@@ -593,4 +638,13 @@
       </label>
       <textarea id="fetchedData" readonly class="textarea textarea-bordered w-full h-24">{fetchedData}</textarea>
     </div>
+
+    {#if fetchedEpisodeData}
+      <div class="form-control">
+        <label for="fetchedEpisodeData" class="label">
+          <span class="label-text">Fetched Episode Data:</span>
+        </label>
+        <textarea id="fetchedEpisodeData" readonly class="textarea textarea-bordered w-full h-24">{fetchedEpisodeData}</textarea>
+      </div>
+    {/if}
   </form>
