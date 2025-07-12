@@ -5,6 +5,8 @@ import * as rawEnv2 from '$env/dynamic/private';
 
 import * as schema from './schema';
 console.log('Database URL:',  rawEnv2);
+console.log('Database URL2:',  rawEnv);
+
  const client = createClient({
     url: rawEnv.DATABASE_URL,
     authToken: rawEnv.DATABASE_AUTH_TOKEN,
