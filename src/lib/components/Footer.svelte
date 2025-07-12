@@ -39,7 +39,7 @@
         <nav class="footer-right">
             <span>
                 Built with <a href="https://kit.svelte.dev" target="_blank" rel="noopener noreferrer">Sveltekit</a> &
-                <a href="https://daisyui.com" target="_blank" rel="noopener noreferrer">DaisyUI v5</a>
+                <a href="https://daisyui.com" target="_blank" rel="noopener noreferrer">DaisyUI v5</a> and <a href="https://turso.tech/" target="_blank" rel="noopener noreferrer">Turso</a> as the database backend.
             </span>
             <span>
                 <a
