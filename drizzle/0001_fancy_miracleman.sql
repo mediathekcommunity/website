@@ -1,0 +1,1 @@
+ALTER TABLE `MOVIES_FILES` ADD `local_video_url` text;
