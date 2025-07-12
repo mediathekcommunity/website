@@ -1,19 +1,10 @@
 <script lang="ts">
-	import { SignedIn, SignedOut, SignInButton, UserButton } from 'svelte-clerk';
+  import { signIn } from "@auth/sveltekit/client"
 </script>
-
-<div class="flex flex-col items-center justify-center min-h-screen">
-  <div class="card w-96 bg-base-100 shadow-xl">
-    <div class="card-body">
-      <h2 class="card-title">Admin Login</h2>
-      <div class="card-actions justify-end">
-        <SignedOut>
-          <SignInButton />
-        </SignedOut>
-        <SignedIn>
-          <UserButton />
-        </SignedIn>
-      </div>
-    </div>
-  </div>
+ 
+<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh;">
+  <nav style="text-align: center;">
+    <img src="/img/logo.svg" alt="Company Logo" />
+    <button on:click={() => signIn()}>Signin</button>
+  </nav>
 </div>
