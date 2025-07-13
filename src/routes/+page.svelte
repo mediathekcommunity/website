@@ -17,6 +17,7 @@
   let geo: string = 'US'; // Placeholder for geo
   let loading: boolean = true;
   let error: string | null = null;
+  let groupedByCountry: { [key: string]: any[] } = {}; // Ensure groupedByCountry is declared at the top level
 
   onMount(async () => {
     try {
@@ -26,13 +27,29 @@
       }
       allMedia = await response.json();
 
+      allMedia.sort((a, b) => {
+        const countryA = a.channel?.country || '';
+        const countryB = b.channel?.country || '';
+        return countryA.localeCompare(countryB);
+      });
+
       heroMedia = allMedia.slice(0, 3); // Top 3 for hero images
       recentAll = allMedia.slice(0, 3); // Most recent overall
       recentSeries = allMedia.filter(m => m.type === 'series').slice(0, 3); // Most recent series
       recentMovies = allMedia.filter(m => m.type === 'movie').slice(0, 3); // Most recent movies
 
       groupedByCompany = groupByBroadcastCompany(allMedia);
-      companyList = Object.keys(groupedByCompany).sort();
+      console.log('Grouped by company:', groupedByCompany);
+      groupedByCountry = allMedia.reduce((acc, mediaItem) => {
+        const country = mediaItem.channel?.country || 'Unknown';
+        if (!acc[country]) {
+          acc[country] = [];
+        }
+        acc[country].push(mediaItem);
+        return acc;
+      }, {});
+      console.log('Grouped by country:', groupedByCountry);
+      companyList = Object.keys(groupedByCountry).sort();
     } catch (e: any) {
       error = e.message;
     } finally {
@@ -92,7 +109,7 @@
         </section>
       {/if}
 
-      <CountrySlider langlist={companyList} langdata={groupedByCompany} {geo} />
+      <CountrySlider langlist={companyList} langdata={groupedByCountry} />
     </div>
   {/if}
 

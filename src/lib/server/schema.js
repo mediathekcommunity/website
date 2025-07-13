@@ -23,6 +23,7 @@ export const media = sqliteTable('MEDIA', {
     tmdbid: text('tmdbid'),
     cast: text('cast'),
     crew: text('crew'),
+    onlineUntil: text('online_until'),
 });
 
 export const moviesFiles = sqliteTable('MOVIES_FILES', {

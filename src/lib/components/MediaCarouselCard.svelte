@@ -21,6 +21,7 @@
 		backdrop_url?: string; // Replaced thumbnail_url with backdrop_url
 		poster_url?: string;
 		channel?: Channel;
+		online_until?: string;
 		// Add other properties if needed, e.g., metascore, remainingDays
 	}
 
@@ -44,6 +45,19 @@
 	const posterUrl = mediaItem.poster_url 
 	  ? `https://img.mediathek.community/images/t/p/original${mediaItem.poster_url}` 
 	  : 'https://via.placeholder.com/150';
+
+	const calculateDaysLeft = (dateString: string) => {
+		const now = new Date();
+		const onlineUntil = new Date(dateString);
+		const diffTime = Math.abs(onlineUntil.getTime() - now.getTime());
+		return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+	};
+
+	let daysLeft = $state(0); // Make daysLeft reactive
+
+	if (mediaItem.online_until) {
+		daysLeft = calculateDaysLeft(mediaItem.online_until);
+	}
 </script>
 
 {#key mediaItem.id}
@@ -82,6 +96,19 @@
 						</div>
 					{/if}
 			</div>
+			{#if mediaItem.online_until}
+				<div class="badge-container">
+					{#if daysLeft <= 1}
+						<span class="badge badge-red">
+							<Icon icon="mdi:clock" /> {daysLeft} day left
+						</span>
+					{:else if daysLeft <= 3}
+						<span class="badge badge-yellow">
+							<Icon icon="mdi:clock" /> {daysLeft} days left
+						</span>
+					{/if}
+				</div>
+			{/if}
 		</div>
 	</a>
 {/key}
@@ -192,6 +219,30 @@
 		font-size: 0.875rem;
 		opacity: 0.8;
 		margin-bottom: 0.5rem;
+	}
+
+	.badge-container {
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		z-index: 1;
+	}
+
+	.badge {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		padding: 4px 8px;
+		border-radius: 4px;
+		color: var(--badge-text-color);
+	}
+
+	.badge-red {
+		background: var(--red-warning-color);
+	}
+
+	.badge-yellow {
+		background: var(--yellow-warning-color);
 	}
 
 	@media (max-width: 640px) {

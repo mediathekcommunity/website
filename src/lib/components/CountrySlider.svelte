@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
+	import { onDestroy } from 'svelte';
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
 	import MediaCarouselCard from './MediaCarouselCard.svelte'; // Changed from MediaItemCard
-	import { derived } from 'svelte/store';
+	import { getCountryName } from '$lib/utils/countryNames';
 
 	interface LanguageData {
 		[langCode: string]: any[];
@@ -11,19 +11,9 @@
 	interface Props {
 		langlist: string[];
 		langdata: LanguageData;
-		geo: string;
 	}
 
-	let { langlist, langdata, geo }: Props = $props();
-
-	// Removed regionNames and getRegionName as broadcast_company is not a country code.
-
-	const sortedLanglist = $derived(
-		langlist?.sort((a: string, b: string) => {
-			// Sort alphabetically by company name
-			return a.localeCompare(b);
-		}) ?? []
-	);
+	let { langlist, langdata }: Props = $props();
 
 	const carouselOptions = {
 		options: {
@@ -42,11 +32,11 @@
 	});
 </script>
 
-{#each sortedLanglist as country}
+{#each langlist as country}
 	{#if langdata[country]?.length > 0}
 		<section class="country-section">
 			<h2 class="country-title">
-				<span>{country}</span>
+				<span>{getCountryName(country)}</span>
 			</h2>
 
 			<div class="embla" use:emblaCarouselSvelte={carouselOptions} bind:this={emblaApi}>
@@ -92,11 +82,9 @@
 	}
 
 	.embla__slide {
- 		min-width: 0;
+		min-width: 0;
 		position: relative;
 	}
-
-
 
 	@media (max-width: 640px) {
 		.country-section {

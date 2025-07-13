@@ -65,6 +65,7 @@ function matchEpisodeToSchema(api: any, mediaData: MediaData) {
     backdrop_url: string;
     cast: string; // New field for cast
     crew: string; // New field for crew
+    online_until: string; // New field for online expiration
   }
 
   interface MediaPayload extends MediaData {
@@ -88,6 +89,7 @@ function matchEpisodeToSchema(api: any, mediaData: MediaData) {
     backdrop_url: '',
     cast: '', // Initialize new field
     crew: '', // Initialize new field
+    online_until: '', // Initialize new field
   };
   let movieFiles: MovieFile[] = [{ videoUrl: '', localVideoUrl: '', quality: '', format: '', audioLanguageFormat: '', subtitlesInfo: '' }];
   let episodes: Episode[] = [{ seasonNumber: 1, episodeNumber: 1, title: '', description: '', originalVideoUrl: '', localVideoUrl: '', releaseDate: '', audioLanguageFormat: '', subtitlesInfo: '', tmdbid: '' }];
@@ -171,6 +173,7 @@ function matchEpisodeToSchema(api: any, mediaData: MediaData) {
           backdrop_url: mediaData.backdrop_url,
           cast: mediaData.cast,
           crew: mediaData.crew,
+          online_until: mediaData.online_until,
         }),
       });
 
@@ -563,6 +566,13 @@ function matchEpisodeToSchema(api: any, mediaData: MediaData) {
             <span class="label-text">Backdrop URL:</span>
           </label>
           <input type="text" id="backdropUrl" bind:value={mediaData.backdrop_url} class="input input-bordered w-full" />
+        </div>
+
+        <div class="form-control">
+          <label for="onlineUntil" class="label">
+            <span class="label-text">Online Until:</span>
+          </label>
+          <input type="date" id="onlineUntil" bind:value={mediaData.online_until} class="input input-bordered w-full" />
         </div>
       </div>
 

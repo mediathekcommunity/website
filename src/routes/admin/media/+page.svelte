@@ -87,6 +87,7 @@
                     <th>Type</th>
                     <th>Genre</th>
                     <th>Broadcast Company</th>
+                    <th>Online Until</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -101,6 +102,7 @@
                         <td>{media.type}</td>
                         <td>{media.genre || 'N/A'}</td>
                         <td>{media.broadcast_company || 'N/A'}</td>
+                        <td>{media.online_until || 'N/A'}</td>
                         <td>
                             <button class="btn btn-sm btn-warning mr-2" on:click={() => goto(`/admin/edit/${media.id}`)}>Edit</button>
                             <button class="btn btn-sm btn-danger" on:click={() => deleteMedia(media.id)}>Delete</button>
