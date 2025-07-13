@@ -98,7 +98,7 @@
 		document.body.scrollIntoView();
 		showVideo = true;
 	}
-  	const getImageUrl = (poster_url) => {
+  	const getImageUrl = (poster_url:any) => {
 		if (poster_url) {
 			return "https://img.mediathek.community/images/t/p/original"+poster_url;
 		}

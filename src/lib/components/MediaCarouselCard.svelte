@@ -18,9 +18,9 @@
 		title: string;
 		original_title?: string;
 		type: 'movie' | 'series' | 'music' | string;
-		thumbnail_url?: string;
-		
-		channel?: Channel; // Add channel object
+		backdrop_url?: string; // Replaced thumbnail_url with backdrop_url
+		poster_url?: string;
+		channel?: Channel;
 		// Add other properties if needed, e.g., metascore, remainingDays
 	}
 

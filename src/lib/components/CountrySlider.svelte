@@ -36,7 +36,7 @@
 		plugins: []
 	};
 
-	let emblaApi = $state(null);
+	let emblaApi: HTMLDivElement | null = $state(null); // Explicitly define the type to allow null assignment
 	onDestroy(() => {
 		emblaApi = null;
 	});

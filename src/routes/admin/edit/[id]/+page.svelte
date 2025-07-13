@@ -4,6 +4,7 @@
   import { goto } from '$app/navigation';
 
   interface MovieFile {
+    id?: string; // Added optional 'id' property
     videoUrl: string;
     localVideoUrl: string;
     quality: string;
@@ -13,6 +14,7 @@
   }
 
   interface Episode {
+    id?: string; // Added optional 'id' property
     seasonNumber: number;
     episodeNumber: number;
     title: string;
@@ -23,6 +25,7 @@
     audioLanguageFormat: string;
     subtitlesInfo: string;
     tmdbid: string; // New field for TMDB Episode ID
+    seriesId?: string; // Added optional 'seriesId' property
   }
 
   interface MediaData {
@@ -47,7 +50,7 @@
     episodes?: Episode[];
   }
 
-  let mediaType: 'movie' | 'series' = 'movie';
+  let mediaType: 'movie' | 'series' | 'y-movie' | 'y-series' = 'movie';
   let mediaData: MediaData = {
     id: '',
     title: '',
@@ -88,7 +91,7 @@
 
     if (mediaDataFetched) {
       mediaData = { ...mediaDataFetched };
-      mediaType = mediaDataFetched.type as 'movie' | 'series';
+      mediaType = mediaDataFetched.type as 'movie' | 'series' | 'y-movie' | 'y-series';
       if (mediaDataFetched.type === 'movie' && mediaDataFetched.moviesFiles) { // Corrected property name
         movieFiles = mediaDataFetched.moviesFiles;
       } else if (mediaDataFetched.type === 'series' && mediaDataFetched.episodes) {
@@ -161,7 +164,7 @@
     }
   }
 
-  async function updateMovieFile(fileIndex) {
+  async function updateMovieFile(fileIndex: number): Promise<void> {
     const file = movieFiles[fileIndex];
     if (!file.id) {
       // New file - create it
@@ -190,7 +193,7 @@
     }
   }
 
-  async function addNewMovieFile(file) {
+  async function addNewMovieFile(file: MovieFile): Promise<void> {
     try {
       const response = await fetch('/api/movie-files', {
         method: 'POST',
@@ -222,7 +225,7 @@
     }
   }
 
-  async function deleteMovieFile(fileIndex) {
+  async function deleteMovieFile(fileIndex: number): Promise<void> {
     const file = movieFiles[fileIndex];
     if (!file.id) {
       // Just remove from array if it's a new unsaved file
@@ -252,7 +255,7 @@
     }
   }
 
-  async function updateEpisode(episodeIndex) {
+  async function updateEpisode(episodeIndex: number): Promise<void> {
     const episode = episodes[episodeIndex];
     if (!episode.id) {
       // New episode - create it
@@ -281,7 +284,7 @@
     }
   }
 
-  async function addNewEpisode(episode) {
+  async function addNewEpisode(episode: Episode): Promise<void> {
     try {
       const response = await fetch('/api/episodes', {
         method: 'POST',
@@ -313,7 +316,7 @@
     }
   }
 
-  async function deleteEpisode(episodeIndex) {
+  async function deleteEpisode(episodeIndex: number): Promise<void> {
     const episode = episodes[episodeIndex];
     if (!episode.id) {
       // Just remove from array if it's a new unsaved episode
@@ -359,9 +362,9 @@
       mediaData.title = data.title;
       mediaData.description = data.overview;
       mediaData.thumbnail_url = data.backdrop_path;
-      mediaData.genre = data.genres.map(genre => genre.name).join(", ");
+      mediaData.genre = data.genres.map((genre: any) => genre.name).join(", ");
       mediaData.release_date_year = data.release_date.split("-")[0];
-      mediaData.cast_crew = data.credits.cast.map(cast => `${cast.name} (${cast.character})`).join(", ");
+      mediaData.cast_crew = data.credits.cast.map((cast: any) => `${cast.name} (${cast.character})`).join(", ");
       mediaData.tmdbid = data.id;
       mediaData.backdrop_url = data.backdrop_path;
       mediaData.poster_url = data.poster_path;
@@ -373,23 +376,31 @@
     }
   }
 
-  function mapEpisodeData(data) {
+  function mapEpisodeData(data: any): Episode {
     return {
       seriesId: data.show_id.toString(),
       seasonNumber: data.season,
       episodeNumber: data.episode,
       title: data.name,
       description: data.overview,
-      originalVideoUrl: null,
-      localVideoUrl: null,
+      originalVideoUrl: '', // Replace null with empty string
+      localVideoUrl: '', // Replace null with empty string
       releaseDate: data.air_date,
-      audioLanguageFormat: null,
-      subtitlesInfo: null,
+      audioLanguageFormat: '', // Replace null with empty string
+      subtitlesInfo: '', // Replace null with empty string
       tmdbid: data.id.toString(),
     };
   }
 
-  async function fetchEpisodeData(tmdbid, season, episode) {
+  function mapGenre(genre: { name: string }): string {
+    return genre.name;
+  }
+
+  function mapCast(cast: { name: string; character: string }): string {
+    return `${cast.name} (${cast.character})`;
+  }
+
+  async function fetchEpisodeData(tmdbid: string, season: number, episode: number): Promise<void> {
     try {
       const url = `https://api3.mediathek.community/episode/${tmdbid}/${season}/${episode}`;
       const response = await fetch(url);
@@ -402,6 +413,13 @@
     } catch (error) {
       console.error("Error fetching episode data:", error);
       fetchedEpisodeData = "Failed to fetch episode data.";
+    }
+  }
+
+  function handleInput(e: Event): void {
+    const target = e.target as HTMLInputElement | null;
+    if (target) {
+      mediaData.tmdbid = target.value.replace(/\D/g, '');
     }
   }
 
@@ -438,7 +456,7 @@
               <span class="label-text">TMDB ID:</span>
             </label>
             <div class="flex items-center gap-2">
-              <input type="text" id="tmdbid" bind:value={mediaData.tmdbid} class="input input-bordered w-full" on:input={(e) => mediaData.tmdbid = e.target.value.replace(/\D/g, '')} />
+              <input type="text" id="tmdbid" bind:value={mediaData.tmdbid} class="input input-bordered w-full" on:input={handleInput} />
               <button type="button" class="btn btn-primary" on:click={fetchTMDBData}>Fetch</button>
             </div>
           </div>

@@ -1,21 +1,50 @@
-<script>
+<script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import { modalvideo, playlist, seriestype, playlistindex } from '$lib/store';
 	import videojs from 'video.js';
+	import type { Player } from 'video.js';
 	// Import nuevo plugins
 	import '$lib/videojs/skins/gold1/videojs.min.css';
 	import '$lib/videojs/plugins/es/nuevo.js';
 	import '$lib/videojs/plugins/es/playlist.js';
 	import '$lib/videojs/plugins/es/videojs.hotkeys.js';
 
-	export let mediaData = null; // Media object from our new schema
-	export let currentFile = null; // Current movie file or episode
-	export let episodes = []; // For series - array of episodes
-	export let movieFiles = []; // For movies - array of video files
+	export let mediaData: MediaItem | null = null; // Explicitly define type
+	export let currentFile: MovieFile | null = null; // Explicitly define type
+	export let episodes: Episode[] = []; // Explicitly define type
+	export let movieFiles: MovieFile[] = []; // Explicitly define type
 
-	let player = null;
-	let videoSource = null;
-	let videoElement;
+	let player: Player | null = null; // Explicitly define type
+	let videoElement: HTMLVideoElement | null = null; // Explicitly define type
+	let videoSource: { sources: { src: string; type: string }[]; poster: string; title: string } | null = null;
+
+	interface MovieFile {
+		id: string; // Added 'id' property
+		videoUrl: string;
+		localVideoUrl?: string;
+		quality?: string;
+		format?: string;
+		audioLanguageFormat?: string;
+		subtitlesInfo?: string;
+	}
+
+	interface Episode {
+		id: string;
+		seasonNumber: number;
+		episodeNumber: number;
+		title: string;
+		description?: string;
+		originalVideoUrl?: string;
+		localVideoUrl?: string;
+		subtitlesInfo?: string;
+	}
+
+	interface MediaItem {
+		id: string;
+		title: string;
+		type: 'movie' | 'series';
+		poster_url?: string;
+	}
 
 	const videojsOptions = {
 		license: '0902555a051359560f49525c090a445d0d1348',
@@ -48,8 +77,18 @@
 		rewindforward: 30
 	};
 
+	function setCommonSource(src: string, poster: string, videoType: string, title: string): void {
+		videoSource = {
+			sources: [{ src, type: videoType }],
+			poster,
+			title: title || ''
+		};
+		player?.poster(poster);
+		player?.src(videoSource.sources);
+	}
+
 	// Convert our new schema data to video player format
-	function convertMovieFileToVideoData(file, media) {
+	function convertMovieFileToVideoData(file: MovieFile, media: MediaItem | null): any {
 		return {
 			src: file.videoUrl,
 			type: getVideoType(file.format || 'mp4'),
@@ -60,7 +99,7 @@
 		};
 	}
 
-	function convertEpisodeToVideoData(episode, media) {
+	function convertEpisodeToVideoData(episode: Episode, media: MediaItem | null): any {
 		return {
 			src: episode.originalVideoUrl || episode.localVideoUrl,
 			type: getVideoType('mp4'), // Default to mp4
@@ -74,8 +113,8 @@
 		};
 	}
 
-	function getVideoType(format) {
-		const formatMap = {
+	function getVideoType(format: string): string {
+		const formatMap: { [key: string]: string } = {
 			mp4: 'video/mp4',
 			webm: 'video/webm',
 			ogg: 'video/ogg',
@@ -86,7 +125,7 @@
 		return formatMap[format?.toLowerCase()] || 'video/mp4';
 	}
 
-	function parseSubtitles(subtitlesInfo) {
+	function parseSubtitles(subtitlesInfo: string | undefined): any[] {
 		if (!subtitlesInfo) return [];
 
 		try {
@@ -116,20 +155,10 @@
 		}
 	}
 
-	function setSource() {
+	function setSource(): void {
 		if (!player || !mediaData) return;
 
 		player.currentTime(0);
-
-		const setCommonSource = (src, poster, videoType, title) => {
-			videoSource = {
-				sources: [{ src, type: videoType }],
-				poster,
-				title: title || ''
-			};
-			player.poster(poster);
-			player.src(videoSource.sources);
-		};
 
 		let videoData;
 
@@ -150,7 +179,7 @@
 				// Multiple quality files - create playlist
 				const playlistData = movieFiles.map((file) => ({
 					...convertMovieFileToVideoData(file, mediaData),
-					id: file.id
+					id: file.id || '' // Ensure id exists or provide a fallback
 				}));
 				playlist.set(playlistData);
 				seriestype.set('playlist');
@@ -188,7 +217,7 @@
 		player.one('loadeddata', handleLoadedData);
 	}
 
-	function handleLoadedData() {
+	function handleLoadedData(): void {
 		if (!player) return;
 		const index = $playlistindex;
 		const currentModalVideo = $modalvideo;
@@ -210,7 +239,7 @@
 		}
 	}
 
-	function handlePlaylistChange() {
+	function handlePlaylistChange(): void {
 		if ($seriestype === 'playlist' && $playlist.length > 0 && player) {
 			if (player.playlist && typeof player.playlist.currentItem === 'function') {
 				player.playlist.currentItem($playlistindex);
@@ -221,7 +250,10 @@
 				if (currentItem) {
 					player.src([{ src: currentItem.src, type: currentItem.type }]);
 					player.poster(currentItem.poster);
-					modalvideo.set(currentItem);
+					modalvideo.set({
+						...currentItem,
+						id: String(currentItem.id)
+					});
 				}
 			}
 		}
@@ -262,7 +294,7 @@
 				}
 			});
 
-			player.on('error', (e) => {
+			player.on('error', (e: Event) => {
 				console.error('Video player error:', e);
 			});
 		}
@@ -295,7 +327,7 @@
 	});
 </script>
 
- 	<!-- svelte-ignore a11y_media_has_caption -->
+	<!-- svelte-ignore a11y_media_has_caption -->
 	<video
 		bind:this={videoElement}
 		id="my-video"
@@ -310,7 +342,7 @@
 			</a>.
 		</p>
 	</video>
- 
+
 <style>
 	.overflow-hidden {
 		overflow: hidden !important;

@@ -12,6 +12,7 @@
   }
 
   interface Episode {
+    seriesId: string; // Added 'seriesId' property
     seasonNumber: number;
     episodeNumber: number;
     title: string;
@@ -57,7 +58,7 @@
     tmdbid: '', // Initialize new field
   };
   let movieFiles: MovieFile[] = [{ videoUrl: '', localVideoUrl: '', quality: '', format: '', audioLanguageFormat: '', subtitlesInfo: '' }];
-  let episodes: Episode[] = [{ seasonNumber: 1, episodeNumber: 1, title: '', description: '', originalVideoUrl: '', localVideoUrl: '', releaseDate: '', audioLanguageFormat: '', subtitlesInfo: '', tmdbid: '' }];
+  let episodes: Episode[] = [{ seriesId: '', seasonNumber: 1, episodeNumber: 1, title: '', description: '', originalVideoUrl: '', localVideoUrl: '', releaseDate: '', audioLanguageFormat: '', subtitlesInfo: '', tmdbid: '' }];
 
   interface Channel {
     id: string;
@@ -92,7 +93,7 @@
   }
 
   function addEpisode() {
-    episodes = [...episodes, { seasonNumber: 1, episodeNumber: 1, title: '', description: '', originalVideoUrl: '', localVideoUrl: '', releaseDate: '', audioLanguageFormat: '', subtitlesInfo: '', tmdbid: '' }];
+    episodes = [...episodes, { seriesId: '', seasonNumber: 1, episodeNumber: 1, title: '', description: '', originalVideoUrl: '', localVideoUrl: '', releaseDate: '', audioLanguageFormat: '', subtitlesInfo: '', tmdbid: '' }];
   }
 
   function removeEpisode(index: number) {
@@ -164,9 +165,9 @@
       mediaData.description = data.overview;
       mediaData.backdrop_url = data.backdrop_path;
       mediaData.poster_url = data.poster_path;
-      mediaData.genre = data.genres.map(genre => genre.name).join(", ");
+      mediaData.genre = data.genres.map(mapGenre).join(", ");
       mediaData.release_date_year = data.release_date.split("-")[0];
-      mediaData.cast_crew = data.credits.cast.map(cast => `${cast.name} (${cast.character})`).join(", ");
+      mediaData.cast_crew = data.credits.cast.map(mapCast).join(", ");
       mediaData.tmdbid = data.id;
 
       fetchedData = "Data successfully mapped to general information.";
@@ -176,23 +177,31 @@
     }
   }
 
-  function mapEpisodeData(data) {
+  function mapEpisodeData(data: any): Episode {
     return {
       seriesId: data.show_id.toString(),
       seasonNumber: data.season,
       episodeNumber: data.episode,
       title: data.name,
       description: data.overview,
-      originalVideoUrl: null,
-      localVideoUrl: null,
+      originalVideoUrl: '', // Replace null with empty string
+      localVideoUrl: '', // Replace null with empty string
       releaseDate: data.air_date,
-      audioLanguageFormat: null,
-      subtitlesInfo: null,
+      audioLanguageFormat: '', // Replace null with empty string
+      subtitlesInfo: '', // Replace null with empty string
       tmdbid: data.id.toString(),
     };
   }
 
-  async function fetchEpisodeData(tmdbid, season, episode) {
+  function mapGenre(genre: any): string {
+    return genre.name;
+  }
+
+  function mapCast(cast: any): string {
+    return `${cast.name} (${cast.character})`;
+  }
+
+  async function fetchEpisodeData(tmdbid: string, season: number, episode: number): Promise<void> {
     try {
       const url = `https://api3.mediathek.community/episode/${tmdbid}/${season}/${episode}`;
       const response = await fetch(url);
@@ -206,6 +215,11 @@
       console.error("Error fetching episode data:", error);
       fetchedEpisodeData = "Failed to fetch episode data.";
     }
+  }
+
+  function handleInput(e: Event): void {
+    const target = e.target as HTMLInputElement;
+    mediaData.tmdbid = target.value.replace(/\D/g, '');
   }
 
   let fetchedData = ""; // Only visible after fetch
@@ -241,7 +255,7 @@
               <span class="label-text">TMDB ID:</span>
             </label>
             <div class="flex items-center gap-2">
-              <input type="text" id="tmdbid" bind:value={mediaData.tmdbid} class="input input-bordered w-full" on:input={(e) => mediaData.tmdbid = e.target.value.replace(/\D/g, '')} />
+              <input type="text" id="tmdbid" bind:value={mediaData.tmdbid} class="input input-bordered w-full" on:input={handleInput} />
               <button type="button" class="btn btn-primary" on:click={fetchTMDBData}>Fetch</button>
             </div>
           </div>
