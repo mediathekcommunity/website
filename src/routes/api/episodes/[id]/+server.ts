@@ -3,7 +3,7 @@ import { createDatabase } from '$lib/server/db';
 import { episodes } from '$lib/server/schema';
 import { eq } from 'drizzle-orm';
 
-export async function PUT({ params, request, locals, platform }) {
+export async function PUT({ params, request, locals, platform }: { params: any; request: Request; locals: any; platform: any }) {
     const session = await locals.auth();
     if (!session?.user) {
         return new Response(null, { status: 401, statusText: "Unauthorized" });
@@ -41,7 +41,7 @@ export async function PUT({ params, request, locals, platform }) {
     }
 }
 
-export async function DELETE({ params, locals, platform }) {
+export async function DELETE({ params, locals, platform }: { params: any; locals: any; platform: any }) {
     const session = await locals.auth();
     if (!session?.user) {
         return new Response(null, { status: 401, statusText: "Unauthorized" });

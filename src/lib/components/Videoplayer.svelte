@@ -264,7 +264,6 @@
 			player = videojs(videoElement, videojsOptions);
 
 			player.ready(() => {
-				console.log('Video player ready');
 
 				// Initialize nuevo plugins
 				if (player.nuevo) {

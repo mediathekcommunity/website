@@ -34,14 +34,8 @@
       const allMedia: MediaItem[] = await response.json();
       const fourkMediaData: MediaItem[] = allMedia.filter((item: MediaItem) => item.quality === '4K');
 
-      console.log('All Media:', allMedia);
-      console.log('4K Media Data (filtered):', fourkMediaData);
-
       hero4kMedia = fourkMediaData.slice(0, 5);
       other4kMedia = fourkMediaData;
-
-      console.log('Hero 4K Media:', hero4kMedia);
-      console.log('Other 4K Media:', other4kMedia);
 
     } catch (e: unknown) {
       if (e instanceof Error) {
@@ -90,9 +84,6 @@
 </main>
 
 <style>
-  main {
-    /* Removed padding-top as per user's request */
-  }
   .embla {
     overflow: hidden;
     margin: 0;

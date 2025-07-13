@@ -19,9 +19,10 @@ export const media = sqliteTable('MEDIA', {
     backdrop_url: text('backdrop_url'),
     genre: text('genre'),
     release_date_year: text('release_date_year'),
-    cast_crew: text('cast_crew'),
     channelId: text('channel_id').references(() => channels.id),
     tmdbid: text('tmdbid'),
+    cast: text('cast'),
+    crew: text('crew'),
 });
 
 export const moviesFiles = sqliteTable('MOVIES_FILES', {

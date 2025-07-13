@@ -2,7 +2,7 @@ import { json } from '@sveltejs/kit';
 import { createDatabase } from '$lib/server/db';
 import { episodes } from '$lib/server/schema';
 
-export async function POST({ request, locals, platform }) {
+export async function POST({ request, locals, platform }: { request: Request; locals: any; platform: any }) {
     const session = await locals.auth();
     if (!session?.user) {
         return new Response(null, { status: 401, statusText: "Unauthorized" });

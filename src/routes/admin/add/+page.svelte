@@ -3,6 +3,7 @@
   import { onMount } from 'svelte';
 
   interface MovieFile {
+    id?: string;
     videoUrl: string;
     localVideoUrl: string;
     quality: string;
@@ -12,6 +13,7 @@
   }
 
   interface Episode {
+    id?: string;
     seriesId: string; // Added 'seriesId' property
     seasonNumber: number;
     episodeNumber: number;
@@ -36,6 +38,8 @@
     cast_crew: string;
     channelId: string; // New field for channel selection
     tmdbid: string; // New field for TMDB ID
+    cast: string; // New field for cast
+    crew: string; // New field for crew
   }
 
   interface MediaPayload extends MediaData {
@@ -56,9 +60,11 @@
     cast_crew: '',
     channelId: '', // Initialize new field
     tmdbid: '', // Initialize new field
+    cast: '', // Initialize new field
+    crew: '', // Initialize new field
   };
-  let movieFiles: MovieFile[] = [{ videoUrl: '', localVideoUrl: '', quality: '', format: '', audioLanguageFormat: '', subtitlesInfo: '' }];
-  let episodes: Episode[] = [{ seriesId: '', seasonNumber: 1, episodeNumber: 1, title: '', description: '', originalVideoUrl: '', localVideoUrl: '', releaseDate: '', audioLanguageFormat: '', subtitlesInfo: '', tmdbid: '' }];
+  let movieFiles: MovieFile[] = [{ id: '', videoUrl: '', localVideoUrl: '', quality: '', format: '', audioLanguageFormat: '', subtitlesInfo: '' }];
+  let episodes: Episode[] = [{ id: '', seriesId: '', seasonNumber: 1, episodeNumber: 1, title: '', description: '', originalVideoUrl: '', localVideoUrl: '', releaseDate: '', audioLanguageFormat: '', subtitlesInfo: '', tmdbid: '' }];
 
   interface Channel {
     id: string;
@@ -70,6 +76,27 @@
   }
 
   let channels: Channel[] = [];
+
+  /**
+   * Maps a TMDB episode API result to the Episode fields (without id).
+   * @param api TMDB episode object
+   * @param mediaData The general info object (for seriesId)
+   */
+  function matchEpisodeToSchema(api: any, mediaData: MediaData): Omit<Episode, 'id'> {
+    return {
+      seriesId: mediaData.id,
+      seasonNumber: api.season_number,
+      episodeNumber: api.episode_number,
+      title: api.name,
+      description: api.overview,
+      originalVideoUrl: '',
+      localVideoUrl: '',
+      releaseDate: api.air_date,
+      audioLanguageFormat: '',
+      subtitlesInfo: '',
+      tmdbid: api.id?.toString() ?? '',
+    };
+  }
 
   onMount(async () => {
     try {
@@ -85,7 +112,7 @@
   });
 
   function addMovieFile() {
-    movieFiles = [...movieFiles, { videoUrl: '', localVideoUrl: '', quality: '', format: '', audioLanguageFormat: '', subtitlesInfo: '' }];
+    movieFiles = [...movieFiles, { id: '', videoUrl: '', localVideoUrl: '', quality: '', format: '', audioLanguageFormat: '', subtitlesInfo: '' }];
   }
 
   function removeMovieFile(index: number) {
@@ -93,37 +120,50 @@
   }
 
   function addEpisode() {
-    episodes = [...episodes, { seriesId: '', seasonNumber: 1, episodeNumber: 1, title: '', description: '', originalVideoUrl: '', localVideoUrl: '', releaseDate: '', audioLanguageFormat: '', subtitlesInfo: '', tmdbid: '' }];
+    episodes = [...episodes, { id: '', seriesId: '', seasonNumber: 1, episodeNumber: 1, title: '', description: '', originalVideoUrl: '', localVideoUrl: '', releaseDate: '', audioLanguageFormat: '', subtitlesInfo: '', tmdbid: '' }];
   }
 
   function removeEpisode(index: number) {
     episodes = episodes.filter((_, i) => i !== index);
   }
 
+  async function checkDuplicateTitle(title: string) {
+    try {
+      const response = await fetch(`/api/media?title=${encodeURIComponent(title)}`);
+      if (response.ok) {
+        const data = await response.json();
+        return data.length > 0; // Return true if duplicates exist
+      } else {
+        console.error('Failed to check for duplicate title:', response.statusText);
+        return false;
+      }
+    } catch (error) {
+      console.error('Error checking for duplicate title:', error);
+      return false;
+    }
+  }
+
   async function handleSubmit() {
     // Basic validation
-    if (!mediaData.title || !mediaData.id) {
-      alert('Title and ID are required!');
+    if (!mediaData.title) {
+      alert('Title is required!');
       return;
     }
 
-    const payload: MediaPayload = {
-      ...mediaData,
-      type: mediaType,
-    };
+    const isDuplicate = await checkDuplicateTitle(mediaData.title);
+    if (isDuplicate) {
+      alert('A media entry with this title already exists!');
+      return;
+    }
 
-    if (mediaType === 'movie') {
-      payload.videoFiles = movieFiles;
-      if (movieFiles.some(file => !file.videoUrl)) {
-        alert('All movie files must have a video URL!');
-        return;
-      }
-    } else if (mediaType === 'series') {
-      payload.episodes = episodes;
-      if (episodes.some(episode => !episode.title || !episode.originalVideoUrl)) {
-        alert('All episodes must have a title and original video URL!');
-        return;
-      }
+    if (!channels.some(channel => channel.id === mediaData.channelId)) {
+      alert('Invalid channel selected! Please choose a valid channel.');
+      return;
+    }
+
+    if (mediaType === 'movie' && !movieFiles.some(file => file.videoUrl)) {
+      alert('At least one movie file must have a Video URL!');
+      return;
     }
 
     try {
@@ -132,11 +172,25 @@
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          type: mediaType,
+          title: mediaData.title,
+          description: mediaData.description,
+          genre: mediaData.genre,
+          release_date_year: mediaData.release_date_year,
+          channelId: mediaData.channelId,
+          tmdbid: mediaData.tmdbid,
+          poster_url: mediaData.poster_url,
+          backdrop_url: mediaData.backdrop_url,
+          cast: mediaData.cast,
+          crew: mediaData.crew,
+          moviesFiles: mediaType === 'movie' ? movieFiles.filter(file => file.videoUrl || file.localVideoUrl) : undefined,
+          episodes: mediaType === 'series' ? episodes.filter(episode => episode.title) : undefined,
+        }),
       });
 
       if (response.ok) {
-        alert('Media added successfully!');
+        alert('Media entry added successfully!');
         goto('/admin');
       } else {
         const errorData = await response.json();
@@ -165,9 +219,12 @@
       mediaData.description = data.overview;
       mediaData.backdrop_url = data.backdrop_path;
       mediaData.poster_url = data.poster_path;
-      mediaData.genre = data.genres.map(mapGenre).join(", ");
-      mediaData.release_date_year = data.release_date.split("-")[0];
-      mediaData.cast_crew = data.credits.cast.map(mapCast).join(", ");
+      mediaData.genre = data.genres ? data.genres.map(mapGenre).join(", ") : "Unknown";
+      mediaData.release_date_year = mediaType === "movie" || mediaType === "y-movie" 
+        ? data.release_date.split("-")[0] 
+        : data.first_air_date.split("-")[0];
+      mediaData.cast = data.credits.cast.map(mapCast).join(", ");
+      mediaData.crew = data.credits.crew.map(mapCrew).join(", ");
       mediaData.tmdbid = data.id;
 
       fetchedData = "Data successfully mapped to general information.";
@@ -201,7 +258,11 @@
     return `${cast.name} (${cast.character})`;
   }
 
-  async function fetchEpisodeData(tmdbid: string, season: number, episode: number): Promise<void> {
+  function mapCrew(crew: any): string {
+    return `${crew.name} (${crew.job})`;
+  }
+
+  async function fetchEpisodeData(tmdbid: string, season: number, episode: number, index: number): Promise<void> {
     try {
       const url = `https://api3.mediathek.community/episode/${tmdbid}/${season}/${episode}`;
       const response = await fetch(url);
@@ -210,7 +271,13 @@
       }
       const data = await response.json();
 
-      fetchedEpisodeData = JSON.stringify(data, null, 2); // Format JSON for display
+      // Map the fetched data to Episode fields using the new match function
+      const mappedEpisode = matchEpisodeToSchema(data, mediaData);
+      fetchedEpisodeData = JSON.stringify(mappedEpisode, null, 2); // For display/debug
+
+      // Update only the episode at the given index
+      episodes[index] = { ...episodes[index], ...mappedEpisode };
+      episodes = [...episodes]; // trigger reactivity
     } catch (error) {
       console.error("Error fetching episode data:", error);
       fetchedEpisodeData = "Failed to fetch episode data.";
@@ -220,6 +287,113 @@
   function handleInput(e: Event): void {
     const target = e.target as HTMLInputElement;
     mediaData.tmdbid = target.value.replace(/\D/g, '');
+  }
+
+  async function updateMovieFile(fileIndex: number): Promise<void> {
+    const file = movieFiles[fileIndex];
+    if (!file.id) {
+      // New file - just remove from array or implement add logic if needed
+      alert('Save new movie files by submitting the form.');
+      return;
+    }
+    try {
+      const response = await fetch(`/api/movie-files/${file.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(file),
+      });
+      if (response.ok) {
+        alert('Movie file updated successfully!');
+      } else {
+        const errorData = await response.json();
+        alert(`Failed to update movie file: ${errorData.error}`);
+      }
+    } catch (error) {
+      console.error('Error updating movie file:', error);
+      alert('An unexpected error occurred.');
+    }
+  }
+
+  async function deleteMovieFile(fileIndex: number): Promise<void> {
+    const file = movieFiles[fileIndex];
+    if (!file.id) {
+      // Just remove from array if it's a new unsaved file
+      removeMovieFile(fileIndex);
+      return;
+    }
+    if (!confirm('Are you sure you want to delete this movie file?')) {
+      return;
+    }
+    try {
+      const response = await fetch(`/api/movie-files/${file.id}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        removeMovieFile(fileIndex);
+        alert('Movie file deleted successfully!');
+      } else {
+        const errorData = await response.json();
+        alert(`Failed to delete movie file: ${errorData.error}`);
+      }
+    } catch (error) {
+      console.error('Error deleting movie file:', error);
+      alert('An unexpected error occurred.');
+    }
+  }
+
+  async function updateEpisode(episodeIndex: number): Promise<void> {
+    const episode = episodes[episodeIndex];
+    if (!episode.id) {
+      alert('Save new episodes by submitting the form.');
+      return;
+    }
+    try {
+      const response = await fetch(`/api/episodes/${episode.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(episode),
+      });
+      if (response.ok) {
+        alert('Episode updated successfully!');
+      } else {
+        const errorData = await response.json();
+        alert(`Failed to update episode: ${errorData.error}`);
+      }
+    } catch (error) {
+      console.error('Error updating episode:', error);
+      alert('An unexpected error occurred.');
+    }
+  }
+
+  async function deleteEpisode(episodeIndex: number): Promise<void> {
+    const episode = episodes[episodeIndex];
+    if (!episode.id) {
+      // Just remove from array if it's a new unsaved episode
+      removeEpisode(episodeIndex);
+      return;
+    }
+    if (!confirm('Are you sure you want to delete this episode?')) {
+      return;
+    }
+    try {
+      const response = await fetch(`/api/episodes/${episode.id}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        removeEpisode(episodeIndex);
+        alert('Episode deleted successfully!');
+      } else {
+        const errorData = await response.json();
+        alert(`Failed to delete episode: ${errorData.error}`);
+      }
+    } catch (error) {
+      console.error('Error deleting episode:', error);
+      alert('An unexpected error occurred.');
+    }
   }
 
   let fetchedData = ""; // Only visible after fetch
@@ -262,6 +436,18 @@
         </div>
 
         <div class="form-control">
+          <label for="channel" class="label">
+            <span class="label-text">Channel:</span>
+          </label>
+          <select id="channel" bind:value={mediaData.channelId} class="select select-bordered w-full">
+            <option value="">Select a Channel</option>
+            {#each channels as channel}
+              <option value={channel.id}>{channel.name} - {channel.country}</option>
+            {/each}
+          </select>
+        </div>
+
+        <div class="form-control">
           <label for="title" class="label">
             <span class="label-text">Title:</span>
           </label>
@@ -273,20 +459,6 @@
             <span class="label-text">Description:</span>
           </label>
           <textarea id="description" bind:value={mediaData.description} class="textarea textarea-bordered w-full h-24"></textarea>
-        </div>
-
-        <div class="form-control">
-          <label for="backdropUrl" class="label">
-            <span class="label-text">Backdrop URL:</span>
-          </label>
-          <input type="text" id="backdropUrl" bind:value={mediaData.backdrop_url} class="input input-bordered w-full" />
-        </div>
-
-        <div class="form-control">
-          <label for="posterUrl" class="label">
-            <span class="label-text">Poster URL:</span>
-          </label>
-          <input type="text" id="posterUrl" bind:value={mediaData.poster_url} class="input input-bordered w-full" />
         </div>
 
         <div class="form-control">
@@ -304,12 +476,32 @@
         </div>
 
         <div class="form-control">
-          <label for="castCrew" class="label">
-            <span class="label-text">Cast & Crew:</span>
+          <label for="cast" class="label">
+            <span class="label-text">Cast:</span>
           </label>
-          <input type="text" id="castCrew" bind:value={mediaData.cast_crew} class="input input-bordered w-full" />
+          <input type="text" id="cast" bind:value={mediaData.cast} class="input input-bordered w-full" />
         </div>
 
+        <div class="form-control">
+          <label for="crew" class="label">
+            <span class="label-text">Crew:</span>
+          </label>
+          <input type="text" id="crew" bind:value={mediaData.crew} class="input input-bordered w-full" />
+        </div>
+
+        <div class="form-control">
+          <label for="posterUrl" class="label">
+            <span class="label-text">Poster URL:</span>
+          </label>
+          <input type="text" id="posterUrl" bind:value={mediaData.poster_url} class="input input-bordered w-full" />
+        </div>
+
+        <div class="form-control">
+          <label for="backdropUrl" class="label">
+            <span class="label-text">Backdrop URL:</span>
+          </label>
+          <input type="text" id="backdropUrl" bind:value={mediaData.backdrop_url} class="input input-bordered w-full" />
+        </div>
       </div>
 
       <!-- Right Column - Movie/Series Content -->
@@ -324,7 +516,7 @@
                   <label for="movieVideoUrl-{i}" class="label">
                     <span class="label-text">Video URL:</span>
                   </label>
-                  <input type="text" id="movieVideoUrl-{i}" bind:value={file.videoUrl} required class="input input-bordered w-full" />
+                  <input type="text" id="movieVideoUrl-{i}" bind:value={file.videoUrl} class="input input-bordered w-full" />
                 </div>
                 <div class="form-control">
                   <label for="movieLocalVideoUrl-{i}" class="label">
@@ -356,7 +548,14 @@
                   </label>
                   <input type="text" id="movieSubtitles-{i}" bind:value={file.subtitlesInfo} class="input input-bordered w-full" />
                 </div>
-                <button type="button" class="btn btn-error btn-sm" on:click={() => removeMovieFile(i)}>Remove File</button>
+                <div class="flex gap-2 mt-3">
+                  <button type="button" class="btn btn-primary btn-sm" on:click={() => updateMovieFile(i)}>
+                    {file.id ? 'Update' : 'Save'} File
+                  </button>
+                  <button type="button" class="btn btn-error btn-sm" on:click={() => deleteMovieFile(i)}>
+                    {file.id ? 'Delete' : 'Remove'} File
+                  </button>
+                </div>
               </div>
             </div>
           {/each}
@@ -428,9 +627,16 @@
                     <span class="label-text">TMDB Episode ID:</span>
                   </label>
                   <input type="text" id="episodeTmdbId-{i}" bind:value={episode.tmdbid} class="input input-bordered w-1/2" />
-                  <button type="button" class="btn btn-primary" on:click={() => fetchEpisodeData(episode.tmdbid, episode.seasonNumber, episode.episodeNumber)}>Fetch</button>
+                  <button type="button" class="btn btn-primary" on:click={() => fetchEpisodeData(episode.tmdbid, episode.seasonNumber, episode.episodeNumber, i)}>Fetch</button>
                 </div>
-                <button type="button" class="btn btn-error btn-sm" on:click={() => removeEpisode(i)}>Remove Episode</button>
+                <div class="flex gap-2 mt-3">
+                  <button type="button" class="btn btn-primary btn-sm" on:click={() => updateEpisode(i)}>
+                    {episode.id ? 'Update' : 'Save'} Episode
+                  </button>
+                  <button type="button" class="btn btn-error btn-sm" on:click={() => deleteEpisode(i)}>
+                    {episode.id ? 'Delete' : 'Remove'} Episode
+                  </button>
+                </div>
               </div>
             </div>
           {/each}
@@ -439,14 +645,16 @@
       </div>
     </div>
 
-    {#if fetchedData}
-      <div class="form-control">
-        <label for="fetchedData" class="label">
-          <span class="label-text">Fetched Data:</span>
-        </label>
-        <textarea id="fetchedData" readonly class="textarea textarea-bordered w-full h-24">{fetchedData}</textarea>
-      </div>
-    {/if}
+    <div class="flex justify-center mt-8">
+      <button type="submit" class="btn btn-primary btn-lg">Update General Info</button>
+    </div>
+
+    <div class="form-control">
+      <label for="fetchedData" class="label">
+        <span class="label-text">Fetched Data:</span>
+      </label>
+      <textarea id="fetchedData" readonly class="textarea textarea-bordered w-full h-24">{fetchedData}</textarea>
+    </div>
 
     {#if fetchedEpisodeData}
       <div class="form-control">
@@ -456,8 +664,4 @@
         <textarea id="fetchedEpisodeData" readonly class="textarea textarea-bordered w-full h-24">{fetchedEpisodeData}</textarea>
       </div>
     {/if}
-
-    <div class="flex justify-center mt-8">
-      <button type="submit" class="btn btn-primary btn-lg">Add Media</button>
-    </div>
   </form>

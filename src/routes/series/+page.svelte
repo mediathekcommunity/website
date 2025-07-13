@@ -85,9 +85,6 @@
 </main>
 
 <style>
-  main {
-    /* Removed padding-top as per user's request */
-  }
   .embla {
     overflow: hidden;
     margin: 0;

@@ -4,7 +4,7 @@ import { channels } from '$lib/server/schema';
 import { channelSchema } from '$lib/schemas/channel';
 import { eq } from 'drizzle-orm';
 
-export async function GET({ params, platform }) {
+export async function GET({ params, platform }: { params: any; platform: any }) {
     try {
         const db = createDatabase(platform);
         const { id } = params;
@@ -15,13 +15,13 @@ export async function GET({ params, platform }) {
         } else {
             return json({ error: 'Channel not found' }, { status: 404 });
         }
-    } catch (/** @type {any} */ error) {
+    } catch (error: any) {
         console.error(`Error fetching channel with ID ${params.id}:`, error);
         return json({ error: 'Failed to fetch channel' }, { status: 500 });
     }
 }
 
-export async function PUT({ params, request, platform }) {
+export async function PUT({ params, request, platform }: { params: any; request: Request; platform: any }) {
     try {
         const db = createDatabase(platform);
         const { id } = params;
@@ -39,7 +39,7 @@ export async function PUT({ params, request, platform }) {
         } else {
             return json({ error: 'Channel not found' }, { status: 404 });
         }
-    } catch (/** @type {any} */ error) {
+    } catch (error: any) {
         console.error(`Error updating channel with ID ${params.id}:`, error);
         if (error.name === 'ZodError') {
             return json({ error: 'Validation failed', details: error.errors }, { status: 400 });
@@ -48,7 +48,7 @@ export async function PUT({ params, request, platform }) {
     }
 }
 
-export async function DELETE({ params, platform }) {
+export async function DELETE({ params, platform }: { params: any; platform: any }) {
     try {
         const db = createDatabase(platform);
         const { id } = params;
@@ -62,7 +62,7 @@ export async function DELETE({ params, platform }) {
         } else {
             return json({ error: 'Channel not found' }, { status: 404 });
         }
-    } catch (/** @type {any} */ error) {
+    } catch (error: any) {
         console.error(`Error deleting channel with ID ${params.id}:`, error);
         return json({ error: 'Failed to delete channel' }, { status: 500 });
     }

@@ -1,0 +1,1 @@
+ALTER TABLE `MEDIA` DROP COLUMN `cast_crew`;

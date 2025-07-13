@@ -3,7 +3,7 @@ import { createDatabase } from '$lib/server/db';
 import { media, channels, moviesFiles, episodes } from '$lib/server/schema';
 import { eq } from 'drizzle-orm';
 
-export async function GET({ params, platform }) {
+export async function GET({ params, platform }: { params: any; platform: any }) {
     try {
         const db = createDatabase(platform);
         const { id } = params;
@@ -21,13 +21,13 @@ export async function GET({ params, platform }) {
         }
 
         return json(mediaItem);
-    } catch (/** @type {any} */ error) {
+    } catch (error: any) {
         console.error('Error fetching media item:', error);
         return json({ error: 'Failed to fetch media item' }, { status: 500 });
     }
 }
 
-export async function PUT({ params, request, platform }) {
+export async function PUT({ params, request, platform }: { params: any; request: Request; platform: any }) {
     try {
         const db = createDatabase(platform);
         const { id } = params;
@@ -48,7 +48,7 @@ export async function PUT({ params, request, platform }) {
         if (type === 'movie') {
             if (videoFiles && videoFiles.length > 0) {
                 await db.delete(moviesFiles).where(eq(moviesFiles.movieId, id));
-                const filesToInsert = videoFiles.map(/** @param {any} file */ file => ({
+                const filesToInsert = videoFiles.map((file: any) => ({
                     id: crypto.randomUUID(), // Generate unique ID for each file
                     videoUrl: file.videoUrl,
                     quality: file.quality,
@@ -62,7 +62,7 @@ export async function PUT({ params, request, platform }) {
         } else if (type === 'series') {
             if (seriesEpisodes && seriesEpisodes.length > 0) {
                 await db.delete(episodes).where(eq(episodes.seriesId, id));
-                const episodesToInsert = seriesEpisodes.map(/** @param {any} episode */ episode => ({
+                const episodesToInsert = seriesEpisodes.map((episode: any) => ({
                     id: crypto.randomUUID(), // Generate unique ID for each episode
                     seasonNumber: episode.seasonNumber,
                     episodeNumber: episode.episodeNumber,
@@ -84,7 +84,7 @@ export async function PUT({ params, request, platform }) {
         } else {
             return json({ error: 'Media not found' }, { status: 404 });
         }
-    } catch (/** @type {any} */ error) {
+    } catch (error: any) {
         console.error(`Error updating media item with ID ${params.id}:`, error);
         if (error.name === 'ZodError') {
             return json({ error: 'Validation failed', details: error.errors }, { status: 400 });
@@ -93,7 +93,7 @@ export async function PUT({ params, request, platform }) {
     }
 }
 
-export async function DELETE({ params, platform }) {
+export async function DELETE({ params, platform }: { params: any; platform: any }) {
     try {
         const db = createDatabase(platform);
         const { id } = params;
@@ -104,7 +104,7 @@ export async function DELETE({ params, platform }) {
         } else {
             return json({ error: 'Media item not found' }, { status: 404 });
         }
-    } catch (/** @type {any} */ error) {
+    } catch (error: any) {
         console.error(`Error deleting media item with ID ${params.id}:`, error);
         return json({ error: 'Failed to delete media item' }, { status: 500 });
     }

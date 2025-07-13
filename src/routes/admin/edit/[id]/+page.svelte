@@ -1,4 +1,24 @@
 <script lang="ts">
+  /**
+   * Maps a TMDB episode API result to the Episode fields (without id).
+   * @param api TMDB episode object
+   * @param mediaData The general info object (for seriesId)
+   */
+function matchEpisodeToSchema(api: any, mediaData: MediaData) {
+  return {
+    seriesId: mediaData.id,
+    seasonNumber: api.season_number ?? api.season ?? api.seasonNumber ?? 1,
+    episodeNumber: api.episode_number ?? api.episode ?? api.episodeNumber ?? 1,
+    title: api.name ?? api.title ?? api.orgtitle ?? '',
+    description: api.overview ?? api.description ?? '',
+    originalVideoUrl: api.originalVideoUrl ?? '',
+    localVideoUrl: api.localVideoUrl ?? '',
+    releaseDate: api.air_date ?? api.release_date ?? '',
+    audioLanguageFormat: api.audioLanguageFormat ?? '',
+    subtitlesInfo: api.subtitlesInfo ?? '',
+    //tmdbid: (api.id ?? api.tmdbid ?? '').toString(),
+  };
+}
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import { goto } from '$app/navigation';
@@ -43,6 +63,8 @@
     tmdbid: string; // New field for TMDB ID
     poster_url: string;
     backdrop_url: string;
+    cast: string; // New field for cast
+    crew: string; // New field for crew
   }
 
   interface MediaPayload extends MediaData {
@@ -64,6 +86,8 @@
     tmdbid: '', // Initialize new field
     poster_url: '',
     backdrop_url: '',
+    cast: '', // Initialize new field
+    crew: '', // Initialize new field
   };
   let movieFiles: MovieFile[] = [{ videoUrl: '', localVideoUrl: '', quality: '', format: '', audioLanguageFormat: '', subtitlesInfo: '' }];
   let episodes: Episode[] = [{ seasonNumber: 1, episodeNumber: 1, title: '', description: '', originalVideoUrl: '', localVideoUrl: '', releaseDate: '', audioLanguageFormat: '', subtitlesInfo: '', tmdbid: '' }];
@@ -122,13 +146,12 @@
 
   async function handleSubmit() {
     // Basic validation
-    if (!mediaData.title || !mediaData.id) {
-      alert('Title and ID are required!');
+    if (!mediaData.title) {
+      alert('Title is required!');
       return;
     }
 
     try {
-      // Only update the main media record (without files/episodes)
       const response = await fetch('/api/media', {
         method: 'PUT',
         headers: {
@@ -142,17 +165,17 @@
           thumbnail_url: mediaData.thumbnail_url,
           genre: mediaData.genre,
           release_date_year: mediaData.release_date_year,
-          cast_crew: mediaData.cast_crew,
           channelId: mediaData.channelId,
           tmdbid: mediaData.tmdbid,
           poster_url: mediaData.poster_url,
           backdrop_url: mediaData.backdrop_url,
+          cast: mediaData.cast,
+          crew: mediaData.crew,
         }),
       });
 
       if (response.ok) {
         alert('Media information updated successfully!');
-        // Reload to show updated data
         window.location.reload();
       } else {
         const errorData = await response.json();
@@ -361,19 +384,29 @@
       // Map fetched data to general information
       mediaData.title = data.title;
       mediaData.description = data.overview;
-      mediaData.thumbnail_url = data.backdrop_path;
-      mediaData.genre = data.genres.map((genre: any) => genre.name).join(", ");
-      mediaData.release_date_year = data.release_date.split("-")[0];
-      mediaData.cast_crew = data.credits.cast.map((cast: any) => `${cast.name} (${cast.character})`).join(", ");
-      mediaData.tmdbid = data.id;
       mediaData.backdrop_url = data.backdrop_path;
       mediaData.poster_url = data.poster_path;
+      mediaData.genre = data.genres.map(mapGenre).join(", ");
+      mediaData.release_date_year = mediaType === "movie" || mediaType === "y-movie" 
+        ? data.release_date.split("-")[0] 
+        : data.first_air_date.split("-")[0];
+      mediaData.cast = data.credits.cast.map(mapCast).join(", ");
+      mediaData.crew = data.credits.crew.map(mapCrew).join(", ");
+      mediaData.tmdbid = data.id;
 
       fetchedData = "Data successfully mapped to general information.";
     } catch (error) {
       console.error("Error fetching TMDB data:", error);
       fetchedData = "Failed to fetch data.";
     }
+  }
+
+  function mapCast(cast: any): string {
+    return `${cast.name} (${cast.character})`;
+  }
+
+  function mapCrew(crew: any): string {
+    return `${crew.name} (${crew.job})`;
   }
 
   function mapEpisodeData(data: any): Episode {
@@ -396,11 +429,7 @@
     return genre.name;
   }
 
-  function mapCast(cast: { name: string; character: string }): string {
-    return `${cast.name} (${cast.character})`;
-  }
-
-  async function fetchEpisodeData(tmdbid: string, season: number, episode: number): Promise<void> {
+  async function fetchEpisodeData(tmdbid: string, season: number, episode: number, index: number): Promise<void> {
     try {
       const url = `https://api3.mediathek.community/episode/${tmdbid}/${season}/${episode}`;
       const response = await fetch(url);
@@ -409,7 +438,13 @@
       }
       const data = await response.json();
 
-      fetchedEpisodeData = JSON.stringify(data, null, 2); // Format JSON for display
+      // Map the fetched data to Episode fields using the new match function
+      const mappedEpisode = matchEpisodeToSchema(data, mediaData);
+      fetchedEpisodeData = JSON.stringify(mappedEpisode, null, 2); // For display/debug
+
+      // Update only the episode at the given index
+      episodes[index] = { ...episodes[index], ...mappedEpisode };
+      episodes = [...episodes]; // trigger reactivity
     } catch (error) {
       console.error("Error fetching episode data:", error);
       fetchedEpisodeData = "Failed to fetch episode data.";
@@ -503,17 +538,17 @@
         </div>
 
         <div class="form-control">
-          <label for="castCrew" class="label">
-            <span class="label-text">Cast & Crew:</span>
+          <label for="cast" class="label">
+            <span class="label-text">Cast:</span>
           </label>
-          <input type="text" id="castCrew" bind:value={mediaData.cast_crew} class="input input-bordered w-full" />
+          <input type="text" id="cast" bind:value={mediaData.cast} class="input input-bordered w-full" />
         </div>
 
         <div class="form-control">
-          <label for="backdropUrl" class="label">
-            <span class="label-text">Backdrop URL:</span>
+          <label for="crew" class="label">
+            <span class="label-text">Crew:</span>
           </label>
-          <input type="text" id="backdropUrl" bind:value={mediaData.backdrop_url} class="input input-bordered w-full" />
+          <input type="text" id="crew" bind:value={mediaData.crew} class="input input-bordered w-full" />
         </div>
 
         <div class="form-control">
@@ -521,6 +556,13 @@
             <span class="label-text">Poster URL:</span>
           </label>
           <input type="text" id="posterUrl" bind:value={mediaData.poster_url} class="input input-bordered w-full" />
+        </div>
+
+        <div class="form-control">
+          <label for="backdropUrl" class="label">
+            <span class="label-text">Backdrop URL:</span>
+          </label>
+          <input type="text" id="backdropUrl" bind:value={mediaData.backdrop_url} class="input input-bordered w-full" />
         </div>
       </div>
 
@@ -643,11 +685,11 @@
                   <input type="text" id="episodeSubtitles-{i}" bind:value={episode.subtitlesInfo} class="input input-bordered w-full" />
                 </div>
                 <div class="form-control flex flex-row items-center gap-2">
-                  <label for="episodeTmdbId-{i}" class="label">
-                    <span class="label-text">TMDB Episode ID:</span>
+                  <label class="label" for="fetchEpisodeData">
+                    <span class="label-text">Fetch Episode Data:</span>
                   </label>
-                  <input type="text" id="episodeTmdbId-{i}" bind:value={episode.tmdbid} class="input input-bordered w-1/2" />
-                  <button type="button" class="btn btn-primary" on:click={() => fetchEpisodeData(episode.tmdbid, episode.seasonNumber, episode.episodeNumber)}>Fetch</button>
+                  <input id="fetchEpisodeData" type="text" class="input input-bordered" />
+                  <button type="button" class="btn btn-primary" on:click={() => fetchEpisodeData(mediaData.tmdbid, episode.seasonNumber, episode.episodeNumber, i)}>Fetch</button>
                 </div>
                 <div class="flex gap-2 mt-3">
                   <button type="button" class="btn btn-primary btn-sm" on:click={() => updateEpisode(i)}>

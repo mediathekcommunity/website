@@ -24,7 +24,6 @@ export const media = sqliteTable("MEDIA", {
 	backdropUrl: text("backdrop_url"),
 	genre: text(),
 	releaseDateYear: text("release_date_year"),
-	castCrew: text("cast_crew"),
 	channelId: text("channel_id").references(() => channels.id),
 });
 

@@ -151,6 +151,9 @@
 								</p>
 							{/if}
 
+							<p class="mb-4 max-w-2xl text-sm text-gray-300 sm:text-base md:text-lg">
+								{slide.description}
+							</p>
 							<!-- Removed special as it's not in the current schema -->
 							<a href="/details/{slide.id}">
 								<button class="btn btn-primary"> Details</button>

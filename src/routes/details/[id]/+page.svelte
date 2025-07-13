@@ -15,7 +15,6 @@
 	// Video player state
 	let showVideo: boolean = false;
 	let currentFile: any = null;
-
 	onMount(async () => {
 		try {
 			const id = $page.params.id;
@@ -26,7 +25,10 @@
 			const data = await response.json();
 			mediaItem = data;
 
-			console.log('MediaItem Backdrop URL:', mediaItem.backdrop_url);
+			if (mediaItem) {
+				mediaItem.cast = data.cast || '';
+				mediaItem.crew = data.crew || '';
+			}
 
 			if (mediaItem && mediaItem.type === 'movie') {
 				movieFiles = mediaItem.moviesFiles || [];
@@ -98,13 +100,21 @@
 		document.body.scrollIntoView();
 		showVideo = true;
 	}
-  	const getImageUrl = (poster_url:any) => {
+	const getImageUrl = (poster_url: any) => {
 		if (poster_url) {
-			return "https://img.mediathek.community/images/t/p/original"+poster_url;
+			return 'https://img.mediathek.community/images/t/p/original' + poster_url;
 		}
 		console.warn('No poster_url found for poster_url', poster_url);
 		return 'https://via.placeholder.com/1280x720.png?text=No+Image'; // Placeholder image
 	};
+
+	function parseMember(member: string) {
+		const nameMatch = member.match(/^(.*?)(?=\()/);
+		const roleMatch = member.match(/\((.*?)\)/);
+		const name = nameMatch ? nameMatch[0].trim() : member.trim();
+		const role = roleMatch ? roleMatch[1].trim() : 'N/A';
+		return { name, role };
+	}
 </script>
 
 <main>
@@ -138,9 +148,6 @@
 							>
 								{mediaItem.title}
 							</h1>
-							<p class="mb-4 max-w-2xl text-sm text-gray-300 sm:text-base md:text-lg">
-								{mediaItem.description}
-							</p>
 							<div class="flex gap-3">
 								<button class="btn btn-primary" on:click={playVideo}>
 									<Icon icon="mdi:play" class="mr-2 h-5 w-5" />
@@ -205,10 +212,6 @@
 												<td class="py-2 pr-4 align-top font-semibold">Release Year:</td>
 												<td class="py-2">{mediaItem.release_date_year}</td>
 											</tr>
-											<tr>
-												<td class="py-2 pr-4 align-top font-semibold">Cast & Crew:</td>
-												<td class="py-2">{mediaItem.cast_crew}</td>
-											</tr>
 										</tbody>
 									</table>
 								</div>
@@ -216,6 +219,45 @@
 								<div>
 									<h3 class="mb-2 text-lg font-semibold">Description</h3>
 									<p class="text-base-content/80 leading-relaxed">{mediaItem.description}</p>
+								</div>
+							</div>
+
+							<h2 class="mt-6 mb-4 text-2xl font-bold">Cast & Crew</h2>
+							<div class="tabs">
+								<input type="radio" name="cast_crew_tabs" class="tab" aria-label="Cast" checked />
+								<div class="tab-content bg-base-100 border-base-300 p-6">
+									<div class="max-h-[calc(6*2.5rem)] overflow-auto">
+										<table class="w-full">
+											<tbody>
+												{#each mediaItem.cast.split(',') as castMember}
+													<tr>
+														<td class="py-2 pr-4 align-top font-semibold"
+															>{parseMember(castMember).name}</td
+														>
+														<td class="py-2">{parseMember(castMember).role}</td>
+													</tr>
+												{/each}
+											</tbody>
+										</table>
+									</div>
+								</div>
+
+								<input type="radio" name="cast_crew_tabs" class="tab" aria-label="Crew" />
+								<div class="tab-content bg-base-100 border-base-300 p-6">
+									<div class="max-h-[calc(6*2.5rem)] overflow-auto">
+										<table class="w-full">
+											<tbody>
+												{#each mediaItem.crew.split(',') as crewMember}
+													<tr>
+														<td class="py-2 pr-4 align-top font-semibold"
+															>{parseMember(crewMember).name}</td
+														>
+														<td class="py-2">{parseMember(crewMember).role}</td>
+													</tr>
+												{/each}
+											</tbody>
+										</table>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -358,29 +400,46 @@
 												<div class="space-y-3">
 													<p class="text-base-content/80">{episode.description}</p>
 													<div class="flex flex-wrap gap-2">
-														<span class="badge badge-primary">{episode.audioLanguageFormat}</span>
-														<span class="badge badge-secondary">{episode.subtitlesInfo}</span>
+														{#if episode.audioLanguageFormat}
+															<span class="badge badge-primary">{episode.audioLanguageFormat}</span>
+														{/if}
+														{#if episode.subtitlesInfo}
+															<span class="badge badge-secondary">{episode.subtitlesInfo}</span>
+														{/if}
 													</div>
 													<div class="flex gap-3 pt-2">
-														<button
-															class="btn btn-primary btn-sm"
-															on:click={() =>
-																playEpisode(
-																	{ ...episode, videoUrl: episode.originalVideoUrl },
-																	index
-																)}
-														>
-															<Icon icon="mdi:play" class="mr-1 h-4 w-4" />
-															Play OV
-														</button>
-														<button
-															class="btn btn-secondary btn-sm"
-															on:click={() =>
-																playEpisode({ ...episode, videoUrl: episode.localVideoUrl }, index)}
-														>
-															<Icon icon="mdi:play" class="mr-1 h-4 w-4" />
-															Play Local
-														</button>
+														{#if episode.originalVideoUrl || episode.localVideoUrl}
+															{#if episode.originalVideoUrl}
+																<button
+																	class="btn btn-primary btn-sm"
+																	on:click={() =>
+																		playEpisode(
+																			{ ...episode, videoUrl: episode.originalVideoUrl },
+																			index
+																		)}
+																>
+																	<Icon icon="mdi:play" class="mr-1 h-4 w-4" />
+																	Play OV
+																</button>
+															{/if}
+															{#if episode.localVideoUrl}
+																<button
+																	class="btn btn-secondary btn-sm"
+																	on:click={() =>
+																		playEpisode(
+																			{ ...episode, videoUrl: episode.localVideoUrl },
+																			index
+																		)}
+																>
+																	<Icon icon="mdi:play" class="mr-1 h-4 w-4" />
+																	Play Local
+																</button>
+															{/if}
+														{:else}
+															<button class="btn btn-disabled btn-sm" disabled
+																>Link comes later</button
+															>
+														{/if}
 													</div>
 												</div>
 											</div>
