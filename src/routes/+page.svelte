@@ -33,6 +33,8 @@
 
       groupedByCompany = groupByBroadcastCompany(allMedia);
       companyList = Object.keys(groupedByCompany).sort();
+
+      console.log('Hero Media Backdrop URLs:', heroMedia.map(item => item.backdrop_url));
     } catch (e: any) {
       error = e.message;
     } finally {

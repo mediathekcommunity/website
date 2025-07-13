@@ -219,32 +219,32 @@
         <h2 class="text-2xl font-bold mb-4">General Information</h2>
         
         <div class="form-control">
-          <label for="mediaType" class="label">
-            <span class="label-text">Media Type:</span>
-          </label>
-          <select id="mediaType" bind:value={mediaType} class="select select-bordered w-full">
-            <option value="movie">Movie</option>
-            <option value="series">Series</option>
-          </select>
-        </div>
-
-        <div class="form-control">
-          <label for="channel" class="label">
-            <span class="label-text">Channel:</span>
-          </label>
-          <select id="channel" bind:value={mediaData.channelId} class="select select-bordered w-full">
-            <option value="">Select a Channel</option>
-            {#each channels as channel}
-              <option value={channel.id}>{channel.name} - {channel.country}</option>
-            {/each}
-          </select>
-        </div>
-
-        <div class="form-control">
           <label for="id" class="label">
             <span class="label-text">ID:</span>
           </label>
           <input type="text" id="id" bind:value={mediaData.id} disabled class="input input-bordered w-full" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="form-control">
+            <label for="mediaType" class="label">
+              <span class="label-text">Media Type:</span>
+            </label>
+            <select id="mediaType" bind:value={mediaType} class="select select-bordered w-full">
+              <option value="movie">Movie</option>
+              <option value="series">Series</option>
+            </select>
+          </div>
+
+          <div class="form-control">
+            <label for="tmdbid" class="label">
+              <span class="label-text">TMDB ID:</span>
+            </label>
+            <div class="flex items-center gap-2">
+              <input type="text" id="tmdbid" bind:value={mediaData.tmdbid} class="input input-bordered w-full" on:input={(e) => mediaData.tmdbid = e.target.value.replace(/\D/g, '')} />
+              <button type="button" class="btn btn-primary" on:click={fetchTMDBData}>Fetch</button>
+            </div>
+          </div>
         </div>
 
         <div class="form-control">
@@ -296,13 +296,6 @@
           <input type="text" id="castCrew" bind:value={mediaData.cast_crew} class="input input-bordered w-full" />
         </div>
 
-        <div class="form-control flex flex-row items-center gap-2">
-          <label for="tmdbid" class="label">
-            <span class="label-text">TMDB ID:</span>
-          </label>
-          <input type="text" id="tmdbid" bind:value={mediaData.tmdbid} class="input input-bordered w-1/2" />
-          <button type="button" class="btn btn-primary" on:click={fetchTMDBData}>Fetch</button>
-        </div>
       </div>
 
       <!-- Right Column - Movie/Series Content -->

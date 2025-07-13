@@ -416,13 +416,32 @@
         <h2 class="text-2xl font-bold mb-4">General Information</h2>
         
         <div class="form-control">
-          <label for="mediaType" class="label">
-            <span class="label-text">Media Type:</span>
+          <label for="id" class="label">
+            <span class="label-text">ID:</span>
           </label>
-          <select id="mediaType" bind:value={mediaType} disabled class="select select-bordered w-full">
-            <option value="movie">Movie</option>
-            <option value="series">Series</option>
-          </select>
+          <input type="text" id="id" bind:value={mediaData.id} disabled class="input input-bordered w-full" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="form-control">
+            <label for="mediaType" class="label">
+              <span class="label-text">Media Type:</span>
+            </label>
+            <select id="mediaType" bind:value={mediaType} disabled class="select select-bordered w-full">
+              <option value="movie">Movie</option>
+              <option value="series">Series</option>
+            </select>
+          </div>
+
+          <div class="form-control">
+            <label for="tmdbid" class="label">
+              <span class="label-text">TMDB ID:</span>
+            </label>
+            <div class="flex items-center gap-2">
+              <input type="text" id="tmdbid" bind:value={mediaData.tmdbid} class="input input-bordered w-full" on:input={(e) => mediaData.tmdbid = e.target.value.replace(/\D/g, '')} />
+              <button type="button" class="btn btn-primary" on:click={fetchTMDBData}>Fetch</button>
+            </div>
+          </div>
         </div>
 
         <div class="form-control">
@@ -438,13 +457,6 @@
         </div>
 
         <div class="form-control">
-          <label for="id" class="label">
-            <span class="label-text">ID:</span>
-          </label>
-          <input type="text" id="id" bind:value={mediaData.id} disabled class="input input-bordered w-full" />
-        </div>
-
-        <div class="form-control">
           <label for="title" class="label">
             <span class="label-text">Title:</span>
           </label>
@@ -456,13 +468,6 @@
             <span class="label-text">Description:</span>
           </label>
           <textarea id="description" bind:value={mediaData.description} class="textarea textarea-bordered w-full h-24"></textarea>
-        </div>
-
-        <div class="form-control">
-          <label for="thumbnailUrl" class="label">
-            <span class="label-text">Thumbnail URL:</span>
-          </label>
-          <input type="text" id="thumbnailUrl" bind:value={mediaData.poster_url} class="input input-bordered w-full" />
         </div>
 
         <div class="form-control">
@@ -486,12 +491,18 @@
           <input type="text" id="castCrew" bind:value={mediaData.cast_crew} class="input input-bordered w-full" />
         </div>
 
-        <div class="form-control flex flex-row items-center gap-2">
-          <label for="tmdbid" class="label">
-            <span class="label-text">TMDB ID:</span>
+        <div class="form-control">
+          <label for="backdropUrl" class="label">
+            <span class="label-text">Backdrop URL:</span>
           </label>
-          <input type="text" id="tmdbid" bind:value={mediaData.tmdbid} class="input input-bordered w-1/2" />
-          <button type="button" class="btn btn-primary" on:click={fetchTMDBData}>Fetch</button>
+          <input type="text" id="backdropUrl" bind:value={mediaData.backdrop_url} class="input input-bordered w-full" />
+        </div>
+
+        <div class="form-control">
+          <label for="posterUrl" class="label">
+            <span class="label-text">Poster URL:</span>
+          </label>
+          <input type="text" id="posterUrl" bind:value={mediaData.poster_url} class="input input-bordered w-full" />
         </div>
       </div>
 

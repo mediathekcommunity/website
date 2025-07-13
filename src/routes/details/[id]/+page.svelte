@@ -26,6 +26,8 @@
 			const data = await response.json();
 			mediaItem = data;
 
+			console.log('MediaItem Backdrop URL:', mediaItem.backdrop_url);
+
 			if (mediaItem && mediaItem.type === 'movie') {
 				movieFiles = mediaItem.moviesFiles || [];
 			} else if (mediaItem && mediaItem.type === 'series') {
