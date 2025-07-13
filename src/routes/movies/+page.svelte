@@ -11,7 +11,8 @@
     title: string;
     description?: string;
     broadcast_company?: string;
-    thumbnail_url?: string;
+    backdrop_url?: string;
+    poster_url?: string;
     genre?: string;
     release_date_year?: string; // Changed to string to match HeroItem
     cast_crew?: string;

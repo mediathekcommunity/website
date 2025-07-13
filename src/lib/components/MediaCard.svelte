@@ -20,7 +20,7 @@
 		title: string;
 		description?: string;
 		
-		thumbnail_url?: string;
+		backdrop_url?: string;
 		genre?: string;
 		release_date_year?: string;
 		cast_crew?: string;
@@ -49,10 +49,10 @@
 	};
 
 	const getImageUrl = (slide: HeroItem) => {
-		if (slide.thumbnail_url) {
-			return "https://img.mediathek.community/images/t/p/original"+slide.thumbnail_url;
+		if (slide.backdrop_url) {
+			return "https://img.mediathek.community/images/t/p/original" + slide.backdrop_url;
 		}
-		console.warn('No thumbnail_url found for slide', slide);
+		console.warn('No backdrop_url found for slide', slide);
 		return 'https://via.placeholder.com/1280x720.png?text=No+Image'; // Placeholder image
 	};
 

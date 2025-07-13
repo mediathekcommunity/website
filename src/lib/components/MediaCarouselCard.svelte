@@ -41,7 +41,9 @@
 		}
 	};
 
-	const posterUrl = mediaItem.thumbnail_url || 'https://via.placeholder.com/150';
+	const posterUrl = mediaItem.poster_url 
+	  ? `https://img.mediathek.community/images/t/p/original${mediaItem.poster_url}` 
+	  : 'https://via.placeholder.com/150';
 </script>
 
 {#key mediaItem.id}

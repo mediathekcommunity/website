@@ -96,11 +96,11 @@
 		document.body.scrollIntoView();
 		showVideo = true;
 	}
-  	const getImageUrl = (thumbnail_url) => {
-		if (thumbnail_url) {
-			return "https://img.mediathek.community/images/t/p/original"+thumbnail_url;
+  	const getImageUrl = (poster_url) => {
+		if (poster_url) {
+			return "https://img.mediathek.community/images/t/p/original"+poster_url;
 		}
-		console.warn('No thumbnail_url found for thumbnail_url', thumbnail_url);
+		console.warn('No poster_url found for poster_url', poster_url);
 		return 'https://via.placeholder.com/1280x720.png?text=No+Image'; // Placeholder image
 	};
 </script>
@@ -121,9 +121,9 @@
 				</div>
 			{:else}
 				<div class="hero-container relative w-full">
-					{#if mediaItem.thumbnail_url}
+					{#if mediaItem.backdrop_url}
 						<img
-							src={getImageUrl(mediaItem.thumbnail_url)}
+							src={getImageUrl(mediaItem.backdrop_url)}
 							alt={mediaItem.title}
 							class="h-full w-full object-cover"
 						/>

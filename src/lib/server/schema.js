@@ -15,7 +15,8 @@ export const media = sqliteTable('MEDIA', {
     type: text('type').notNull(), // "movie" or "series"
     title: text('title').notNull(),
     description: text('description'),
-    thumbnail_url: text('thumbnail_url'),
+    poster_url: text('poster_url'),
+    backdrop_url: text('backdrop_url'),
     genre: text('genre'),
     release_date_year: text('release_date_year'),
     cast_crew: text('cast_crew'),

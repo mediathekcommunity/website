@@ -38,6 +38,8 @@
     episodes?: Episode[];
     channelId: string; // New field for channel selection
     tmdbid: string; // New field for TMDB ID
+    poster_url: string;
+    backdrop_url: string;
   }
 
   interface MediaPayload extends MediaData {
@@ -57,6 +59,8 @@
     type: 'movie', // Default type
     channelId: '', // Initialize new field
     tmdbid: '', // Initialize new field
+    poster_url: '',
+    backdrop_url: '',
   };
   let movieFiles: MovieFile[] = [{ videoUrl: '', localVideoUrl: '', quality: '', format: '', audioLanguageFormat: '', subtitlesInfo: '' }];
   let episodes: Episode[] = [{ seasonNumber: 1, episodeNumber: 1, title: '', description: '', originalVideoUrl: '', localVideoUrl: '', releaseDate: '', audioLanguageFormat: '', subtitlesInfo: '', tmdbid: '' }];
@@ -138,6 +142,8 @@
           cast_crew: mediaData.cast_crew,
           channelId: mediaData.channelId,
           tmdbid: mediaData.tmdbid,
+          poster_url: mediaData.poster_url,
+          backdrop_url: mediaData.backdrop_url,
         }),
       });
 
@@ -339,7 +345,7 @@
 
   async function fetchTMDBData() {
     try {
-      const url = mediaType === "movie" || mediaType === "y_movie" 
+      const url = mediaType === "movie" || mediaType === "y-movie" 
         ? `https://api3.mediathek.community/movie/${mediaData.tmdbid}` 
         : `https://api3.mediathek.community/tv/${mediaData.tmdbid}`;
 
@@ -357,6 +363,8 @@
       mediaData.release_date_year = data.release_date.split("-")[0];
       mediaData.cast_crew = data.credits.cast.map(cast => `${cast.name} (${cast.character})`).join(", ");
       mediaData.tmdbid = data.id;
+      mediaData.backdrop_url = data.backdrop_path;
+      mediaData.poster_url = data.poster_path;
 
       fetchedData = "Data successfully mapped to general information.";
     } catch (error) {
@@ -454,7 +462,7 @@
           <label for="thumbnailUrl" class="label">
             <span class="label-text">Thumbnail URL:</span>
           </label>
-          <input type="text" id="thumbnailUrl" bind:value={mediaData.thumbnail_url} class="input input-bordered w-full" />
+          <input type="text" id="thumbnailUrl" bind:value={mediaData.poster_url} class="input input-bordered w-full" />
         </div>
 
         <div class="form-control">

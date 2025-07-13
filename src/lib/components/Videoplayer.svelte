@@ -54,7 +54,7 @@
 			src: file.videoUrl,
 			type: getVideoType(file.format || 'mp4'),
 			title: media?.title || 'Untitled',
-			poster: media?.thumbnail_url || '',
+			poster: media?.poster_url || '',
 			quality: file.quality,
 			tracks: parseSubtitles(file.subtitlesInfo)
 		};
@@ -65,7 +65,7 @@
 			src: episode.originalVideoUrl || episode.localVideoUrl,
 			type: getVideoType('mp4'), // Default to mp4
 			title: `${media?.title || 'Series'} - S${episode.seasonNumber}E${episode.episodeNumber}: ${episode.title}`,
-			poster: media?.thumbnail_url || '',
+			poster: media?.poster_url || '',
 			tracks: parseSubtitles(episode.subtitlesInfo),
 			// Episode metadata
 			seasonNumber: episode.seasonNumber,

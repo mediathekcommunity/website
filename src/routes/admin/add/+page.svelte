@@ -28,7 +28,8 @@
     id: string;
     title: string;
     description: string;
-    thumbnail_url: string;
+    backdrop_url: string;
+    poster_url: string;
     genre: string;
     release_date_year: string;
     cast_crew: string;
@@ -42,12 +43,13 @@
     episodes?: Episode[];
   }
 
-  let mediaType: 'movie' | 'series' | 'y_movie' | 'y_series' = 'movie';
+  let mediaType: 'movie' | 'series' | 'y-movie' | 'y-series' = 'movie';
   let mediaData: MediaData = {
     id: '',
     title: '',
     description: '',
-    thumbnail_url: '',
+    backdrop_url: '',
+    poster_url: '',
     genre: '',
     release_date_year: '',
     cast_crew: '',
@@ -147,7 +149,7 @@
 
   async function fetchTMDBData() {
     try {
-      const url = mediaType === "movie" || mediaType === "y_movie" 
+      const url = mediaType === "movie" || mediaType === "y-movie" 
         ? `https://api3.mediathek.community/movie/${mediaData.tmdbid}` 
         : `https://api3.mediathek.community/tv/${mediaData.tmdbid}`;
 
@@ -160,7 +162,8 @@
       // Map fetched data to general information
       mediaData.title = data.title;
       mediaData.description = data.overview;
-      mediaData.thumbnail_url = data.poster_path;
+      mediaData.backdrop_url = data.backdrop_path;
+      mediaData.poster_url = data.poster_path;
       mediaData.genre = data.genres.map(genre => genre.name).join(", ");
       mediaData.release_date_year = data.release_date.split("-")[0];
       mediaData.cast_crew = data.credits.cast.map(cast => `${cast.name} (${cast.character})`).join(", ");
@@ -259,10 +262,17 @@
         </div>
 
         <div class="form-control">
-          <label for="thumbnailUrl" class="label">
-            <span class="label-text">Thumbnail URL:</span>
+          <label for="backdropUrl" class="label">
+            <span class="label-text">Backdrop URL:</span>
           </label>
-          <input type="text" id="thumbnailUrl" bind:value={mediaData.thumbnail_url} class="input input-bordered w-full" />
+          <input type="text" id="backdropUrl" bind:value={mediaData.backdrop_url} class="input input-bordered w-full" />
+        </div>
+
+        <div class="form-control">
+          <label for="posterUrl" class="label">
+            <span class="label-text">Poster URL:</span>
+          </label>
+          <input type="text" id="posterUrl" bind:value={mediaData.poster_url} class="input input-bordered w-full" />
         </div>
 
         <div class="form-control">
