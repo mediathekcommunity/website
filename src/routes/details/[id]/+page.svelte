@@ -204,9 +204,11 @@
 											</tr>
 											<tr>
 												<td class="py-2 pr-4 align-top font-semibold">Genre:</td>
-												<td class="py-2"
-													><span class="badge badge-secondary">{mediaItem.genre}</span></td
-												>
+												<td class="py-2">
+													{#each mediaItem.genre.split(',') as genre}
+														<span class="badge badge-secondary mr-2">{genre.trim()}</span>
+													{/each}
+												</td>
 											</tr>
 											<tr>
 												<td class="py-2 pr-4 align-top font-semibold">Release Year:</td>
