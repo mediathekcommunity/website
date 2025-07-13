@@ -50,7 +50,7 @@
 
 	const getImageUrl = (slide: HeroItem) => {
 		if (slide.thumbnail_url) {
-			return "https://img.mediathek.community/images/t/p/original/"+slide.thumbnail_url;
+			return "https://img.mediathek.community/images/t/p/original"+slide.thumbnail_url;
 		}
 		console.warn('No thumbnail_url found for slide', slide);
 		return 'https://via.placeholder.com/1280x720.png?text=No+Image'; // Placeholder image
