@@ -352,7 +352,7 @@
       // Map fetched data to general information
       mediaData.title = data.title;
       mediaData.description = data.overview;
-      mediaData.thumbnail_url = data.poster_path;
+      mediaData.thumbnail_url = data.backdrop_path;
       mediaData.genre = data.genres.map(genre => genre.name).join(", ");
       mediaData.release_date_year = data.release_date.split("-")[0];
       mediaData.cast_crew = data.credits.cast.map(cast => `${cast.name} (${cast.character})`).join(", ");

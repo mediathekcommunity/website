@@ -96,6 +96,13 @@
 		document.body.scrollIntoView();
 		showVideo = true;
 	}
+  	const getImageUrl = (thumbnail_url) => {
+		if (thumbnail_url) {
+			return "https://img.mediathek.community/images/t/p/original/"+thumbnail_url;
+		}
+		console.warn('No thumbnail_url found for thumbnail_url', thumbnail_url);
+		return 'https://via.placeholder.com/1280x720.png?text=No+Image'; // Placeholder image
+	};
 </script>
 
 <main>
@@ -116,7 +123,7 @@
 				<div class="hero-container relative w-full">
 					{#if mediaItem.thumbnail_url}
 						<img
-							src={mediaItem.thumbnail_url}
+							src={getImageUrl(mediaItem.thumbnail_url)}
 							alt={mediaItem.title}
 							class="h-full w-full object-cover"
 						/>
