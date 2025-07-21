@@ -52,5 +52,5 @@ EXPOSE 3000
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# Start the application with tini for proper signal handling
-CMD ["tini", "--", "node", "build"]
+# Start the application with tini for proper signal handling and graceful shutdown
+CMD ["tini", "-g", "--", "node", "build"]

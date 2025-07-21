@@ -112,7 +112,7 @@ jobs:
         app_id: ${{ secrets.APP_ID }}
         api_key: ${{ secrets.BUNNYNET_API_KEY }}
         container: app
-        image_tag: "${{ github.sha }}"
+        image_tag: "sha-${{ github.sha }}"
 
     - name: Deploy notification
       run: |
