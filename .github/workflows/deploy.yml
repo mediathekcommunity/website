@@ -3,6 +3,7 @@ name: Deploy to Production
 on:
   push:
     branches: [ main, master ]
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
@@ -86,8 +87,17 @@ jobs:
       if: always()
       run: rm -f .env
 
+    - name: Update container image on Magic Containers
+      uses: BunnyWay/actions/container-update-image@main
+      with:
+        app_id: ${{ vars.APP_ID }}
+        api_key: ${{ secrets.BUNNYNET_API_KEY }}
+        container: app
+        image_tag: "${{ github.sha }}"
+
     - name: Deploy notification
       run: |
         echo "🚀 Docker image built and pushed successfully!"
         echo "📦 Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
         echo "🏷️  Tags: ${{ steps.meta.outputs.tags }}"
+        echo "🐰 Container updated on Magic Containers with SHA: ${{ github.sha }}"
