@@ -102,6 +102,8 @@ jobs:
     needs: build
     environment: production
     if: success()
+    permissions:
+      contents: read
     
     steps:
     - name: Update container image on Magic Containers

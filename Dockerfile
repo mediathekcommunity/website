@@ -1,9 +1,9 @@
 FROM node:alpine AS builder
 WORKDIR /app
 
-# Install pnpm globally and dumb-init for better process handling
+# Install pnpm globally and tini for better process handling
 RUN npm install -g pnpm && \
-    apk add --no-cache dumb-init
+    apk add --no-cache tini
 
 # Copy package files
 COPY package.json pnpm-lock.yaml ./
@@ -26,9 +26,9 @@ RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
 FROM node:alpine
 WORKDIR /app
 
-# Install pnpm globally and dumb-init
+# Install pnpm globally and tini
 RUN npm install -g pnpm && \
-    apk add --no-cache dumb-init
+    apk add --no-cache tini
 
 # Copy built application and dependencies from builder
 COPY --from=builder /app/build build/
@@ -52,5 +52,5 @@ EXPOSE 3000
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# Start the application with dumb-init for proper signal handling
-CMD ["dumb-init", "node", "build"]
+# Start the application with tini for proper signal handling
+CMD ["tini", "--", "node", "build"]

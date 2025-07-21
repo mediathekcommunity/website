@@ -99,6 +99,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     if: success()
+    permissions:
+      contents: read
     
     steps:
     - name: Update container image on Magic Containers (CI/Testing)
