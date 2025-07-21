@@ -1,29 +1,34 @@
 FROM node:alpine AS builder
 WORKDIR /app
 
-# Install pnpm globally
-RUN npm install -g pnpm
+# Install pnpm globally and dumb-init for better process handling
+RUN npm install -g pnpm && \
+    apk add --no-cache dumb-init
 
 # Copy package files
 COPY package.json pnpm-lock.yaml ./
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+# Install dependencies with cache mount
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+    pnpm install --frozen-lockfile
 
-# Copy source code
+# Copy source code (exclude patterns handled by .dockerignore)
 COPY . .
 
-# Load environment variables and build
-RUN export $(grep -v '^#' .env | xargs) && pnpm build
+# Load environment variables and build with cache mount
+RUN --mount=type=cache,target=/app/.svelte-kit \
+    export $(grep -v '^#' .env | xargs) && pnpm build
 
-# Prune to production dependencies
-RUN pnpm prune --prod
+# Prune to production dependencies with cache mount  
+RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
+    pnpm prune --prod
 
 FROM node:alpine
 WORKDIR /app
 
-# Install pnpm globally in production image
-RUN npm install -g pnpm
+# Install pnpm globally and dumb-init
+RUN npm install -g pnpm && \
+    apk add --no-cache dumb-init
 
 # Copy built application and dependencies from builder
 COPY --from=builder /app/build build/
@@ -45,6 +50,7 @@ EXPOSE 3000
 
 # Set production environment
 ENV NODE_ENV=production
+ENV PORT=3000
 
-# Start the application
-CMD ["node", "build"]
+# Start the application with dumb-init for proper signal handling
+CMD ["dumb-init", "node", "build"]
