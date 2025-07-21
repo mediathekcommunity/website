@@ -11,15 +11,8 @@ env:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     environment: production
-    strategy:
-      matrix:
-        include:
-          - os: ubuntu-latest
-            arch: amd64
-          - os: ubuntu-24.04-arm
-            arch: arm64
     permissions:
       contents: read
       packages: write
@@ -80,7 +73,7 @@ jobs:
       uses: docker/build-push-action@v6
       with:
         context: .
-        platforms: linux/${{ matrix.arch }}
+        platforms: linux/amd64
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
@@ -89,11 +82,11 @@ jobs:
           BUILDKIT_INLINE_CACHE=1
           GIT_SHA=${{ github.sha }}
         cache-from: |
-          type=gha,scope=prod-${{ matrix.arch }}
-          type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache-${{ matrix.arch }}
+          type=gha,scope=prod
+          type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache
         cache-to: |
-          type=gha,mode=max,scope=prod-${{ matrix.arch }}
-          type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache-${{ matrix.arch }},mode=max
+          type=gha,mode=max,scope=prod
+          type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
         provenance: mode=max
         sbom: true
 
@@ -106,7 +99,7 @@ jobs:
         echo "🚀 Docker image built and pushed successfully!"
         echo "📦 Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
         echo "🏷️  Tags: ${{ steps.meta.outputs.tags }}"
-        echo "🏗️  Architecture: ${{ matrix.arch }}"
+        echo "🏗️  Architecture: amd64"
 
   deploy:
     runs-on: ubuntu-latest
