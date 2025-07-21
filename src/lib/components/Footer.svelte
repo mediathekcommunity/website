@@ -81,7 +81,7 @@
                     </a>
                 </span>
                 <span class="build-info">
-                    Build: <code class="sha-code">{buildSha}</code>
+                    Build: <code class="sha-code">{buildSha()}</code>
                 </span>
             </div>
         </nav>
