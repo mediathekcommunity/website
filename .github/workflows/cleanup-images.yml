@@ -1,0 +1,113 @@
+name: Cleanup Container Images
+
+on:
+  push:
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
+    - name: Cleanup old container images
+      run: |
+        echo "🧹 Starting comprehensive image cleanup..."
+        echo "📦 Repository: ${{ env.IMAGE_NAME }}"
+        
+        # Extract just the repository name (remove owner/)
+        REPO_NAME="${{ env.IMAGE_NAME }}"
+        PACKAGE_NAME="${REPO_NAME##*/}"
+        
+        echo "🔍 Getting all package versions..."
+        
+        # Get all package versions, including untagged ones
+        gh api --paginate \
+          -H "Accept: application/vnd.github+json" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          "/user/packages/container/${PACKAGE_NAME}/versions" \
+          --jq '.[] | {
+            id: .id, 
+            tags: .metadata.container.tags, 
+            created_at: .created_at,
+            is_untagged: (.metadata.container.tags | length == 0)
+          }' > all_versions.json
+        
+        # Separate tagged and untagged versions
+        echo "📋 Analyzing versions..."
+        
+        # Get tagged versions (excluding latest and production)
+        cat all_versions.json | jq -r 'select(.is_untagged == false and (.tags | contains(["latest", "production"]) | not))' | jq -s 'sort_by(.created_at) | reverse' > tagged_versions.json
+        
+        # Get untagged versions
+        cat all_versions.json | jq -r 'select(.is_untagged == true)' | jq -s 'sort_by(.created_at) | reverse' > untagged_versions.json
+        
+        # Keep only the 3 most recent tagged versions
+        TAGGED_COUNT=$(cat tagged_versions.json | jq 'length')
+        UNTAGGED_COUNT=$(cat untagged_versions.json | jq 'length')
+        
+        echo "📊 Found $TAGGED_COUNT tagged versions and $UNTAGGED_COUNT untagged versions"
+        
+        # Delete old tagged versions (keep 3 most recent)
+        if [ "$TAGGED_COUNT" -gt 3 ]; then
+          TAGGED_TO_DELETE=$(cat tagged_versions.json | jq -r '.[3:] | .[].id')
+          TAGGED_DELETE_COUNT=$((TAGGED_COUNT - 3))
+          echo "🗑️  Deleting $TAGGED_DELETE_COUNT old tagged versions:"
+          
+          echo "$TAGGED_TO_DELETE" | while read -r version_id; do
+            if [ -n "$version_id" ]; then
+              TAGS=$(cat tagged_versions.json | jq -r --arg id "$version_id" '.[] | select(.id == $id) | .tags | join(", ")')
+              echo "  🏷️  Deleting tagged version: $version_id (tags: $TAGS)"
+              gh api --method DELETE \
+                -H "Accept: application/vnd.github+json" \
+                -H "X-GitHub-Api-Version: 2022-11-28" \
+                "/user/packages/container/${PACKAGE_NAME}/versions/$version_id" || echo "    ❌ Failed to delete $version_id"
+            fi
+          done
+        else
+          echo "✅ Tagged versions within limit ($TAGGED_COUNT/3)"
+        fi
+        
+        # Delete ALL untagged versions (they're usually build artifacts)
+        if [ "$UNTAGGED_COUNT" -gt 0 ]; then
+          UNTAGGED_TO_DELETE=$(cat untagged_versions.json | jq -r '.[].id')
+          echo "🗑️  Deleting all $UNTAGGED_COUNT untagged versions:"
+          
+          echo "$UNTAGGED_TO_DELETE" | while read -r version_id; do
+            if [ -n "$version_id" ]; then
+              echo "  📦 Deleting untagged version: $version_id"
+              gh api --method DELETE \
+                -H "Accept: application/vnd.github+json" \
+                -H "X-GitHub-Api-Version: 2022-11-28" \
+                "/user/packages/container/${PACKAGE_NAME}/versions/$version_id" || echo "    ❌ Failed to delete $version_id"
+            fi
+          done
+        else
+          echo "✅ No untagged versions found"
+        fi
+        
+        # Summary
+        echo ""
+        echo "📋 Cleanup Summary:"
+        echo "  📦 Package: $PACKAGE_NAME"
+        echo "  🏷️  Tagged versions: $TAGGED_COUNT (kept 3 most recent)"
+        echo "  📦 Untagged versions: $UNTAGGED_COUNT (deleted all)"
+        echo "  🧹 Cleanup completed successfully!"
+        
+        # Cleanup temp files
+        rm -f all_versions.json tagged_versions.json untagged_versions.json
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Cleanup notification
+      run: |
+        echo "✅ Container registry cleanup completed!"
+        echo "🔄 This workflow runs on every push to keep your registry clean"
+        echo "🛡️  Protected tags: latest, production"
+        echo "📝 Retention: 3 most recent tagged versions + 0 untagged versions"
