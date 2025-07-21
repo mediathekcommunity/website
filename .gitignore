@@ -29,3 +29,4 @@ check-db.js
 sync-data.js
 *.temp.js
 *.tmp.js
+scripts/dev.js

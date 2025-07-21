@@ -4,7 +4,7 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		"dev": "vite dev",
+		"dev": "node scripts/dev.js",
 		"build": "vite build",
 		"start": "node build",
 		"preview": "vite preview",
@@ -23,6 +23,7 @@
 		"@sveltejs/vite-plugin-svelte": "^6.0.0",
 		"@tailwindcss/vite": "^4.1.11",
 		"@types/node": "^24.0.13",
+		"dotenv": "^17.2.0",
 		"eslint": "^9.31.0",
 		"eslint-config-prettier": "^10.1.5",
 		"eslint-plugin-svelte": "^3.10.1",
