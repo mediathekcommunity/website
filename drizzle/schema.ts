@@ -1,5 +1,14 @@
-import { sqliteTable, AnySQLiteColumn, foreignKey, text, integer } from "drizzle-orm/sqlite-core"
+import { sqliteTable, AnySQLiteColumn, text, foreignKey, integer } from "drizzle-orm/sqlite-core"
   import { sql } from "drizzle-orm"
+
+export const channels = sqliteTable("CHANNELS", {
+	id: text().primaryKey().notNull(),
+	name: text().notNull(),
+	title: text(),
+	poster: text(),
+	icon: text(),
+	country: text(),
+});
 
 export const episodes = sqliteTable("EPISODES", {
 	id: text().primaryKey().notNull(),
@@ -13,6 +22,7 @@ export const episodes = sqliteTable("EPISODES", {
 	releaseDate: text("release_date"),
 	audioLanguageFormat: text("audio_language_format"),
 	subtitlesInfo: text("subtitles_info"),
+	tmdbid: text(),
 });
 
 export const media = sqliteTable("MEDIA", {
@@ -25,25 +35,20 @@ export const media = sqliteTable("MEDIA", {
 	genre: text(),
 	releaseDateYear: text("release_date_year"),
 	channelId: text("channel_id").references(() => channels.id),
+	tmdbid: text(),
+	cast: text(),
+	crew: text(),
+	onlineUntil: text("online_until"),
 });
 
 export const moviesFiles = sqliteTable("MOVIES_FILES", {
 	id: text().primaryKey().notNull(),
 	movieId: text("movie_id").notNull().references(() => media.id, { onDelete: "cascade" } ),
 	videoUrl: text("video_url").notNull(),
+	localVideoUrl: text("local_video_url"),
+	quality: text(),
 	format: text(),
 	audioLanguageFormat: text("audio_language_format"),
 	subtitlesInfo: text("subtitles_info"),
-	quality: text(),
-	localVideoUrl: text("local_video_url"),
-});
-
-export const channels = sqliteTable("CHANNELS", {
-	id: text().primaryKey().notNull(),
-	name: text().notNull(),
-	title: text(),
-	poster: text(),
-	icon: text(),
-	country: text(),
 });
 

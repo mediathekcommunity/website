@@ -1,0 +1,84 @@
+name: Build and Deploy Docker Image
+
+on:
+  pull_request:
+    branches: [ main, master ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix=sha-
+          type=raw,value=latest,enable={{is_default_branch}}
+        labels: |
+          org.opencontainers.image.title=${{ github.repository }}
+          org.opencontainers.image.description=SvelteKit Media Application
+          org.opencontainers.image.vendor=Media Community
+
+    - name: Create production environment file
+      run: |
+        cat > .env << EOF
+        # Production Environment Variables
+        NODE_ENV="production"
+        
+        # Production Database
+        DATABASE_URL="${{ secrets.DATABASE_URL }}"
+        DATABASE_AUTH_TOKEN="${{ secrets.DATABASE_AUTH_TOKEN }}"
+        
+        # Authentication
+        PUBLIC_CLERK_PUBLISHABLE_KEY=${{ secrets.PUBLIC_CLERK_PUBLISHABLE_KEY }}
+        CLERK_SECRET_KEY=${{ secrets.CLERK_SECRET_KEY }}
+        
+        AUTH_SECRET="${{ secrets.AUTH_SECRET }}"
+        AUTH0_CLIENT_ID="${{ secrets.AUTH0_CLIENT_ID }}"
+        AUTH0_CLIENT_SECRET="${{ secrets.AUTH0_CLIENT_SECRET }}"
+        AUTH0_ISSUER_BASE_URL="${{ secrets.AUTH0_ISSUER_BASE_URL }}"
+        EOF
+
+    - name: Build and push
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        platforms: linux/amd64,linux/arm64
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        secrets: |
+          GIT_AUTH_TOKEN=${{ secrets.GITHUB_TOKEN }}
+
+    - name: Clean up environment file
+      if: always()
+      run: rm -f .env

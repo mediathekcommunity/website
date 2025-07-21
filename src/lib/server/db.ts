@@ -1,33 +1,25 @@
 import { createClient } from '@libsql/client';
 import { drizzle } from 'drizzle-orm/libsql';
-import { dev } from '$app/environment';
-import * as rawEnv from '$env/static/private';
-import * as rawEnv2 from '$env/dynamic/private';
-
 import * as schema from './schema';
 
-// Function to get database client with platform.env support
-export function createDatabase(platform?: App.Platform) {
-	let databaseUrl: string;
-	let authToken: string;
+// Get environment variables with fallbacks
+const DATABASE_URL = process.env.DATABASE_URL;
+const DATABASE_AUTH_TOKEN = process.env.DATABASE_AUTH_TOKEN;
+const NODE_ENV = process.env.NODE_ENV || 'development';
 
-	if (dev) {
-		// Development mode - use environment variables
-		databaseUrl = rawEnv.DATABASE_URL;
-		authToken = rawEnv.DATABASE_AUTH_TOKEN;
-	} else if (platform?.env|| rawEnv2) {
-		// Production mode - use platform.env (Cloudflare Workers)
-		databaseUrl = platform?.env.DATABASE_URL || rawEnv.DATABASE_URL;
-		authToken = platform?.env.DATABASE_AUTH_TOKEN || rawEnv.DATABASE_AUTH_TOKEN;
-	} else {
-		// Fallback to environment variables if platform is not available
-		databaseUrl = rawEnv.DATABASE_URL;
-		authToken = rawEnv.DATABASE_AUTH_TOKEN;
-	}
+// Function to create database client with platform support
+export function createDatabase(platform?: App.Platform) {
+	// Use platform.env if available (for Cloudflare Workers), otherwise use process.env
+	const databaseUrl = platform?.env?.DATABASE_URL || DATABASE_URL;
+	const authToken = platform?.env?.DATABASE_AUTH_TOKEN || DATABASE_AUTH_TOKEN;
 
 	if (!databaseUrl || !authToken) {
-		throw new Error('Database URL and auth token are required');
+		throw new Error(
+			`Database connection failed. Missing: ${!databaseUrl ? 'DATABASE_URL' : ''} ${!authToken ? 'DATABASE_AUTH_TOKEN' : ''}`.trim()
+		);
 	}
+
+	console.log(`Connecting to database in ${NODE_ENV} environment`);
 
 	const client = createClient({
 		url: databaseUrl,
@@ -37,6 +29,7 @@ export function createDatabase(platform?: App.Platform) {
 	return drizzle(client, { schema });
 }
 
-// Default export for development and fallback
+// Default database instance
 const db = createDatabase();
+
 export default db;

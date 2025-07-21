@@ -3,6 +3,7 @@
   import Footer from "$lib/components/Footer.svelte";
   import { onMount } from 'svelte';
   import { writable } from 'svelte/store';
+  import { page } from '$app/stores';
 
   let { children } = $props();
 
@@ -17,17 +18,8 @@
     desktopDrawerOpen.update((value) => !value);
   }
 
-  const SCROLL_THRESHOLD = 50;
-  let isScrolled = $state(false);
-
-  function updateScrollState() {
-    isScrolled = window.scrollY > SCROLL_THRESHOLD;
-  }
-
-  onMount(() => {
-    window.addEventListener('scroll', updateScrollState);
-    return () => window.removeEventListener('scroll', updateScrollState);
-  });
+  // Check if current page is an admin page
+  const isAdminPage = $derived($page.route.id?.startsWith('/admin'));
 </script>
 
 <div class="drawer">
@@ -35,8 +27,7 @@
   <div class="drawer-content flex flex-col">
     <!-- Navbar -->
     <div
-      class="navbar bg-base-300 header w-full"
-      class:navbar-glass={isScrolled || $isMobileMenuOpen}
+      class="navbar bg-base-300 header w-full navbar-glass"
     >
       <div class="flex-none lg:hidden">
         <label for="my-drawer-3" aria-label="open sidebar" class="btn btn-square btn-ghost">
@@ -74,8 +65,33 @@
         </ul>
       </div>
     </div>
+    
+    <!-- Sample Data Banner (hidden on admin pages) -->
+    {#if !isAdminPage}
+    <div class="sample-data-banner">
+      <div class="container mx-auto px-4 py-2 text-center">
+        <div class="alert alert-info">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            class="h-6 w-6 shrink-0 stroke-current"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+          <span>All current data is sample data for demonstration purposes</span>
+        </div>
+      </div>
+    </div>
+    {/if}
+    
     <!-- Page content here -->
-    <main>
+    <main class:admin-page={isAdminPage}>
       {@render children()}
     </main>
   </div>
@@ -116,11 +132,47 @@
     right: 0;
     z-index: 1000;
     transition: all 0.3s ease;
-    background-color: transparent;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
+    background-color: rgba(20, 20, 20, 0.9);
   }
   .navbar-glass {
     background-color: rgba(20, 20, 20, 0.9);
+  }
+
+  .sample-data-banner {
+    position: fixed;
+    top: 4rem; /* Adjust based on navbar height */
+    left: 0;
+    right: 0;
+    z-index: 999;
+    background-color: rgba(20, 20, 20, 0.9);
+    border-bottom: 1px solid hsl(var(--bc) / 0.2);
+  }
+
+  .sample-data-banner .alert {
+    margin: 0;
+    border-radius: 0;
+    background-color: hsl(var(--in));
+    color: hsl(var(--inc));
+    border: none;
+  }
+
+  /* Adjust main content to account for banner */
+  main {
+    padding-top: 6rem; /* Navbar + banner height */
+  }
+
+  /* Admin pages don't have banner, so less padding */
+  main.admin-page {
+    padding-top: 4rem; /* Just navbar height */
+  }
+
+  @media (max-width: 768px) {
+    main {
+      padding-top: 6rem;
+    }
+    
+    main.admin-page {
+      padding-top: 4rem;
+    }
   }
 </style>

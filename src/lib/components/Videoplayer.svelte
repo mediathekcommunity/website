@@ -200,6 +200,7 @@
 				...convertEpisodeToVideoData(episode, mediaData),
 				id: episode.id
 			}));
+			console.log('Generated playlist for series:', playlistData);
 			playlist.set(playlistData);
 			seriestype.set('playlist');
 			if (player.playlist) {
@@ -260,6 +261,11 @@
 	}
 
 	onMount(() => {
+		console.log('Videoplayer mounted with mediaData:', mediaData);
+		console.log('Initial currentFile:', currentFile);
+		console.log('Episodes:', episodes);
+		console.log('Movie files:', movieFiles);
+
 		if (videoElement) {
 			player = videojs(videoElement, videojsOptions);
 
@@ -315,7 +321,27 @@
 		$playlist &&
 		typeof $playlistindex !== 'undefined'
 	) {
+		console.log('Reactive block triggered for playlist change');
+		console.log('Playlist index:', $playlistindex);
+		console.log('Playlist data:', $playlist);
 		handlePlaylistChange();
+	}
+
+	$: if (mediaData && player && currentFile) {
+		if (player.playlist && typeof player.playlist.currentItem === 'function') {
+			const playlistIndex = playlist.get().findIndex(item => item.src === currentFile.videoUrl || item.src === currentFile.localVideoUrl);
+			if (playlistIndex !== -1) {
+				player.playlist.currentItem(playlistIndex);
+				console.log('Switched to playlist index:', playlistIndex);
+				console.log('Active playlist item:', player.playlist()[playlistIndex]);
+			} else {
+				player.playlist.insert(convertMovieFileToVideoData(currentFile, mediaData));
+				console.log('Inserted new media item into playlist:', currentFile);
+			}
+		} else {
+			player.playlist.new([convertMovieFileToVideoData(currentFile, mediaData)]);
+			console.log('Loaded new playlist with current file:', currentFile);
+		}
 	}
 
 	onDestroy(() => {

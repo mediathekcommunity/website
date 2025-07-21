@@ -71,6 +71,7 @@
 			if (mediaItem.type === 'movie' && movieFiles.length > 0) {
 				currentFile = movieFiles[0];
 			}
+			console.log('Playing video:', currentFile);
 			document.body.scrollIntoView();
 			showVideo = true;
 		} else {
@@ -84,19 +85,30 @@
 	}
 
 	function playEpisode(episode: any, index: number) {
-		// Set the episode with the correct video URL for the player
-		currentFile = {
-			...episode,
-			// Ensure we use the videoUrl if it's set, otherwise fall back to originalVideoUrl
-			originalVideoUrl: episode.videoUrl || episode.originalVideoUrl,
-			localVideoUrl: episode.localVideoUrl
-		};
-		document.body.scrollIntoView();
-		showVideo = true;
+		if (showVideo) {
+			// If the player is already active, switch to the playlist entry of the episode
+			console.log('Switching to episode in playlist:', episode);
+			currentFile = {
+				...episode,
+				originalVideoUrl: episode.videoUrl || episode.originalVideoUrl,
+				localVideoUrl: episode.localVideoUrl
+			};
+		} else {
+			// Set the episode with the correct video URL for the player
+			currentFile = {
+				...episode,
+				originalVideoUrl: episode.videoUrl || episode.originalVideoUrl,
+				localVideoUrl: episode.localVideoUrl
+			};
+			console.log('Playing episode:', currentFile);
+			document.body.scrollIntoView();
+			showVideo = true;
+		}
 	}
 
 	function playMovieFile(file: any) {
 		currentFile = file;
+		console.log('Playing movie file:', currentFile);
 		document.body.scrollIntoView();
 		showVideo = true;
 	}

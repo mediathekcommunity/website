@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "f5330a40-0ea7-474d-a09e-2b69be7cd48b",
+  "id": "26aa6d71-9231-46e0-8e8f-d9164517a4c8",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "CHANNELS": {
@@ -135,6 +135,13 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "tmdbid": {
+          "name": "tmdbid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {},
@@ -188,8 +195,15 @@
           "notNull": false,
           "autoincrement": false
         },
-        "thumbnail_url": {
-          "name": "thumbnail_url",
+        "poster_url": {
+          "name": "poster_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "backdrop_url": {
+          "name": "backdrop_url",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -209,15 +223,36 @@
           "notNull": false,
           "autoincrement": false
         },
-        "cast_crew": {
-          "name": "cast_crew",
+        "channel_id": {
+          "name": "channel_id",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "channel_id": {
-          "name": "channel_id",
+        "tmdbid": {
+          "name": "tmdbid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "cast": {
+          "name": "cast",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "crew": {
+          "name": "crew",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "online_until": {
+          "name": "online_until",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -266,6 +301,13 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true,
+          "autoincrement": false
+        },
+        "local_video_url": {
+          "name": "local_video_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "quality": {

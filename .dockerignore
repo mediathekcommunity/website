@@ -1,0 +1,74 @@
+Dockerfile
+.dockerignore
+.git
+.gitignore
+.gitattributes
+README.md
+.npmrc
+.prettierrc
+.prettierignore
+.eslintrc.cjs
+eslint.config.js
+.graphqlrc
+.editorconfig
+.svelte-kit
+.vscode
+node_modules
+build
+package
+.output
+dist
+
+# Environment files (excluded - will be handled by build script)
+**/.env
+.env.*
+!.env
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage
+.nyc_output
+
+# Cache
+.cache
+.parcel-cache
+.next
+.nuxt
+.vuepress/dist
+
+# Serverless directories
+.serverless
+.FuseBox
+.dynamodb
+
+# IDE
+.tern-project
+.tern-port
+.tmp
+.temp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Old site
+oldsite
+
+# Docker and build scripts
+build-docker.sh
+build-docker.bat
+run-docker.sh
+run-docker.bat
+docker-compose.yml

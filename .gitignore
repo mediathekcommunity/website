@@ -23,3 +23,9 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 oldsite/
 src/routes/api/seed/+server.ts
+
+# Utility Scripts (temporary/development only)
+check-db.js
+sync-data.js
+*.temp.js
+*.tmp.js

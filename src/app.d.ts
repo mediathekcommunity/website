@@ -12,6 +12,9 @@ declare global {
 			env: {
 				DATABASE_URL: string;
 				DATABASE_AUTH_TOKEN: string;
+				DATABASE_URL_DEV?: string;
+				DATABASE_AUTH_TOKEN_DEV?: string;
+				NODE_ENV?: string;
 				AUTH_SECRET: string;
 				// Add other environment variables as needed
 			};
