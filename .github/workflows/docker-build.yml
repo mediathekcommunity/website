@@ -100,44 +100,6 @@ jobs:
         echo "🏷️  Tags: ${{ steps.meta.outputs.tags }}"
         echo "🏗️  Architecture: amd64"
 
-    - name: Cleanup old images
-      run: |
-        echo "🧹 Cleaning up old images, keeping only the last 3..."
-        
-        # Get all tags for the repository, sorted by creation date (newest first)
-        REPO_NAME="${{ env.IMAGE_NAME }}"
-        
-        # Get all package versions (tags) excluding 'latest' and 'production'
-        gh api --paginate \
-          -H "Accept: application/vnd.github+json" \
-          -H "X-GitHub-Api-Version: 2022-11-28" \
-          "/user/packages/container/${REPO_NAME##*/}/versions" \
-          --jq '.[] | select(.metadata.container.tags | length > 0 and (. | contains(["latest", "production"]) | not)) | {id: .id, tags: .metadata.container.tags, created_at: .created_at}' \
-          | jq -s 'sort_by(.created_at) | reverse' > versions.json
-        
-        # Keep only the 3 most recent versions, delete the rest
-        VERSIONS_TO_DELETE=$(cat versions.json | jq -r '.[3:] | .[].id')
-        
-        if [ -n "$VERSIONS_TO_DELETE" ]; then
-          echo "Deleting old image versions:"
-          echo "$VERSIONS_TO_DELETE" | while read -r version_id; do
-            if [ -n "$version_id" ]; then
-              echo "  Deleting version ID: $version_id"
-              gh api --method DELETE \
-                -H "Accept: application/vnd.github+json" \
-                -H "X-GitHub-Api-Version: 2022-11-28" \
-                "/user/packages/container/${REPO_NAME##*/}/versions/$version_id" || echo "    Failed to delete $version_id"
-            fi
-          done
-          echo "✅ Cleanup completed"
-        else
-          echo "✅ No old images to cleanup"
-        fi
-        
-        rm -f versions.json
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   deploy:
     runs-on: ubuntu-latest
     needs: build
