@@ -1,5 +1,5 @@
 <script>
-    import { env } from '$env/dynamic/public';
+    import { env } from '$env/static/public';
     import { dev } from '$app/environment';
     
     const currentYear = $state(new Date().getFullYear());
