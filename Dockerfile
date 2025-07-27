@@ -17,7 +17,7 @@ COPY . .
 
 # Load environment variables and build with cache mount
 ARG GIT_SHA
-ENV VITE_GIT_SHA=$GIT_SHA
+ENV PUBLIC_VITE_GIT_SHA=$GIT_SHA
 RUN --mount=type=cache,target=/app/.svelte-kit \
     export $(grep -v '^#' .env | xargs) && pnpm build
 

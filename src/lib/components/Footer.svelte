@@ -1,5 +1,5 @@
 <script>
-    import { env } from '$env/dynamic/public';
+    import { PUBLIC_VITE_GIT_SHA } from '$env/static/public';
     import { dev } from '$app/environment';
     
     const currentYear = $state(new Date().getFullYear());
@@ -7,7 +7,7 @@
     // Get the build SHA from environment variable and truncate to 7 characters
     // In dev mode, get current commit SHA and append +dev
     const buildSha = $derived(() => {
-        let sha = env.VITE_GIT_SHA?.substring(0, 7) || 'unknown';
+        let sha = PUBLIC_VITE_GIT_SHA?.substring(0, 7) || 'unknown';
         
         if (dev) {
             sha = sha === 'unknown' ? 'latest' : sha;
