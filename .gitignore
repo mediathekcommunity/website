@@ -30,3 +30,4 @@ sync-data.js
 *.temp.js
 *.tmp.js
 scripts/dev.js
+*.md
