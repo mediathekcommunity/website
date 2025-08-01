@@ -3,6 +3,7 @@
 	import { page } from '$app/stores';
 	import Icon from '@iconify/svelte';
 	import Videoplayer from '$lib/components/Videoplayer.svelte';
+	import { playlistindex } from '$lib/store';
 
 	let mediaItem: any = null;
 	let movieFiles: any[] = [];
@@ -15,6 +16,7 @@
 	// Video player state
 	let showVideo: boolean = false;
 	let currentFile: any = null;
+	let currentSeason: number | null = null;
 	onMount(async () => {
 		try {
 			const id = $page.params.id;
@@ -70,8 +72,22 @@
 			// For movies, use the first available file
 			if (mediaItem.type === 'movie' && movieFiles.length > 0) {
 				currentFile = movieFiles[0];
+			} else if (mediaItem.type === 'series' && episodes.length > 0) {
+				// For series, always start with Season 1, Episode 1
+				const season1Episodes = episodes.filter(ep => ep.seasonNumber === 1);
+				if (season1Episodes.length > 0) {
+					currentSeason = 1;
+					// Set playlist index to 0 for the first episode of Season 1
+					playlistindex.set(0);
+					console.log('Starting series playback from Season 1, Episode 1');
+				} else {
+					console.warn('No Season 1 episodes found, using first available episode');
+					const firstEpisode = episodes[0];
+					currentSeason = firstEpisode.seasonNumber;
+					playlistindex.set(0);
+				}
 			}
-			console.log('Playing video:', currentFile);
+			console.log('Playing video:', currentFile || 'series');
 			document.body.scrollIntoView();
 			showVideo = true;
 		} else {
@@ -85,32 +101,83 @@
 	}
 
 	function playEpisode(episode: any, index: number) {
+		const seasonNumber = episode.seasonNumber;
+		
 		if (showVideo) {
-			// If the player is already active, switch to the playlist entry of the episode
-			console.log('Switching to episode in playlist:', episode);
-			currentFile = {
-				...episode,
-				originalVideoUrl: episode.videoUrl || episode.originalVideoUrl,
-				localVideoUrl: episode.localVideoUrl
-			};
+			// If the player is already active, switch to the episode in the playlist
+			console.log('Switching to episode in playlist:', episode.title, 'Season:', seasonNumber);
+			
+			// Check if we're switching seasons
+			if (currentSeason !== seasonNumber) {
+				console.log('Switching seasons from', currentSeason, 'to', seasonNumber);
+				currentSeason = seasonNumber;
+				// When switching seasons, we need to reinitialize the player with the new season's playlist
+				// The Videoplayer will react to currentSeason change and rebuild the playlist
+				setTimeout(() => {
+					// Find the episode index within the current season
+					const seasonEpisodes = episodes.filter(ep => ep.seasonNumber === seasonNumber);
+					const episodeIndex = seasonEpisodes.findIndex(ep => ep.id === episode.id);
+					if (episodeIndex !== -1) {
+						playlistindex.set(episodeIndex);
+						console.log('Set playlist index to:', episodeIndex, 'within season', seasonNumber);
+					}
+				}, 100); // Small delay to allow playlist to be rebuilt
+			} else {
+				// Same season, just switch episode index
+				const seasonEpisodes = episodes.filter(ep => ep.seasonNumber === seasonNumber);
+				const episodeIndex = seasonEpisodes.findIndex(ep => ep.id === episode.id);
+				if (episodeIndex !== -1) {
+					playlistindex.set(episodeIndex);
+					console.log('Updated playlist index to:', episodeIndex, 'within season', seasonNumber);
+				} else {
+					console.warn('Episode not found in season episodes:', episode);
+				}
+			}
 		} else {
-			// Set the episode with the correct video URL for the player
-			currentFile = {
-				...episode,
-				originalVideoUrl: episode.videoUrl || episode.originalVideoUrl,
-				localVideoUrl: episode.localVideoUrl
-			};
-			console.log('Playing episode:', currentFile);
+			// Initialize player with the episode from the selected season
+			console.log('Playing episode:', episode.title, 'Season:', seasonNumber);
+			currentSeason = seasonNumber;
+			
+			// Find the episode index within the current season
+			const seasonEpisodes = episodes.filter(ep => ep.seasonNumber === seasonNumber);
+			const episodeIndex = seasonEpisodes.findIndex(ep => ep.id === episode.id);
+			if (episodeIndex !== -1) {
+				playlistindex.set(episodeIndex);
+			}
+			
 			document.body.scrollIntoView();
 			showVideo = true;
 		}
 	}
 
 	function playMovieFile(file: any) {
-		currentFile = file;
-		console.log('Playing movie file:', currentFile);
-		document.body.scrollIntoView();
-		showVideo = true;
+		const switchTime = Date.now();
+		
+		if (showVideo) {
+			// If the player is already active, reset the player state and switch to the new source
+			console.log('Switching to new movie file in active player:', file.videoUrl || file.localVideoUrl);
+			currentFile = {
+				...file,
+				// Keep the videoUrl as passed from the button click
+				videoUrl: file.videoUrl,
+				localVideoUrl: file.localVideoUrl,
+				// Add timestamp to force reactivity
+				_switchTime: switchTime
+			};
+		} else {
+			// Initialize player with the selected file
+			currentFile = {
+				...file,
+				// Keep the videoUrl as passed from the button click
+				videoUrl: file.videoUrl,
+				localVideoUrl: file.localVideoUrl,
+				// Add timestamp to force reactivity
+				_switchTime: switchTime
+			};
+			console.log('Playing movie file:', currentFile.videoUrl || currentFile.localVideoUrl);
+			document.body.scrollIntoView();
+			showVideo = true;
+		}
 	}
 	const getImageUrl = (poster_url: any) => {
 		if (poster_url) {
@@ -139,7 +206,7 @@
 			{#if showVideo}
 				<div class="hero-container2 top60 relative w-full">
 					<div class="video-player-container h-full">
-						<Videoplayer mediaData={mediaItem} {currentFile} {episodes} {movieFiles} />
+						<Videoplayer mediaData={mediaItem} {currentFile} {episodes} {movieFiles} {currentSeason} />
 						<button class="close-video-btn" on:click={stopVideo}>Close Video</button>
 					</div>
 				</div>

@@ -13,6 +13,7 @@
 	export let currentFile: MovieFile | null = null; // Explicitly define type
 	export let episodes: Episode[] = []; // Explicitly define type
 	export let movieFiles: MovieFile[] = []; // Explicitly define type
+	export let currentSeason: number | null = null; // Track current season for series
 
 	let player: Player | null = null; // Explicitly define type
 	let videoElement: HTMLVideoElement | null = null; // Explicitly define type
@@ -78,25 +79,45 @@
 	};
 
 	function setCommonSource(src: string, poster: string, videoType: string, title: string): void {
+		console.log('Player loading new source:', src);
+		
 		videoSource = {
 			sources: [{ src, type: videoType }],
 			poster,
 			title: title || ''
 		};
-		player?.poster(poster);
-		player?.src(videoSource.sources);
+		
+		// Force player to reload the source
+		if (player) {
+			player.pause();
+			player.currentTime(0);
+			player.poster(poster);
+			player.src(videoSource.sources);
+			player.load(); // Force reload
+		}
 	}
 
 	// Convert our new schema data to video player format
 	function convertMovieFileToVideoData(file: MovieFile, media: MediaItem | null): any {
-		return {
-			src: file.videoUrl,
+		// Use the appropriate video URL (prioritize the one that was clicked)
+		const videoUrl = file.videoUrl || file.localVideoUrl;
+		
+		if (!videoUrl) {
+			console.warn('No video URL found in file:', file);
+		}
+		
+		const result = {
+			src: videoUrl,
 			type: getVideoType(file.format || 'mp4'),
 			title: media?.title || 'Untitled',
 			poster: media?.poster_url || '',
 			quality: file.quality,
-			tracks: parseSubtitles(file.subtitlesInfo)
+			tracks: parseSubtitles(file.subtitlesInfo),
+			// Add a unique identifier to help with reactivity
+			_sourceId: `${videoUrl}_${Date.now()}`
 		};
+		
+		return result;
 	}
 
 	function convertEpisodeToVideoData(episode: Episode, media: MediaItem | null): any {
@@ -129,13 +150,11 @@
 		if (!subtitlesInfo) return [];
 
 		try {
-			// Try to parse as JSON first
 			if (subtitlesInfo.startsWith('[') || subtitlesInfo.startsWith('{')) {
 				const parsed = JSON.parse(subtitlesInfo);
 				return Array.isArray(parsed) ? parsed : [parsed];
 			}
 
-			// Simple format: "English:en.vtt,German:de.vtt"
 			return subtitlesInfo
 				.split(',')
 				.map((sub) => {
@@ -150,69 +169,48 @@
 				})
 				.filter((track) => track.src);
 		} catch (e) {
-			console.warn('Could not parse subtitles info:', subtitlesInfo);
+			console.warn('Failed to parse subtitles info:', subtitlesInfo, e);
 			return [];
 		}
 	}
 
 	function setSource(): void {
-		if (!player || !mediaData) return;
+		if (!player || !mediaData) {
+			console.log('setSource: Missing player or mediaData');
+			return;
+		}
 
-		player.currentTime(0);
+		console.log('setSource called for:', mediaData.type, currentFile ? 'with currentFile' : 'without currentFile');
 
 		let videoData;
 
 		if (mediaData.type === 'movie' && currentFile) {
-			// Single movie file
 			videoData = convertMovieFileToVideoData(currentFile, mediaData);
-			seriestype.set('single');
-			modalvideo.set(videoData);
-			setCommonSource(videoData.src, videoData.poster, videoData.type, videoData.title);
+			updatePlayer(videoData);
 		} else if (mediaData.type === 'movie' && movieFiles.length > 0) {
-			// Multiple movie files - use first one or create playlist
 			if (movieFiles.length === 1) {
 				videoData = convertMovieFileToVideoData(movieFiles[0], mediaData);
-				seriestype.set('single');
-				modalvideo.set(videoData);
-				setCommonSource(videoData.src, videoData.poster, videoData.type, videoData.title);
+				updatePlayer(videoData);
 			} else {
-				// Multiple quality files - create playlist
 				const playlistData = movieFiles.map((file) => ({
 					...convertMovieFileToVideoData(file, mediaData),
-					id: file.id || '' // Ensure id exists or provide a fallback
+					id: file.id || ''
 				}));
-				playlist.set(playlistData);
-				seriestype.set('playlist');
-				if (player.playlist) {
-					player.playlist(playlistData);
-					const playlistItem = playlistData[$playlistindex] || playlistData[0];
-					if (playlistItem) {
-						player.poster(playlistItem.poster);
-						if (player.playlist && typeof player.playlist.currentItem === 'function') {
-							player.playlist.currentItem($playlistindex || 0);
-						}
-					}
-				}
+				updatePlaylist(playlistData);
 			}
 		} else if (mediaData.type === 'series' && episodes.length > 0) {
-			// Series with episodes
-			const playlistData = episodes.map((episode) => ({
+			// Filter episodes by current season if specified, otherwise use all episodes
+			const episodesToUse = currentSeason 
+				? episodes.filter(episode => episode.seasonNumber === currentSeason)
+				: episodes;
+			
+			console.log('Creating playlist for season:', currentSeason, 'Episodes:', episodesToUse.length);
+			
+			const playlistData = episodesToUse.map((episode) => ({
 				...convertEpisodeToVideoData(episode, mediaData),
 				id: episode.id
 			}));
-			console.log('Generated playlist for series:', playlistData);
-			playlist.set(playlistData);
-			seriestype.set('playlist');
-			if (player.playlist) {
-				player.playlist(playlistData);
-				const playlistItem = playlistData[$playlistindex] || playlistData[0];
-				if (playlistItem) {
-					player.poster(playlistItem.poster);
-					if (player.playlist && typeof player.playlist.currentItem === 'function') {
-						player.playlist.currentItem($playlistindex || 0);
-					}
-				}
-			}
+			updatePlaylist(playlistData);
 		}
 
 		player.one('loadeddata', handleLoadedData);
@@ -241,20 +239,61 @@
 	}
 
 	function handlePlaylistChange(): void {
+		console.log('handlePlaylistChange called:', { 
+			seriestype: $seriestype, 
+			playlistLength: $playlist.length, 
+			playlistindex: $playlistindex,
+			hasPlayer: !!player 
+		});
+		
 		if ($seriestype === 'playlist' && $playlist.length > 0 && player) {
 			if (player.playlist && typeof player.playlist.currentItem === 'function') {
+				console.log('Using video.js playlist.currentItem');
 				player.playlist.currentItem($playlistindex);
 				player.playlist.autoadvance?.(0);
 			} else {
-				// Fallback for when playlist plugin isn't fully loaded
+				console.log('Using manual playlist switching');
 				const currentItem = $playlist[$playlistindex];
 				if (currentItem) {
+					console.log('Switching to playlist item:', currentItem.src);
 					player.src([{ src: currentItem.src, type: currentItem.type }]);
 					player.poster(currentItem.poster);
 					modalvideo.set({
 						...currentItem,
 						id: String(currentItem.id)
 					});
+				} else {
+					console.warn('No playlist item found at index:', $playlistindex);
+				}
+			}
+		}
+	}
+
+	function updatePlayer(videoData: any): void {
+		if (!player || !videoData) {
+			console.log('updatePlayer: Missing player or videoData');
+			return;
+		}
+		
+		console.log('Updating player source to:', videoData.src);
+		
+		seriestype.set('single');
+		modalvideo.set(videoData);
+		
+		// Set new source (setCommonSource handles the reset)
+		setCommonSource(videoData.src, videoData.poster, videoData.type, videoData.title);
+	}
+
+	function updatePlaylist(playlistData: any[]): void {
+		playlist.set(playlistData);
+		seriestype.set('playlist');
+		if (player.playlist) {
+			player.playlist(playlistData);
+			const playlistItem = playlistData[$playlistindex] || playlistData[0];
+			if (playlistItem) {
+				player.poster(playlistItem.poster);
+				if (player.playlist && typeof player.playlist.currentItem === 'function') {
+					player.playlist.currentItem($playlistindex || 0);
 				}
 			}
 		}
@@ -270,8 +309,6 @@
 			player = videojs(videoElement, videojsOptions);
 
 			player.ready(() => {
-
-				// Initialize nuevo plugins
 				if (player.nuevo) {
 					player.nuevo(nuevoOptions);
 				}
@@ -279,16 +316,9 @@
 					player.hotkeys({ seekStep: 10 });
 				}
 
-				// Set initial source
-				if ($seriestype === 'playlist') {
-					setSource();
-					player.pause();
-				} else {
-					player.pause();
-					setSource();
-				}
+				setSource();
+				player.pause();
 
-				// Set up playlist navigation for series
 				if (mediaData?.type === 'series' && episodes.length > 1) {
 					player.on('ended', () => {
 						const nextIndex = $playlistindex + 1;
@@ -305,13 +335,15 @@
 		}
 	});
 
-	// React to external changes
-	$: if (
-		player &&
-		mediaData &&
-		($seriestype === 'single' || $seriestype === 'default') &&
-		$modalvideo
-	) {
+	// React to external changes - consolidated reactive block
+	$: if (player && mediaData && currentFile && mediaData.type === 'movie') {
+		console.log('Movie currentFile reactive block triggered:', currentFile._switchTime);
+		setSource();
+	}
+	
+	// Separate reactive block for series and other cases
+	$: if (player && mediaData && ($seriestype === 'single' || $seriestype === 'default') && $modalvideo && !currentFile) {
+		console.log('Modal video reactive block triggered');
 		setSource();
 	}
 
@@ -321,10 +353,18 @@
 		$playlist &&
 		typeof $playlistindex !== 'undefined'
 	) {
-		console.log('Reactive block triggered for playlist change');
-		console.log('Playlist index:', $playlistindex);
-		console.log('Playlist data:', $playlist);
+		console.log('Playlist reactive block triggered:', {
+			playlistIndex: $playlistindex,
+			playlistLength: $playlist.length,
+			seriestype: $seriestype
+		});
 		handlePlaylistChange();
+	}
+
+	// React to currentSeason changes for series - rebuild playlist when season changes
+	$: if (player && mediaData && mediaData.type === 'series' && episodes.length > 0 && currentSeason !== null) {
+		console.log('Current season changed, rebuilding playlist for season:', currentSeason);
+		setSource();
 	}
 
 	$: if (mediaData && player && currentFile) {

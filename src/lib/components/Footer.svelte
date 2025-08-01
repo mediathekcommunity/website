@@ -1,16 +1,24 @@
 <script>
-    import { PUBLIC_VITE_GIT_SHA } from '$env/static/public';
     import { dev } from '$app/environment';
+    import { browser } from '$app/environment';
     
     const currentYear = $state(new Date().getFullYear());
     
-    // Get the build SHA from environment variable and truncate to 7 characters
-    // In dev mode, get current commit SHA and append +dev
+    // Get the build SHA - fallback to dev-local in development
     const buildSha = $derived(() => {
-        let sha = PUBLIC_VITE_GIT_SHA?.substring(0, 7) || 'unknown';
+        // Try to get from environment, fallback to dev-local
+        let sha;
+        try {
+            // @ts-ignore - This might not exist in dev
+            sha = import.meta.env.VITE_GIT_SHA || 'dev-local';
+        } catch (e) {
+            sha = 'dev-local';
+        }
+        
+        // Truncate to 7 characters
+        sha = sha.substring(0, 7);
         
         if (dev) {
-            sha = sha === 'unknown' ? 'latest' : sha;
             sha += '+dev';
         }
         
